@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coral-identity
+data:
+  CORAL_IDENTITY_LOGGING: {{ .Values.logging | quote }}
+  SECRET_TOKEN: {{ .Values.secretToken | quote }}
+  ARTIFACT_PATH: {{ .Values.artifact.basePath }}/{{ .Values.artifact.relativePath }}

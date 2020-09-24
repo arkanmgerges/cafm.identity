@@ -1,0 +1,78 @@
+# Default values for coral-api.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: docker-registry.dev.arkan.cloud/coral/coral-identity
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v1"
+
+imagePullSecrets: [{"name":"docker-registry"}]
+nameOverride: ""
+fullnameOverride: ""
+
+logging: DEBUG
+secretToken: 1234 # Set this from command line
+artifact:
+  name: "{{ template \"coral-api.name\" $ }}-artifact"
+  basePath: /artifact
+  relativePath: coral.identity/bundle
+
+env:
+  - name: CORAL_IDENTITY_LOGGING
+    valueFrom:
+      configMapKeyRef:
+        name: coral-identity
+        key: CORAL_IDENTITY_LOGGING
+  - name: SECRET_TOKEN
+    valueFrom:
+      configMapKeyRef:
+        name: coral-identity
+        key: SECRET_TOKEN
+  - name: ARTIFACT_FOLDER_PATH
+    valueFrom:
+      configMapKeyRef:
+        name: coral-identity
+        key: ARTIFACT_PATH
+nfs:
+  path: /exports
+  server: arkan.cloud
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPortName: coral-identity
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
