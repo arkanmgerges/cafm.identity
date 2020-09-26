@@ -1,3 +1,7 @@
+"""
+@author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
+"""
+
 import json
 import os
 from uuid import uuid4

@@ -1,3 +1,7 @@
+"""
+@author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
+"""
+
 from abc import ABC, abstractmethod
 
 from src.portadapter.messaging.common.Consumer import Consumer

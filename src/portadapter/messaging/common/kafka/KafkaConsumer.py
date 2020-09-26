@@ -1,22 +1,21 @@
-import enum
+"""
+@author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
+"""
+
 import json
 import os
 from typing import List, Any
 
 from confluent_kafka import DeserializingConsumer as ConfluentKafkaConsumer
-
-from src.portadapter.messaging.common.Consumer import Consumer
 from confluent_kafka.serialization import StringDeserializer
 
-
-class KafkaOffsetReset(enum.Enum):
-    earliest = 1
-    latest = 2
+from src.portadapter.messaging.common.Consumer import Consumer
+from src.portadapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
 
 
 class KafkaConsumer(Consumer):
     def __init__(self, groupId: str = '', autoCommit: bool = False, partitionEof: bool = True,
-                 autoOffsetReset: str = KafkaOffsetReset.latest.name):
+                 autoOffsetReset: str = ConsumerOffsetReset.latest.name):
         self._consumer: ConfluentKafkaConsumer = ConfluentKafkaConsumer({
             'bootstrap.servers': os.getenv('MESSAGE_BROKER_SERVERS', ''),
             'group.id': groupId,

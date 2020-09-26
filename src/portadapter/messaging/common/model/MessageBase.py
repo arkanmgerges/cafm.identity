@@ -1,3 +1,7 @@
+"""
+@author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
+"""
+
 from __future__ import annotations
 
 import os

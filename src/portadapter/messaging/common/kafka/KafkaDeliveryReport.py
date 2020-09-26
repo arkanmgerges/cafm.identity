@@ -1,3 +1,7 @@
+"""
+@author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
+"""
+
 import os
 
 from src.portadapter.messaging.common.SimpleProducer import SimpleProducer

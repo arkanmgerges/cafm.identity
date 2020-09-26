@@ -1,3 +1,7 @@
+"""
+@author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
+"""
+
 from abc import ABC, abstractmethod
 from typing import Any, List
 
