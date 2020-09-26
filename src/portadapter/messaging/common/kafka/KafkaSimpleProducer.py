@@ -8,8 +8,6 @@ from uuid import uuid4
 
 from confluent_kafka import SerializingProducer
 from confluent_kafka.avro import CachedSchemaRegistryClient
-from confluent_kafka.schema_registry import record_subject_name_strategy
-from confluent_kafka.schema_registry.avro import AvroSerializer
 from confluent_kafka.serialization import StringSerializer
 
 from src.portadapter.messaging.common.SimpleProducer import SimpleProducer
@@ -35,7 +33,7 @@ class KafkaSimpleProducer(SimpleProducer):
                         'value.serializer': lambda v, ctx: json.dumps(v).encode('utf-8')}
         producer = SerializingProducer(producerConf)
         producer.poll(0.0)
-        producer.produce(topic=obj.topic(), key=str(uuid4()), value=obj.toMap(),
+        producer.produce(topic=obj.topic(), key=obj.msgId(), value=obj.toMap(),
                          on_delivery=self._deliveryReport)
         producer.flush()
 

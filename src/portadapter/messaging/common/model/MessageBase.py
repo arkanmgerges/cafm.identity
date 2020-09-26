@@ -28,3 +28,10 @@ class MessageBase(ABC, object):
             dict: Dictionary data of the object
         """
         pass
+
+    @abstractmethod
+    def msgId(self) -> str:
+        """Retrieve message id
+
+        """
+        pass

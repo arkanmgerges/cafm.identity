@@ -6,7 +6,7 @@ import json
 import os
 from uuid import uuid4
 
-from confluent_kafka import Producer
+from confluent_kafka import SerializingProducer
 from confluent_kafka.avro import CachedSchemaRegistryClient
 from confluent_kafka.serialization import StringSerializer
 
@@ -15,6 +15,7 @@ from src.portadapter.messaging.common.kafka.KafkaDeliveryReport import KafkaDeli
 from src.portadapter.messaging.common.Consumer import Consumer
 from src.portadapter.messaging.common.TransactionalProducer import TransactionalProducer
 from src.portadapter.messaging.common.model.MessageBase import MessageBase
+from src.resource.logging.logger import logger
 
 MESSAGE_SCHEMA_REGISTRY_URL = os.getenv('MESSAGE_SCHEMA_REGISTRY_URL', '')
 
@@ -23,23 +24,28 @@ class KafkaTransactionalProducer(TransactionalProducer):
     def __init__(self, schemaRegistry=None, transactionalId=str(uuid4())):
         self._schemaRegistry = schemaRegistry
         self._deliveryReport = KafkaDeliveryReport.deliveryReport
-        self._producer = Producer({
+        self._producer = SerializingProducer({
             'bootstrap.servers': os.getenv('MESSAGE_BROKER_SERVERS', ''),
+            'transactional.id': transactionalId,
             'key.serializer': StringSerializer('utf_8'),
             'value.serializer': lambda v, ctx: json.dumps(v).encode('utf-8')
         })
 
     def initTransaction(self) -> None:
-        self._producer.initTransaction()
+        logger.info(f'init transaction')
+        self._producer.init_transactions()
 
     def beginTransaction(self) -> None:
-        self._producer.beginTransaction()
+        logger.info(f'begin transaction')
+        self._producer.begin_transaction()
 
     def abortTransaction(self) -> None:
-        self._producer.abortTransaction()
+        logger.info(f'abort transaction')
+        self._producer.abort_transaction()
 
     def commitTransaction(self) -> None:
-        self._producer.commitTransaction()
+        logger.info(f'commit transaction')
+        self._producer.commit_transaction()
 
     def produce(self, obj: MessageBase, schema: dict):
         c = CachedSchemaRegistryClient({'url': MESSAGE_SCHEMA_REGISTRY_URL})
@@ -47,11 +53,13 @@ class KafkaTransactionalProducer(TransactionalProducer):
         if not res:
             raise Exception(f'Schema is not compatible {schema}')
 
+        keyId = obj.msgId()
+        logger.info(f'produce for id {keyId}')
         self._producer.poll(0.0)
-        self._producer.produce(topic=obj.topic(), key=str(uuid4()), value=obj.toMap(),
-                         on_delivery=self._deliveryReport)
+        self._producer.produce(topic=obj.topic(), key=keyId, value=obj.toMap(),
+                               on_delivery=self._deliveryReport)
 
     def sendOffsetsToTransaction(self, consumer: Consumer):
+        logger.info(f'send offsets to transaction for consumer {consumer}')
         self._producer.send_offsets_to_transaction(consumer.position(consumer.assignment()),
                                                    consumer.consumerGroupMetadata())
-

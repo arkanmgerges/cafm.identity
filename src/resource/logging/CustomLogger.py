@@ -1,5 +1,4 @@
 import inspect
-import logging
 import os
 import sys
 import traceback
@@ -9,7 +8,6 @@ from typing import Text, Union, Any, Optional, Dict, Tuple
 
 _SysExcInfoType = Union[Tuple[type, BaseException, Optional[TracebackType]],
                         Tuple[None, None, None]]
-from injector import Module, singleton, provider, Injector
 
 if sys.version_info >= (3, 5):
     _ExcInfoType = Union[None, bool, _SysExcInfoType, BaseException]
@@ -62,10 +60,19 @@ class CustomLogger(Logger):
         self.modifyMsg(super().log, msg)
 
     def modifyMsg(self, call, msg, printStackTrace=False):
-        callerFrameRecord = inspect.stack()[1]
-        frame = callerFrameRecord[0]
-        info = inspect.getframeinfo(frame)
-        modifiedMsg = f'[{info.filename}][line: {info.lineno}] {msg}'
-        call(modifiedMsg)
+        maxLines = os.getenv('CORAL_API_LOGGING_MAX_FILE_LINES', 5)
+        counter = 0
+        listOfRecords = inspect.stack()
+        modifiedMsgArray = ['\nfiles:\n']
+        for callerFrameRecord in listOfRecords:
+            frame = callerFrameRecord[0]
+            info = inspect.getframeinfo(frame)
+            modifiedMsgArray.append(f'\t[{info.filename}][line: {info.lineno}]\n')
+            counter += 1
+            if counter >= maxLines:
+                modifiedMsgArray.append(f'message:\n \t{msg}\n')
+                break
+
+        call(''.join(modifiedMsgArray))
         if printStackTrace:
             traceback.print_stack()

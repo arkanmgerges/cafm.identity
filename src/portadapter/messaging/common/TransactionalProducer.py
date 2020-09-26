@@ -53,7 +53,7 @@ class TransactionalProducer(ABC):
         pass
 
     @abstractmethod
-    def sendOffsetsToTransaction(self, consumer: Consumer):
+    def sendOffsetsToTransaction(self, consumer: Consumer) -> None:
         """Commit processed message offsets to the transaction
 
         """

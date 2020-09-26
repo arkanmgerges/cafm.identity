@@ -1,0 +1,13 @@
+{
+ "namespace": "coral.identity",
+ "type": "record",
+ "name": "Command",
+ "doc": "Command to be created for the identity",
+ "fields": [
+     {"name": "id", "type": "string", "doc": "The identity of the command"},
+     {"name": "name",  "type": "string", "default": "", "doc": "The name of the command"},
+     {"name": "data",  "type": "string", "default": "", "doc": "The data of the command"},
+     {"name": "creatorServiceName",  "type": "string", "default": "", "doc": "The service who created the command"},
+     {"name": "createdOn",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this command got created"}
+ ]
+}

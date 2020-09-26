@@ -3,13 +3,14 @@
 """
 
 import os
-from time import sleep
 
 from confluent_kafka.cimpl import KafkaError
 
 import src.portadapter.api.rest.AppDi as AppDi
 from src.portadapter.messaging.common.Consumer import Consumer
 from src.portadapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
+from src.portadapter.messaging.common.TransactionalProducer import TransactionalProducer
+from src.portadapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.resource.logging.logger import logger
 
 
@@ -23,14 +24,21 @@ class ApiCommandListener:
 
         # Subscribe
         consumer.subscribe([os.getenv('CORAL_API_COMMAND_TOPIC', '')])
+
+        # Producer
+        producer: TransactionalProducer = AppDi.instance.get(TransactionalProducer)
+        producer.initTransaction()
+        producer.beginTransaction()
+
         try:
             while True:
                 try:
                     msg = consumer.poll(timeout=1.0)
+                    if msg is None:
+                        continue
                 except Exception as _e:
-                    pass
-                if msg is None:
                     continue
+
                 if msg.error():
                     if msg.error().code() == KafkaError._PARTITION_EOF:
                         logger.info(f'msg reached partition eof: {msg.error()}')
@@ -41,10 +49,30 @@ class ApiCommandListener:
                     logger.info(
                         f'topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
                     logger.info(f'value: {msg.value()}')
-                sleep(3)
+
+                    try:
+                        msgData = msg.value()
+                        producer.produce(
+                            obj=IdentityCommand(id=msgData['id'], creatorServiceName=msgData['creatorServiceName'],
+                                                name=msgData['name'],
+                                                data=msgData['data'], createdOn=msgData['createdOn']),
+                            schema=IdentityCommand.get_schema())
+
+                        # Send the consumer's position to transaction to commit
+                        # them along with the transaction, committing both
+                        # input and outputs in the same transaction is what provides EOS.
+                        producer.sendOffsetsToTransaction(consumer)
+                        producer.commitTransaction()
+
+                        producer.beginTransaction()
+                    except Exception as e:
+                        logger.error(e)
+
+                # sleep(3)
         except KeyboardInterrupt:
             logger.info(f'Aborted by user')
         finally:
+            producer.commitTransaction()
             # Close down consumer to commit final offsets.
             consumer.close()
 
