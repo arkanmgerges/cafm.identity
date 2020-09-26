@@ -17,7 +17,7 @@ from fastapi.security import HTTPBearer
 from starlette.requests import Request
 
 router = APIRouter()
-SECRET_TOKEN = os.environ.get('SECRET_TOKEN', None)
+SECRET_TOKEN = os.getenv('SECRET_TOKEN', None)
 
 import tarfile
 import os.path
@@ -57,7 +57,7 @@ async def getAllOpaBundles(request: Request, _=Depends(CustomHttpBearer())):
     try:
         # return Response(content = 'ok', media_type = 'text/html')
         # filePath = os.path.dirname(os.path.abspath(__file__)) + '/../../../artifact/bundle.tar.gz'
-        filePath = os.environ.get('ARTIFACT_FOLDER_PATH', None)
+        filePath = os.getenv('ARTIFACT_FOLDER_PATH', None)
         if filePath is None:
             raise HTTPException(
                 status_code=HTTP_500_INTERNAL_SERVER_ERROR,

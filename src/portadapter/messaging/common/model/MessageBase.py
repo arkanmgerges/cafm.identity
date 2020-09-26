@@ -1,0 +1,26 @@
+from __future__ import annotations
+
+import os
+from abc import ABC, abstractmethod
+
+
+class MessageBase(ABC, object):
+    @abstractmethod
+    def topic(self):
+        """Retrieve the topic that this message will use
+
+        Returns:
+              str: Topic that this message is using
+        """
+        pass
+
+    @abstractmethod
+    def toMap(self, *args):
+        """Retrieve object dictionary
+        Args:
+            *args: Arguments associated for calling this method
+
+        Returns:
+            dict: Dictionary data of the object
+        """
+        pass
