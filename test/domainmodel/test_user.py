@@ -12,7 +12,7 @@ def test_create_user():
 
 def test_create_user_with_semantic_constructor():
     id = str(uuid4())
-    user = User.by(id=id, username='john', password='1234')
+    user = User.createNew(id=id, username='john', password='1234')
     assert isinstance(user, User)
     assert user.id() == id
     assert user.username() == 'john'

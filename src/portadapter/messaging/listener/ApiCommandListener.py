@@ -53,9 +53,16 @@ class ApiCommandListener:
                     try:
                         msgData = msg.value()
                         producer.produce(
-                            obj=IdentityCommand(id=msgData['id'], creatorServiceName=msgData['creatorServiceName'],
+                            obj=IdentityCommand(id=msgData['id'],
+                                                serviceName=msgData['creatorServiceName'],
                                                 name=msgData['name'],
-                                                data=msgData['data'], createdOn=msgData['createdOn']),
+                                                data=msgData['data'],
+                                                createdOn=msgData['createdOn'],
+                                                externalId=msgData['id'],
+                                                externalServiceName=msgData['creatorServiceName'],
+                                                externalName=msgData['name'],
+                                                externalData=msgData['data'],
+                                                externalCreatedOn=msgData['createdOn']),
                             schema=IdentityCommand.get_schema())
 
                         # Send the consumer's position to transaction to commit
