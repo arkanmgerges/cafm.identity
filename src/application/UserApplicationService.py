@@ -25,3 +25,6 @@ class UserApplicationService:
         except UserDoesNotExistException:
             user = User.createFrom(id=id, username=username, password=password)
             self._userRepository.createUser(user)
+
+    def userByUsernameAndPassword(self, username: str, password: str):
+        return self._userRepository.userByUsernameAndPassword(username=username, password=password)

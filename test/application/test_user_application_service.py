@@ -49,3 +49,17 @@ def test_create_user_with_event_publishing_when_user_does_not_exist():
 
     repo.userByUsername.assert_called_once()
     repo.createUser.assert_called_once()
+    assert len(DomainEventPublisher.postponedEvents()) > 0
+
+
+def test_get_user_by_username_and_password_when_user_exists():
+    repo = Mock(spec=UserRepository)
+    username = 'me'
+    password = 'pass'
+    user = User(username=username, password=password)
+
+    repo.userByUsernameAndPassword = Mock(return_value=user)
+    appService = UserApplicationService(repo)
+    appService.userByUsernameAndPassword(username=username, password=password)
+
+    repo.userByUsernameAndPassword.assert_called_once_with(username=username, password=password)

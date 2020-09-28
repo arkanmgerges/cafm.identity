@@ -1,0 +1,21 @@
+// python -m grpc_tools.protoc -I./proto --python_out=. --grpc_python_out=. ./proto/pingpong.proto
+syntax = "proto3";
+
+
+
+message UserAppService_userByUsernameAndPasswordRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message UserAppService_userByUsernameAndPasswordResponse {
+  string id = 1;
+  string username = 2;
+  string password = 3;
+}
+
+
+
+service UserAppService {
+  rpc userByUsernameAndPassword (UserAppService_userByUsernameAndPasswordRequest) returns (UserAppService_userByUsernameAndPasswordResponse) {}
+}

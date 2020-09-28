@@ -2,10 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import src.resource.proto._generated.pingpong_pb2 as pingpong__pb2
+import identity_pb2 as identity__pb2
 
 
-class PingPongServiceStub(object):
+class UserAppServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -14,42 +14,42 @@ class PingPongServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.ping = channel.unary_unary(
-                '/PingPongService/ping',
-                request_serializer=pingpong__pb2.Ping.SerializeToString,
-                response_deserializer=pingpong__pb2.Pong.FromString,
+        self.userByUsernameAndPassword = channel.unary_unary(
+                '/UserAppService/userByUsernameAndPassword',
+                request_serializer=identity__pb2.UserAppService_userByUsernameAndPasswordRequest.SerializeToString,
+                response_deserializer=identity__pb2.UserAppService_userByUsernameAndPasswordResponse.FromString,
                 )
 
 
-class PingPongServiceServicer(object):
+class UserAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def ping(self, request, context):
+    def userByUsernameAndPassword(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_PingPongServiceServicer_to_server(servicer, server):
+def add_UserAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'ping': grpc.unary_unary_rpc_method_handler(
-                    servicer.ping,
-                    request_deserializer=pingpong__pb2.Ping.FromString,
-                    response_serializer=pingpong__pb2.Pong.SerializeToString,
+            'userByUsernameAndPassword': grpc.unary_unary_rpc_method_handler(
+                    servicer.userByUsernameAndPassword,
+                    request_deserializer=identity__pb2.UserAppService_userByUsernameAndPasswordRequest.FromString,
+                    response_serializer=identity__pb2.UserAppService_userByUsernameAndPasswordResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'PingPongService', rpc_method_handlers)
+            'UserAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class PingPongService(object):
+class UserAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def ping(request,
+    def userByUsernameAndPassword(request,
             target,
             options=(),
             channel_credentials=None,
@@ -59,8 +59,8 @@ class PingPongService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/PingPongService/ping',
-            pingpong__pb2.Ping.SerializeToString,
-            pingpong__pb2.Pong.FromString,
+        return grpc.experimental.unary_unary(request, target, '/UserAppService/userByUsernameAndPassword',
+            identity__pb2.UserAppService_userByUsernameAndPasswordRequest.SerializeToString,
+            identity__pb2.UserAppService_userByUsernameAndPasswordResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
