@@ -7,13 +7,11 @@ from fastapi.exceptions import HTTPException
 from starlette import status
 from starlette.responses import JSONResponse
 import random
-from src.resource.logging.logger import logger
 
 import numpy as np
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-import src.portadapter.api.rest.AppDi as AppDi
 from src.portadapter.api.rest.model.response.exception.Message import Message
 from src.portadapter.api.rest.router.v1 import opabundle
 

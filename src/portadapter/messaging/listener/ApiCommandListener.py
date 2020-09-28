@@ -6,7 +6,7 @@ import os
 
 from confluent_kafka.cimpl import KafkaError
 
-import src.portadapter.api.rest.AppDi as AppDi
+import src.portadapter.AppDi as AppDi
 from src.portadapter.messaging.common.Consumer import Consumer
 from src.portadapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
 from src.portadapter.messaging.common.TransactionalProducer import TransactionalProducer
