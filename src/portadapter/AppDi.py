@@ -9,6 +9,7 @@ from src.application.RealmApplicationService import RealmApplicationService
 from src.application.ResourceTypeApplicationService import ResourceTypeApplicationService
 from src.application.RoleApplicationService import RoleApplicationService
 from src.application.UserApplicationService import UserApplicationService
+from src.application.UserGroupApplicationService import UserGroupApplicationService
 from src.domainmodel.ou.OuRepository import OuRepository
 from src.domainmodel.permission.PermissionRepository import PermissionRepository
 from src.domainmodel.project.ProjectRepository import ProjectRepository
@@ -16,6 +17,7 @@ from src.domainmodel.realm.RealmRepository import RealmRepository
 from src.domainmodel.resourcetype.ResourceTypeRepository import ResourceTypeRepository
 from src.domainmodel.role.RoleRepository import RoleRepository
 from src.domainmodel.user.UserRepository import UserRepository
+from src.domainmodel.usergroup.UserGroupRepository import UserGroupRepository
 from src.portadapter.messaging.common.Consumer import Consumer
 from src.portadapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
 from src.portadapter.messaging.common.SimpleProducer import SimpleProducer
@@ -31,6 +33,7 @@ from src.portadapter.repository.arangodb.realm.RealmRepositoryImpl import RealmR
 from src.portadapter.repository.arangodb.resourcetype.ResourceTypeRepositoryImpl import ResourceTypeRepositoryImpl
 from src.portadapter.repository.arangodb.role.RoleRepositoryImpl import RoleRepositoryImpl
 from src.portadapter.repository.arangodb.user.UserRepositoryImpl import UserRepositoryImpl
+from src.portadapter.repository.arangodb.usergroup.UserGroupRepositoryImpl import UserGroupRepositoryImpl
 
 
 class AppDi(Module):
@@ -73,7 +76,12 @@ class AppDi(Module):
     @singleton
     @provider
     def provideResourceTypeApplicationService(self) -> ResourceTypeApplicationService:
-        return ResourceTypeApplicationService(self.__injector__.get(ResourceTypeRepository))   
+        return ResourceTypeApplicationService(self.__injector__.get(ResourceTypeRepository))
+
+    @singleton
+    @provider
+    def provideUserGroupApplicationService(self) -> UserGroupApplicationService:
+        return UserGroupApplicationService(self.__injector__.get(UserGroupRepository))
     # endregion
 
     # region Repository
@@ -111,6 +119,11 @@ class AppDi(Module):
     @provider
     def provideResourceTypeRepository(self) -> ResourceTypeRepository:
         return ResourceTypeRepositoryImpl()
+
+    @singleton
+    @provider
+    def provideUserGroupRepository(self) -> UserGroupRepository:
+        return UserGroupRepositoryImpl()
     # endregion
 
     # region Messaging

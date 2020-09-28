@@ -430,3 +430,64 @@ class ResourceTypeAppService(object):
             identity__pb2.ResourceTypeAppService_resourceTypeByNameResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class UserGroupAppServiceStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.userGroupByName = channel.unary_unary(
+                '/UserGroupAppService/userGroupByName',
+                request_serializer=identity__pb2.UserGroupAppService_userGroupByNameRequest.SerializeToString,
+                response_deserializer=identity__pb2.UserGroupAppService_userGroupByNameResponse.FromString,
+                )
+
+
+class UserGroupAppServiceServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def userGroupByName(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_UserGroupAppServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'userGroupByName': grpc.unary_unary_rpc_method_handler(
+                    servicer.userGroupByName,
+                    request_deserializer=identity__pb2.UserGroupAppService_userGroupByNameRequest.FromString,
+                    response_serializer=identity__pb2.UserGroupAppService_userGroupByNameResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'UserGroupAppService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class UserGroupAppService(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def userGroupByName(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/UserGroupAppService/userGroupByName',
+            identity__pb2.UserGroupAppService_userGroupByNameRequest.SerializeToString,
+            identity__pb2.UserGroupAppService_userGroupByNameResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

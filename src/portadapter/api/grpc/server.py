@@ -12,6 +12,7 @@ from src.portadapter.api.grpc.listener.RealmAppServiceListener import RealmAppSe
 from src.portadapter.api.grpc.listener.ResourceTypeAppServiceListener import ResourceTypeAppServiceListener
 from src.portadapter.api.grpc.listener.RoleAppServiceListener import RoleAppServiceListener
 from src.portadapter.api.grpc.listener.UserAppServiceListener import UserAppServiceListener
+from src.portadapter.api.grpc.listener.UserGroupAppServiceListener import UserGroupAppServiceListener
 
 
 def serve():
@@ -21,6 +22,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
     identity_pb2_grpc.add_UserAppServiceServicer_to_server(UserAppServiceListener(), server)
     identity_pb2_grpc.add_RoleAppServiceServicer_to_server(RoleAppServiceListener(), server)
+    identity_pb2_grpc.add_UserGroupAppServiceServicer_to_server(UserGroupAppServiceListener(), server)
     identity_pb2_grpc.add_ResourceTypeAppServiceServicer_to_server(ResourceTypeAppServiceListener(), server)
     identity_pb2_grpc.add_ProjectAppServiceServicer_to_server(ProjectAppServiceListener(), server)
     identity_pb2_grpc.add_RealmAppServiceServicer_to_server(RealmAppServiceListener(), server)

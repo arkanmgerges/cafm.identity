@@ -68,6 +68,15 @@ message ResourceTypeAppService_resourceTypeByNameResponse {
   string name = 2;
 }
 
+message UserGroupAppService_userGroupByNameRequest {
+  string name = 1;
+}
+
+message UserGroupAppService_userGroupByNameResponse {
+  string id = 1;
+  string name = 2;
+}
+
 
 
 
@@ -98,4 +107,8 @@ service ProjectAppService {
 
 service ResourceTypeAppService {
   rpc resourceTypeByName (ResourceTypeAppService_resourceTypeByNameRequest) returns (ResourceTypeAppService_resourceTypeByNameResponse) {}
+}
+
+service UserGroupAppService {
+  rpc userGroupByName (UserGroupAppService_userGroupByNameRequest) returns (UserGroupAppService_userGroupByNameResponse) {}
 }
