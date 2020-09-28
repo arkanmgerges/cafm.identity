@@ -32,6 +32,14 @@ message OuAppService_ouByNameResponse {
   string name = 2;
 }
 
+message RealmAppService_realmByNameRequest {
+  string name = 1;
+}
+
+message RealmAppService_realmByNameResponse {
+  string id = 1;
+  string name = 2;
+}
 
 service UserAppService {
   rpc userByUsernameAndPassword (UserAppService_userByUsernameAndPasswordRequest) returns (UserAppService_userByUsernameAndPasswordResponse) {}
@@ -43,4 +51,8 @@ service RoleAppService {
 
 service OuAppService {
   rpc ouByName (OuAppService_ouByNameRequest) returns (OuAppService_ouByNameResponse) {}
+}
+
+service RealmAppService {
+  rpc realmByName (RealmAppService_realmByNameRequest) returns (RealmAppService_realmByNameResponse) {}
 }

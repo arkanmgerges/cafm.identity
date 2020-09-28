@@ -3,9 +3,11 @@ from uuid import uuid4
 from injector import Module, Injector, singleton, provider, inject
 
 from src.application.OuApplicationService import OuApplicationService
+from src.application.RealmApplicationService import RealmApplicationService
 from src.application.RoleApplicationService import RoleApplicationService
 from src.application.UserApplicationService import UserApplicationService
 from src.domainmodel.ou.OuRepository import OuRepository
+from src.domainmodel.realm.RealmRepository import RealmRepository
 from src.domainmodel.role.RoleRepository import RoleRepository
 from src.domainmodel.user.UserRepository import UserRepository
 from src.portadapter.messaging.common.Consumer import Consumer
@@ -17,6 +19,7 @@ from src.portadapter.messaging.common.kafka.KafkaProducer import KafkaProducer
 from injector import ClassAssistedBuilder
 
 from src.portadapter.repository.arangodb.ou.OuRepositoryImpl import OuRepositoryImpl
+from src.portadapter.repository.arangodb.realm.RealmRepositoryImpl import RealmRepositoryImpl
 from src.portadapter.repository.arangodb.role.RoleRepositoryImpl import RoleRepositoryImpl
 from src.portadapter.repository.arangodb.user.UserRepositoryImpl import UserRepositoryImpl
 
@@ -42,6 +45,11 @@ class AppDi(Module):
     @provider
     def provideOuApplicationService(self) -> OuApplicationService:
         return OuApplicationService(self.__injector__.get(OuRepository))
+    
+    @singleton
+    @provider
+    def provideRealmApplicationService(self) -> RealmApplicationService:
+        return RealmApplicationService(self.__injector__.get(RealmRepository))  
     # endregion
 
     # region Repository
@@ -59,6 +67,11 @@ class AppDi(Module):
     @provider
     def provideOuRepository(self) -> OuRepository:
         return OuRepositoryImpl()
+    
+    @singleton
+    @provider
+    def provideRealmRepository(self) -> RealmRepository:
+        return RealmRepositoryImpl()
     # endregion
 
     # region Messaging

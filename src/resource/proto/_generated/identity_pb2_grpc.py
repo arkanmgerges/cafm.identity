@@ -186,3 +186,64 @@ class OuAppService(object):
             identity__pb2.OuAppService_ouByNameResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class RealmAppServiceStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.realmByName = channel.unary_unary(
+                '/RealmAppService/realmByName',
+                request_serializer=identity__pb2.RealmAppService_realmByNameRequest.SerializeToString,
+                response_deserializer=identity__pb2.RealmAppService_realmByNameResponse.FromString,
+                )
+
+
+class RealmAppServiceServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def realmByName(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_RealmAppServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'realmByName': grpc.unary_unary_rpc_method_handler(
+                    servicer.realmByName,
+                    request_deserializer=identity__pb2.RealmAppService_realmByNameRequest.FromString,
+                    response_serializer=identity__pb2.RealmAppService_realmByNameResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'RealmAppService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class RealmAppService(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def realmByName(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/RealmAppService/realmByName',
+            identity__pb2.RealmAppService_realmByNameRequest.SerializeToString,
+            identity__pb2.RealmAppService_realmByNameResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
