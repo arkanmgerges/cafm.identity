@@ -3,10 +3,12 @@ from uuid import uuid4
 from injector import Module, Injector, singleton, provider, inject
 
 from src.application.OuApplicationService import OuApplicationService
+from src.application.PermissionApplicationService import PermissionApplicationService
 from src.application.RealmApplicationService import RealmApplicationService
 from src.application.RoleApplicationService import RoleApplicationService
 from src.application.UserApplicationService import UserApplicationService
 from src.domainmodel.ou.OuRepository import OuRepository
+from src.domainmodel.permission.PermissionRepository import PermissionRepository
 from src.domainmodel.realm.RealmRepository import RealmRepository
 from src.domainmodel.role.RoleRepository import RoleRepository
 from src.domainmodel.user.UserRepository import UserRepository
@@ -19,6 +21,7 @@ from src.portadapter.messaging.common.kafka.KafkaProducer import KafkaProducer
 from injector import ClassAssistedBuilder
 
 from src.portadapter.repository.arangodb.ou.OuRepositoryImpl import OuRepositoryImpl
+from src.portadapter.repository.arangodb.permission.PermissionRepositoryImpl import PermissionRepositoryImpl
 from src.portadapter.repository.arangodb.realm.RealmRepositoryImpl import RealmRepositoryImpl
 from src.portadapter.repository.arangodb.role.RoleRepositoryImpl import RoleRepositoryImpl
 from src.portadapter.repository.arangodb.user.UserRepositoryImpl import UserRepositoryImpl
@@ -49,7 +52,12 @@ class AppDi(Module):
     @singleton
     @provider
     def provideRealmApplicationService(self) -> RealmApplicationService:
-        return RealmApplicationService(self.__injector__.get(RealmRepository))  
+        return RealmApplicationService(self.__injector__.get(RealmRepository))
+
+    @singleton
+    @provider
+    def providePermissionApplicationService(self) -> PermissionApplicationService:
+        return PermissionApplicationService(self.__injector__.get(PermissionRepository))
     # endregion
 
     # region Repository
@@ -72,6 +80,11 @@ class AppDi(Module):
     @provider
     def provideRealmRepository(self) -> RealmRepository:
         return RealmRepositoryImpl()
+    
+    @singleton
+    @provider
+    def providePermissionRepository(self) -> PermissionRepository:
+        return PermissionRepositoryImpl()
     # endregion
 
     # region Messaging

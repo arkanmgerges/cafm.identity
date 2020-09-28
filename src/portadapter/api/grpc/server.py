@@ -6,6 +6,7 @@ import grpc
 
 import src.resource.proto._generated.identity_pb2_grpc as identity_pb2_grpc
 from src.portadapter.api.grpc.listener.OuAppServiceListener import OuAppServiceListener
+from src.portadapter.api.grpc.listener.PermissionAppServiceListener import PermissionAppServiceListener
 from src.portadapter.api.grpc.listener.RealmAppServiceListener import RealmAppServiceListener
 from src.portadapter.api.grpc.listener.RoleAppServiceListener import RoleAppServiceListener
 from src.portadapter.api.grpc.listener.UserAppServiceListener import UserAppServiceListener
@@ -19,6 +20,7 @@ def serve():
     identity_pb2_grpc.add_UserAppServiceServicer_to_server(UserAppServiceListener(), server)
     identity_pb2_grpc.add_RoleAppServiceServicer_to_server(RoleAppServiceListener(), server)
     identity_pb2_grpc.add_RealmAppServiceServicer_to_server(RealmAppServiceListener(), server)
+    identity_pb2_grpc.add_PermissionAppServiceServicer_to_server(PermissionAppServiceListener(), server)
     identity_pb2_grpc.add_OuAppServiceServicer_to_server(OuAppServiceListener(), server)
     server.add_insecure_port("[::]:9999")
     server.start()

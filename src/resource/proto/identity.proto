@@ -23,6 +23,15 @@ message RoleAppService_roleByNameResponse {
   string name = 2;
 }
 
+message PermissionAppService_permissionByNameRequest {
+  string name = 1;
+}
+
+message PermissionAppService_permissionByNameResponse {
+  string id = 1;
+  string name = 2;
+}
+
 message OuAppService_ouByNameRequest {
   string name = 1;
 }
@@ -47,6 +56,10 @@ service UserAppService {
 
 service RoleAppService {
   rpc roleByName (RoleAppService_roleByNameRequest) returns (RoleAppService_roleByNameResponse) {}
+}
+
+service PermissionAppService {
+  rpc permissionByName (PermissionAppService_permissionByNameRequest) returns (PermissionAppService_permissionByNameResponse) {}
 }
 
 service OuAppService {
