@@ -23,6 +23,15 @@ message RoleAppService_roleByNameResponse {
   string name = 2;
 }
 
+message ProjectAppService_projectByNameRequest {
+  string name = 1;
+}
+
+message ProjectAppService_projectByNameResponse {
+  string id = 1;
+  string name = 2;
+}
+
 message PermissionAppService_permissionByNameRequest {
   string name = 1;
 }
@@ -68,4 +77,8 @@ service OuAppService {
 
 service RealmAppService {
   rpc realmByName (RealmAppService_realmByNameRequest) returns (RealmAppService_realmByNameResponse) {}
+}
+
+service ProjectAppService {
+  rpc projectByName (ProjectAppService_projectByNameRequest) returns (ProjectAppService_projectByNameResponse) {}
 }

@@ -15,7 +15,7 @@ def test_create_permission_object_when_permission_already_exist():
     DomainEventPublisher.cleanup()
     repo = Mock(spec=PermissionRepository)
     name = 'me'
-    repo.permissionByPermissionname = Mock(side_effect=PermissionAlreadyExistException)
+    repo.permissionByName = Mock(side_effect=PermissionAlreadyExistException)
     appService = PermissionApplicationService(repo)
     with pytest.raises(PermissionAlreadyExistException):
         permission = appService.createObjectOnly(name=name)

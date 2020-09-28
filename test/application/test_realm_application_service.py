@@ -15,7 +15,7 @@ def test_create_realm_object_when_realm_already_exist():
     DomainEventPublisher.cleanup()
     repo = Mock(spec=RealmRepository)
     name = 'me'
-    repo.realmByRealmname = Mock(side_effect=RealmAlreadyExistException)
+    repo.realmByName = Mock(side_effect=RealmAlreadyExistException)
     appService = RealmApplicationService(repo)
     with pytest.raises(RealmAlreadyExistException):
         realm = appService.createObjectOnly(name=name)

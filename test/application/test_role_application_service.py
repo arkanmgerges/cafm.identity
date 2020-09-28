@@ -15,7 +15,7 @@ def test_create_role_object_when_role_already_exist():
     DomainEventPublisher.cleanup()
     repo = Mock(spec=RoleRepository)
     name = 'me'
-    repo.roleByRolename = Mock(side_effect=RoleAlreadyExistException)
+    repo.roleByName = Mock(side_effect=RoleAlreadyExistException)
     appService = RoleApplicationService(repo)
     with pytest.raises(RoleAlreadyExistException):
         role = appService.createObjectOnly(name=name)

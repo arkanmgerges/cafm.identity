@@ -15,7 +15,7 @@ def test_create_ou_object_when_ou_already_exist():
     DomainEventPublisher.cleanup()
     repo = Mock(spec=OuRepository)
     name = 'me'
-    repo.ouByOuname = Mock(side_effect=OuAlreadyExistException)
+    repo.ouByName = Mock(side_effect=OuAlreadyExistException)
     appService = OuApplicationService(repo)
     with pytest.raises(OuAlreadyExistException):
         ou = appService.createObjectOnly(name=name)

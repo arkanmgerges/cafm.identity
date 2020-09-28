@@ -4,11 +4,13 @@ from injector import Module, Injector, singleton, provider, inject
 
 from src.application.OuApplicationService import OuApplicationService
 from src.application.PermissionApplicationService import PermissionApplicationService
+from src.application.ProjectApplicationService import ProjectApplicationService
 from src.application.RealmApplicationService import RealmApplicationService
 from src.application.RoleApplicationService import RoleApplicationService
 from src.application.UserApplicationService import UserApplicationService
 from src.domainmodel.ou.OuRepository import OuRepository
 from src.domainmodel.permission.PermissionRepository import PermissionRepository
+from src.domainmodel.project.ProjectRepository import ProjectRepository
 from src.domainmodel.realm.RealmRepository import RealmRepository
 from src.domainmodel.role.RoleRepository import RoleRepository
 from src.domainmodel.user.UserRepository import UserRepository
@@ -22,6 +24,7 @@ from injector import ClassAssistedBuilder
 
 from src.portadapter.repository.arangodb.ou.OuRepositoryImpl import OuRepositoryImpl
 from src.portadapter.repository.arangodb.permission.PermissionRepositoryImpl import PermissionRepositoryImpl
+from src.portadapter.repository.arangodb.project.ProjectRepositoryImpl import ProjectRepositoryImpl
 from src.portadapter.repository.arangodb.realm.RealmRepositoryImpl import RealmRepositoryImpl
 from src.portadapter.repository.arangodb.role.RoleRepositoryImpl import RoleRepositoryImpl
 from src.portadapter.repository.arangodb.user.UserRepositoryImpl import UserRepositoryImpl
@@ -58,6 +61,11 @@ class AppDi(Module):
     @provider
     def providePermissionApplicationService(self) -> PermissionApplicationService:
         return PermissionApplicationService(self.__injector__.get(PermissionRepository))
+    
+    @singleton
+    @provider
+    def provideProjectApplicationService(self) -> ProjectApplicationService:
+        return ProjectApplicationService(self.__injector__.get(ProjectRepository))   
     # endregion
 
     # region Repository
@@ -85,6 +93,11 @@ class AppDi(Module):
     @provider
     def providePermissionRepository(self) -> PermissionRepository:
         return PermissionRepositoryImpl()
+    
+    @singleton
+    @provider
+    def provideProjectRepository(self) -> ProjectRepository:
+        return ProjectRepositoryImpl()
     # endregion
 
     # region Messaging
