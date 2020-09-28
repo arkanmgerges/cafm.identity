@@ -125,3 +125,64 @@ class RoleAppService(object):
             identity__pb2.RoleAppService_roleByNameResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class OuAppServiceStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.ouByName = channel.unary_unary(
+                '/OuAppService/ouByName',
+                request_serializer=identity__pb2.OuAppService_ouByNameRequest.SerializeToString,
+                response_deserializer=identity__pb2.OuAppService_ouByNameResponse.FromString,
+                )
+
+
+class OuAppServiceServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def ouByName(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_OuAppServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'ouByName': grpc.unary_unary_rpc_method_handler(
+                    servicer.ouByName,
+                    request_deserializer=identity__pb2.OuAppService_ouByNameRequest.FromString,
+                    response_serializer=identity__pb2.OuAppService_ouByNameResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'OuAppService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class OuAppService(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def ouByName(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/OuAppService/ouByName',
+            identity__pb2.OuAppService_ouByNameRequest.SerializeToString,
+            identity__pb2.OuAppService_ouByNameResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

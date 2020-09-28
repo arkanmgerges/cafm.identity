@@ -23,6 +23,14 @@ message RoleAppService_roleByNameResponse {
   string name = 2;
 }
 
+message OuAppService_ouByNameRequest {
+  string name = 1;
+}
+
+message OuAppService_ouByNameResponse {
+  string id = 1;
+  string name = 2;
+}
 
 
 service UserAppService {
@@ -31,4 +39,8 @@ service UserAppService {
 
 service RoleAppService {
   rpc roleByName (RoleAppService_roleByNameRequest) returns (RoleAppService_roleByNameResponse) {}
+}
+
+service OuAppService {
+  rpc ouByName (OuAppService_ouByNameRequest) returns (OuAppService_ouByNameResponse) {}
 }

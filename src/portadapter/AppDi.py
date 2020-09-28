@@ -2,8 +2,10 @@ from uuid import uuid4
 
 from injector import Module, Injector, singleton, provider, inject
 
+from src.application.OuApplicationService import OuApplicationService
 from src.application.RoleApplicationService import RoleApplicationService
 from src.application.UserApplicationService import UserApplicationService
+from src.domainmodel.ou.OuRepository import OuRepository
 from src.domainmodel.role.RoleRepository import RoleRepository
 from src.domainmodel.user.UserRepository import UserRepository
 from src.portadapter.messaging.common.Consumer import Consumer
@@ -14,6 +16,7 @@ from src.portadapter.messaging.common.kafka.KafkaConsumer import KafkaConsumer
 from src.portadapter.messaging.common.kafka.KafkaProducer import KafkaProducer
 from injector import ClassAssistedBuilder
 
+from src.portadapter.repository.arangodb.ou.OuRepositoryImpl import OuRepositoryImpl
 from src.portadapter.repository.arangodb.role.RoleRepositoryImpl import RoleRepositoryImpl
 from src.portadapter.repository.arangodb.user.UserRepositoryImpl import UserRepositoryImpl
 
@@ -33,7 +36,12 @@ class AppDi(Module):
     @singleton
     @provider
     def provideRoleApplicationService(self) -> RoleApplicationService:
-        return RoleApplicationService(self.__injector__.get(RoleRepository))
+        return RoleApplicationService(self.__injector__.get(RoleRepository))   
+    
+    @singleton
+    @provider
+    def provideOuApplicationService(self) -> OuApplicationService:
+        return OuApplicationService(self.__injector__.get(OuRepository))
     # endregion
 
     # region Repository
@@ -46,6 +54,11 @@ class AppDi(Module):
     @provider
     def provideRoleRepository(self) -> RoleRepository:
         return RoleRepositoryImpl()
+    
+    @singleton
+    @provider
+    def provideOuRepository(self) -> OuRepository:
+        return OuRepositoryImpl()
     # endregion
 
     # region Messaging

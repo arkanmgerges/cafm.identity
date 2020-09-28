@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0eidentity.proto\"U\n/UserAppService_userByUsernameAndPasswordRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"b\n0UserAppService_userByUsernameAndPasswordResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\"0\n RoleAppService_roleByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"=\n!RoleAppService_roleByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\x95\x01\n\x0eUserAppService\x12\x82\x01\n\x19userByUsernameAndPassword\x12\x30.UserAppService_userByUsernameAndPasswordRequest\x1a\x31.UserAppService_userByUsernameAndPasswordResponse\"\x00\x32g\n\x0eRoleAppService\x12U\n\nroleByName\x12!.RoleAppService_roleByNameRequest\x1a\".RoleAppService_roleByNameResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0eidentity.proto\"U\n/UserAppService_userByUsernameAndPasswordRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"b\n0UserAppService_userByUsernameAndPasswordResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\"0\n RoleAppService_roleByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"=\n!RoleAppService_roleByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\",\n\x1cOuAppService_ouByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"9\n\x1dOuAppService_ouByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\x95\x01\n\x0eUserAppService\x12\x82\x01\n\x19userByUsernameAndPassword\x12\x30.UserAppService_userByUsernameAndPasswordRequest\x1a\x31.UserAppService_userByUsernameAndPasswordResponse\"\x00\x32g\n\x0eRoleAppService\x12U\n\nroleByName\x12!.RoleAppService_roleByNameRequest\x1a\".RoleAppService_roleByNameResponse\"\x00\x32[\n\x0cOuAppService\x12K\n\x08ouByName\x12\x1d.OuAppService_ouByNameRequest\x1a\x1e.OuAppService_ouByNameResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -180,10 +180,83 @@ _ROLEAPPSERVICE_ROLEBYNAMERESPONSE = _descriptor.Descriptor(
   serialized_end=316,
 )
 
+
+_OUAPPSERVICE_OUBYNAMEREQUEST = _descriptor.Descriptor(
+  name='OuAppService_ouByNameRequest',
+  full_name='OuAppService_ouByNameRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='name', full_name='OuAppService_ouByNameRequest.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=318,
+  serialized_end=362,
+)
+
+
+_OUAPPSERVICE_OUBYNAMERESPONSE = _descriptor.Descriptor(
+  name='OuAppService_ouByNameResponse',
+  full_name='OuAppService_ouByNameResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='id', full_name='OuAppService_ouByNameResponse.id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='name', full_name='OuAppService_ouByNameResponse.name', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=364,
+  serialized_end=421,
+)
+
 DESCRIPTOR.message_types_by_name['UserAppService_userByUsernameAndPasswordRequest'] = _USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDREQUEST
 DESCRIPTOR.message_types_by_name['UserAppService_userByUsernameAndPasswordResponse'] = _USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDRESPONSE
 DESCRIPTOR.message_types_by_name['RoleAppService_roleByNameRequest'] = _ROLEAPPSERVICE_ROLEBYNAMEREQUEST
 DESCRIPTOR.message_types_by_name['RoleAppService_roleByNameResponse'] = _ROLEAPPSERVICE_ROLEBYNAMERESPONSE
+DESCRIPTOR.message_types_by_name['OuAppService_ouByNameRequest'] = _OUAPPSERVICE_OUBYNAMEREQUEST
+DESCRIPTOR.message_types_by_name['OuAppService_ouByNameResponse'] = _OUAPPSERVICE_OUBYNAMERESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 UserAppService_userByUsernameAndPasswordRequest = _reflection.GeneratedProtocolMessageType('UserAppService_userByUsernameAndPasswordRequest', (_message.Message,), {
@@ -214,6 +287,20 @@ RoleAppService_roleByNameResponse = _reflection.GeneratedProtocolMessageType('Ro
   })
 _sym_db.RegisterMessage(RoleAppService_roleByNameResponse)
 
+OuAppService_ouByNameRequest = _reflection.GeneratedProtocolMessageType('OuAppService_ouByNameRequest', (_message.Message,), {
+  'DESCRIPTOR' : _OUAPPSERVICE_OUBYNAMEREQUEST,
+  '__module__' : 'identity_pb2'
+  # @@protoc_insertion_point(class_scope:OuAppService_ouByNameRequest)
+  })
+_sym_db.RegisterMessage(OuAppService_ouByNameRequest)
+
+OuAppService_ouByNameResponse = _reflection.GeneratedProtocolMessageType('OuAppService_ouByNameResponse', (_message.Message,), {
+  'DESCRIPTOR' : _OUAPPSERVICE_OUBYNAMERESPONSE,
+  '__module__' : 'identity_pb2'
+  # @@protoc_insertion_point(class_scope:OuAppService_ouByNameResponse)
+  })
+_sym_db.RegisterMessage(OuAppService_ouByNameResponse)
+
 
 
 _USERAPPSERVICE = _descriptor.ServiceDescriptor(
@@ -223,8 +310,8 @@ _USERAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=319,
-  serialized_end=468,
+  serialized_start=424,
+  serialized_end=573,
   methods=[
   _descriptor.MethodDescriptor(
     name='userByUsernameAndPassword',
@@ -249,8 +336,8 @@ _ROLEAPPSERVICE = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=470,
-  serialized_end=573,
+  serialized_start=575,
+  serialized_end=678,
   methods=[
   _descriptor.MethodDescriptor(
     name='roleByName',
@@ -266,5 +353,31 @@ _ROLEAPPSERVICE = _descriptor.ServiceDescriptor(
 _sym_db.RegisterServiceDescriptor(_ROLEAPPSERVICE)
 
 DESCRIPTOR.services_by_name['RoleAppService'] = _ROLEAPPSERVICE
+
+
+_OUAPPSERVICE = _descriptor.ServiceDescriptor(
+  name='OuAppService',
+  full_name='OuAppService',
+  file=DESCRIPTOR,
+  index=2,
+  serialized_options=None,
+  create_key=_descriptor._internal_create_key,
+  serialized_start=680,
+  serialized_end=771,
+  methods=[
+  _descriptor.MethodDescriptor(
+    name='ouByName',
+    full_name='OuAppService.ouByName',
+    index=0,
+    containing_service=None,
+    input_type=_OUAPPSERVICE_OUBYNAMEREQUEST,
+    output_type=_OUAPPSERVICE_OUBYNAMERESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+])
+_sym_db.RegisterServiceDescriptor(_OUAPPSERVICE)
+
+DESCRIPTOR.services_by_name['OuAppService'] = _OUAPPSERVICE
 
 # @@protoc_insertion_point(module_scope)
