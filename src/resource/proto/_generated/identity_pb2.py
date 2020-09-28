@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0eidentity.proto\"U\n/UserAppService_userByUsernameAndPasswordRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"b\n0UserAppService_userByUsernameAndPasswordResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\"0\n RoleAppService_roleByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"=\n!RoleAppService_roleByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"6\n&ProjectAppService_projectByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"C\n\'ProjectAppService_projectByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"<\n,PermissionAppService_permissionByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"I\n-PermissionAppService_permissionByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\",\n\x1cOuAppService_ouByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"9\n\x1dOuAppService_ouByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"2\n\"RealmAppService_realmByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"?\n#RealmAppService_realmByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\x95\x01\n\x0eUserAppService\x12\x82\x01\n\x19userByUsernameAndPassword\x12\x30.UserAppService_userByUsernameAndPasswordRequest\x1a\x31.UserAppService_userByUsernameAndPasswordResponse\"\x00\x32g\n\x0eRoleAppService\x12U\n\nroleByName\x12!.RoleAppService_roleByNameRequest\x1a\".RoleAppService_roleByNameResponse\"\x00\x32\x8b\x01\n\x14PermissionAppService\x12s\n\x10permissionByName\x12-.PermissionAppService_permissionByNameRequest\x1a..PermissionAppService_permissionByNameResponse\"\x00\x32[\n\x0cOuAppService\x12K\n\x08ouByName\x12\x1d.OuAppService_ouByNameRequest\x1a\x1e.OuAppService_ouByNameResponse\"\x00\x32m\n\x0fRealmAppService\x12Z\n\x0brealmByName\x12#.RealmAppService_realmByNameRequest\x1a$.RealmAppService_realmByNameResponse\"\x00\x32y\n\x11ProjectAppService\x12\x64\n\rprojectByName\x12\'.ProjectAppService_projectByNameRequest\x1a(.ProjectAppService_projectByNameResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0eidentity.proto\"U\n/UserAppService_userByUsernameAndPasswordRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"b\n0UserAppService_userByUsernameAndPasswordResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\"0\n RoleAppService_roleByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"=\n!RoleAppService_roleByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"6\n&ProjectAppService_projectByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"C\n\'ProjectAppService_projectByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"<\n,PermissionAppService_permissionByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"I\n-PermissionAppService_permissionByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\",\n\x1cOuAppService_ouByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"9\n\x1dOuAppService_ouByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"2\n\"RealmAppService_realmByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"?\n#RealmAppService_realmByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"@\n0ResourceTypeAppService_resourceTypeByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"M\n1ResourceTypeAppService_resourceTypeByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\x95\x01\n\x0eUserAppService\x12\x82\x01\n\x19userByUsernameAndPassword\x12\x30.UserAppService_userByUsernameAndPasswordRequest\x1a\x31.UserAppService_userByUsernameAndPasswordResponse\"\x00\x32g\n\x0eRoleAppService\x12U\n\nroleByName\x12!.RoleAppService_roleByNameRequest\x1a\".RoleAppService_roleByNameResponse\"\x00\x32\x8b\x01\n\x14PermissionAppService\x12s\n\x10permissionByName\x12-.PermissionAppService_permissionByNameRequest\x1a..PermissionAppService_permissionByNameResponse\"\x00\x32[\n\x0cOuAppService\x12K\n\x08ouByName\x12\x1d.OuAppService_ouByNameRequest\x1a\x1e.OuAppService_ouByNameResponse\"\x00\x32m\n\x0fRealmAppService\x12Z\n\x0brealmByName\x12#.RealmAppService_realmByNameRequest\x1a$.RealmAppService_realmByNameResponse\"\x00\x32y\n\x11ProjectAppService\x12\x64\n\rprojectByName\x12\'.ProjectAppService_projectByNameRequest\x1a(.ProjectAppService_projectByNameResponse\"\x00\x32\x97\x01\n\x16ResourceTypeAppService\x12}\n\x12resourceTypeByName\x12\x31.ResourceTypeAppService_resourceTypeByNameRequest\x1a\x32.ResourceTypeAppService_resourceTypeByNameResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -464,6 +464,77 @@ _REALMAPPSERVICE_REALMBYNAMERESPONSE = _descriptor.Descriptor(
   serialized_end=800,
 )
 
+
+_RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMEREQUEST = _descriptor.Descriptor(
+  name='ResourceTypeAppService_resourceTypeByNameRequest',
+  full_name='ResourceTypeAppService_resourceTypeByNameRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='name', full_name='ResourceTypeAppService_resourceTypeByNameRequest.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=802,
+  serialized_end=866,
+)
+
+
+_RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMERESPONSE = _descriptor.Descriptor(
+  name='ResourceTypeAppService_resourceTypeByNameResponse',
+  full_name='ResourceTypeAppService_resourceTypeByNameResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='id', full_name='ResourceTypeAppService_resourceTypeByNameResponse.id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='name', full_name='ResourceTypeAppService_resourceTypeByNameResponse.name', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=868,
+  serialized_end=945,
+)
+
 DESCRIPTOR.message_types_by_name['UserAppService_userByUsernameAndPasswordRequest'] = _USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDREQUEST
 DESCRIPTOR.message_types_by_name['UserAppService_userByUsernameAndPasswordResponse'] = _USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDRESPONSE
 DESCRIPTOR.message_types_by_name['RoleAppService_roleByNameRequest'] = _ROLEAPPSERVICE_ROLEBYNAMEREQUEST
@@ -476,6 +547,8 @@ DESCRIPTOR.message_types_by_name['OuAppService_ouByNameRequest'] = _OUAPPSERVICE
 DESCRIPTOR.message_types_by_name['OuAppService_ouByNameResponse'] = _OUAPPSERVICE_OUBYNAMERESPONSE
 DESCRIPTOR.message_types_by_name['RealmAppService_realmByNameRequest'] = _REALMAPPSERVICE_REALMBYNAMEREQUEST
 DESCRIPTOR.message_types_by_name['RealmAppService_realmByNameResponse'] = _REALMAPPSERVICE_REALMBYNAMERESPONSE
+DESCRIPTOR.message_types_by_name['ResourceTypeAppService_resourceTypeByNameRequest'] = _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMEREQUEST
+DESCRIPTOR.message_types_by_name['ResourceTypeAppService_resourceTypeByNameResponse'] = _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMERESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 UserAppService_userByUsernameAndPasswordRequest = _reflection.GeneratedProtocolMessageType('UserAppService_userByUsernameAndPasswordRequest', (_message.Message,), {
@@ -562,6 +635,20 @@ RealmAppService_realmByNameResponse = _reflection.GeneratedProtocolMessageType('
   })
 _sym_db.RegisterMessage(RealmAppService_realmByNameResponse)
 
+ResourceTypeAppService_resourceTypeByNameRequest = _reflection.GeneratedProtocolMessageType('ResourceTypeAppService_resourceTypeByNameRequest', (_message.Message,), {
+  'DESCRIPTOR' : _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMEREQUEST,
+  '__module__' : 'identity_pb2'
+  # @@protoc_insertion_point(class_scope:ResourceTypeAppService_resourceTypeByNameRequest)
+  })
+_sym_db.RegisterMessage(ResourceTypeAppService_resourceTypeByNameRequest)
+
+ResourceTypeAppService_resourceTypeByNameResponse = _reflection.GeneratedProtocolMessageType('ResourceTypeAppService_resourceTypeByNameResponse', (_message.Message,), {
+  'DESCRIPTOR' : _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMERESPONSE,
+  '__module__' : 'identity_pb2'
+  # @@protoc_insertion_point(class_scope:ResourceTypeAppService_resourceTypeByNameResponse)
+  })
+_sym_db.RegisterMessage(ResourceTypeAppService_resourceTypeByNameResponse)
+
 
 
 _USERAPPSERVICE = _descriptor.ServiceDescriptor(
@@ -571,8 +658,8 @@ _USERAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=803,
-  serialized_end=952,
+  serialized_start=948,
+  serialized_end=1097,
   methods=[
   _descriptor.MethodDescriptor(
     name='userByUsernameAndPassword',
@@ -597,8 +684,8 @@ _ROLEAPPSERVICE = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=954,
-  serialized_end=1057,
+  serialized_start=1099,
+  serialized_end=1202,
   methods=[
   _descriptor.MethodDescriptor(
     name='roleByName',
@@ -623,8 +710,8 @@ _PERMISSIONAPPSERVICE = _descriptor.ServiceDescriptor(
   index=2,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1060,
-  serialized_end=1199,
+  serialized_start=1205,
+  serialized_end=1344,
   methods=[
   _descriptor.MethodDescriptor(
     name='permissionByName',
@@ -649,8 +736,8 @@ _OUAPPSERVICE = _descriptor.ServiceDescriptor(
   index=3,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1201,
-  serialized_end=1292,
+  serialized_start=1346,
+  serialized_end=1437,
   methods=[
   _descriptor.MethodDescriptor(
     name='ouByName',
@@ -675,8 +762,8 @@ _REALMAPPSERVICE = _descriptor.ServiceDescriptor(
   index=4,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1294,
-  serialized_end=1403,
+  serialized_start=1439,
+  serialized_end=1548,
   methods=[
   _descriptor.MethodDescriptor(
     name='realmByName',
@@ -701,8 +788,8 @@ _PROJECTAPPSERVICE = _descriptor.ServiceDescriptor(
   index=5,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1405,
-  serialized_end=1526,
+  serialized_start=1550,
+  serialized_end=1671,
   methods=[
   _descriptor.MethodDescriptor(
     name='projectByName',
@@ -718,5 +805,31 @@ _PROJECTAPPSERVICE = _descriptor.ServiceDescriptor(
 _sym_db.RegisterServiceDescriptor(_PROJECTAPPSERVICE)
 
 DESCRIPTOR.services_by_name['ProjectAppService'] = _PROJECTAPPSERVICE
+
+
+_RESOURCETYPEAPPSERVICE = _descriptor.ServiceDescriptor(
+  name='ResourceTypeAppService',
+  full_name='ResourceTypeAppService',
+  file=DESCRIPTOR,
+  index=6,
+  serialized_options=None,
+  create_key=_descriptor._internal_create_key,
+  serialized_start=1674,
+  serialized_end=1825,
+  methods=[
+  _descriptor.MethodDescriptor(
+    name='resourceTypeByName',
+    full_name='ResourceTypeAppService.resourceTypeByName',
+    index=0,
+    containing_service=None,
+    input_type=_RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMEREQUEST,
+    output_type=_RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMERESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+])
+_sym_db.RegisterServiceDescriptor(_RESOURCETYPEAPPSERVICE)
+
+DESCRIPTOR.services_by_name['ResourceTypeAppService'] = _RESOURCETYPEAPPSERVICE
 
 # @@protoc_insertion_point(module_scope)

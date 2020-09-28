@@ -369,3 +369,64 @@ class ProjectAppService(object):
             identity__pb2.ProjectAppService_projectByNameResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class ResourceTypeAppServiceStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.resourceTypeByName = channel.unary_unary(
+                '/ResourceTypeAppService/resourceTypeByName',
+                request_serializer=identity__pb2.ResourceTypeAppService_resourceTypeByNameRequest.SerializeToString,
+                response_deserializer=identity__pb2.ResourceTypeAppService_resourceTypeByNameResponse.FromString,
+                )
+
+
+class ResourceTypeAppServiceServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def resourceTypeByName(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_ResourceTypeAppServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'resourceTypeByName': grpc.unary_unary_rpc_method_handler(
+                    servicer.resourceTypeByName,
+                    request_deserializer=identity__pb2.ResourceTypeAppService_resourceTypeByNameRequest.FromString,
+                    response_serializer=identity__pb2.ResourceTypeAppService_resourceTypeByNameResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'ResourceTypeAppService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class ResourceTypeAppService(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def resourceTypeByName(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/ResourceTypeAppService/resourceTypeByName',
+            identity__pb2.ResourceTypeAppService_resourceTypeByNameRequest.SerializeToString,
+            identity__pb2.ResourceTypeAppService_resourceTypeByNameResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -59,6 +59,19 @@ message RealmAppService_realmByNameResponse {
   string name = 2;
 }
 
+message ResourceTypeAppService_resourceTypeByNameRequest {
+  string name = 1;
+}
+
+message ResourceTypeAppService_resourceTypeByNameResponse {
+  string id = 1;
+  string name = 2;
+}
+
+
+
+
+
 service UserAppService {
   rpc userByUsernameAndPassword (UserAppService_userByUsernameAndPasswordRequest) returns (UserAppService_userByUsernameAndPasswordResponse) {}
 }
@@ -81,4 +94,8 @@ service RealmAppService {
 
 service ProjectAppService {
   rpc projectByName (ProjectAppService_projectByNameRequest) returns (ProjectAppService_projectByNameResponse) {}
+}
+
+service ResourceTypeAppService {
+  rpc resourceTypeByName (ResourceTypeAppService_resourceTypeByNameRequest) returns (ResourceTypeAppService_resourceTypeByNameResponse) {}
 }
