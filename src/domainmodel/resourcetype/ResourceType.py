@@ -10,17 +10,13 @@ class ResourceType:
         self._name = name
 
     @classmethod
-    def createNew(cls, id: str = str(uuid4()), name=''):
-        from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-        from src.domainmodel.resourcetype.ResourceTypeCreated import ResourceTypeCreated
-
+    def createFrom(cls, id: str = str(uuid4()), name='', publishEvent: bool = True):
         resourceType = ResourceType(id, name)
-        DomainEventPublisher.addEventForPublishing(ResourceTypeCreated(resourceType))
+        if publishEvent:
+            from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
+            from src.domainmodel.resourcetype.ResourceTypeCreated import ResourceTypeCreated
+            DomainEventPublisher.addEventForPublishing(ResourceTypeCreated(resourceType))
         return resourceType
-
-    @classmethod
-    def createFrom(cls, id: str = str(uuid4()), name=''):
-        return ResourceType(id, name)
 
     def id(self) -> str:
         return self._id

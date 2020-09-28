@@ -13,17 +13,13 @@ class Ou:
         self._name = name
 
     @classmethod
-    def createNew(cls, id: str = str(uuid4()), name=''):
-        from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-        from src.domainmodel.ou.OuCreated import OuCreated
-
+    def createFrom(cls, id: str = str(uuid4()), name='', publishEvent: bool = True):
         ou = Ou(id, name)
-        DomainEventPublisher.addEventForPublishing(OuCreated(ou))
+        if publishEvent:
+            from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
+            from src.domainmodel.ou.OuCreated import OuCreated
+            DomainEventPublisher.addEventForPublishing(OuCreated(ou))
         return ou
-
-    @classmethod
-    def createFrom(cls, id: str = str(uuid4()), name=''):
-        return Ou(id, name)
 
     def id(self) -> str:
         return self._id

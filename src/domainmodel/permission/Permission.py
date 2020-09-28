@@ -13,17 +13,13 @@ class Permission:
         self._name = name
 
     @classmethod
-    def createNew(cls, id: str = str(uuid4()), name=''):
-        from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-        from src.domainmodel.permission.PermissionCreated import PermissionCreated
-
+    def createFrom(cls, id: str = str(uuid4()), name='', publishEvent: bool = True):
         permission = Permission(id, name)
-        DomainEventPublisher.addEventForPublishing(PermissionCreated(permission))
+        if publishEvent:
+            from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
+            from src.domainmodel.permission.PermissionCreated import PermissionCreated
+            DomainEventPublisher.addEventForPublishing(PermissionCreated(permission))
         return permission
-
-    @classmethod
-    def createFrom(cls, id: str = str(uuid4()), name=''):
-        return Permission(id, name)
 
     def id(self) -> str:
         return self._id

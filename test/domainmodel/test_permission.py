@@ -12,7 +12,7 @@ def test_create_permission():
 
 def test_create_permission_with_semantic_constructor():
     id = str(uuid4())
-    permission = Permission.createNew(id=id, name='Prj1')
+    permission = Permission.createFrom(id=id, name='Prj1')
     assert isinstance(permission, Permission)
     assert permission.id() == id
     assert permission.name() == 'Prj1'

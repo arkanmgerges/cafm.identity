@@ -12,7 +12,7 @@ def test_create_ou():
 
 def test_create_ou_with_semantic_constructor():
     id = str(uuid4())
-    ou = Ou.createNew(id=id, name='Prj1')
+    ou = Ou.createFrom(id=id, name='Prj1')
     assert isinstance(ou, Ou)
     assert ou.id() == id
     assert ou.name() == 'Prj1'

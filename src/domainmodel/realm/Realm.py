@@ -13,17 +13,13 @@ class Realm:
         self._name = name
 
     @classmethod
-    def createNew(cls, id: str = str(uuid4()), name=''):
-        from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-        from src.domainmodel.realm.RealmCreated import RealmCreated
-
+    def createFrom(cls, id: str = str(uuid4()), name='', publishEvent: bool = True):
         realm = Realm(id, name)
-        DomainEventPublisher.addEventForPublishing(RealmCreated(realm))
+        if publishEvent:
+            from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
+            from src.domainmodel.realm.RealmCreated import RealmCreated
+            DomainEventPublisher.addEventForPublishing(RealmCreated(realm))
         return realm
-
-    @classmethod
-    def createFrom(cls, id: str = str(uuid4()), name=''):
-        return Realm(id, name)
 
     def id(self) -> str:
         return self._id

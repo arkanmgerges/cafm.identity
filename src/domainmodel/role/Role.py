@@ -13,17 +13,13 @@ class Role:
         self._name = name
 
     @classmethod
-    def createNew(cls, id: str = str(uuid4()), name=''):
-        from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-        from src.domainmodel.role.RoleCreated import RoleCreated
-
+    def createFrom(cls, id: str = str(uuid4()), name='', publishEvent: bool = True):
         role = Role(id, name)
-        DomainEventPublisher.addEventForPublishing(RoleCreated(role))
+        if publishEvent:
+            from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
+            from src.domainmodel.role.RoleCreated import RoleCreated
+            DomainEventPublisher.addEventForPublishing(RoleCreated(role))
         return role
-
-    @classmethod
-    def createFrom(cls, id: str = str(uuid4()), name=''):
-        return Role(id, name)
 
     def id(self) -> str:
         return self._id

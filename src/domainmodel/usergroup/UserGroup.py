@@ -9,17 +9,13 @@ class UserGroup:
         self._id = id
 
     @classmethod
-    def createNew(cls, id: str = str(uuid4())):
-        from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-        from src.domainmodel.usergroup.UserGroupCreated import UserGroupCreated
-
+    def createFrom(cls, id: str = str(uuid4()), publishEvent: bool = True):
         userGroup = UserGroup(id)
-        DomainEventPublisher.addEventForPublishing(UserGroupCreated(userGroup))
+        if publishEvent:
+            from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
+            from src.domainmodel.usergroup.UserGroupCreated import UserGroupCreated
+            DomainEventPublisher.addEventForPublishing(UserGroupCreated(userGroup))
         return userGroup
-
-    @classmethod
-    def createFrom(cls, id: str = str(uuid4())):
-        return UserGroup(id)
 
     def id(self) -> str:
         return self._id

@@ -2,6 +2,8 @@ from uuid import uuid4
 
 from injector import Module, Injector, singleton, provider, inject
 
+from src.application.UserApplicationService import UserApplicationService
+from src.domainmodel.user.UserRepository import UserRepository
 from src.portadapter.messaging.common.Consumer import Consumer
 from src.portadapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
 from src.portadapter.messaging.common.SimpleProducer import SimpleProducer
@@ -10,6 +12,8 @@ from src.portadapter.messaging.common.kafka.KafkaConsumer import KafkaConsumer
 from src.portadapter.messaging.common.kafka.KafkaProducer import KafkaProducer
 from injector import ClassAssistedBuilder
 
+from src.portadapter.repository.arangodb.user.UserRepositoryImpl import UserRepositoryImpl
+
 
 class AppDi(Module):
     """
@@ -17,6 +21,21 @@ class AppDi(Module):
 
     """
 
+    # region Application service
+    @singleton
+    @provider
+    def provideUserApplicationService(self) -> UserApplicationService:
+        return UserApplicationService(self.__injector__.get(UserRepository))
+    # endregion
+
+    # region Repository
+    @singleton
+    @provider
+    def provideUserRepository(self) -> UserRepository:
+        return UserRepositoryImpl()
+    # endregion
+
+    # region Messaging
     @singleton
     @provider
     def provideSimpleProducer(self) -> SimpleProducer:
@@ -33,6 +52,7 @@ class AppDi(Module):
                         partitionEof: bool = True, autoOffsetReset: str = ConsumerOffsetReset.earliest.name) -> Consumer:
         return KafkaConsumer(groupId=groupId, autoCommit=autoCommit, partitionEof=partitionEof,
                              autoOffsetReset=autoOffsetReset)
+    # endregion
 
 
 class Builder:

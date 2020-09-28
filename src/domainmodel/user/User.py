@@ -11,17 +11,13 @@ class User:
         self._password = password
 
     @classmethod
-    def createNew(cls, id: str = str(uuid4()), username='', password=''):
-        from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-        from src.domainmodel.user.UserCreated import UserCreated
-
+    def createFrom(cls, id: str = str(uuid4()), username='', password='', publishEvent: bool = True):
         user = User(id, username, password)
-        DomainEventPublisher.addEventForPublishing(UserCreated(user))
+        if publishEvent:
+            from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
+            from src.domainmodel.user.UserCreated import UserCreated
+            DomainEventPublisher.addEventForPublishing(UserCreated(user))
         return user
-
-    @classmethod
-    def createFrom(cls, id: str = str(uuid4()), username='', password=''):
-        return User(id, username, password)
 
     def id(self) -> str:
         return self._id

@@ -13,17 +13,13 @@ class Project:
         self._name = name
 
     @classmethod
-    def createNew(cls, id: str = str(uuid4()), name=''):
-        from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-        from src.domainmodel.project.ProjectCreated import ProjectCreated
-
+    def createFrom(cls, id: str = str(uuid4()), name='', publishEvent: bool = True):
         project = Project(id, name)
-        DomainEventPublisher.addEventForPublishing(ProjectCreated(project))
+        if publishEvent:
+            from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
+            from src.domainmodel.project.ProjectCreated import ProjectCreated
+            DomainEventPublisher.addEventForPublishing(ProjectCreated(project))
         return project
-
-    @classmethod
-    def createFrom(cls, id: str = str(uuid4()), name=''):
-        return Project(id, name)
 
     def id(self) -> str:
         return self._id

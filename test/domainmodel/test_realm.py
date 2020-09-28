@@ -12,7 +12,7 @@ def test_create_realm():
 
 def test_create_realm_with_semantic_constructor():
     id = str(uuid4())
-    realm = Realm.createNew(id=id, name='ComABC')
+    realm = Realm.createFrom(id=id, name='ComABC')
     assert isinstance(realm, Realm)
     assert realm.id() == id
     assert realm.name() == 'ComABC'

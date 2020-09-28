@@ -12,7 +12,7 @@ def test_create_role():
 
 def test_create_role_with_semantic_constructor():
     id = str(uuid4())
-    role = Role.createNew(id=id, name='Prj1')
+    role = Role.createFrom(id=id, name='Prj1')
     assert isinstance(role, Role)
     assert role.id() == id
     assert role.name() == 'Prj1'

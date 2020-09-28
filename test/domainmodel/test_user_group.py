@@ -19,7 +19,7 @@ def test_create_user_group():
 
 def test_create_by_semantic_constructor():
     id = str(uuid4())
-    userGroup = UserGroup.createNew(id=id)
+    userGroup = UserGroup.createFrom(id=id)
     assert isinstance(userGroup, UserGroup)
     assert userGroup.id() == id
     assert json.loads(DomainEventPublisher.postponedEvents()[0].data())['id'] == id
