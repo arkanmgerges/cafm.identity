@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package coral.identity.realm;
+
+message RealmAppService_realmByNameRequest {
+  string name = 1;
+}
+
+message RealmAppService_realmByNameResponse {
+  string id = 1;
+  string name = 2;
+}
+
+service RealmAppService {
+  rpc realmByName (RealmAppService_realmByNameRequest) returns (RealmAppService_realmByNameResponse) {}
+}

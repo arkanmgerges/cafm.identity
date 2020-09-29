@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package coral.identity.project;
+
+message ProjectAppService_projectByNameRequest {
+  string name = 1;
+}
+
+message ProjectAppService_projectByNameResponse {
+  string id = 1;
+  string name = 2;
+}
+
+service ProjectAppService {
+  rpc projectByName (ProjectAppService_projectByNameRequest) returns (ProjectAppService_projectByNameResponse) {}
+}

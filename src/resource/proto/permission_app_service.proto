@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package coral.identity.permission;
+
+message PermissionAppService_permissionByNameRequest {
+  string name = 1;
+}
+
+message PermissionAppService_permissionByNameResponse {
+  string id = 1;
+  string name = 2;
+}
+
+service PermissionAppService {
+  rpc permissionByName (PermissionAppService_permissionByNameRequest) returns (PermissionAppService_permissionByNameResponse) {}
+}

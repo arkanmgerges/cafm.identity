@@ -6,15 +6,15 @@ import time
 import grpc
 
 import src.portadapter.AppDi as AppDi
-import src.resource.proto._generated.identity_pb2 as identity_pb2
-import src.resource.proto._generated.identity_pb2_grpc as identity_pb2_grpc
 from src.application.UserApplicationService import UserApplicationService
 from src.domainmodel.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.domainmodel.user.User import User
+from src.resource.proto._generated.user_app_service_pb2 import UserAppService_userByUsernameAndPasswordResponse
+from src.resource.proto._generated.user_app_service_pb2_grpc import UserAppServiceServicer
 
 
-class UserAppServiceListener(identity_pb2_grpc.UserAppServiceServicer):
-    """The listener function implemests the rpc call as described in the .proto file"""
+class UserAppServiceListener(UserAppServiceServicer):
+    """The listener function implements the rpc call as described in the .proto file"""
 
     def __init__(self):
         self.counter = 0
@@ -28,12 +28,11 @@ class UserAppServiceListener(identity_pb2_grpc.UserAppServiceServicer):
             userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
             user: User = userAppService.userByUsernameAndPassword(username=request.username,
                                                                   password=request.password)
-            return identity_pb2.UserAppService_userByUsernameAndPasswordResponse(id=user.id(), username=user.username(),
-                                                                                 password=user.password())
+            return UserAppService_userByUsernameAndPasswordResponse(id=user.id(), username=user.username())
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('User does not exist')
-            return identity_pb2.UserAppService_userByUsernameAndPasswordResponse()
+            return UserAppService_userByUsernameAndPasswordResponse()
         # except Exception as e:
         #     context.set_code(grpc.StatusCode.UNKNOWN)
         #     context.set_details(f'{e}')

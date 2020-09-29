@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package coral.identity.resourceType;
+
+message ResourceTypeAppService_resourceTypeByNameRequest {
+  string name = 1;
+}
+
+message ResourceTypeAppService_resourceTypeByNameResponse {
+  string id = 1;
+  string name = 2;
+}
+
+service ResourceTypeAppService {
+  rpc resourceTypeByName (ResourceTypeAppService_resourceTypeByNameRequest) returns (ResourceTypeAppService_resourceTypeByNameResponse) {}
+}

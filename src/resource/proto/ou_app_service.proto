@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package coral.identity.ou;
+
+message OuAppService_ouByNameRequest {
+  string name = 1;
+}
+
+message OuAppService_ouByNameResponse {
+  string id = 1;
+  string name = 2;
+}
+
+service OuAppService {
+  rpc ouByName (OuAppService_ouByNameRequest) returns (OuAppService_ouByNameResponse) {}
+}
+

@@ -1,0 +1,17 @@
+// python -m grpc_tools.protoc -I./proto --python_out=. --grpc_python_out=. ./proto/pingpong.proto
+syntax = "proto3";
+
+package coral.identity.userGroup;
+
+message UserGroupAppService_userGroupByNameRequest {
+  string name = 1;
+}
+
+message UserGroupAppService_userGroupByNameResponse {
+  string id = 1;
+  string name = 2;
+}
+
+service UserGroupAppService {
+  rpc userGroupByName (UserGroupAppService_userGroupByNameRequest) returns (UserGroupAppService_userGroupByNameResponse) {}
+}

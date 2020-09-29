@@ -6,15 +6,15 @@ import time
 import grpc
 
 import src.portadapter.AppDi as AppDi
-import src.resource.proto._generated.identity_pb2 as identity_pb2
-import src.resource.proto._generated.identity_pb2_grpc as identity_pb2_grpc
 from src.application.RealmApplicationService import RealmApplicationService
-from src.domainmodel.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
 from src.domainmodel.realm.Realm import Realm
+from src.domainmodel.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+from src.resource.proto._generated.realm_app_service_pb2 import RealmAppService_realmByNameResponse
+from src.resource.proto._generated.realm_app_service_pb2_grpc import RealmAppServiceServicer
 
 
-class RealmAppServiceListener(identity_pb2_grpc.RealmAppServiceServicer):
-    """The listener function implemests the rpc call as described in the .proto file"""
+class RealmAppServiceListener(RealmAppServiceServicer):
+    """The listener function implements the rpc call as described in the .proto file"""
 
     def __init__(self):
         self.counter = 0
@@ -27,11 +27,11 @@ class RealmAppServiceListener(identity_pb2_grpc.RealmAppServiceServicer):
         try:
             realmAppService: RealmApplicationService = AppDi.instance.get(RealmApplicationService)
             realm: Realm = realmAppService.realmByName(name=request.name)
-            return identity_pb2.RealmAppService_realmByNameResponse(id=realm.id(), name=realm.name())
+            return RealmAppService_realmByNameResponse(id=realm.id(), name=realm.name())
         except RealmDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Realm does not exist')
-            return identity_pb2.RealmAppService_realmByNameResponse()
+            return RealmAppService_realmByNameResponse()
         # except Exception as e:
         #     context.set_code(grpc.StatusCode.UNKNOWN)
         #     context.set_details(f'{e}')

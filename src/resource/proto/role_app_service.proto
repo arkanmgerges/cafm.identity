@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package coral.identity.role;
+
+message RoleAppService_roleByNameRequest {
+  string name = 1;
+}
+
+message RoleAppService_roleByNameResponse {
+  string id = 1;
+  string name = 2;
+}
+
+
+service RoleAppService {
+  rpc roleByName (RoleAppService_roleByNameRequest) returns (RoleAppService_roleByNameResponse) {}
+}

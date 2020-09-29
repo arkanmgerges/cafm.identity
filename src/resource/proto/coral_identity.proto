@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "ou_app_service.proto";
+import "permission_app_service.proto";
+import "project_app_service.proto";
+import "realm_app_service.proto";
+import "resource_type_app_service.proto";
+import "role_app_service.proto";
+import "user_app_service.proto";
+import "user_group_app_service.proto";
