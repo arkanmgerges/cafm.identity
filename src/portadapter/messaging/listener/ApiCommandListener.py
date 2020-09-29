@@ -3,6 +3,8 @@
 """
 
 import os
+import signal
+import traceback
 
 from confluent_kafka.cimpl import KafkaError
 
@@ -11,13 +13,21 @@ from src.portadapter.messaging.common.Consumer import Consumer
 from src.portadapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
 from src.portadapter.messaging.common.TransactionalProducer import TransactionalProducer
 from src.portadapter.messaging.common.model.IdentityCommand import IdentityCommand
+from src.portadapter.messaging.listener.handler.CreateUserHandler import CreateUserHandler
 from src.resource.logging.logger import logger
 
 
 class ApiCommandListener:
+    def __init__(self):
+        self._handlers = []
+        self.addHandlers()
+        signal.signal(signal.SIGINT, self.interruptExecution)
+        signal.signal(signal.SIGTERM, self.interruptExecution)
 
-    @staticmethod
-    def run():
+    def interruptExecution(self, _signum, _frame):
+        raise SystemExit()
+
+    def run(self):
         consumer: Consumer = AppDi.Builder.buildConsumer(
             groupId=os.getenv('CORAL_IDENTITY_CONSUMER_GROUP_API_CMD_NAME', ''), autoCommit=False, partitionEof=True,
             autoOffsetReset=ConsumerOffsetReset.earliest.name)
@@ -52,12 +62,14 @@ class ApiCommandListener:
 
                     try:
                         msgData = msg.value()
+                        handledResult = self.handleCommand(name=msgData['name'], data=msgData['data'])
+
                         producer.produce(
                             obj=IdentityCommand(id=msgData['id'],
-                                                serviceName=msgData['creatorServiceName'],
-                                                name=msgData['name'],
-                                                data=msgData['data'],
-                                                createdOn=msgData['createdOn'],
+                                                serviceName='coral.identity',
+                                                name=handledResult['name'],
+                                                data=handledResult['data'],
+                                                createdOn=handledResult['createdOn'],
                                                 externalId=msgData['id'],
                                                 externalServiceName=msgData['creatorServiceName'],
                                                 externalName=msgData['name'],
@@ -78,10 +90,19 @@ class ApiCommandListener:
                 # sleep(3)
         except KeyboardInterrupt:
             logger.info(f'Aborted by user')
+        except SystemExit:
+            logger.info(f'Shutting down the process')
         finally:
-            producer.commitTransaction()
             # Close down consumer to commit final offsets.
             consumer.close()
 
+    def handleCommand(self, name, data):
+        for handler in self._handlers:
+            if handler.canHandle(name):
+                return handler.handleCommand(name=name, data=data)
 
-ApiCommandListener.run()
+    def addHandlers(self):
+        self._handlers.append(CreateUserHandler())
+
+
+ApiCommandListener().run()
