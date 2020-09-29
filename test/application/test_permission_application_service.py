@@ -5,13 +5,13 @@ import pytest
 from mock import Mock
 
 from src.application.PermissionApplicationService import PermissionApplicationService
-from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-from src.domainmodel.permission.Permission import Permission
-from src.domainmodel.permission.PermissionRepository import PermissionRepository
+from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.permission.Permission import Permission
+from src.domain_model.permission.PermissionRepository import PermissionRepository
 
 
 def test_create_permission_object_when_permission_already_exist():
-    from src.domainmodel.resource.exception.PermissionAlreadyExistException import PermissionAlreadyExistException
+    from src.domain_model.resource.exception.PermissionAlreadyExistException import PermissionAlreadyExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=PermissionRepository)
     name = 'me'
@@ -22,7 +22,7 @@ def test_create_permission_object_when_permission_already_exist():
 
 
 def test_create_permission_object_when_permission_does_not_exist():
-    from src.domainmodel.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
+    from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=PermissionRepository)
     name = 'me'
@@ -35,7 +35,7 @@ def test_create_permission_object_when_permission_does_not_exist():
 
 
 def test_create_permission_with_event_publishing_when_permission_does_not_exist():
-    from src.domainmodel.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
+    from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=PermissionRepository)
     id = '1234567'
@@ -61,3 +61,25 @@ def test_get_permission_by_name_when_permission_exists():
     appService.permissionByName(name=name)
 
     repo.permissionByName.assert_called_once_with(name=name)
+
+def test_create_object_only_raise_exception_when_permission_exists():
+    from src.domain_model.resource.exception.PermissionAlreadyExistException import PermissionAlreadyExistException
+    repo = Mock(spec=PermissionRepository)
+    name = 'me'
+    permission = Permission(name=name)
+
+    repo.permissionByName = Mock(return_value=permission)
+    appService = PermissionApplicationService(repo)
+    with pytest.raises(PermissionAlreadyExistException):
+        permission = appService.createObjectOnly(name=name)
+
+def test_create_permission_raise_exception_when_permission_exists():
+    from src.domain_model.resource.exception.PermissionAlreadyExistException import PermissionAlreadyExistException
+    repo = Mock(spec=PermissionRepository)
+    name = 'me'
+    permission = Permission(name=name)
+
+    repo.permissionByName = Mock(return_value=permission)
+    appService = PermissionApplicationService(repo)
+    with pytest.raises(PermissionAlreadyExistException):
+        permission = appService.createPermission(id='1', name=name)

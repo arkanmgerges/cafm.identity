@@ -1,10 +1,10 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domainmodel.resource.exception.UserAlreadyExistException import UserAlreadyExistException
-from src.domainmodel.resource.exception.UserDoesNotExistException import UserDoesNotExistException
-from src.domainmodel.user.User import User
-from src.domainmodel.user.UserRepository import UserRepository
+from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
+from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
+from src.domain_model.user.User import User
+from src.domain_model.user.UserRepository import UserRepository
 
 
 class UserApplicationService:

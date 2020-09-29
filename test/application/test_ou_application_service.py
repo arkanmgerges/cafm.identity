@@ -5,13 +5,13 @@ import pytest
 from mock import Mock
 
 from src.application.OuApplicationService import OuApplicationService
-from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-from src.domainmodel.ou.Ou import Ou
-from src.domainmodel.ou.OuRepository import OuRepository
+from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.ou.Ou import Ou
+from src.domain_model.ou.OuRepository import OuRepository
 
 
 def test_create_ou_object_when_ou_already_exist():
-    from src.domainmodel.resource.exception.OuAlreadyExistException import OuAlreadyExistException
+    from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=OuRepository)
     name = 'me'
@@ -22,7 +22,7 @@ def test_create_ou_object_when_ou_already_exist():
 
 
 def test_create_ou_object_when_ou_does_not_exist():
-    from src.domainmodel.resource.exception.OuDoesNotExistException import OuDoesNotExistException
+    from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=OuRepository)
     name = 'me'
@@ -35,7 +35,7 @@ def test_create_ou_object_when_ou_does_not_exist():
 
 
 def test_create_ou_with_event_publishing_when_ou_does_not_exist():
-    from src.domainmodel.resource.exception.OuDoesNotExistException import OuDoesNotExistException
+    from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=OuRepository)
     id = '1234567'
@@ -61,3 +61,25 @@ def test_get_ou_by_name_when_ou_exists():
     appService.ouByName(name=name)
 
     repo.ouByName.assert_called_once_with(name=name)
+
+def test_create_object_only_raise_exception_when_ou_exists():
+    from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
+    repo = Mock(spec=OuRepository)
+    name = 'me'
+    ou = Ou(name=name)
+
+    repo.ouByName = Mock(return_value=ou)
+    appService = OuApplicationService(repo)
+    with pytest.raises(OuAlreadyExistException):
+        ou = appService.createObjectOnly(name=name)
+
+def test_create_ou_raise_exception_when_ou_exists():
+    from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
+    repo = Mock(spec=OuRepository)
+    name = 'me'
+    ou = Ou(name=name)
+
+    repo.ouByName = Mock(return_value=ou)
+    appService = OuApplicationService(repo)
+    with pytest.raises(OuAlreadyExistException):
+        ou = appService.createOu(id='1', name=name)

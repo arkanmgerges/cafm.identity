@@ -5,13 +5,13 @@ import pytest
 from mock import Mock
 
 from src.application.ResourceTypeApplicationService import ResourceTypeApplicationService
-from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-from src.domainmodel.resourcetype.ResourceType import ResourceType
-from src.domainmodel.resourcetype.ResourceTypeRepository import ResourceTypeRepository
+from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.resource_type.ResourceType import ResourceType
+from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
 
 
 def test_create_resourceType_object_when_resourceType_already_exist():
-    from src.domainmodel.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException
+    from src.domain_model.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=ResourceTypeRepository)
     name = 'me'
@@ -22,7 +22,7 @@ def test_create_resourceType_object_when_resourceType_already_exist():
 
 
 def test_create_resourceType_object_when_resourceType_does_not_exist():
-    from src.domainmodel.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
+    from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=ResourceTypeRepository)
     name = 'me'
@@ -35,7 +35,7 @@ def test_create_resourceType_object_when_resourceType_does_not_exist():
 
 
 def test_create_resourceType_with_event_publishing_when_resourceType_does_not_exist():
-    from src.domainmodel.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
+    from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=ResourceTypeRepository)
     id = '1234567'
@@ -61,3 +61,25 @@ def test_get_resourceType_by_name_when_resourceType_exists():
     appService.resourceTypeByName(name=name)
 
     repo.resourceTypeByName.assert_called_once_with(name=name)
+
+def test_create_object_only_raise_exception_when_resourceType_exists():
+    from src.domain_model.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException
+    repo = Mock(spec=ResourceTypeRepository)
+    name = 'me'
+    resourceType = ResourceType(name=name)
+
+    repo.resourceTypeByName = Mock(return_value=resourceType)
+    appService = ResourceTypeApplicationService(repo)
+    with pytest.raises(ResourceTypeAlreadyExistException):
+        resourceType = appService.createObjectOnly(name=name)
+
+def test_create_resourceType_raise_exception_when_resourceType_exists():
+    from src.domain_model.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException
+    repo = Mock(spec=ResourceTypeRepository)
+    name = 'me'
+    resourceType = ResourceType(name=name)
+
+    repo.resourceTypeByName = Mock(return_value=resourceType)
+    appService = ResourceTypeApplicationService(repo)
+    with pytest.raises(ResourceTypeAlreadyExistException):
+        resourceType = appService.createResourceType(id='1', name=name)

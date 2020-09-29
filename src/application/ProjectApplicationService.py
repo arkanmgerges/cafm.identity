@@ -1,10 +1,10 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domainmodel.resource.exception.ProjectAlreadyExistException import ProjectAlreadyExistException
-from src.domainmodel.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
-from src.domainmodel.project.Project import Project
-from src.domainmodel.project.ProjectRepository import ProjectRepository
+from src.domain_model.resource.exception.ProjectAlreadyExistException import ProjectAlreadyExistException
+from src.domain_model.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
+from src.domain_model.project.Project import Project
+from src.domain_model.project.ProjectRepository import ProjectRepository
 
 
 class ProjectApplicationService:

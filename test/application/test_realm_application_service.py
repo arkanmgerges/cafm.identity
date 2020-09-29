@@ -5,13 +5,13 @@ import pytest
 from mock import Mock
 
 from src.application.RealmApplicationService import RealmApplicationService
-from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-from src.domainmodel.realm.Realm import Realm
-from src.domainmodel.realm.RealmRepository import RealmRepository
+from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.realm.Realm import Realm
+from src.domain_model.realm.RealmRepository import RealmRepository
 
 
 def test_create_realm_object_when_realm_already_exist():
-    from src.domainmodel.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
+    from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=RealmRepository)
     name = 'me'
@@ -22,7 +22,7 @@ def test_create_realm_object_when_realm_already_exist():
 
 
 def test_create_realm_object_when_realm_does_not_exist():
-    from src.domainmodel.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+    from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=RealmRepository)
     name = 'me'
@@ -35,7 +35,7 @@ def test_create_realm_object_when_realm_does_not_exist():
 
 
 def test_create_realm_with_event_publishing_when_realm_does_not_exist():
-    from src.domainmodel.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+    from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=RealmRepository)
     id = '1234567'
@@ -61,3 +61,25 @@ def test_get_realm_by_name_when_realm_exists():
     appService.realmByName(name=name)
 
     repo.realmByName.assert_called_once_with(name=name)
+
+def test_create_object_only_raise_exception_when_realm_exists():
+    from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
+    repo = Mock(spec=RealmRepository)
+    name = 'me'
+    realm = Realm(name=name)
+
+    repo.realmByName = Mock(return_value=realm)
+    appService = RealmApplicationService(repo)
+    with pytest.raises(RealmAlreadyExistException):
+        realm = appService.createObjectOnly(name=name)
+
+def test_create_realm_raise_exception_when_realm_exists():
+    from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
+    repo = Mock(spec=RealmRepository)
+    name = 'me'
+    realm = Realm(name=name)
+
+    repo.realmByName = Mock(return_value=realm)
+    appService = RealmApplicationService(repo)
+    with pytest.raises(RealmAlreadyExistException):
+        realm = appService.createRealm(id='1', name=name)

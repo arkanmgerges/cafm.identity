@@ -4,4 +4,4 @@ COPY . /app
 WORKDIR /app
 
 RUN pip install -qr requirements.txt
-CMD ["uvicorn", "src.portadapter.api.rest.main:app"]
+CMD ["uvicorn", "src.port_adapter.api.rest.main:app"]

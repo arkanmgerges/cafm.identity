@@ -1,10 +1,10 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domainmodel.resource.exception.UserGroupAlreadyExistException import UserGroupAlreadyExistException
-from src.domainmodel.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
-from src.domainmodel.usergroup.UserGroup import UserGroup
-from src.domainmodel.usergroup.UserGroupRepository import UserGroupRepository
+from src.domain_model.resource.exception.UserGroupAlreadyExistException import UserGroupAlreadyExistException
+from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
+from src.domain_model.user_group.UserGroup import UserGroup
+from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
 
 
 class UserGroupApplicationService:

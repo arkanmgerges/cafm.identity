@@ -5,13 +5,13 @@ import pytest
 from mock import Mock
 
 from src.application.UserGroupApplicationService import UserGroupApplicationService
-from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-from src.domainmodel.usergroup.UserGroup import UserGroup
-from src.domainmodel.usergroup.UserGroupRepository import UserGroupRepository
+from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.user_group.UserGroup import UserGroup
+from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
 
 
 def test_create_userGroup_object_when_userGroup_already_exist():
-    from src.domainmodel.resource.exception.UserGroupAlreadyExistException import UserGroupAlreadyExistException
+    from src.domain_model.resource.exception.UserGroupAlreadyExistException import UserGroupAlreadyExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=UserGroupRepository)
     name = 'me'
@@ -22,7 +22,7 @@ def test_create_userGroup_object_when_userGroup_already_exist():
 
 
 def test_create_userGroup_object_when_userGroup_does_not_exist():
-    from src.domainmodel.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
+    from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=UserGroupRepository)
     name = 'me'
@@ -35,7 +35,7 @@ def test_create_userGroup_object_when_userGroup_does_not_exist():
 
 
 def test_create_userGroup_with_event_publishing_when_userGroup_does_not_exist():
-    from src.domainmodel.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
+    from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=UserGroupRepository)
     id = '1234567'
@@ -61,3 +61,25 @@ def test_get_userGroup_by_name_when_userGroup_exists():
     appService.userGroupByName(name=name)
 
     repo.userGroupByName.assert_called_once_with(name=name)
+
+def test_create_object_only_raise_exception_when_userGroup_exists():
+    from src.domain_model.resource.exception.UserGroupAlreadyExistException import UserGroupAlreadyExistException
+    repo = Mock(spec=UserGroupRepository)
+    name = 'me'
+    userGroup = UserGroup(name=name)
+
+    repo.userGroupByName = Mock(return_value=userGroup)
+    appService = UserGroupApplicationService(repo)
+    with pytest.raises(UserGroupAlreadyExistException):
+        userGroup = appService.createObjectOnly(name=name)
+
+def test_create_userGroup_raise_exception_when_userGroup_exists():
+    from src.domain_model.resource.exception.UserGroupAlreadyExistException import UserGroupAlreadyExistException
+    repo = Mock(spec=UserGroupRepository)
+    name = 'me'
+    userGroup = UserGroup(name=name)
+
+    repo.userGroupByName = Mock(return_value=userGroup)
+    appService = UserGroupApplicationService(repo)
+    with pytest.raises(UserGroupAlreadyExistException):
+        userGroup = appService.createUserGroup(id='1', name=name)

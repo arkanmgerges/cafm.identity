@@ -1,10 +1,10 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domainmodel.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
-from src.domainmodel.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
-from src.domainmodel.role.Role import Role
-from src.domainmodel.role.RoleRepository import RoleRepository
+from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
+from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
+from src.domain_model.role.Role import Role
+from src.domain_model.role.RoleRepository import RoleRepository
 
 
 class RoleApplicationService:

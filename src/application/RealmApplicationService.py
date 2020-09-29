@@ -1,10 +1,10 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domainmodel.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
-from src.domainmodel.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
-from src.domainmodel.realm.Realm import Realm
-from src.domainmodel.realm.RealmRepository import RealmRepository
+from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
+from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+from src.domain_model.realm.Realm import Realm
+from src.domain_model.realm.RealmRepository import RealmRepository
 
 
 class RealmApplicationService:

@@ -1,10 +1,10 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domainmodel.resource.exception.OuAlreadyExistException import OuAlreadyExistException
-from src.domainmodel.resource.exception.OuDoesNotExistException import OuDoesNotExistException
-from src.domainmodel.ou.Ou import Ou
-from src.domainmodel.ou.OuRepository import OuRepository
+from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
+from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
+from src.domain_model.ou.Ou import Ou
+from src.domain_model.ou.OuRepository import OuRepository
 
 
 class OuApplicationService:

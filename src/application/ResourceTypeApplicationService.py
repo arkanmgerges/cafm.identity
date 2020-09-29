@@ -1,10 +1,10 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domainmodel.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException
-from src.domainmodel.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
-from src.domainmodel.resourcetype.ResourceType import ResourceType
-from src.domainmodel.resourcetype.ResourceTypeRepository import ResourceTypeRepository
+from src.domain_model.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException
+from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
+from src.domain_model.resource_type.ResourceType import ResourceType
+from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
 
 
 class ResourceTypeApplicationService:

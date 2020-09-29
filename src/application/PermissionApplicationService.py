@@ -1,10 +1,10 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domainmodel.resource.exception.PermissionAlreadyExistException import PermissionAlreadyExistException
-from src.domainmodel.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
-from src.domainmodel.permission.Permission import Permission
-from src.domainmodel.permission.PermissionRepository import PermissionRepository
+from src.domain_model.resource.exception.PermissionAlreadyExistException import PermissionAlreadyExistException
+from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
+from src.domain_model.permission.Permission import Permission
+from src.domain_model.permission.PermissionRepository import PermissionRepository
 
 
 class PermissionApplicationService:

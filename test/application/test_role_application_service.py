@@ -5,13 +5,13 @@ import pytest
 from mock import Mock
 
 from src.application.RoleApplicationService import RoleApplicationService
-from src.domainmodel.event.DomainEventPublisher import DomainEventPublisher
-from src.domainmodel.role.Role import Role
-from src.domainmodel.role.RoleRepository import RoleRepository
+from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.role.Role import Role
+from src.domain_model.role.RoleRepository import RoleRepository
 
 
 def test_create_role_object_when_role_already_exist():
-    from src.domainmodel.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
+    from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=RoleRepository)
     name = 'me'
@@ -22,7 +22,7 @@ def test_create_role_object_when_role_already_exist():
 
 
 def test_create_role_object_when_role_does_not_exist():
-    from src.domainmodel.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
+    from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=RoleRepository)
     name = 'me'
@@ -35,7 +35,7 @@ def test_create_role_object_when_role_does_not_exist():
 
 
 def test_create_role_with_event_publishing_when_role_does_not_exist():
-    from src.domainmodel.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
+    from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=RoleRepository)
     id = '1234567'
@@ -61,3 +61,25 @@ def test_get_role_by_name_when_role_exists():
     appService.roleByName(name=name)
 
     repo.roleByName.assert_called_once_with(name=name)
+
+def test_create_object_only_raise_exception_when_role_exists():
+    from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
+    repo = Mock(spec=RoleRepository)
+    name = 'me'
+    role = Role(name=name)
+
+    repo.roleByName = Mock(return_value=role)
+    appService = RoleApplicationService(repo)
+    with pytest.raises(RoleAlreadyExistException):
+        role = appService.createObjectOnly(name=name)
+
+def test_create_role_raise_exception_when_role_exists():
+    from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
+    repo = Mock(spec=RoleRepository)
+    name = 'me'
+    role = Role(name=name)
+
+    repo.roleByName = Mock(return_value=role)
+    appService = RoleApplicationService(repo)
+    with pytest.raises(RoleAlreadyExistException):
+        role = appService.createRole(id='1', name=name)
