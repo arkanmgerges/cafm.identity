@@ -17,11 +17,11 @@ DIR_NAME = os.path.dirname(os.path.realpath(__file__)) + '/../avro'
 @avro_schema(AvroModelContainer(default_namespace="coral.identity"),
              schema_file=os.path.join(DIR_NAME, "identity-command.avsc"))
 class IdentityCommand(MessageBase):
-    def __init__(self, id, serviceName='coral.identity', name='', data='', createdOn=round(time.time() * 1000),
+    def __init__(self, id, creatorServiceName='coral.identity', name='', data='', createdOn=round(time.time() * 1000),
                  externalId=None, externalServiceName=None, externalName=None, externalData=None,
                  externalCreatedOn=None):
         super().__init__(
-            {'id': id, 'serviceName': serviceName, 'name': name, 'createdOn': createdOn, 'data': data,
+            {'id': id, 'creatorServiceName': creatorServiceName, 'name': name, 'createdOn': createdOn, 'data': data,
              'externalId': externalId, 'externalServiceName': externalServiceName, 'externalName': externalName,
              'externalCreatedOn': externalCreatedOn, 'externalData': externalData})
 
@@ -29,7 +29,7 @@ class IdentityCommand(MessageBase):
         return vars(self)['_value']
 
     def topic(self):
-        return os.getenv('CORAL_IDENTITY_COMMAND_TOPIC', None)
+        return os.getenv('CORAL_IDENTITY_COMMAND_TOPIC', 'coral.identity.cmd')
 
     def msgId(self):
         return self.id

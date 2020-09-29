@@ -1,18 +1,20 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-
+import json
 import os
 import signal
-import traceback
 
 from confluent_kafka.cimpl import KafkaError
 
 import src.portadapter.AppDi as AppDi
+from src.domainmodel.resource.exception.DomainModelException import DomainModelException
 from src.portadapter.messaging.common.Consumer import Consumer
 from src.portadapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
 from src.portadapter.messaging.common.TransactionalProducer import TransactionalProducer
+from src.portadapter.messaging.common.model.ApiResponse import ApiResponse
 from src.portadapter.messaging.common.model.IdentityCommand import IdentityCommand
+from src.portadapter.messaging.listener.CommandConstant import IdentityCommandConstant
 from src.portadapter.messaging.listener.handler.CreateUserHandler import CreateUserHandler
 from src.resource.logging.logger import logger
 
@@ -20,6 +22,7 @@ from src.resource.logging.logger import logger
 class ApiCommandListener:
     def __init__(self):
         self._handlers = []
+        self._creatorServiceName = os.getenv('CORAL_IDENTITY_SERVICE_NAME', 'coral.identity')
         self.addHandlers()
         signal.signal(signal.SIGINT, self.interruptExecution)
         signal.signal(signal.SIGTERM, self.interruptExecution)
@@ -63,12 +66,12 @@ class ApiCommandListener:
                     try:
                         msgData = msg.value()
                         handledResult = self.handleCommand(name=msgData['name'], data=msgData['data'])
-
+                        logger.debug(f'handleResult returned with: {handledResult}')
                         producer.produce(
                             obj=IdentityCommand(id=msgData['id'],
-                                                serviceName='coral.identity',
-                                                name=handledResult['name'],
-                                                data=handledResult['data'],
+                                                creatorServiceName=self._creatorServiceName,
+                                                name=msgData['name'],
+                                                data=json.dumps(handledResult['data']),
                                                 createdOn=handledResult['createdOn'],
                                                 externalId=msgData['id'],
                                                 externalServiceName=msgData['creatorServiceName'],
@@ -84,6 +87,17 @@ class ApiCommandListener:
                         producer.commitTransaction()
 
                         producer.beginTransaction()
+                    except DomainModelException as e:
+                        logger.warn(e)
+                        msgData = msg.value()
+                        producer.produce(
+                            obj=ApiResponse(commandId=msgData['id'], commandName=msgData['name'],
+                                            data=json.dumps({'reason': {'message': e.message, 'code': e.code}}),
+                                            creatorServiceName=self._creatorServiceName, success=False),
+                            schema=ApiResponse.get_schema())
+                        producer.sendOffsetsToTransaction(consumer)
+                        producer.commitTransaction()
+                        producer.beginTransaction()
                     except Exception as e:
                         logger.error(e)
 
@@ -93,6 +107,7 @@ class ApiCommandListener:
         except SystemExit:
             logger.info(f'Shutting down the process')
         finally:
+            producer.abortTransaction()
             # Close down consumer to commit final offsets.
             consumer.close()
 

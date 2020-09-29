@@ -1,0 +1,14 @@
+{
+ "namespace": "coral.api",
+ "type": "record",
+ "name": "Response",
+ "doc": "Response to be sent to the api",
+ "fields": [
+     {"name": "commandId", "type": "string", "doc": "The identity of the command that this response belong"},
+     {"name": "commandName", "type": "string", "doc": "The name of the command that this response belong"},
+     {"name": "data",  "type": "string", "default": "", "doc": "Response data"},
+     {"name": "creatorServiceName",  "type": "string", "default": "", "doc": "Who created this response"},
+     {"name": "success",  "type": "boolean", "default": false, "doc": "If the response has succeeded"},
+     {"name": "createdOn",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this response got created"}
+ ]
+}

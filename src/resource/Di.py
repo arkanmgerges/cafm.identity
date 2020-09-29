@@ -1,11 +1,7 @@
-import inspect
 import logging
 import os
-import sys
-import traceback
 from logging import Logger
-from types import TracebackType
-from typing import Text, Union, Any, Optional, Dict, Tuple
+
 from injector import Module, singleton, provider, Injector
 
 from src.resource.logging.CustomLogger import CustomLogger, LogLevelEnum, logLevelEnumItemFromString

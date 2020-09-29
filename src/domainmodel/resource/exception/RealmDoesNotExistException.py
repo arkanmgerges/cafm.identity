@@ -1,9 +1,12 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from src.domainmodel.resource.exception.DomainModelException import DomainModelException
+from src.domainmodel.resource.exception.CodeExceptionConstant import CodeExceptionConstant
 
 
-class RealmDoesNotExistException(Exception):
+class RealmDoesNotExistException(DomainModelException):
     def __init__(self, name:str = ''):
         self.message = f'{name} does not exist'
-        super().__init__(self.message)
+        self.code = CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
+        super().__init__(self.message, self.code)
