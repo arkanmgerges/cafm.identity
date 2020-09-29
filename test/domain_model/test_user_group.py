@@ -22,4 +22,4 @@ def test_create_by_semantic_constructor():
     userGroup = UserGroup.createFrom(id=id)
     assert isinstance(userGroup, UserGroup)
     assert userGroup.id() == id
-    assert json.loads(DomainEventPublisher.postponedEvents()[0].data())['id'] == id
+    assert DomainEventPublisher.postponedEvents()[0].data()['id'] == id

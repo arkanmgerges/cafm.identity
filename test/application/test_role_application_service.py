@@ -62,6 +62,7 @@ def test_get_role_by_name_when_role_exists():
 
     repo.roleByName.assert_called_once_with(name=name)
 
+
 def test_create_object_only_raise_exception_when_role_exists():
     from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
     repo = Mock(spec=RoleRepository)
@@ -72,6 +73,7 @@ def test_create_object_only_raise_exception_when_role_exists():
     appService = RoleApplicationService(repo)
     with pytest.raises(RoleAlreadyExistException):
         role = appService.createObjectOnly(name=name)
+
 
 def test_create_role_raise_exception_when_role_exists():
     from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException

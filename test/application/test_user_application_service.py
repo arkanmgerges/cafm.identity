@@ -64,6 +64,7 @@ def test_get_user_by_username_and_password_when_user_exists():
 
     repo.userByUsernameAndPassword.assert_called_once_with(username=username, password=password)
 
+
 def test_create_object_only_raise_exception_when_user_exists():
     from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
     repo = Mock(spec=UserRepository)
@@ -74,6 +75,7 @@ def test_create_object_only_raise_exception_when_user_exists():
     appService = UserApplicationService(repo)
     with pytest.raises(UserAlreadyExistException):
         user = appService.createObjectOnly(username=name, password='1234')
+
 
 def test_create_user_raise_exception_when_user_exists():
     from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException

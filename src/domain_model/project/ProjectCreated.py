@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
+from uuid import uuid4
 
 from src.domain_model.event.DomainEvent import DomainEvent
 from src.domain_model.project.Project import Project
@@ -9,6 +10,6 @@ from src.domain_model.project.Project import Project
 
 class ProjectCreated(DomainEvent):
     def __init__(self, project: Project):
-        super().__init__()
-        self._data = json.dumps(project.toMap())
+        super().__init__(id=str(uuid4()), name='project_created')
+        self._data = project.toMap()
 

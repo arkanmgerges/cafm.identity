@@ -62,6 +62,7 @@ def test_get_permission_by_name_when_permission_exists():
 
     repo.permissionByName.assert_called_once_with(name=name)
 
+
 def test_create_object_only_raise_exception_when_permission_exists():
     from src.domain_model.resource.exception.PermissionAlreadyExistException import PermissionAlreadyExistException
     repo = Mock(spec=PermissionRepository)
@@ -72,6 +73,7 @@ def test_create_object_only_raise_exception_when_permission_exists():
     appService = PermissionApplicationService(repo)
     with pytest.raises(PermissionAlreadyExistException):
         permission = appService.createObjectOnly(name=name)
+
 
 def test_create_permission_raise_exception_when_permission_exists():
     from src.domain_model.resource.exception.PermissionAlreadyExistException import PermissionAlreadyExistException

@@ -62,6 +62,7 @@ def test_get_resourceType_by_name_when_resourceType_exists():
 
     repo.resourceTypeByName.assert_called_once_with(name=name)
 
+
 def test_create_object_only_raise_exception_when_resourceType_exists():
     from src.domain_model.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException
     repo = Mock(spec=ResourceTypeRepository)
@@ -72,6 +73,7 @@ def test_create_object_only_raise_exception_when_resourceType_exists():
     appService = ResourceTypeApplicationService(repo)
     with pytest.raises(ResourceTypeAlreadyExistException):
         resourceType = appService.createObjectOnly(name=name)
+
 
 def test_create_resourceType_raise_exception_when_resourceType_exists():
     from src.domain_model.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException

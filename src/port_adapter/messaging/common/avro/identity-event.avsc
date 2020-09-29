@@ -1,0 +1,13 @@
+{
+ "namespace": "coral.identity",
+ "type": "record",
+ "name": "Event",
+ "doc": "Event that has occurred in identity",
+ "fields": [
+     {"name": "id", "type": "string", "doc": "The identity of the event"},
+     {"name": "name",  "type": "string", "default": "", "doc": "The name of the event"},
+     {"name": "data",  "type": "string", "default": "", "doc": "The data of the event"},
+     {"name": "creatorServiceName",  "type": "string", "default": "", "doc": "The service who created the event"},
+     {"name": "occurredOn",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this event has occurred"}
+ ]
+}

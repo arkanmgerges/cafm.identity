@@ -62,6 +62,7 @@ def test_get_project_by_name_when_project_exists():
 
     repo.projectByName.assert_called_once_with(name=name)
 
+
 def test_create_object_only_raise_exception_when_role_exists():
     from src.domain_model.resource.exception.ProjectAlreadyExistException import ProjectAlreadyExistException
     repo = Mock(spec=ProjectRepository)
@@ -72,6 +73,7 @@ def test_create_object_only_raise_exception_when_role_exists():
     appService = ProjectApplicationService(repo)
     with pytest.raises(ProjectAlreadyExistException):
         role = appService.createObjectOnly(name=name)
+
 
 def test_create_role_raise_exception_when_role_exists():
     from src.domain_model.resource.exception.ProjectAlreadyExistException import ProjectAlreadyExistException

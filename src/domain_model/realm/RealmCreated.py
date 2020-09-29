@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
+from uuid import uuid4
 
 from src.domain_model.event.DomainEvent import DomainEvent
 from src.domain_model.realm.Realm import Realm
@@ -9,6 +10,6 @@ from src.domain_model.realm.Realm import Realm
 
 class RealmCreated(DomainEvent):
     def __init__(self, realm: Realm):
-        super().__init__()
-        self._data = json.dumps(realm.toMap())
+        super().__init__(id=str(uuid4()), name='realm_created')
+        self._data = realm.toMap()
 

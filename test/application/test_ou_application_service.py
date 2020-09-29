@@ -62,6 +62,7 @@ def test_get_ou_by_name_when_ou_exists():
 
     repo.ouByName.assert_called_once_with(name=name)
 
+
 def test_create_object_only_raise_exception_when_ou_exists():
     from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
     repo = Mock(spec=OuRepository)
@@ -72,6 +73,7 @@ def test_create_object_only_raise_exception_when_ou_exists():
     appService = OuApplicationService(repo)
     with pytest.raises(OuAlreadyExistException):
         ou = appService.createObjectOnly(name=name)
+
 
 def test_create_ou_raise_exception_when_ou_exists():
     from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException

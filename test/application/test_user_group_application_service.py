@@ -62,6 +62,7 @@ def test_get_userGroup_by_name_when_userGroup_exists():
 
     repo.userGroupByName.assert_called_once_with(name=name)
 
+
 def test_create_object_only_raise_exception_when_userGroup_exists():
     from src.domain_model.resource.exception.UserGroupAlreadyExistException import UserGroupAlreadyExistException
     repo = Mock(spec=UserGroupRepository)
@@ -72,6 +73,7 @@ def test_create_object_only_raise_exception_when_userGroup_exists():
     appService = UserGroupApplicationService(repo)
     with pytest.raises(UserGroupAlreadyExistException):
         userGroup = appService.createObjectOnly(name=name)
+
 
 def test_create_userGroup_raise_exception_when_userGroup_exists():
     from src.domain_model.resource.exception.UserGroupAlreadyExistException import UserGroupAlreadyExistException

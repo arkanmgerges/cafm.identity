@@ -62,6 +62,7 @@ def test_get_realm_by_name_when_realm_exists():
 
     repo.realmByName.assert_called_once_with(name=name)
 
+
 def test_create_object_only_raise_exception_when_realm_exists():
     from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
     repo = Mock(spec=RealmRepository)
@@ -72,6 +73,7 @@ def test_create_object_only_raise_exception_when_realm_exists():
     appService = RealmApplicationService(repo)
     with pytest.raises(RealmAlreadyExistException):
         realm = appService.createObjectOnly(name=name)
+
 
 def test_create_realm_raise_exception_when_realm_exists():
     from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException

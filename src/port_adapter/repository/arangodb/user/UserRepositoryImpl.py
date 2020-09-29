@@ -11,6 +11,8 @@ from src.domain_model.user.UserRepository import UserRepository
 
 from pyArango.connection import *
 
+from src.resource.logging.logger import logger
+
 
 class UserRepositoryImpl(UserRepository):
     def __init__(self):
@@ -25,6 +27,7 @@ class UserRepositoryImpl(UserRepository):
             raise Exception(f'[UserRepository::__init__] Could not connect to the db, message: {e}')
 
     def createUser(self, user: User):
+        logger.debug(f'[{UserRepository.createUser.__qualname__}] - with name = {user.username()}')
         aql = '''
         UPSERT { id: @id}
             INSERT {id: @id, username: @username, password: @password}
@@ -37,6 +40,7 @@ class UserRepositoryImpl(UserRepository):
         print(queryResult)
 
     def userByUsername(self, username: str) -> User:
+        logger.debug(f'[{UserRepository.userByUsername.__qualname__}] - with name = {username}')
         aql = '''
             FOR u IN user
             FILTER u.username == @username
@@ -52,6 +56,7 @@ class UserRepositoryImpl(UserRepository):
         return User.createFrom(id=result[0]['id'], username=result[0]['username'], password=result[0]['password'])
 
     def userByUsernameAndPassword(self, username: str, password: str) -> User:
+        logger.debug(f'[{UserRepository.userByUsernameAndPassword.__qualname__}] - with name = {username}')
         aql = '''
             FOR u IN user
             FILTER u.username == @username AND u.password == @password
