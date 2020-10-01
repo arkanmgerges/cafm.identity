@@ -4,6 +4,7 @@
 
 import os
 
+import redis
 from pyArango.connection import *
 from pyArango.query import AQLQuery
 
@@ -22,10 +23,20 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
             )
             self._db = self._connection[os.getenv('CORAL_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
-            raise Exception(f'[{AuthenticationRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+            raise Exception(
+                f'[{AuthenticationRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+
+        try:
+            self._cache = redis.Redis(host=os.getenv('CORAL_IDENTITY_REDIS_HOST', 'localhost'),
+                                      port=os.getenv('CORAL_IDENTITY_REDIS_PORT', 6379))
+            self._cacheSessionKeyPrefix = os.getenv('CORAL_IDENTITY_REDIS_SESSION_KEY_PREFIX', 'coral.identity.session.')
+        except Exception as e:
+            raise Exception(
+                f'[{AuthenticationRepositoryImpl.__init__.__qualname__}] Could not connect to the redis, message: {e}')
 
     def authenticateUserByNameAndPassword(self, name: str, password: str) -> dict:
-        logger.debug(f'[{AuthenticationRepositoryImpl.authenticateUserByNameAndPassword.__qualname__}] - with name = {name}')
+        logger.debug(
+            f'[{AuthenticationRepositoryImpl.authenticateUserByNameAndPassword.__qualname__}] - with name = {name}')
         aql = '''
                 WITH role,userGroup
                 FOR u IN user
@@ -48,4 +59,11 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
         result = result[0]
         return {'id': result['id'], 'name': result['name'], 'role': result['role']}
 
+    def persistToken(self, token: str, ttl: int = 300) -> None:
+        self._cache.setex(f'{self._cacheSessionKeyPrefix}{token}', ttl, token)
 
+    def refreshToken(self, token: str, ttl: int = 300) -> None:
+        self._cache.setex(f'{self._cacheSessionKeyPrefix}{token}', ttl, token)
+
+    def tokenExist(self, token: str) -> bool:
+        return self._cache.exists(f'{self._cacheSessionKeyPrefix}{token}') == 1

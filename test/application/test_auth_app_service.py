@@ -19,6 +19,7 @@ def test_authenticate_user_when_exist():
 
     assert isinstance(token, str)
     assert len(token) > 0
+    authRepo.persistToken.assert_called()
 
 
 def test_authenticate_user_when_does_not_exist():

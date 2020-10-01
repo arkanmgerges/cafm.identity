@@ -20,3 +20,31 @@ class AuthenticationRepository(ABC):
             `UserDoesNotExistException <UserDoesNotExistException>`: When user does not exist
         """
 
+    @abstractmethod
+    def persistToken(self, token: str, ttl: int = 300) -> None:
+        """Save the token for a period of time measured in seconds
+
+        Args:
+            token (str): The token to be persisted
+            ttl (int): time to live measured in seconds, if the ttl is -1 then the token will be persisted forever
+        """
+
+    @abstractmethod
+    def refreshToken(self, token: str, ttl: int = 300) -> None:
+        """Refresh the ttl of the token
+
+        Args:
+            token (str): The token to be refreshed
+            ttl (int): time to live measured in seconds, if the ttl is -1 then the token will be persisted forever
+        """
+
+    @abstractmethod
+    def tokenExist(self, token: str) -> bool:
+        """Check if the token does exist
+
+        Args:
+            token (str): The token to be checked
+
+        Returns:
+            bool: If True then the token exists, False if it does not exist
+        """

@@ -27,5 +27,6 @@ class AuthenticationService:
         payload = {'id': result['id'], 'role': result['role'], 'name': result['name']}
         import os
         key = os.getenv('CORAL_JWT_SECRET', 'secret')
-        token = jwt.encode(header, payload, key)
-        return token.decode('utf-8')
+        token = jwt.encode(header, payload, key).decode('utf-8')
+        self._authRepo.persistToken(token=token)
+        return token
