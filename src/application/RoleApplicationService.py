@@ -16,14 +16,14 @@ class RoleApplicationService:
             self._roleRepository.roleByName(name=name)
             raise RoleAlreadyExistException(name=name)
         except RoleDoesNotExistException:
-            return Role.createFrom(name=name, publishEvent=False)
+            return Role.createFrom(name=name)
 
     def createRole(self, id: str, name: str):
         try:
             self._roleRepository.roleByName(name=name)
             raise RoleAlreadyExistException(name=name)
         except RoleDoesNotExistException:
-            role = Role.createFrom(id=id, name=name)
+            role = Role.createFrom(id=id, name=name, publishEvent=True)
             self._roleRepository.createRole(role)
 
     def roleByName(self, name: str):

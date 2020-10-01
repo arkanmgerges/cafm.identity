@@ -67,6 +67,7 @@ PyJWT = "==1.7.1"
 Sphinx = "==2.4.3"
 mock = "*"
 pyarango = "*"
+authlib = "*"
 
 [requires]
 python_version = "3.8"

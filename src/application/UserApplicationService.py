@@ -18,7 +18,7 @@ class UserApplicationService:
             raise UserAlreadyExistException(username=username)
         except UserDoesNotExistException:
             logger.debug(f'[{UserApplicationService.createObjectOnly.__qualname__}] - with name = {username}')
-            return User.createFrom(username=username, password=password, publishEvent=False)
+            return User.createFrom(username=username, password=password)
 
     def createUser(self, id: str, username: str, password: str):
         try:
@@ -26,7 +26,7 @@ class UserApplicationService:
             raise UserAlreadyExistException(username=username)
         except UserDoesNotExistException:
             logger.debug(f'[{UserApplicationService.createUser.__qualname__}] - with name = {username}')
-            user = User.createFrom(id=id, username=username, password=password)
+            user = User.createFrom(id=id, username=username, password=password, publishEvent=True)
             self._userRepository.createUser(user)
             return user
 

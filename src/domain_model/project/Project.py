@@ -13,7 +13,7 @@ class Project:
         self._name = name
 
     @classmethod
-    def createFrom(cls, id: str = str(uuid4()), name='', publishEvent: bool = True):
+    def createFrom(cls, id: str = str(uuid4()), name='', publishEvent: bool = False):
         project = Project(id, name)
         if publishEvent:
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher

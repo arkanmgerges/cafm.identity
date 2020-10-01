@@ -37,7 +37,6 @@ class UserRepositoryImpl(UserRepository):
 
         bindVars = {"id": user.id(), "username": user.username(), "password": user.password()}
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        print(queryResult)
 
     def userByUsername(self, username: str) -> User:
         logger.debug(f'[{UserRepository.userByUsername.__qualname__}] - with name = {username}')

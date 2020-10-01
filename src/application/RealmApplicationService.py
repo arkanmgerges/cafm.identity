@@ -16,14 +16,14 @@ class RealmApplicationService:
             self._realmRepository.realmByName(name=name)
             raise RealmAlreadyExistException(name=name)
         except RealmDoesNotExistException:
-            return Realm.createFrom(name=name, publishEvent=False)
+            return Realm.createFrom(name=name)
 
     def createRealm(self, id: str, name: str):
         try:
             self._realmRepository.realmByName(name=name)
             raise RealmAlreadyExistException(name=name)
         except RealmDoesNotExistException:
-            realm = Realm.createFrom(id=id, name=name)
+            realm = Realm.createFrom(id=id, name=name, publishEvent=True)
             self._realmRepository.createRealm(realm)
 
     def realmByName(self, name: str):

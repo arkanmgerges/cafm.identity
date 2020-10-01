@@ -16,14 +16,14 @@ class ResourceTypeApplicationService:
             self._resourceTypeRepository.resourceTypeByName(name=name)
             raise ResourceTypeAlreadyExistException(name=name)
         except ResourceTypeDoesNotExistException:
-            return ResourceType.createFrom(name=name, publishEvent=False)
+            return ResourceType.createFrom(name=name)
 
     def createResourceType(self, id: str, name: str):
         try:
             self._resourceTypeRepository.resourceTypeByName(name=name)
             raise ResourceTypeAlreadyExistException(name=name)
         except ResourceTypeDoesNotExistException:
-            resourceType = ResourceType.createFrom(id=id, name=name)
+            resourceType = ResourceType.createFrom(id=id, name=name, publishEvent=True)
             self._resourceTypeRepository.createResourceType(resourceType)
 
     def resourceTypeByName(self, name: str):

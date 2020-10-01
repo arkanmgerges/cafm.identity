@@ -16,14 +16,14 @@ class ProjectApplicationService:
             self._projectRepository.projectByName(name=name)
             raise ProjectAlreadyExistException(name=name)
         except ProjectDoesNotExistException:
-            return Project.createFrom(name=name, publishEvent=False)
+            return Project.createFrom(name=name)
 
     def createProject(self, id: str, name: str):
         try:
             self._projectRepository.projectByName(name=name)
             raise ProjectAlreadyExistException(name=name)
         except ProjectDoesNotExistException:
-            project = Project.createFrom(id=id, name=name)
+            project = Project.createFrom(id=id, name=name, publishEvent=True)
             self._projectRepository.createProject(project)
 
     def projectByName(self, name: str):

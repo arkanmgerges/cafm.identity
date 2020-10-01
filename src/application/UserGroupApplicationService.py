@@ -16,14 +16,14 @@ class UserGroupApplicationService:
             self._userGroupRepository.userGroupByName(name=name)
             raise UserGroupAlreadyExistException(name=name)
         except UserGroupDoesNotExistException:
-            return UserGroup.createFrom(name=name, publishEvent=False)
+            return UserGroup.createFrom(name=name)
 
     def createUserGroup(self, id: str, name: str):
         try:
             self._userGroupRepository.userGroupByName(name=name)
             raise UserGroupAlreadyExistException(name=name)
         except UserGroupDoesNotExistException:
-            userGroup = UserGroup.createFrom(id=id, name=name)
+            userGroup = UserGroup.createFrom(id=id, name=name, publishEvent=True)
             self._userGroupRepository.createUserGroup(userGroup)
 
     def userGroupByName(self, name: str):

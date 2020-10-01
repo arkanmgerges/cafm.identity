@@ -16,14 +16,14 @@ class PermissionApplicationService:
             self._permissionRepository.permissionByName(name=name)
             raise PermissionAlreadyExistException(name=name)
         except PermissionDoesNotExistException:
-            return Permission.createFrom(name=name, publishEvent=False)
+            return Permission.createFrom(name=name)
 
     def createPermission(self, id: str, name: str):
         try:
             self._permissionRepository.permissionByName(name=name)
             raise PermissionAlreadyExistException(name=name)
         except PermissionDoesNotExistException:
-            permission = Permission.createFrom(id=id, name=name)
+            permission = Permission.createFrom(id=id, name=name, publishEvent=True)
             self._permissionRepository.createPermission(permission)
 
     def permissionByName(self, name: str):

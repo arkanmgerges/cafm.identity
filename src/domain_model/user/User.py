@@ -13,7 +13,7 @@ class User:
         self._password = password
 
     @classmethod
-    def createFrom(cls, id: str = str(uuid4()), username='', password='', publishEvent: bool = True):
+    def createFrom(cls, id: str = str(uuid4()), username='', password='', publishEvent: bool = False):
         logger.debug(f'[User::createFrom] - with name {username}')
         user = User(id, username, password)
         if publishEvent:

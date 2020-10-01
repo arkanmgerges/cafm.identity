@@ -16,14 +16,14 @@ class OuApplicationService:
             self._ouRepository.ouByName(name=name)
             raise OuAlreadyExistException(name=name)
         except OuDoesNotExistException:
-            return Ou.createFrom(name=name, publishEvent=False)
+            return Ou.createFrom(name=name)
 
     def createOu(self, id: str, name: str):
         try:
             self._ouRepository.ouByName(name=name)
             raise OuAlreadyExistException(name=name)
         except OuDoesNotExistException:
-            ou = Ou.createFrom(id=id, name=name)
+            ou = Ou.createFrom(id=id, name=name, publishEvent=True)
             self._ouRepository.createOu(ou)
 
     def ouByName(self, name: str):
