@@ -14,24 +14,24 @@ def test_create_user_object_when_user_already_exist():
     from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=UserRepository)
-    username = 'me'
-    repo.userByUsername = Mock(side_effect=UserAlreadyExistException)
+    name = 'me'
+    repo.userByName = Mock(side_effect=UserAlreadyExistException)
     appService = UserApplicationService(repo)
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createObjectOnly(username=username, password='1234')
+        user = appService.createObjectOnly(name=name, password='1234')
 
 
 def test_create_user_object_when_user_does_not_exist():
     from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
     DomainEventPublisher.cleanup()
     repo = Mock(spec=UserRepository)
-    username = 'me'
+    name = 'me'
 
-    repo.userByUsername = Mock(side_effect=UserDoesNotExistException)
+    repo.userByName = Mock(side_effect=UserDoesNotExistException)
     appService = UserApplicationService(repo)
-    user = appService.createObjectOnly(username=username, password='1234')
+    user = appService.createObjectOnly(name=name, password='1234')
     assert isinstance(user, User)
-    assert user.username() == username
+    assert user.name() == name
 
 
 def test_create_user_with_event_publishing_when_user_does_not_exist():
@@ -39,51 +39,51 @@ def test_create_user_with_event_publishing_when_user_does_not_exist():
     DomainEventPublisher.cleanup()
     repo = Mock(spec=UserRepository)
     id = '1234567'
-    username = 'me'
+    name = 'me'
     password = 'pass'
 
-    repo.userByUsername = Mock(side_effect=UserDoesNotExistException)
+    repo.userByName = Mock(side_effect=UserDoesNotExistException)
     repo.createUser = Mock(spec=UserRepository.createUser)
     appService = UserApplicationService(repo)
-    appService.createUser(id=id, username=username, password=password)
+    appService.createUser(id=id, name=name, password=password)
 
-    repo.userByUsername.assert_called_once()
+    repo.userByName.assert_called_once()
     repo.createUser.assert_called_once()
     assert len(DomainEventPublisher.postponedEvents()) > 0
 
 
-def test_get_user_by_username_and_password_when_user_exists():
+def test_get_user_by_name_and_password_when_user_exists():
     repo = Mock(spec=UserRepository)
-    username = 'me'
+    name = 'me'
     password = 'pass'
-    user = User(username=username, password=password)
+    user = User(name=name, password=password)
 
-    repo.userByUsernameAndPassword = Mock(return_value=user)
+    repo.userByNameAndPassword = Mock(return_value=user)
     appService = UserApplicationService(repo)
-    appService.userByUsernameAndPassword(username=username, password=password)
+    appService.userByNameAndPassword(name=name, password=password)
 
-    repo.userByUsernameAndPassword.assert_called_once_with(username=username, password=password)
+    repo.userByNameAndPassword.assert_called_once_with(name=name, password=password)
 
 
 def test_create_object_only_raise_exception_when_user_exists():
     from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
     repo = Mock(spec=UserRepository)
     name = 'me'
-    user = User(id='1', username=name, password='1234')
+    user = User(id='1', name=name, password='1234')
 
     repo.userByName = Mock(return_value=user)
     appService = UserApplicationService(repo)
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createObjectOnly(username=name, password='1234')
+        user = appService.createObjectOnly(name=name, password='1234')
 
 
 def test_create_user_raise_exception_when_user_exists():
     from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
     repo = Mock(spec=UserRepository)
     name = 'me'
-    user = User(id='1', username=name, password='1234')
+    user = User(id='1', name=name, password='1234')
 
     repo.userByName = Mock(return_value=user)
     appService = UserApplicationService(repo)
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createUser(id='1', username=name, password='1234')
+        user = appService.createUser(id='1', name=name, password='1234')

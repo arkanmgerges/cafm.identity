@@ -19,29 +19,29 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x16user_app_service.proto\x12\x13\x63oral.identity.user\"U\n/UserAppService_userByUsernameAndPasswordRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"P\n0UserAppService_userByUsernameAndPasswordResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t2\xbd\x01\n\x0eUserAppService\x12\xaa\x01\n\x19userByUsernameAndPassword\x12\x44.coral.identity.user.UserAppService_userByUsernameAndPasswordRequest\x1a\x45.coral.identity.user.UserAppService_userByUsernameAndPasswordResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x16user_app_service.proto\x12\x13\x63oral.identity.user\"M\n+UserAppService_userByNameAndPasswordRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"H\n,UserAppService_userByNameAndPasswordResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xb1\x01\n\x0eUserAppService\x12\x9e\x01\n\x15userByNameAndPassword\x12@.coral.identity.user.UserAppService_userByNameAndPasswordRequest\x1a\x41.coral.identity.user.UserAppService_userByNameAndPasswordResponse\"\x00\x62\x06proto3'
 )
 
 
 
 
-_USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDREQUEST = _descriptor.Descriptor(
-  name='UserAppService_userByUsernameAndPasswordRequest',
-  full_name='coral.identity.user.UserAppService_userByUsernameAndPasswordRequest',
+_USERAPPSERVICE_USERBYNAMEANDPASSWORDREQUEST = _descriptor.Descriptor(
+  name='UserAppService_userByNameAndPasswordRequest',
+  full_name='coral.identity.user.UserAppService_userByNameAndPasswordRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='username', full_name='coral.identity.user.UserAppService_userByUsernameAndPasswordRequest.username', index=0,
+      name='name', full_name='coral.identity.user.UserAppService_userByNameAndPasswordRequest.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='password', full_name='coral.identity.user.UserAppService_userByUsernameAndPasswordRequest.password', index=1,
+      name='password', full_name='coral.identity.user.UserAppService_userByNameAndPasswordRequest.password', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -60,27 +60,27 @@ _USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=47,
-  serialized_end=132,
+  serialized_end=124,
 )
 
 
-_USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDRESPONSE = _descriptor.Descriptor(
-  name='UserAppService_userByUsernameAndPasswordResponse',
-  full_name='coral.identity.user.UserAppService_userByUsernameAndPasswordResponse',
+_USERAPPSERVICE_USERBYNAMEANDPASSWORDRESPONSE = _descriptor.Descriptor(
+  name='UserAppService_userByNameAndPasswordResponse',
+  full_name='coral.identity.user.UserAppService_userByNameAndPasswordResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='coral.identity.user.UserAppService_userByUsernameAndPasswordResponse.id', index=0,
+      name='id', full_name='coral.identity.user.UserAppService_userByNameAndPasswordResponse.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='username', full_name='coral.identity.user.UserAppService_userByUsernameAndPasswordResponse.username', index=1,
+      name='name', full_name='coral.identity.user.UserAppService_userByNameAndPasswordResponse.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -98,27 +98,27 @@ _USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=134,
-  serialized_end=214,
+  serialized_start=126,
+  serialized_end=198,
 )
 
-DESCRIPTOR.message_types_by_name['UserAppService_userByUsernameAndPasswordRequest'] = _USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDREQUEST
-DESCRIPTOR.message_types_by_name['UserAppService_userByUsernameAndPasswordResponse'] = _USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDRESPONSE
+DESCRIPTOR.message_types_by_name['UserAppService_userByNameAndPasswordRequest'] = _USERAPPSERVICE_USERBYNAMEANDPASSWORDREQUEST
+DESCRIPTOR.message_types_by_name['UserAppService_userByNameAndPasswordResponse'] = _USERAPPSERVICE_USERBYNAMEANDPASSWORDRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-UserAppService_userByUsernameAndPasswordRequest = _reflection.GeneratedProtocolMessageType('UserAppService_userByUsernameAndPasswordRequest', (_message.Message,), {
-  'DESCRIPTOR' : _USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDREQUEST,
+UserAppService_userByNameAndPasswordRequest = _reflection.GeneratedProtocolMessageType('UserAppService_userByNameAndPasswordRequest', (_message.Message,), {
+  'DESCRIPTOR' : _USERAPPSERVICE_USERBYNAMEANDPASSWORDREQUEST,
   '__module__' : 'user_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.user.UserAppService_userByUsernameAndPasswordRequest)
+  # @@protoc_insertion_point(class_scope:coral.identity.user.UserAppService_userByNameAndPasswordRequest)
   })
-_sym_db.RegisterMessage(UserAppService_userByUsernameAndPasswordRequest)
+_sym_db.RegisterMessage(UserAppService_userByNameAndPasswordRequest)
 
-UserAppService_userByUsernameAndPasswordResponse = _reflection.GeneratedProtocolMessageType('UserAppService_userByUsernameAndPasswordResponse', (_message.Message,), {
-  'DESCRIPTOR' : _USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDRESPONSE,
+UserAppService_userByNameAndPasswordResponse = _reflection.GeneratedProtocolMessageType('UserAppService_userByNameAndPasswordResponse', (_message.Message,), {
+  'DESCRIPTOR' : _USERAPPSERVICE_USERBYNAMEANDPASSWORDRESPONSE,
   '__module__' : 'user_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.user.UserAppService_userByUsernameAndPasswordResponse)
+  # @@protoc_insertion_point(class_scope:coral.identity.user.UserAppService_userByNameAndPasswordResponse)
   })
-_sym_db.RegisterMessage(UserAppService_userByUsernameAndPasswordResponse)
+_sym_db.RegisterMessage(UserAppService_userByNameAndPasswordResponse)
 
 
 
@@ -129,16 +129,16 @@ _USERAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=217,
-  serialized_end=406,
+  serialized_start=201,
+  serialized_end=378,
   methods=[
   _descriptor.MethodDescriptor(
-    name='userByUsernameAndPassword',
-    full_name='coral.identity.user.UserAppService.userByUsernameAndPassword',
+    name='userByNameAndPassword',
+    full_name='coral.identity.user.UserAppService.userByNameAndPassword',
     index=0,
     containing_service=None,
-    input_type=_USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDREQUEST,
-    output_type=_USERAPPSERVICE_USERBYUSERNAMEANDPASSWORDRESPONSE,
+    input_type=_USERAPPSERVICE_USERBYNAMEANDPASSWORDREQUEST,
+    output_type=_USERAPPSERVICE_USERBYNAMEANDPASSWORDRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

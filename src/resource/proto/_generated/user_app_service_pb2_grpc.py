@@ -14,17 +14,17 @@ class UserAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.userByUsernameAndPassword = channel.unary_unary(
-                '/coral.identity.user.UserAppService/userByUsernameAndPassword',
-                request_serializer=user__app__service__pb2.UserAppService_userByUsernameAndPasswordRequest.SerializeToString,
-                response_deserializer=user__app__service__pb2.UserAppService_userByUsernameAndPasswordResponse.FromString,
+        self.userByNameAndPassword = channel.unary_unary(
+                '/coral.identity.user.UserAppService/userByNameAndPassword',
+                request_serializer=user__app__service__pb2.UserAppService_userByNameAndPasswordRequest.SerializeToString,
+                response_deserializer=user__app__service__pb2.UserAppService_userByNameAndPasswordResponse.FromString,
                 )
 
 
 class UserAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def userByUsernameAndPassword(self, request, context):
+    def userByNameAndPassword(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -33,10 +33,10 @@ class UserAppServiceServicer(object):
 
 def add_UserAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'userByUsernameAndPassword': grpc.unary_unary_rpc_method_handler(
-                    servicer.userByUsernameAndPassword,
-                    request_deserializer=user__app__service__pb2.UserAppService_userByUsernameAndPasswordRequest.FromString,
-                    response_serializer=user__app__service__pb2.UserAppService_userByUsernameAndPasswordResponse.SerializeToString,
+            'userByNameAndPassword': grpc.unary_unary_rpc_method_handler(
+                    servicer.userByNameAndPassword,
+                    request_deserializer=user__app__service__pb2.UserAppService_userByNameAndPasswordRequest.FromString,
+                    response_serializer=user__app__service__pb2.UserAppService_userByNameAndPasswordResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -49,7 +49,7 @@ class UserAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def userByUsernameAndPassword(request,
+    def userByNameAndPassword(request,
             target,
             options=(),
             channel_credentials=None,
@@ -59,8 +59,8 @@ class UserAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/coral.identity.user.UserAppService/userByUsernameAndPassword',
-            user__app__service__pb2.UserAppService_userByUsernameAndPasswordRequest.SerializeToString,
-            user__app__service__pb2.UserAppService_userByUsernameAndPasswordResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/coral.identity.user.UserAppService/userByNameAndPassword',
+            user__app__service__pb2.UserAppService_userByNameAndPasswordRequest.SerializeToString,
+            user__app__service__pb2.UserAppService_userByNameAndPasswordResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -7,15 +7,15 @@ from src.resource.logging.logger import logger
 
 
 class User:
-    def __init__(self, id: str = str(uuid4()), username='', password=''):
+    def __init__(self, id: str = str(uuid4()), name='', password=''):
         self._id = id
-        self._username = username
+        self._name = name
         self._password = password
 
     @classmethod
-    def createFrom(cls, id: str = str(uuid4()), username='', password='', publishEvent: bool = False):
-        logger.debug(f'[User::createFrom] - with name {username}')
-        user = User(id, username, password)
+    def createFrom(cls, id: str = str(uuid4()), name='', password='', publishEvent: bool = False):
+        logger.debug(f'[User::createFrom] - with name {name}')
+        user = User(id, name, password)
         if publishEvent:
             logger.debug(f'[User::createFrom] - publish UserCreated event')
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
@@ -26,11 +26,11 @@ class User:
     def id(self) -> str:
         return self._id
 
-    def username(self) -> str:
-        return self._username
+    def name(self) -> str:
+        return self._name
 
     def password(self) -> str:
         return self._password
 
     def toMap(self) -> dict:
-        return {"id": self.id(), "username": self.username()}
+        return {"id": self.id(), "name": self.name()}

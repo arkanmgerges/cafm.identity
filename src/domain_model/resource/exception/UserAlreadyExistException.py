@@ -6,7 +6,7 @@ from src.domain_model.resource.exception.CodeExceptionConstant import CodeExcept
 
 
 class UserAlreadyExistException(DomainModelException):
-    def __init__(self, username: str = ''):
-        self.message = f'{username} already exist'
+    def __init__(self, name: str = ''):
+        self.message = f'{name} already exist'
         self.code = CodeExceptionConstant.OBJECT_ALREADY_EXIST.value
         super().__init__(self.message, self.code)

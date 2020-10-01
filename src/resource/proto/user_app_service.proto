@@ -2,16 +2,16 @@ syntax = "proto3";
 
 package coral.identity.user;
 
-message UserAppService_userByUsernameAndPasswordRequest {
-  string username = 1;
+message UserAppService_userByNameAndPasswordRequest {
+  string name = 1;
   string password = 2;
 }
 
-message UserAppService_userByUsernameAndPasswordResponse {
+message UserAppService_userByNameAndPasswordResponse {
   string id = 1;
-  string username = 2;
+  string name = 2;
 }
 
 service UserAppService {
-  rpc userByUsernameAndPassword (UserAppService_userByUsernameAndPasswordRequest) returns (UserAppService_userByUsernameAndPasswordResponse) {}
+  rpc userByNameAndPassword (UserAppService_userByNameAndPasswordRequest) returns (UserAppService_userByNameAndPasswordResponse) {}
 }

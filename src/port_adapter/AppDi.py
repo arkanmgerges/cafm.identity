@@ -2,6 +2,7 @@ from uuid import uuid4
 
 from injector import Module, Injector, singleton, provider, inject
 
+from src.application.AuthenticationApplicationService import AuthenticationApplicationService
 from src.application.OuApplicationService import OuApplicationService
 from src.application.PermissionApplicationService import PermissionApplicationService
 from src.application.ProjectApplicationService import ProjectApplicationService
@@ -10,6 +11,8 @@ from src.application.ResourceTypeApplicationService import ResourceTypeApplicati
 from src.application.RoleApplicationService import RoleApplicationService
 from src.application.UserApplicationService import UserApplicationService
 from src.application.UserGroupApplicationService import UserGroupApplicationService
+from src.domain_model.AuthenticationRepository import AuthenticationRepository
+from src.domain_model.AuthenticationService import AuthenticationService
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.permission.PermissionRepository import PermissionRepository
 from src.domain_model.project.ProjectRepository import ProjectRepository
@@ -26,6 +29,7 @@ from src.port_adapter.messaging.common.kafka.KafkaConsumer import KafkaConsumer
 from src.port_adapter.messaging.common.kafka.KafkaProducer import KafkaProducer
 from injector import ClassAssistedBuilder
 
+from src.port_adapter.repository.arangodb.AuthenticationRepositoryImpl import AuthenticationRepositoryImpl
 from src.port_adapter.repository.arangodb.ou.OuRepositoryImpl import OuRepositoryImpl
 from src.port_adapter.repository.arangodb.permission.PermissionRepositoryImpl import PermissionRepositoryImpl
 from src.port_adapter.repository.arangodb.project.ProjectRepositoryImpl import ProjectRepositoryImpl
@@ -82,6 +86,11 @@ class AppDi(Module):
     @provider
     def provideUserGroupApplicationService(self) -> UserGroupApplicationService:
         return UserGroupApplicationService(self.__injector__.get(UserGroupRepository))
+
+    @singleton
+    @provider
+    def provideAuthenticationApplicationService(self) -> AuthenticationApplicationService:
+        return AuthenticationApplicationService(self.__injector__.get(AuthenticationService))
     # endregion
 
     # region Repository
@@ -124,6 +133,18 @@ class AppDi(Module):
     @provider
     def provideUserGroupRepository(self) -> UserGroupRepository:
         return UserGroupRepositoryImpl()
+
+    @singleton
+    @provider
+    def provideAuthenticationRepository(self) -> AuthenticationRepository:
+        return AuthenticationRepositoryImpl()
+    # endregion
+
+    # region domain service
+    @singleton
+    @provider
+    def provideAuthenticationService(self) -> AuthenticationService:
+        return AuthenticationService(self.__injector__.get(AuthenticationRepository))
     # endregion
 
     # region Messaging

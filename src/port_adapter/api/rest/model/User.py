@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class User(BaseModel):
-    username: str
+    name: str
     email: str = None
     fullName: str = None
     disabled: bool = None

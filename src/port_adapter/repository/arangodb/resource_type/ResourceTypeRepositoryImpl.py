@@ -22,7 +22,7 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
             )
             self._db = self._connection[os.getenv('CORAL_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
-            raise Exception(f'[ResourceTypeRepository::__init__] Could not connect to the db, message: {e}')
+            raise Exception(f'[{ResourceTypeRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
 
     def createResourceType(self, resourceType: ResourceType):
         aql = '''

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package coral.identity.auth;
+
+message AuthAppService_authenticateUserByNameAndPasswordRequest {
+  string name = 1;
+  string password = 2;
+}
+
+message AuthAppService_authenticateUserByNameAndPasswordResponse {
+  string token = 1;
+}
+
+service AuthAppService {
+  rpc authenticateUserByNameAndPassword (AuthAppService_authenticateUserByNameAndPasswordRequest) returns (AuthAppService_authenticateUserByNameAndPasswordResponse) {}
+}

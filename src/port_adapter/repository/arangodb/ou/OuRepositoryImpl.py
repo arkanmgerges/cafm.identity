@@ -22,7 +22,7 @@ class OuRepositoryImpl(OuRepository):
             )
             self._db = self._connection[os.getenv('CORAL_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
-            raise Exception(f'[OuRepository::__init__] Could not connect to the db, message: {e}')
+            raise Exception(f'[{OuRepository.__init__.__qualname__}] Could not connect to the db, message: {e}')
 
     def createOu(self, ou: Ou):
         aql = '''

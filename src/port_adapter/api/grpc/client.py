@@ -7,7 +7,7 @@ import grpc
 from grpc.beta.interfaces import StatusCode
 
 from src.resource.logging.logger import logger
-from src.resource.proto._generated.user_app_service_pb2 import UserAppService_userByUsernameAndPasswordRequest
+from src.resource.proto._generated.user_app_service_pb2 import UserAppService_userByNameAndPasswordRequest
 from src.resource.proto._generated.user_app_service_pb2_grpc import UserAppServiceStub
 
 
@@ -20,8 +20,8 @@ def run():
         stub = UserAppServiceStub(channel)
         try:
             start = time.time()
-            response = stub.userByUsernameAndPassword.with_call(
-                UserAppService_userByUsernameAndPasswordRequest(username='arkan', password='12345'),
+            response = stub.userByNameAndPassword.with_call(
+                UserAppService_userByNameAndPasswordRequest(name='arkan', password='12345'),
                 metadata=(('auth_token', 'res-token-yumyum'),))
             # Compute item similarity matrix based on content attributes
             logger.info(f'{time.time() - start}: resp= {response} : processId: {pid}')

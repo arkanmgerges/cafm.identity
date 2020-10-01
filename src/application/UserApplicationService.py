@@ -12,23 +12,23 @@ class UserApplicationService:
     def __init__(self, userRepository: UserRepository):
         self._userRepository = userRepository
 
-    def createObjectOnly(self, username: str, password: str):
+    def createObjectOnly(self, name: str, password: str):
         try:
-            self._userRepository.userByUsername(username=username)
-            raise UserAlreadyExistException(username=username)
+            self._userRepository.userByName(name=name)
+            raise UserAlreadyExistException(name=name)
         except UserDoesNotExistException:
-            logger.debug(f'[{UserApplicationService.createObjectOnly.__qualname__}] - with name = {username}')
-            return User.createFrom(username=username, password=password)
+            logger.debug(f'[{UserApplicationService.createObjectOnly.__qualname__}] - with name = {name}')
+            return User.createFrom(name=name, password=password)
 
-    def createUser(self, id: str, username: str, password: str):
+    def createUser(self, id: str, name: str, password: str):
         try:
-            self._userRepository.userByUsername(username=username)
-            raise UserAlreadyExistException(username=username)
+            self._userRepository.userByName(name=name)
+            raise UserAlreadyExistException(name=name)
         except UserDoesNotExistException:
-            logger.debug(f'[{UserApplicationService.createUser.__qualname__}] - with name = {username}')
-            user = User.createFrom(id=id, username=username, password=password, publishEvent=True)
+            logger.debug(f'[{UserApplicationService.createUser.__qualname__}] - with name = {name}')
+            user = User.createFrom(id=id, name=name, password=password, publishEvent=True)
             self._userRepository.createUser(user)
             return user
 
-    def userByUsernameAndPassword(self, username: str, password: str):
-        return self._userRepository.userByUsernameAndPassword(username=username, password=password)
+    def userByNameAndPassword(self, name: str, password: str):
+        return self._userRepository.userByNameAndPassword(name=name, password=password)

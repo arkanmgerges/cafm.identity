@@ -8,3 +8,4 @@ import "resource_type_app_service.proto";
 import "role_app_service.proto";
 import "user_app_service.proto";
 import "user_group_app_service.proto";
+import "auth_app_service.proto";

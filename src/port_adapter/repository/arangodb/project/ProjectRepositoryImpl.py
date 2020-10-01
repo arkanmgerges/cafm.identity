@@ -22,7 +22,7 @@ class ProjectRepositoryImpl(ProjectRepository):
             )
             self._db = self._connection[os.getenv('CORAL_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
-            raise Exception(f'[ProjectRepository::__init__] Could not connect to the db, message: {e}')
+            raise Exception(f'[{ProjectRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
 
     def createProject(self, project: Project):
         aql = '''
