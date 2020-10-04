@@ -17,13 +17,16 @@ DIR_NAME = os.path.dirname(os.path.realpath(__file__)) + '/../avro'
 @avro_schema(AvroModelContainer(default_namespace="coral.identity"),
              schema_file=os.path.join(DIR_NAME, "identity-command.avsc"))
 class IdentityCommand(MessageBase):
-    def __init__(self, id, creatorServiceName='coral.identity', name='', data='', createdOn=round(time.time() * 1000),
-                 externalId=None, externalServiceName=None, externalName=None, externalData=None,
+    def __init__(self, id, creatorServiceName='coral.identity', name='', metadata='', data='',
+                 createdOn=round(time.time() * 1000),
+                 externalId=None, externalServiceName=None, externalName=None, externalMetadata=None, externalData=None,
                  externalCreatedOn=None):
         super().__init__(
-            {'id': id, 'creatorServiceName': creatorServiceName, 'name': name, 'createdOn': createdOn, 'data': data,
+            {'id': id, 'creatorServiceName': creatorServiceName, 'name': name, 'createdOn': createdOn,
+             'metadata': metadata, 'data': data,
              'externalId': externalId, 'externalServiceName': externalServiceName, 'externalName': externalName,
-             'externalCreatedOn': externalCreatedOn, 'externalData': externalData})
+             'externalCreatedOn': externalCreatedOn, 'externalMetadata': externalMetadata,
+             'externalData': externalData})
 
     def toMap(self, thisObjectForMapping=None, _ctx=None):
         return vars(self)['_value']

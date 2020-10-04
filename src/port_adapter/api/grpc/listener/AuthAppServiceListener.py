@@ -30,7 +30,7 @@ class AuthAppServiceListener(AuthAppServiceServicer):
             #     print('Received initial metadata: key=%s value=%s' % (key, value))
 
             authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
-            token: bytes = authAppService.authenticateUserByNameAndPassword(name=request.name,
+            token: str = authAppService.authenticateUserByNameAndPassword(name=request.name,
                                                                             password=request.password)
             return AuthAppService_authenticateUserByNameAndPasswordResponse(token=token)
         except UserDoesNotExistException:

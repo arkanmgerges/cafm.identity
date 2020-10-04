@@ -1,6 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from src.resource.logging.logger import logger
+
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
@@ -18,6 +20,7 @@ class Project:
         if publishEvent:
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
             from src.domain_model.project.ProjectCreated import ProjectCreated
+            logger.debug(f'[{Project.createFrom.__qualname__}] - Create Project with name = {name} and id = {id}')
             DomainEventPublisher.addEventForPublishing(ProjectCreated(project))
         return project
 

@@ -1,6 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from src.resource.logging.logger import logger
+
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
@@ -18,6 +20,7 @@ class Realm:
         if publishEvent:
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
             from src.domain_model.realm.RealmCreated import RealmCreated
+            logger.debug(f'[{Realm.createFrom.__qualname__}] - Create Realm with name = {name} and id = {id}')
             DomainEventPublisher.addEventForPublishing(RealmCreated(realm))
         return realm
 

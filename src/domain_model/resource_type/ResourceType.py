@@ -3,6 +3,8 @@
 """
 from uuid import uuid4
 
+from src.resource.logging.logger import logger
+
 
 class ResourceType:
     def __init__(self, id: str = str(uuid4()), name=''):
@@ -15,6 +17,7 @@ class ResourceType:
         if publishEvent:
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
             from src.domain_model.resource_type.ResourceTypeCreated import ResourceTypeCreated
+            logger.debug(f'[{ResourceType.createFrom.__qualname__}] - Create ResourceType with name = {name} and id = {id}')
             DomainEventPublisher.addEventForPublishing(ResourceTypeCreated(resourceType))
         return resourceType
 

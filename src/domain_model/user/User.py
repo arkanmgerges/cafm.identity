@@ -14,10 +14,10 @@ class User:
 
     @classmethod
     def createFrom(cls, id: str = str(uuid4()), name='', password='', publishEvent: bool = False):
-        logger.debug(f'[User::createFrom] - with name {name}')
+        logger.debug(f'[{User.createFrom.__qualname__}] - with name {name}')
         user = User(id, name, password)
         if publishEvent:
-            logger.debug(f'[User::createFrom] - publish UserCreated event')
+            logger.debug(f'[{User.createFrom.__qualname__}] - publish UserCreated event')
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
             from src.domain_model.user.UserCreated import UserCreated
             DomainEventPublisher.addEventForPublishing(UserCreated(user))

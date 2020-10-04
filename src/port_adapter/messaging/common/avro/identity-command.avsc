@@ -6,11 +6,13 @@
  "fields": [
      {"name": "externalId", "type": ["null", "string"], "default": null, "doc": "The external identity of the command, this command can be created by other service"},
      {"name": "externalName",  "type": ["null", "string"], "default": null, "doc": "The name of the command used by the external service"},
+     {"name": "externalMetadata",  "type": ["null", "string"], "default": null, "doc": "The metadata of the command used by the other service"},
      {"name": "externalData",  "type": ["null", "string"], "default": null, "doc": "The data of the command used by the other service"},
      {"name": "externalServiceName",  "type": ["null", "string"], "default": null, "doc": "The service who created the command externally"},
      {"name": "externalCreatedOn",  "type": ["null", "long"], "default": null, "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this command got created"},
      {"name": "id", "type": "string", "doc": "The identity of the command"},
      {"name": "name",  "type": "string", "default": "", "doc": "The name of the command"},
+     {"name": "metadata",  "type": "string", "default": "", "doc": "The metadata of the command"},
      {"name": "data",  "type": "string", "default": "", "doc": "The data of the command"},
      {"name": "creatorServiceName",  "type": "string", "default": "", "doc": "The service who created the command"},
      {"name": "createdOn",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this command got created"}

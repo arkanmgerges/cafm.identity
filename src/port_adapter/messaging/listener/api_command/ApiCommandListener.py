@@ -53,28 +53,40 @@ class ApiCommandListener:
 
                 if msg.error():
                     if msg.error().code() == KafkaError._PARTITION_EOF:
-                        logger.info(f'msg reached partition eof: {msg.error()}')
+                        logger.info(
+                            f'[{ApiCommandListener.run.__qualname__}] - msg reached partition eof: {msg.error()}')
                     else:
                         logger.error(msg.error())
                 else:
                     # Proper message
                     logger.info(
-                        f'topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
+                        f'[{ApiCommandListener.run.__qualname__}] - topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
                     logger.info(f'value: {msg.value()}')
 
                     try:
                         msgData = msg.value()
                         handledResult = self.handleCommand(name=msgData['name'], data=msgData['data'])
-                        logger.debug(f'handleResult returned with: {handledResult}')
+                        if handledResult is None:  # Consume the offset since there is no handler for it
+                            logger.info(
+                                f'[{ApiCommandListener.run.__qualname__}] - Consume the offset for handleCommand(name={msgData["name"]}, data={msgData["data"]})')
+                            producer.sendOffsetsToTransaction(consumer)
+                            producer.commitTransaction()
+                            producer.beginTransaction()
+                            continue
+
+                        logger.debug(
+                            f'[{ApiCommandListener.run.__qualname__}] - handleResult returned with: {handledResult}')
                         producer.produce(
                             obj=IdentityCommand(id=msgData['id'],
                                                 creatorServiceName=self._creatorServiceName,
                                                 name=msgData['name'],
+                                                metadata=msgData['metadata'],
                                                 data=json.dumps(handledResult['data']),
                                                 createdOn=handledResult['createdOn'],
                                                 externalId=msgData['id'],
                                                 externalServiceName=msgData['creatorServiceName'],
                                                 externalName=msgData['name'],
+                                                externalMetadata=msgData['metadata'],
                                                 externalData=msgData['data'],
                                                 externalCreatedOn=msgData['createdOn']),
                             schema=IdentityCommand.get_schema())
@@ -91,6 +103,7 @@ class ApiCommandListener:
                         msgData = msg.value()
                         producer.produce(
                             obj=ApiResponse(commandId=msgData['id'], commandName=msgData['name'],
+                                            metadata=msgData['metadata'],
                                             data=json.dumps({'reason': {'message': e.message, 'code': e.code}}),
                                             creatorServiceName=self._creatorServiceName, success=False),
                             schema=ApiResponse.get_schema())
@@ -102,9 +115,9 @@ class ApiCommandListener:
 
                 # sleep(3)
         except KeyboardInterrupt:
-            logger.info(f'Aborted by user')
+            logger.info(f'[{ApiCommandListener.run.__qualname__}] - Aborted by user')
         except SystemExit:
-            logger.info(f'Shutting down the process')
+            logger.info(f'[{ApiCommandListener.run.__qualname__}] - Shutting down the process')
         finally:
             producer.abortTransaction()
             # Close down consumer to commit final offsets.
@@ -113,7 +126,9 @@ class ApiCommandListener:
     def handleCommand(self, name, data):
         for handler in self._handlers:
             if handler.canHandle(name):
-                return handler.handleCommand(name=name, data=data)
+                result = handler.handleCommand(name=name, data=data)
+                return {"data": ""} if result is None else result
+        return None
 
     def addHandlers(self):
         self._handlers.append(CreateUserHandler())

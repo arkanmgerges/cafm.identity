@@ -1,6 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from src.resource.logging.logger import logger
+
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
@@ -18,6 +20,7 @@ class Ou:
         if publishEvent:
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
             from src.domain_model.ou.OuCreated import OuCreated
+            logger.debug(f'[{Ou.createFrom.__qualname__}] - Create Ou with name = {name} and id = {id}')
             DomainEventPublisher.addEventForPublishing(OuCreated(ou))
         return ou
 

@@ -56,25 +56,33 @@ class IdentityCommandListener:
 
                 if msg.error():
                     if msg.error().code() == KafkaError._PARTITION_EOF:
-                        logger.info(f'msg reached partition eof: {msg.error()}')
+                        logger.info(f'[{IdentityCommandListener.run.__qualname__}] - msg reached partition eof: {msg.error()}')
                     else:
                         logger.error(msg.error())
                 else:
                     # Proper message
                     logger.info(
-                        f'topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
+                        f'[{IdentityCommandListener.run.__qualname__}] - topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
                     logger.info(f'value: {msg.value()}')
 
                     try:
                         msgData = msg.value()
                         handledResult = self.handleCommand(name=msgData['name'], data=msgData['data'])
-                        logger.debug(f'handleResult returned with: {handledResult}')
+                        if handledResult is None:  # Consume the offset since there is no handler for it
+                            logger.info(
+                                f'[{IdentityCommandListener.run.__qualname__}] - Consume the offset for handleCommand(name={msgData["name"]}, data={msgData["data"]})')
+                            producer.sendOffsetsToTransaction(consumer)
+                            producer.commitTransaction()
+                            producer.beginTransaction()
+                            continue
 
+                        logger.debug(f'[{IdentityCommandListener.run.__qualname__}] - handleResult returned with: {handledResult}')
                         # If the external service name who initiated the command is coral api service name, then
                         if msgData['externalServiceName'] == self._coralApiServiceName:
                             # Produce to api response
                             producer.produce(
                                 obj=ApiResponse(commandId=msgData['externalId'], commandName=msgData['externalName'],
+                                                metadata=msgData['metadata'],
                                                 data=json.dumps(handledResult['data']),
                                                 creatorServiceName=self._creatorServiceName, success=True),
                                 schema=ApiResponse.get_schema())
@@ -90,6 +98,7 @@ class IdentityCommandListener:
                                 obj=IdentityEvent(id=domainEvent.id(),
                                                   creatorServiceName=self._creatorServiceName,
                                                   name=domainEvent.name(),
+                                                  metadata=msgData['metadata'],
                                                   data=json.dumps(domainEvent.data()),
                                                   occurredOn=domainEvent.occurredOn()),
                                 schema=IdentityEvent.get_schema())
@@ -108,6 +117,7 @@ class IdentityCommandListener:
                         msgData = msg.value()
                         producer.produce(
                             obj=ApiResponse(commandId=msgData['id'], commandName=msgData['name'],
+                                            metadata=msgData['metadata'],
                                             data=json.dumps({'reason': {'message': e.message, 'code': e.code}}),
                                             creatorServiceName=self._creatorServiceName, success=False),
                             schema=ApiResponse.get_schema())
@@ -119,9 +129,9 @@ class IdentityCommandListener:
 
                 # sleep(3)
         except KeyboardInterrupt:
-            logger.info(f'Aborted by user')
+            logger.info(f'[{IdentityCommandListener.run.__qualname__}] - Aborted by user')
         except SystemExit:
-            logger.info(f'Shutting down the process')
+            logger.info(f'[{IdentityCommandListener.run.__qualname__}] - Shutting down the process')
         finally:
             producer.abortTransaction()
             # Close down consumer to commit final offsets.
@@ -130,7 +140,9 @@ class IdentityCommandListener:
     def handleCommand(self, name, data):
         for handler in self._handlers:
             if handler.canHandle(name):
-                return handler.handleCommand(name=name, data=data)
+                result = handler.handleCommand(name=name, data=data)
+                return {"data": ""} if result is None else result
+        return None
 
     def addHandlers(self):
         self._handlers.append(CreateUserHandler())
