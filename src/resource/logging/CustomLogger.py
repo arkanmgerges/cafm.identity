@@ -78,7 +78,7 @@ class CustomLogger(Logger):
         self.modifyMsg(super().log, msg)
 
     def modifyMsg(self, call, msg, printStackTrace=False, printErrorExc=False):
-        maxLines = int(os.getenv('CORAL_API_LOGGING_MAX_FILE_LINES', 5))
+        maxLines = int(os.getenv('CAFM_API_LOGGING_MAX_FILE_LINES', 5))
         counter = 0
         listOfRecords = inspect.stack()
         modifiedMsgArray = ['\nfiles:\n']

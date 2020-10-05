@@ -1,5 +1,5 @@
 {
- "namespace": "coral.api",
+ "namespace": "cafm.api",
  "type": "record",
  "name": "Response",
  "doc": "Response to be sent to the api",

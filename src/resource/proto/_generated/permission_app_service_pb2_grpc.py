@@ -15,7 +15,7 @@ class PermissionAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.permissionByName = channel.unary_unary(
-                '/coral.identity.permission.PermissionAppService/permissionByName',
+                '/cafm.identity.permission.PermissionAppService/permissionByName',
                 request_serializer=permission__app__service__pb2.PermissionAppService_permissionByNameRequest.SerializeToString,
                 response_deserializer=permission__app__service__pb2.PermissionAppService_permissionByNameResponse.FromString,
                 )
@@ -40,7 +40,7 @@ def add_PermissionAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'coral.identity.permission.PermissionAppService', rpc_method_handlers)
+            'cafm.identity.permission.PermissionAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -59,7 +59,7 @@ class PermissionAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/coral.identity.permission.PermissionAppService/permissionByName',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission.PermissionAppService/permissionByName',
             permission__app__service__pb2.PermissionAppService_permissionByNameRequest.SerializeToString,
             permission__app__service__pb2.PermissionAppService_permissionByNameResponse.FromString,
             options, channel_credentials,

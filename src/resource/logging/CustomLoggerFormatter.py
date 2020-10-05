@@ -16,7 +16,7 @@ class CustomLoggerFormatter(logging.Formatter):
     reset = "\x1b[0m"
     # format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
     format = (
-        f'%(asctime)s - [{os.getenv("CORAL_IDENTITY_SERVICE_NAME", "coral.identity")}] - %(name)s - %(levelname)s - %(message)s')
+        f'%(asctime)s - [{os.getenv("CAFM_IDENTITY_SERVICE_NAME", "cafm.identity")}] - %(name)s - %(levelname)s - %(message)s')
 
     FORMATS = {
         logging.DEBUG: blue + format + reset,

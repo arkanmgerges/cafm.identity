@@ -1,5 +1,5 @@
 {
- "namespace": "coral.identity",
+ "namespace": "cafm.identity",
  "type": "record",
  "name": "Command",
  "doc": "Command to be created for the identity",

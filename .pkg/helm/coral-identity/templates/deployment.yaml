@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "coral-api.fullname" . }}
+  name: {{ include "cafm-api.fullname" . }}
   labels:
-    {{- include "coral-api.labels" . | nindent 4 }}
+    {{- include "cafm-api.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "coral-api.selectorLabels" . | nindent 6 }}
+      {{- include "cafm-api.selectorLabels" . | nindent 6 }}
   template:
     metadata:
     {{- with .Values.podAnnotations }}
@@ -16,7 +16,7 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
-        {{- include "coral-api.selectorLabels" . | nindent 8 }}
+        {{- include "cafm-api.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

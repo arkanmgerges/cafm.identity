@@ -15,7 +15,7 @@ class ProjectAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.projectByName = channel.unary_unary(
-                '/coral.identity.project.ProjectAppService/projectByName',
+                '/cafm.identity.project.ProjectAppService/projectByName',
                 request_serializer=project__app__service__pb2.ProjectAppService_projectByNameRequest.SerializeToString,
                 response_deserializer=project__app__service__pb2.ProjectAppService_projectByNameResponse.FromString,
                 )
@@ -40,7 +40,7 @@ def add_ProjectAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'coral.identity.project.ProjectAppService', rpc_method_handlers)
+            'cafm.identity.project.ProjectAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -59,7 +59,7 @@ class ProjectAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/coral.identity.project.ProjectAppService/projectByName',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/projectByName',
             project__app__service__pb2.ProjectAppService_projectByNameRequest.SerializeToString,
             project__app__service__pb2.ProjectAppService_projectByNameResponse.FromString,
             options, channel_credentials,

@@ -13,4 +13,4 @@ spec:
   storageClassName: nfs-client
   selector:
     matchLabels:
-      app: {{ template "coral-api.name" $ }}
+      app: {{ template "cafm-api.name" $ }}

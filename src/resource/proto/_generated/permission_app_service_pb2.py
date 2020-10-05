@@ -15,11 +15,11 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='permission_app_service.proto',
-  package='coral.identity.permission',
+  package='cafm.identity.permission',
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1cpermission_app_service.proto\x12\x19\x63oral.identity.permission\"<\n,PermissionAppService_permissionByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"I\n-PermissionAppService_permissionByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xc0\x01\n\x14PermissionAppService\x12\xa7\x01\n\x10permissionByName\x12G.coral.identity.permission.PermissionAppService_permissionByNameRequest\x1aH.coral.identity.permission.PermissionAppService_permissionByNameResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x1cpermission_app_service.proto\x12\x18\x63\x61\x66m.identity.permission\"<\n,PermissionAppService_permissionByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"I\n-PermissionAppService_permissionByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xbe\x01\n\x14PermissionAppService\x12\xa5\x01\n\x10permissionByName\x12\x46.cafm.identity.permission.PermissionAppService_permissionByNameRequest\x1aG.cafm.identity.permission.PermissionAppService_permissionByNameResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -27,14 +27,14 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _PERMISSIONAPPSERVICE_PERMISSIONBYNAMEREQUEST = _descriptor.Descriptor(
   name='PermissionAppService_permissionByNameRequest',
-  full_name='coral.identity.permission.PermissionAppService_permissionByNameRequest',
+  full_name='cafm.identity.permission.PermissionAppService_permissionByNameRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.permission.PermissionAppService_permissionByNameRequest.name', index=0,
+      name='name', full_name='cafm.identity.permission.PermissionAppService_permissionByNameRequest.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -52,28 +52,28 @@ _PERMISSIONAPPSERVICE_PERMISSIONBYNAMEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=59,
-  serialized_end=119,
+  serialized_start=58,
+  serialized_end=118,
 )
 
 
 _PERMISSIONAPPSERVICE_PERMISSIONBYNAMERESPONSE = _descriptor.Descriptor(
   name='PermissionAppService_permissionByNameResponse',
-  full_name='coral.identity.permission.PermissionAppService_permissionByNameResponse',
+  full_name='cafm.identity.permission.PermissionAppService_permissionByNameResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='coral.identity.permission.PermissionAppService_permissionByNameResponse.id', index=0,
+      name='id', full_name='cafm.identity.permission.PermissionAppService_permissionByNameResponse.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.permission.PermissionAppService_permissionByNameResponse.name', index=1,
+      name='name', full_name='cafm.identity.permission.PermissionAppService_permissionByNameResponse.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -91,8 +91,8 @@ _PERMISSIONAPPSERVICE_PERMISSIONBYNAMERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=121,
-  serialized_end=194,
+  serialized_start=120,
+  serialized_end=193,
 )
 
 DESCRIPTOR.message_types_by_name['PermissionAppService_permissionByNameRequest'] = _PERMISSIONAPPSERVICE_PERMISSIONBYNAMEREQUEST
@@ -102,14 +102,14 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 PermissionAppService_permissionByNameRequest = _reflection.GeneratedProtocolMessageType('PermissionAppService_permissionByNameRequest', (_message.Message,), {
   'DESCRIPTOR' : _PERMISSIONAPPSERVICE_PERMISSIONBYNAMEREQUEST,
   '__module__' : 'permission_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.permission.PermissionAppService_permissionByNameRequest)
+  # @@protoc_insertion_point(class_scope:cafm.identity.permission.PermissionAppService_permissionByNameRequest)
   })
 _sym_db.RegisterMessage(PermissionAppService_permissionByNameRequest)
 
 PermissionAppService_permissionByNameResponse = _reflection.GeneratedProtocolMessageType('PermissionAppService_permissionByNameResponse', (_message.Message,), {
   'DESCRIPTOR' : _PERMISSIONAPPSERVICE_PERMISSIONBYNAMERESPONSE,
   '__module__' : 'permission_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.permission.PermissionAppService_permissionByNameResponse)
+  # @@protoc_insertion_point(class_scope:cafm.identity.permission.PermissionAppService_permissionByNameResponse)
   })
 _sym_db.RegisterMessage(PermissionAppService_permissionByNameResponse)
 
@@ -117,17 +117,17 @@ _sym_db.RegisterMessage(PermissionAppService_permissionByNameResponse)
 
 _PERMISSIONAPPSERVICE = _descriptor.ServiceDescriptor(
   name='PermissionAppService',
-  full_name='coral.identity.permission.PermissionAppService',
+  full_name='cafm.identity.permission.PermissionAppService',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=197,
-  serialized_end=389,
+  serialized_start=196,
+  serialized_end=386,
   methods=[
   _descriptor.MethodDescriptor(
     name='permissionByName',
-    full_name='coral.identity.permission.PermissionAppService.permissionByName',
+    full_name='cafm.identity.permission.PermissionAppService.permissionByName',
     index=0,
     containing_service=None,
     input_type=_PERMISSIONAPPSERVICE_PERMISSIONBYNAMEREQUEST,

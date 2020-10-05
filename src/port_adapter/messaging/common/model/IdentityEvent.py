@@ -14,10 +14,10 @@ from src.port_adapter.messaging.common.model.MessageBase import MessageBase
 DIR_NAME = os.path.dirname(os.path.realpath(__file__)) + '/../avro'
 
 
-@avro_schema(AvroModelContainer(default_namespace="coral.identity"),
+@avro_schema(AvroModelContainer(default_namespace="cafm.identity"),
              schema_file=os.path.join(DIR_NAME, "identity-event.avsc"))
 class IdentityEvent(MessageBase):
-    def __init__(self, id, creatorServiceName='coral.identity', name='', metadata='', data='',
+    def __init__(self, id, creatorServiceName='cafm.identity', name='', metadata='', data='',
                  occurredOn=round(time.time() * 1000)):
         super().__init__(
             {'id': id, 'creatorServiceName': creatorServiceName, 'name': name, 'occurredOn': occurredOn,
@@ -27,7 +27,7 @@ class IdentityEvent(MessageBase):
         return vars(self)['_value']
 
     def topic(self):
-        return os.getenv('CORAL_IDENTITY_EVENT_TOPIC', 'coral.identity.evt')
+        return os.getenv('CAFM_IDENTITY_EVENT_TOPIC', 'cafm.identity.evt')
 
     def msgId(self):
         return self.id

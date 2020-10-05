@@ -15,7 +15,7 @@ class UserGroupAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.userGroupByName = channel.unary_unary(
-                '/coral.identity.userGroup.UserGroupAppService/userGroupByName',
+                '/cafm.identity.userGroup.UserGroupAppService/userGroupByName',
                 request_serializer=user__group__app__service__pb2.UserGroupAppService_userGroupByNameRequest.SerializeToString,
                 response_deserializer=user__group__app__service__pb2.UserGroupAppService_userGroupByNameResponse.FromString,
                 )
@@ -40,7 +40,7 @@ def add_UserGroupAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'coral.identity.userGroup.UserGroupAppService', rpc_method_handlers)
+            'cafm.identity.userGroup.UserGroupAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -59,7 +59,7 @@ class UserGroupAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/coral.identity.userGroup.UserGroupAppService/userGroupByName',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.userGroup.UserGroupAppService/userGroupByName',
             user__group__app__service__pb2.UserGroupAppService_userGroupByNameRequest.SerializeToString,
             user__group__app__service__pb2.UserGroupAppService_userGroupByNameResponse.FromString,
             options, channel_credentials,

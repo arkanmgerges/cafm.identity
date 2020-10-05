@@ -19,7 +19,7 @@ class Di(Module):
     def provideLogger(self) -> Logger:
         loggerLevel = LogLevelEnum.DEBUG
         try:
-            loggerLevel = os.getenv('CORAL_IDENTITY_LOGGING', LogLevelEnum.NOTSET)
+            loggerLevel = os.getenv('CAFM_IDENTITY_LOGGING', LogLevelEnum.NOTSET)
             if loggerLevel != LogLevelEnum.NOTSET:
                 if loggerLevel not in [logLevel.name for logLevel in LogLevelEnum]:
                     loggerLevel = LogLevelEnum.NOTSET
@@ -28,7 +28,7 @@ class Di(Module):
         except:
             loggerLevel = LogLevelEnum.NOTSET
 
-        logger = CustomLogger('coralLogger')
+        logger = CustomLogger('cafmLogger')
         if loggerLevel != LogLevelEnum.NOTSET:
             ch = logging.StreamHandler()
             ch.setLevel(loggerLevel.name)

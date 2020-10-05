@@ -15,7 +15,7 @@ class OuAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.ouByName = channel.unary_unary(
-                '/coral.identity.ou.OuAppService/ouByName',
+                '/cafm.identity.ou.OuAppService/ouByName',
                 request_serializer=ou__app__service__pb2.OuAppService_ouByNameRequest.SerializeToString,
                 response_deserializer=ou__app__service__pb2.OuAppService_ouByNameResponse.FromString,
                 )
@@ -40,7 +40,7 @@ def add_OuAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'coral.identity.ou.OuAppService', rpc_method_handlers)
+            'cafm.identity.ou.OuAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -59,7 +59,7 @@ class OuAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/coral.identity.ou.OuAppService/ouByName',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.ou.OuAppService/ouByName',
             ou__app__service__pb2.OuAppService_ouByNameRequest.SerializeToString,
             ou__app__service__pb2.OuAppService_ouByNameResponse.FromString,
             options, channel_credentials,

@@ -15,7 +15,7 @@ class AuthAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.authenticateUserByNameAndPassword = channel.unary_unary(
-                '/coral.identity.auth.AuthAppService/authenticateUserByNameAndPassword',
+                '/cafm.identity.auth.AuthAppService/authenticateUserByNameAndPassword',
                 request_serializer=auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordRequest.SerializeToString,
                 response_deserializer=auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordResponse.FromString,
                 )
@@ -40,7 +40,7 @@ def add_AuthAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'coral.identity.auth.AuthAppService', rpc_method_handlers)
+            'cafm.identity.auth.AuthAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -59,7 +59,7 @@ class AuthAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/coral.identity.auth.AuthAppService/authenticateUserByNameAndPassword',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.auth.AuthAppService/authenticateUserByNameAndPassword',
             auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordRequest.SerializeToString,
             auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordResponse.FromString,
             options, channel_credentials,

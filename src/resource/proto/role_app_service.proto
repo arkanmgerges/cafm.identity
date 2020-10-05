@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package coral.identity.role;
+package cafm.identity.role;
 
 message RoleAppService_roleByNameRequest {
   string name = 1;

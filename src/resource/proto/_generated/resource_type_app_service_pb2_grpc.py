@@ -15,7 +15,7 @@ class ResourceTypeAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.resourceTypeByName = channel.unary_unary(
-                '/coral.identity.resourceType.ResourceTypeAppService/resourceTypeByName',
+                '/cafm.identity.resourceType.ResourceTypeAppService/resourceTypeByName',
                 request_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameRequest.SerializeToString,
                 response_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameResponse.FromString,
                 )
@@ -40,7 +40,7 @@ def add_ResourceTypeAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'coral.identity.resourceType.ResourceTypeAppService', rpc_method_handlers)
+            'cafm.identity.resourceType.ResourceTypeAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -59,7 +59,7 @@ class ResourceTypeAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/coral.identity.resourceType.ResourceTypeAppService/resourceTypeByName',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.resourceType.ResourceTypeAppService/resourceTypeByName',
             resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameRequest.SerializeToString,
             resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameResponse.FromString,
             options, channel_credentials,

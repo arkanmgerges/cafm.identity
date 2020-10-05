@@ -1,11 +1,11 @@
-# Default values for coral-api.
+# Default values for cafm-api.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: docker-registry.dev.arkan.cloud/coral/coral-identity
+  repository: docker-registry.dev.arkan.cloud/cafm/cafm-identity
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "v1"
@@ -17,25 +17,25 @@ fullnameOverride: ""
 logging: DEBUG
 secretToken: 1234 # Set this from command line
 artifact:
-  name: "{{ template \"coral-api.name\" $ }}-artifact"
+  name: "{{ template \"cafm-api.name\" $ }}-artifact"
   basePath: /artifact
-  relativePath: coral.identity/bundle
+  relativePath: cafm.identity/bundle
 
 env:
-  - name: CORAL_IDENTITY_LOGGING
+  - name: CAFM_IDENTITY_LOGGING
     valueFrom:
       configMapKeyRef:
-        name: coral-identity
-        key: CORAL_IDENTITY_LOGGING
+        name: cafm-identity
+        key: CAFM_IDENTITY_LOGGING
   - name: SECRET_TOKEN
     valueFrom:
       configMapKeyRef:
-        name: coral-identity
+        name: cafm-identity
         key: SECRET_TOKEN
   - name: ARTIFACT_FOLDER_PATH
     valueFrom:
       configMapKeyRef:
-        name: coral-identity
+        name: cafm-identity
         key: ARTIFACT_PATH
 nfs:
   path: /exports
@@ -57,7 +57,7 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 80
-  targetPortName: coral-identity
+  targetPortName: cafm-identity
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

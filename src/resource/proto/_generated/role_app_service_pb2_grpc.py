@@ -15,7 +15,7 @@ class RoleAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.roleByName = channel.unary_unary(
-                '/coral.identity.role.RoleAppService/roleByName',
+                '/cafm.identity.role.RoleAppService/roleByName',
                 request_serializer=role__app__service__pb2.RoleAppService_roleByNameRequest.SerializeToString,
                 response_deserializer=role__app__service__pb2.RoleAppService_roleByNameResponse.FromString,
                 )
@@ -40,7 +40,7 @@ def add_RoleAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'coral.identity.role.RoleAppService', rpc_method_handlers)
+            'cafm.identity.role.RoleAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -59,7 +59,7 @@ class RoleAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/coral.identity.role.RoleAppService/roleByName',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.role.RoleAppService/roleByName',
             role__app__service__pb2.RoleAppService_roleByNameRequest.SerializeToString,
             role__app__service__pb2.RoleAppService_roleByNameResponse.FromString,
             options, channel_credentials,

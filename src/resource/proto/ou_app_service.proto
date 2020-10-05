@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package coral.identity.ou;
+package cafm.identity.ou;
 
 message OuAppService_ouByNameRequest {
   string name = 1;

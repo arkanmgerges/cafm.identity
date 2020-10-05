@@ -1,5 +1,5 @@
 {
- "namespace": "coral.api",
+ "namespace": "cafm.api",
  "type": "record",
  "name": "Command",
  "doc": "Command to be created by the api",

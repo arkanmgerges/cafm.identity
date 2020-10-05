@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package coral.identity.realm;
+package cafm.identity.realm;
 
 message RealmAppService_realmByNameRequest {
   string name = 1;

@@ -15,7 +15,7 @@ class RealmAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.realmByName = channel.unary_unary(
-                '/coral.identity.realm.RealmAppService/realmByName',
+                '/cafm.identity.realm.RealmAppService/realmByName',
                 request_serializer=realm__app__service__pb2.RealmAppService_realmByNameRequest.SerializeToString,
                 response_deserializer=realm__app__service__pb2.RealmAppService_realmByNameResponse.FromString,
                 )
@@ -40,7 +40,7 @@ def add_RealmAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'coral.identity.realm.RealmAppService', rpc_method_handlers)
+            'cafm.identity.realm.RealmAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -59,7 +59,7 @@ class RealmAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/coral.identity.realm.RealmAppService/realmByName',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.realm.RealmAppService/realmByName',
             realm__app__service__pb2.RealmAppService_realmByNameRequest.SerializeToString,
             realm__app__service__pb2.RealmAppService_realmByNameResponse.FromString,
             options, channel_credentials,

@@ -15,7 +15,7 @@ class UserAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.userByNameAndPassword = channel.unary_unary(
-                '/coral.identity.user.UserAppService/userByNameAndPassword',
+                '/cafm.identity.user.UserAppService/userByNameAndPassword',
                 request_serializer=user__app__service__pb2.UserAppService_userByNameAndPasswordRequest.SerializeToString,
                 response_deserializer=user__app__service__pb2.UserAppService_userByNameAndPasswordResponse.FromString,
                 )
@@ -40,7 +40,7 @@ def add_UserAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'coral.identity.user.UserAppService', rpc_method_handlers)
+            'cafm.identity.user.UserAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -59,7 +59,7 @@ class UserAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/coral.identity.user.UserAppService/userByNameAndPassword',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user.UserAppService/userByNameAndPassword',
             user__app__service__pb2.UserAppService_userByNameAndPasswordRequest.SerializeToString,
             user__app__service__pb2.UserAppService_userByNameAndPasswordResponse.FromString,
             options, channel_credentials,

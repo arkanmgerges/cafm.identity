@@ -21,7 +21,7 @@ from src.resource.logging.logger import logger
 class ApiCommandListener:
     def __init__(self):
         self._handlers = []
-        self._creatorServiceName = os.getenv('CORAL_IDENTITY_SERVICE_NAME', 'coral.identity')
+        self._creatorServiceName = os.getenv('CAFM_IDENTITY_SERVICE_NAME', 'cafm.identity')
         self.addHandlers()
         signal.signal(signal.SIGINT, self.interruptExecution)
         signal.signal(signal.SIGTERM, self.interruptExecution)
@@ -31,11 +31,11 @@ class ApiCommandListener:
 
     def run(self):
         consumer: Consumer = AppDi.Builder.buildConsumer(
-            groupId=os.getenv('CORAL_IDENTITY_CONSUMER_GROUP_API_CMD_NAME', ''), autoCommit=False, partitionEof=True,
+            groupId=os.getenv('CAFM_IDENTITY_CONSUMER_GROUP_API_CMD_NAME', ''), autoCommit=False, partitionEof=True,
             autoOffsetReset=ConsumerOffsetReset.earliest.name)
 
         # Subscribe
-        consumer.subscribe([os.getenv('CORAL_API_COMMAND_TOPIC', '')])
+        consumer.subscribe([os.getenv('CAFM_API_COMMAND_TOPIC', '')])
 
         # Producer
         producer: TransactionalProducer = AppDi.instance.get(TransactionalProducer)

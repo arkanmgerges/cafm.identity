@@ -1,5 +1,5 @@
 {
- "namespace": "coral.identity",
+ "namespace": "cafm.identity",
  "type": "record",
  "name": "Event",
  "doc": "Event that has occurred in identity",

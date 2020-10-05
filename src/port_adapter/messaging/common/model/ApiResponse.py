@@ -14,7 +14,7 @@ from src.port_adapter.messaging.common.model.MessageBase import MessageBase
 DIR_NAME = os.path.dirname(os.path.realpath(__file__)) + '/../avro'
 
 
-@avro_schema(AvroModelContainer(default_namespace="coral.api"),
+@avro_schema(AvroModelContainer(default_namespace="cafm.api"),
              schema_file=os.path.join(DIR_NAME, "api-response.avsc"))
 class ApiResponse(MessageBase):
     def __init__(self, commandId, commandName, metadata='', data='', creatorServiceName='', success=False,
@@ -28,7 +28,7 @@ class ApiResponse(MessageBase):
         return vars(self)['_value']
 
     def topic(self):
-        return os.getenv('CORAL_API_RESPONSE_TOPIC', 'coral.api.rsp')
+        return os.getenv('CAFM_API_RESPONSE_TOPIC', 'cafm.api.rsp')
 
     def msgId(self):
         return self.commandId

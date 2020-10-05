@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ template "coral-api.name" $ }}
+  name: {{ template "cafm-api.name" $ }}
   labels:
-    app: {{ template "coral-api.name" $ }}
+    app: {{ template "cafm-api.name" $ }}
 spec:
   capacity:
     storage: 1Gi

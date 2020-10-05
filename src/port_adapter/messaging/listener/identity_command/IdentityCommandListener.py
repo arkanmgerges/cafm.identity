@@ -22,8 +22,8 @@ from src.resource.logging.logger import logger
 class IdentityCommandListener:
     def __init__(self):
         self._handlers = []
-        self._creatorServiceName = os.getenv('CORAL_IDENTITY_SERVICE_NAME', 'coral.identity')
-        self._coralApiServiceName = os.getenv('CORAL_API_SERVICE_NAME', 'coral.api')
+        self._creatorServiceName = os.getenv('CAFM_IDENTITY_SERVICE_NAME', 'cafm.identity')
+        self._cafmApiServiceName = os.getenv('CAFM_API_SERVICE_NAME', 'cafm.api')
         self.addHandlers()
         signal.signal(signal.SIGINT, self.interruptExecution)
         signal.signal(signal.SIGTERM, self.interruptExecution)
@@ -33,12 +33,12 @@ class IdentityCommandListener:
 
     def run(self):
         consumer: Consumer = AppDi.Builder.buildConsumer(
-            groupId=os.getenv('CORAL_IDENTITY_CONSUMER_GROUP_IDENTITY_CMD_NAME', ''), autoCommit=False,
+            groupId=os.getenv('CAFM_IDENTITY_CONSUMER_GROUP_IDENTITY_CMD_NAME', ''), autoCommit=False,
             partitionEof=True,
             autoOffsetReset=ConsumerOffsetReset.earliest.name)
 
         # Subscribe - Consume the commands that exist in this service own topic
-        consumer.subscribe([os.getenv('CORAL_IDENTITY_COMMAND_TOPIC', '')])
+        consumer.subscribe([os.getenv('CAFM_IDENTITY_COMMAND_TOPIC', '')])
 
         # Producer
         producer: TransactionalProducer = AppDi.instance.get(TransactionalProducer)
@@ -77,8 +77,8 @@ class IdentityCommandListener:
                             continue
 
                         logger.debug(f'[{IdentityCommandListener.run.__qualname__}] - handleResult returned with: {handledResult}')
-                        # If the external service name who initiated the command is coral api service name, then
-                        if msgData['externalServiceName'] == self._coralApiServiceName:
+                        # If the external service name who initiated the command is cafm api service name, then
+                        if msgData['externalServiceName'] == self._cafmApiServiceName:
                             # Produce to api response
                             producer.produce(
                                 obj=ApiResponse(commandId=msgData['externalId'], commandName=msgData['externalName'],

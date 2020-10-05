@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package coral.identity.project;
+package cafm.identity.project;
 
 message ProjectAppService_projectByNameRequest {
   string name = 1;

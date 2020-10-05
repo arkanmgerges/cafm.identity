@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package coral.identity.resourceType;
+package cafm.identity.resourceType;
 
 message ResourceTypeAppService_resourceTypeByNameRequest {
   string name = 1;

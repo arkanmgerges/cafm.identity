@@ -13,7 +13,7 @@ from src.resource.proto._generated.user_app_service_pb2_grpc import UserAppServi
 
 def run():
     "The run method, that sends gRPC conformant messsages to the server"
-    logger.info('coral.identity: Starting grpc client')
+    logger.info('cafm.identity: Starting grpc client')
     counter = 0
     pid = os.getpid()
     with grpc.insecure_channel("localhost:9999") as channel:

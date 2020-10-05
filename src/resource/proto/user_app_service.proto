@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package coral.identity.user;
+package cafm.identity.user;
 
 message UserAppService_userByNameAndPasswordRequest {
   string name = 1;

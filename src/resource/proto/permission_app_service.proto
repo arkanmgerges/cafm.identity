@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package coral.identity.permission;
+package cafm.identity.permission;
 
 message PermissionAppService_permissionByNameRequest {
   string name = 1;

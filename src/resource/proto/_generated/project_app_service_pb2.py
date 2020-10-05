@@ -15,11 +15,11 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='project_app_service.proto',
-  package='coral.identity.project',
+  package='cafm.identity.project',
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x19project_app_service.proto\x12\x16\x63oral.identity.project\"6\n&ProjectAppService_projectByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"C\n\'ProjectAppService_projectByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xa8\x01\n\x11ProjectAppService\x12\x92\x01\n\rprojectByName\x12>.coral.identity.project.ProjectAppService_projectByNameRequest\x1a?.coral.identity.project.ProjectAppService_projectByNameResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x19project_app_service.proto\x12\x15\x63\x61\x66m.identity.project\"6\n&ProjectAppService_projectByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"C\n\'ProjectAppService_projectByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xa6\x01\n\x11ProjectAppService\x12\x90\x01\n\rprojectByName\x12=.cafm.identity.project.ProjectAppService_projectByNameRequest\x1a>.cafm.identity.project.ProjectAppService_projectByNameResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -27,14 +27,14 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _PROJECTAPPSERVICE_PROJECTBYNAMEREQUEST = _descriptor.Descriptor(
   name='ProjectAppService_projectByNameRequest',
-  full_name='coral.identity.project.ProjectAppService_projectByNameRequest',
+  full_name='cafm.identity.project.ProjectAppService_projectByNameRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.project.ProjectAppService_projectByNameRequest.name', index=0,
+      name='name', full_name='cafm.identity.project.ProjectAppService_projectByNameRequest.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -52,28 +52,28 @@ _PROJECTAPPSERVICE_PROJECTBYNAMEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=53,
-  serialized_end=107,
+  serialized_start=52,
+  serialized_end=106,
 )
 
 
 _PROJECTAPPSERVICE_PROJECTBYNAMERESPONSE = _descriptor.Descriptor(
   name='ProjectAppService_projectByNameResponse',
-  full_name='coral.identity.project.ProjectAppService_projectByNameResponse',
+  full_name='cafm.identity.project.ProjectAppService_projectByNameResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='coral.identity.project.ProjectAppService_projectByNameResponse.id', index=0,
+      name='id', full_name='cafm.identity.project.ProjectAppService_projectByNameResponse.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.project.ProjectAppService_projectByNameResponse.name', index=1,
+      name='name', full_name='cafm.identity.project.ProjectAppService_projectByNameResponse.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -91,8 +91,8 @@ _PROJECTAPPSERVICE_PROJECTBYNAMERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=109,
-  serialized_end=176,
+  serialized_start=108,
+  serialized_end=175,
 )
 
 DESCRIPTOR.message_types_by_name['ProjectAppService_projectByNameRequest'] = _PROJECTAPPSERVICE_PROJECTBYNAMEREQUEST
@@ -102,14 +102,14 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 ProjectAppService_projectByNameRequest = _reflection.GeneratedProtocolMessageType('ProjectAppService_projectByNameRequest', (_message.Message,), {
   'DESCRIPTOR' : _PROJECTAPPSERVICE_PROJECTBYNAMEREQUEST,
   '__module__' : 'project_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.project.ProjectAppService_projectByNameRequest)
+  # @@protoc_insertion_point(class_scope:cafm.identity.project.ProjectAppService_projectByNameRequest)
   })
 _sym_db.RegisterMessage(ProjectAppService_projectByNameRequest)
 
 ProjectAppService_projectByNameResponse = _reflection.GeneratedProtocolMessageType('ProjectAppService_projectByNameResponse', (_message.Message,), {
   'DESCRIPTOR' : _PROJECTAPPSERVICE_PROJECTBYNAMERESPONSE,
   '__module__' : 'project_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.project.ProjectAppService_projectByNameResponse)
+  # @@protoc_insertion_point(class_scope:cafm.identity.project.ProjectAppService_projectByNameResponse)
   })
 _sym_db.RegisterMessage(ProjectAppService_projectByNameResponse)
 
@@ -117,17 +117,17 @@ _sym_db.RegisterMessage(ProjectAppService_projectByNameResponse)
 
 _PROJECTAPPSERVICE = _descriptor.ServiceDescriptor(
   name='ProjectAppService',
-  full_name='coral.identity.project.ProjectAppService',
+  full_name='cafm.identity.project.ProjectAppService',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=179,
-  serialized_end=347,
+  serialized_start=178,
+  serialized_end=344,
   methods=[
   _descriptor.MethodDescriptor(
     name='projectByName',
-    full_name='coral.identity.project.ProjectAppService.projectByName',
+    full_name='cafm.identity.project.ProjectAppService.projectByName',
     index=0,
     containing_service=None,
     input_type=_PROJECTAPPSERVICE_PROJECTBYNAMEREQUEST,

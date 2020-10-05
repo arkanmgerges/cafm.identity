@@ -15,11 +15,11 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='resource_type_app_service.proto',
-  package='coral.identity.resourceType',
+  package='cafm.identity.resourceType',
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1fresource_type_app_service.proto\x12\x1b\x63oral.identity.resourceType\"@\n0ResourceTypeAppService_resourceTypeByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"M\n1ResourceTypeAppService_resourceTypeByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xd0\x01\n\x16ResourceTypeAppService\x12\xb5\x01\n\x12resourceTypeByName\x12M.coral.identity.resourceType.ResourceTypeAppService_resourceTypeByNameRequest\x1aN.coral.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x1fresource_type_app_service.proto\x12\x1a\x63\x61\x66m.identity.resourceType\"@\n0ResourceTypeAppService_resourceTypeByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"M\n1ResourceTypeAppService_resourceTypeByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xce\x01\n\x16ResourceTypeAppService\x12\xb3\x01\n\x12resourceTypeByName\x12L.cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameRequest\x1aM.cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -27,14 +27,14 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMEREQUEST = _descriptor.Descriptor(
   name='ResourceTypeAppService_resourceTypeByNameRequest',
-  full_name='coral.identity.resourceType.ResourceTypeAppService_resourceTypeByNameRequest',
+  full_name='cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.resourceType.ResourceTypeAppService_resourceTypeByNameRequest.name', index=0,
+      name='name', full_name='cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameRequest.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -52,28 +52,28 @@ _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=64,
-  serialized_end=128,
+  serialized_start=63,
+  serialized_end=127,
 )
 
 
 _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMERESPONSE = _descriptor.Descriptor(
   name='ResourceTypeAppService_resourceTypeByNameResponse',
-  full_name='coral.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse',
+  full_name='cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='coral.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse.id', index=0,
+      name='id', full_name='cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse.name', index=1,
+      name='name', full_name='cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -91,8 +91,8 @@ _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=130,
-  serialized_end=207,
+  serialized_start=129,
+  serialized_end=206,
 )
 
 DESCRIPTOR.message_types_by_name['ResourceTypeAppService_resourceTypeByNameRequest'] = _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMEREQUEST
@@ -102,14 +102,14 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 ResourceTypeAppService_resourceTypeByNameRequest = _reflection.GeneratedProtocolMessageType('ResourceTypeAppService_resourceTypeByNameRequest', (_message.Message,), {
   'DESCRIPTOR' : _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMEREQUEST,
   '__module__' : 'resource_type_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.resourceType.ResourceTypeAppService_resourceTypeByNameRequest)
+  # @@protoc_insertion_point(class_scope:cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameRequest)
   })
 _sym_db.RegisterMessage(ResourceTypeAppService_resourceTypeByNameRequest)
 
 ResourceTypeAppService_resourceTypeByNameResponse = _reflection.GeneratedProtocolMessageType('ResourceTypeAppService_resourceTypeByNameResponse', (_message.Message,), {
   'DESCRIPTOR' : _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMERESPONSE,
   '__module__' : 'resource_type_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse)
+  # @@protoc_insertion_point(class_scope:cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse)
   })
 _sym_db.RegisterMessage(ResourceTypeAppService_resourceTypeByNameResponse)
 
@@ -117,17 +117,17 @@ _sym_db.RegisterMessage(ResourceTypeAppService_resourceTypeByNameResponse)
 
 _RESOURCETYPEAPPSERVICE = _descriptor.ServiceDescriptor(
   name='ResourceTypeAppService',
-  full_name='coral.identity.resourceType.ResourceTypeAppService',
+  full_name='cafm.identity.resourceType.ResourceTypeAppService',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=210,
-  serialized_end=418,
+  serialized_start=209,
+  serialized_end=415,
   methods=[
   _descriptor.MethodDescriptor(
     name='resourceTypeByName',
-    full_name='coral.identity.resourceType.ResourceTypeAppService.resourceTypeByName',
+    full_name='cafm.identity.resourceType.ResourceTypeAppService.resourceTypeByName',
     index=0,
     containing_service=None,
     input_type=_RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMEREQUEST,

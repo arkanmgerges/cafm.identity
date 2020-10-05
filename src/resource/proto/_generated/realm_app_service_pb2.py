@@ -15,11 +15,11 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='realm_app_service.proto',
-  package='coral.identity.realm',
+  package='cafm.identity.realm',
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x17realm_app_service.proto\x12\x14\x63oral.identity.realm\"2\n\"RealmAppService_realmByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"?\n#RealmAppService_realmByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\x98\x01\n\x0fRealmAppService\x12\x84\x01\n\x0brealmByName\x12\x38.coral.identity.realm.RealmAppService_realmByNameRequest\x1a\x39.coral.identity.realm.RealmAppService_realmByNameResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x17realm_app_service.proto\x12\x13\x63\x61\x66m.identity.realm\"2\n\"RealmAppService_realmByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"?\n#RealmAppService_realmByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\x96\x01\n\x0fRealmAppService\x12\x82\x01\n\x0brealmByName\x12\x37.cafm.identity.realm.RealmAppService_realmByNameRequest\x1a\x38.cafm.identity.realm.RealmAppService_realmByNameResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -27,14 +27,14 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _REALMAPPSERVICE_REALMBYNAMEREQUEST = _descriptor.Descriptor(
   name='RealmAppService_realmByNameRequest',
-  full_name='coral.identity.realm.RealmAppService_realmByNameRequest',
+  full_name='cafm.identity.realm.RealmAppService_realmByNameRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.realm.RealmAppService_realmByNameRequest.name', index=0,
+      name='name', full_name='cafm.identity.realm.RealmAppService_realmByNameRequest.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -52,28 +52,28 @@ _REALMAPPSERVICE_REALMBYNAMEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=49,
-  serialized_end=99,
+  serialized_start=48,
+  serialized_end=98,
 )
 
 
 _REALMAPPSERVICE_REALMBYNAMERESPONSE = _descriptor.Descriptor(
   name='RealmAppService_realmByNameResponse',
-  full_name='coral.identity.realm.RealmAppService_realmByNameResponse',
+  full_name='cafm.identity.realm.RealmAppService_realmByNameResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='coral.identity.realm.RealmAppService_realmByNameResponse.id', index=0,
+      name='id', full_name='cafm.identity.realm.RealmAppService_realmByNameResponse.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.realm.RealmAppService_realmByNameResponse.name', index=1,
+      name='name', full_name='cafm.identity.realm.RealmAppService_realmByNameResponse.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -91,8 +91,8 @@ _REALMAPPSERVICE_REALMBYNAMERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=101,
-  serialized_end=164,
+  serialized_start=100,
+  serialized_end=163,
 )
 
 DESCRIPTOR.message_types_by_name['RealmAppService_realmByNameRequest'] = _REALMAPPSERVICE_REALMBYNAMEREQUEST
@@ -102,14 +102,14 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 RealmAppService_realmByNameRequest = _reflection.GeneratedProtocolMessageType('RealmAppService_realmByNameRequest', (_message.Message,), {
   'DESCRIPTOR' : _REALMAPPSERVICE_REALMBYNAMEREQUEST,
   '__module__' : 'realm_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.realm.RealmAppService_realmByNameRequest)
+  # @@protoc_insertion_point(class_scope:cafm.identity.realm.RealmAppService_realmByNameRequest)
   })
 _sym_db.RegisterMessage(RealmAppService_realmByNameRequest)
 
 RealmAppService_realmByNameResponse = _reflection.GeneratedProtocolMessageType('RealmAppService_realmByNameResponse', (_message.Message,), {
   'DESCRIPTOR' : _REALMAPPSERVICE_REALMBYNAMERESPONSE,
   '__module__' : 'realm_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.realm.RealmAppService_realmByNameResponse)
+  # @@protoc_insertion_point(class_scope:cafm.identity.realm.RealmAppService_realmByNameResponse)
   })
 _sym_db.RegisterMessage(RealmAppService_realmByNameResponse)
 
@@ -117,17 +117,17 @@ _sym_db.RegisterMessage(RealmAppService_realmByNameResponse)
 
 _REALMAPPSERVICE = _descriptor.ServiceDescriptor(
   name='RealmAppService',
-  full_name='coral.identity.realm.RealmAppService',
+  full_name='cafm.identity.realm.RealmAppService',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=167,
-  serialized_end=319,
+  serialized_start=166,
+  serialized_end=316,
   methods=[
   _descriptor.MethodDescriptor(
     name='realmByName',
-    full_name='coral.identity.realm.RealmAppService.realmByName',
+    full_name='cafm.identity.realm.RealmAppService.realmByName',
     index=0,
     containing_service=None,
     input_type=_REALMAPPSERVICE_REALMBYNAMEREQUEST,

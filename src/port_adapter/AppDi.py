@@ -29,15 +29,15 @@ from src.port_adapter.messaging.common.kafka.KafkaConsumer import KafkaConsumer
 from src.port_adapter.messaging.common.kafka.KafkaProducer import KafkaProducer
 from injector import ClassAssistedBuilder
 
-from src.port_adapter.repository.arangodb.AuthenticationRepositoryImpl import AuthenticationRepositoryImpl
-from src.port_adapter.repository.arangodb.ou.OuRepositoryImpl import OuRepositoryImpl
-from src.port_adapter.repository.arangodb.permission.PermissionRepositoryImpl import PermissionRepositoryImpl
-from src.port_adapter.repository.arangodb.project.ProjectRepositoryImpl import ProjectRepositoryImpl
-from src.port_adapter.repository.arangodb.realm.RealmRepositoryImpl import RealmRepositoryImpl
-from src.port_adapter.repository.arangodb.resource_type.ResourceTypeRepositoryImpl import ResourceTypeRepositoryImpl
-from src.port_adapter.repository.arangodb.role.RoleRepositoryImpl import RoleRepositoryImpl
-from src.port_adapter.repository.arangodb.user.UserRepositoryImpl import UserRepositoryImpl
-from src.port_adapter.repository.arangodb.user_group.UserGroupRepositoryImpl import UserGroupRepositoryImpl
+from src.port_adapter.repository.domain_model.AuthenticationRepositoryImpl import AuthenticationRepositoryImpl
+from src.port_adapter.repository.domain_model.ou.OuRepositoryImpl import OuRepositoryImpl
+from src.port_adapter.repository.domain_model.permission.PermissionRepositoryImpl import PermissionRepositoryImpl
+from src.port_adapter.repository.domain_model.project.ProjectRepositoryImpl import ProjectRepositoryImpl
+from src.port_adapter.repository.domain_model.realm.RealmRepositoryImpl import RealmRepositoryImpl
+from src.port_adapter.repository.domain_model.resource_type.ResourceTypeRepositoryImpl import ResourceTypeRepositoryImpl
+from src.port_adapter.repository.domain_model.role.RoleRepositoryImpl import RoleRepositoryImpl
+from src.port_adapter.repository.domain_model.user.UserRepositoryImpl import UserRepositoryImpl
+from src.port_adapter.repository.domain_model.user_group.UserGroupRepositoryImpl import UserGroupRepositoryImpl
 
 
 class AppDi(Module):

@@ -14,10 +14,10 @@ from src.port_adapter.messaging.common.model.MessageBase import MessageBase
 DIR_NAME = os.path.dirname(os.path.realpath(__file__)) + '/../avro'
 
 
-@avro_schema(AvroModelContainer(default_namespace="coral.identity"),
+@avro_schema(AvroModelContainer(default_namespace="cafm.identity"),
              schema_file=os.path.join(DIR_NAME, "identity-command.avsc"))
 class IdentityCommand(MessageBase):
-    def __init__(self, id, creatorServiceName='coral.identity', name='', metadata='', data='',
+    def __init__(self, id, creatorServiceName='cafm.identity', name='', metadata='', data='',
                  createdOn=round(time.time() * 1000),
                  externalId=None, externalServiceName=None, externalName=None, externalMetadata=None, externalData=None,
                  externalCreatedOn=None):
@@ -32,7 +32,7 @@ class IdentityCommand(MessageBase):
         return vars(self)['_value']
 
     def topic(self):
-        return os.getenv('CORAL_IDENTITY_COMMAND_TOPIC', 'coral.identity.cmd')
+        return os.getenv('CAFM_IDENTITY_COMMAND_TOPIC', 'cafm.identity.cmd')
 
     def msgId(self):
         return self.id

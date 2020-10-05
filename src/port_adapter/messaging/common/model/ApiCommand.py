@@ -14,10 +14,10 @@ from src.port_adapter.messaging.common.model.MessageBase import MessageBase
 DIR_NAME = os.path.dirname(os.path.realpath(__file__)) + '/../avro'
 
 
-@avro_schema(AvroModelContainer(default_namespace="coral.api"),
+@avro_schema(AvroModelContainer(default_namespace="cafm.api"),
              schema_file=os.path.join(DIR_NAME, "api-command.avsc"))
 class ApiCommand(MessageBase):
-    def __init__(self, id, creatorServiceName='coral.api', name='', metadata='', data='',
+    def __init__(self, id, creatorServiceName='cafm.api', name='', metadata='', data='',
                  createdOn=round(time.time() * 1000)):
         super().__init__(
             {'id': id, 'creatorServiceName': creatorServiceName, 'name': name, 'createdOn': createdOn,
@@ -27,7 +27,7 @@ class ApiCommand(MessageBase):
         return vars(self)['_value']
 
     def topic(self):
-        return os.getenv('CORAL_API_COMMAND_TOPIC', None)
+        return os.getenv('CAFM_API_COMMAND_TOPIC', None)
 
     def msgId(self):
         return self.id

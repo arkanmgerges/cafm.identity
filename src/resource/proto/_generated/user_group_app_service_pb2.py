@@ -15,11 +15,11 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='user_group_app_service.proto',
-  package='coral.identity.userGroup',
+  package='cafm.identity.userGroup',
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1cuser_group_app_service.proto\x12\x18\x63oral.identity.userGroup\":\n*UserGroupAppService_userGroupByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"G\n+UserGroupAppService_userGroupByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xb8\x01\n\x13UserGroupAppService\x12\xa0\x01\n\x0fuserGroupByName\x12\x44.coral.identity.userGroup.UserGroupAppService_userGroupByNameRequest\x1a\x45.coral.identity.userGroup.UserGroupAppService_userGroupByNameResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x1cuser_group_app_service.proto\x12\x17\x63\x61\x66m.identity.userGroup\":\n*UserGroupAppService_userGroupByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"G\n+UserGroupAppService_userGroupByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xb6\x01\n\x13UserGroupAppService\x12\x9e\x01\n\x0fuserGroupByName\x12\x43.cafm.identity.userGroup.UserGroupAppService_userGroupByNameRequest\x1a\x44.cafm.identity.userGroup.UserGroupAppService_userGroupByNameResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -27,14 +27,14 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _USERGROUPAPPSERVICE_USERGROUPBYNAMEREQUEST = _descriptor.Descriptor(
   name='UserGroupAppService_userGroupByNameRequest',
-  full_name='coral.identity.userGroup.UserGroupAppService_userGroupByNameRequest',
+  full_name='cafm.identity.userGroup.UserGroupAppService_userGroupByNameRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.userGroup.UserGroupAppService_userGroupByNameRequest.name', index=0,
+      name='name', full_name='cafm.identity.userGroup.UserGroupAppService_userGroupByNameRequest.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -52,28 +52,28 @@ _USERGROUPAPPSERVICE_USERGROUPBYNAMEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=58,
-  serialized_end=116,
+  serialized_start=57,
+  serialized_end=115,
 )
 
 
 _USERGROUPAPPSERVICE_USERGROUPBYNAMERESPONSE = _descriptor.Descriptor(
   name='UserGroupAppService_userGroupByNameResponse',
-  full_name='coral.identity.userGroup.UserGroupAppService_userGroupByNameResponse',
+  full_name='cafm.identity.userGroup.UserGroupAppService_userGroupByNameResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='coral.identity.userGroup.UserGroupAppService_userGroupByNameResponse.id', index=0,
+      name='id', full_name='cafm.identity.userGroup.UserGroupAppService_userGroupByNameResponse.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.userGroup.UserGroupAppService_userGroupByNameResponse.name', index=1,
+      name='name', full_name='cafm.identity.userGroup.UserGroupAppService_userGroupByNameResponse.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -91,8 +91,8 @@ _USERGROUPAPPSERVICE_USERGROUPBYNAMERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=118,
-  serialized_end=189,
+  serialized_start=117,
+  serialized_end=188,
 )
 
 DESCRIPTOR.message_types_by_name['UserGroupAppService_userGroupByNameRequest'] = _USERGROUPAPPSERVICE_USERGROUPBYNAMEREQUEST
@@ -102,14 +102,14 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 UserGroupAppService_userGroupByNameRequest = _reflection.GeneratedProtocolMessageType('UserGroupAppService_userGroupByNameRequest', (_message.Message,), {
   'DESCRIPTOR' : _USERGROUPAPPSERVICE_USERGROUPBYNAMEREQUEST,
   '__module__' : 'user_group_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.userGroup.UserGroupAppService_userGroupByNameRequest)
+  # @@protoc_insertion_point(class_scope:cafm.identity.userGroup.UserGroupAppService_userGroupByNameRequest)
   })
 _sym_db.RegisterMessage(UserGroupAppService_userGroupByNameRequest)
 
 UserGroupAppService_userGroupByNameResponse = _reflection.GeneratedProtocolMessageType('UserGroupAppService_userGroupByNameResponse', (_message.Message,), {
   'DESCRIPTOR' : _USERGROUPAPPSERVICE_USERGROUPBYNAMERESPONSE,
   '__module__' : 'user_group_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.userGroup.UserGroupAppService_userGroupByNameResponse)
+  # @@protoc_insertion_point(class_scope:cafm.identity.userGroup.UserGroupAppService_userGroupByNameResponse)
   })
 _sym_db.RegisterMessage(UserGroupAppService_userGroupByNameResponse)
 
@@ -117,17 +117,17 @@ _sym_db.RegisterMessage(UserGroupAppService_userGroupByNameResponse)
 
 _USERGROUPAPPSERVICE = _descriptor.ServiceDescriptor(
   name='UserGroupAppService',
-  full_name='coral.identity.userGroup.UserGroupAppService',
+  full_name='cafm.identity.userGroup.UserGroupAppService',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=192,
-  serialized_end=376,
+  serialized_start=191,
+  serialized_end=373,
   methods=[
   _descriptor.MethodDescriptor(
     name='userGroupByName',
-    full_name='coral.identity.userGroup.UserGroupAppService.userGroupByName',
+    full_name='cafm.identity.userGroup.UserGroupAppService.userGroupByName',
     index=0,
     containing_service=None,
     input_type=_USERGROUPAPPSERVICE_USERGROUPBYNAMEREQUEST,

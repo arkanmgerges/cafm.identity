@@ -15,11 +15,11 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='ou_app_service.proto',
-  package='coral.identity.ou',
+  package='cafm.identity.ou',
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x14ou_app_service.proto\x12\x11\x63oral.identity.ou\",\n\x1cOuAppService_ouByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"9\n\x1dOuAppService_ouByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\x7f\n\x0cOuAppService\x12o\n\x08ouByName\x12/.coral.identity.ou.OuAppService_ouByNameRequest\x1a\x30.coral.identity.ou.OuAppService_ouByNameResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x14ou_app_service.proto\x12\x10\x63\x61\x66m.identity.ou\",\n\x1cOuAppService_ouByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"9\n\x1dOuAppService_ouByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2}\n\x0cOuAppService\x12m\n\x08ouByName\x12..cafm.identity.ou.OuAppService_ouByNameRequest\x1a/.cafm.identity.ou.OuAppService_ouByNameResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -27,14 +27,14 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _OUAPPSERVICE_OUBYNAMEREQUEST = _descriptor.Descriptor(
   name='OuAppService_ouByNameRequest',
-  full_name='coral.identity.ou.OuAppService_ouByNameRequest',
+  full_name='cafm.identity.ou.OuAppService_ouByNameRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.ou.OuAppService_ouByNameRequest.name', index=0,
+      name='name', full_name='cafm.identity.ou.OuAppService_ouByNameRequest.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -52,28 +52,28 @@ _OUAPPSERVICE_OUBYNAMEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=43,
-  serialized_end=87,
+  serialized_start=42,
+  serialized_end=86,
 )
 
 
 _OUAPPSERVICE_OUBYNAMERESPONSE = _descriptor.Descriptor(
   name='OuAppService_ouByNameResponse',
-  full_name='coral.identity.ou.OuAppService_ouByNameResponse',
+  full_name='cafm.identity.ou.OuAppService_ouByNameResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='coral.identity.ou.OuAppService_ouByNameResponse.id', index=0,
+      name='id', full_name='cafm.identity.ou.OuAppService_ouByNameResponse.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='name', full_name='coral.identity.ou.OuAppService_ouByNameResponse.name', index=1,
+      name='name', full_name='cafm.identity.ou.OuAppService_ouByNameResponse.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -91,8 +91,8 @@ _OUAPPSERVICE_OUBYNAMERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=89,
-  serialized_end=146,
+  serialized_start=88,
+  serialized_end=145,
 )
 
 DESCRIPTOR.message_types_by_name['OuAppService_ouByNameRequest'] = _OUAPPSERVICE_OUBYNAMEREQUEST
@@ -102,14 +102,14 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 OuAppService_ouByNameRequest = _reflection.GeneratedProtocolMessageType('OuAppService_ouByNameRequest', (_message.Message,), {
   'DESCRIPTOR' : _OUAPPSERVICE_OUBYNAMEREQUEST,
   '__module__' : 'ou_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.ou.OuAppService_ouByNameRequest)
+  # @@protoc_insertion_point(class_scope:cafm.identity.ou.OuAppService_ouByNameRequest)
   })
 _sym_db.RegisterMessage(OuAppService_ouByNameRequest)
 
 OuAppService_ouByNameResponse = _reflection.GeneratedProtocolMessageType('OuAppService_ouByNameResponse', (_message.Message,), {
   'DESCRIPTOR' : _OUAPPSERVICE_OUBYNAMERESPONSE,
   '__module__' : 'ou_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:coral.identity.ou.OuAppService_ouByNameResponse)
+  # @@protoc_insertion_point(class_scope:cafm.identity.ou.OuAppService_ouByNameResponse)
   })
 _sym_db.RegisterMessage(OuAppService_ouByNameResponse)
 
@@ -117,17 +117,17 @@ _sym_db.RegisterMessage(OuAppService_ouByNameResponse)
 
 _OUAPPSERVICE = _descriptor.ServiceDescriptor(
   name='OuAppService',
-  full_name='coral.identity.ou.OuAppService',
+  full_name='cafm.identity.ou.OuAppService',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=148,
-  serialized_end=275,
+  serialized_start=147,
+  serialized_end=272,
   methods=[
   _descriptor.MethodDescriptor(
     name='ouByName',
-    full_name='coral.identity.ou.OuAppService.ouByName',
+    full_name='cafm.identity.ou.OuAppService.ouByName',
     index=0,
     containing_service=None,
     input_type=_OUAPPSERVICE_OUBYNAMEREQUEST,
