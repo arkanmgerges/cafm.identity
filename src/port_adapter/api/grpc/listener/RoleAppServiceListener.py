@@ -46,16 +46,18 @@ class RoleAppServiceListener(RoleAppServiceServicer):
     def roles(self, request, context):
         try:
             metadata = context.invocation_metadata()
-            logger.debug(f'[{RoleAppServiceListener.roles.__qualname__}] - Getting metadata {metadata}')
+            resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
-            logger.debug(f'[{RoleAppServiceListener.roles.__qualname__}] - claims {claims}')
             ownedRoles = claims['role'] if 'role' in claims else []
-            logger.debug(f'[{RoleAppServiceListener.roles.__qualname__}] - ownedRoles {ownedRoles}')
+            logger.debug(f'[{RoleAppServiceListener.roles.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
+resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
 
             roles: List[Role] = roleAppService.roles(ownedRoles=ownedRoles, resultFrom=request.resultFrom,
-                                                     resultSize=request.resultSize)
-            return RoleAppService_rolesResponse(response=json.dumps([role.toMap() for role in roles]))
+                                                     resultSize=resultSize)
+            response = json.dumps([role.toMap() for role in roles])
+            logger.debug(f'[{RoleAppServiceListener.roles.__qualname__}] - response: {response}')
+            return RoleAppService_rolesResponse(response=response)
         except RoleDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No roles found')

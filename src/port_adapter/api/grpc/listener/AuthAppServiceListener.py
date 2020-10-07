@@ -10,7 +10,8 @@ from src.application.AuthenticationApplicationService import AuthenticationAppli
 from src.domain_model.resource.exception.InvalidCredentialsException import InvalidCredentialsException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.resource.logging.logger import logger
-from src.resource.proto._generated.auth_app_service_pb2 import AuthAppService_authenticateUserByNameAndPasswordResponse
+from src.resource.proto._generated.auth_app_service_pb2 import AuthAppService_authenticateUserByNameAndPasswordResponse, \
+    AuthAppService_isAuthenticatedResponse
 from src.resource.proto._generated.auth_app_service_pb2_grpc import AuthAppServiceServicer
 
 
@@ -54,3 +55,34 @@ class AuthAppServiceListener(AuthAppServiceServicer):
             logger.warn(
                 f'[{AuthAppServiceListener.authenticateUserByNameAndPassword.__qualname__}] - exception, Unknown: {e}')
             raise e
+
+    # def isAuthenticated(self, request, context):
+    #     metadata = context.invocation_metadata()
+    #     logger.debug(f'[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Getting metadata {metadata}')
+    #     token = metadata[0].value if 'token' in metadata[0] else None
+    #     if token is None:
+    #         context.set_code(grpc.StatusCode.NOT_FOUND)
+    #         context.set_details('Token not found')
+    #         return AuthAppService_isAuthenticatedResponse()
+    #     else:
+    #         try:
+    #             authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
+    #             result = authAppService.isAuthenticated(token=token)
+    #             return AuthAppService_isAuthenticatedResponse(response=result)
+    #         except Exception as e:
+    #             context.set_code(grpc.StatusCode.ERROR)
+    #             context.set_details(e)
+    #             return AuthAppService_isAuthenticatedResponse()
+
+
+    def isAuthenticated(self, request, context):
+        try:
+            authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
+            logger.debug(f'[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Call with token: {request.token}')
+            result = authAppService.isAuthenticated(token=request.token)
+            logger.debug(f'[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Receive response with result: {result}')
+            return AuthAppService_isAuthenticatedResponse(response=result)
+        except Exception as e:
+            context.set_code(grpc.StatusCode.ERROR)
+            context.set_details(e)
+            return AuthAppService_isAuthenticatedResponse()

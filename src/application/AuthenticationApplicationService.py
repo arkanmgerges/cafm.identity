@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 from src.domain_model.AuthenticationService import AuthenticationService
+from src.resource.logging.logger import logger
 
 
 class AuthenticationApplicationService:
@@ -22,3 +23,7 @@ class AuthenticationApplicationService:
             `UserDoesNotExistException <UserDoesNotExistException>`: When user does not exist
         """
         return self._authService.authenticateUser(name=name, password=password)
+
+    def isAuthenticated(self, token: str) -> bool:
+        logger.debug(f'[{AuthenticationApplicationService.isAuthenticated.__qualname__}] - Received token: {token}')
+        return self._authService.isAuthenticated(token=token)

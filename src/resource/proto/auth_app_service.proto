@@ -11,6 +11,15 @@ message AuthAppService_authenticateUserByNameAndPasswordResponse {
   string token = 1;
 }
 
+message AuthAppService_isAuthenticatedRequest {
+  string token = 1;
+}
+
+message AuthAppService_isAuthenticatedResponse {
+  bool response = 1;
+}
+
 service AuthAppService {
   rpc authenticateUserByNameAndPassword (AuthAppService_authenticateUserByNameAndPasswordRequest) returns (AuthAppService_authenticateUserByNameAndPasswordResponse) {}
+  rpc isAuthenticated (AuthAppService_isAuthenticatedRequest) returns (AuthAppService_isAuthenticatedResponse) {}
 }

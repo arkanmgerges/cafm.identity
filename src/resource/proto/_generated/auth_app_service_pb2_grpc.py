@@ -19,12 +19,23 @@ class AuthAppServiceStub(object):
                 request_serializer=auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordRequest.SerializeToString,
                 response_deserializer=auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordResponse.FromString,
                 )
+        self.isAuthenticated = channel.unary_unary(
+                '/cafm.identity.auth.AuthAppService/isAuthenticated',
+                request_serializer=auth__app__service__pb2.AuthAppService_isAuthenticatedRequest.SerializeToString,
+                response_deserializer=auth__app__service__pb2.AuthAppService_isAuthenticatedResponse.FromString,
+                )
 
 
 class AuthAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def authenticateUserByNameAndPassword(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def isAuthenticated(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_AuthAppServiceServicer_to_server(servicer, server):
                     servicer.authenticateUserByNameAndPassword,
                     request_deserializer=auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordRequest.FromString,
                     response_serializer=auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordResponse.SerializeToString,
+            ),
+            'isAuthenticated': grpc.unary_unary_rpc_method_handler(
+                    servicer.isAuthenticated,
+                    request_deserializer=auth__app__service__pb2.AuthAppService_isAuthenticatedRequest.FromString,
+                    response_serializer=auth__app__service__pb2.AuthAppService_isAuthenticatedResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class AuthAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.auth.AuthAppService/authenticateUserByNameAndPassword',
             auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordRequest.SerializeToString,
             auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def isAuthenticated(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.auth.AuthAppService/isAuthenticated',
+            auth__app__service__pb2.AuthAppService_isAuthenticatedRequest.SerializeToString,
+            auth__app__service__pb2.AuthAppService_isAuthenticatedResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
