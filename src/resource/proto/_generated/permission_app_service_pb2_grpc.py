@@ -19,12 +19,23 @@ class PermissionAppServiceStub(object):
                 request_serializer=permission__app__service__pb2.PermissionAppService_permissionByNameRequest.SerializeToString,
                 response_deserializer=permission__app__service__pb2.PermissionAppService_permissionByNameResponse.FromString,
                 )
+        self.permissions = channel.unary_unary(
+                '/cafm.identity.permission.PermissionAppService/permissions',
+                request_serializer=permission__app__service__pb2.PermissionAppService_permissionsRequest.SerializeToString,
+                response_deserializer=permission__app__service__pb2.PermissionAppService_permissionsResponse.FromString,
+                )
 
 
 class PermissionAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def permissionByName(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def permissions(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_PermissionAppServiceServicer_to_server(servicer, server):
                     servicer.permissionByName,
                     request_deserializer=permission__app__service__pb2.PermissionAppService_permissionByNameRequest.FromString,
                     response_serializer=permission__app__service__pb2.PermissionAppService_permissionByNameResponse.SerializeToString,
+            ),
+            'permissions': grpc.unary_unary_rpc_method_handler(
+                    servicer.permissions,
+                    request_deserializer=permission__app__service__pb2.PermissionAppService_permissionsRequest.FromString,
+                    response_serializer=permission__app__service__pb2.PermissionAppService_permissionsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class PermissionAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission.PermissionAppService/permissionByName',
             permission__app__service__pb2.PermissionAppService_permissionByNameRequest.SerializeToString,
             permission__app__service__pb2.PermissionAppService_permissionByNameResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def permissions(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission.PermissionAppService/permissions',
+            permission__app__service__pb2.PermissionAppService_permissionsRequest.SerializeToString,
+            permission__app__service__pb2.PermissionAppService_permissionsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

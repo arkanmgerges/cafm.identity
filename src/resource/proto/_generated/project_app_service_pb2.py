@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x19project_app_service.proto\x12\x15\x63\x61\x66m.identity.project\"6\n&ProjectAppService_projectByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"C\n\'ProjectAppService_projectByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xa6\x01\n\x11ProjectAppService\x12\x90\x01\n\rprojectByName\x12=.cafm.identity.project.ProjectAppService_projectByNameRequest\x1a>.cafm.identity.project.ProjectAppService_projectByNameResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x19project_app_service.proto\x12\x15\x63\x61\x66m.identity.project\"6\n&ProjectAppService_projectByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"C\n\'ProjectAppService_projectByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"K\n!ProjectAppService_projectsRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\"6\n\"ProjectAppService_projectsResponse\x12\x10\n\x08response\x18\x01 \x01(\t2\xaa\x02\n\x11ProjectAppService\x12\x90\x01\n\rprojectByName\x12=.cafm.identity.project.ProjectAppService_projectByNameRequest\x1a>.cafm.identity.project.ProjectAppService_projectByNameResponse\"\x00\x12\x81\x01\n\x08projects\x12\x38.cafm.identity.project.ProjectAppService_projectsRequest\x1a\x39.cafm.identity.project.ProjectAppService_projectsResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -95,8 +95,81 @@ _PROJECTAPPSERVICE_PROJECTBYNAMERESPONSE = _descriptor.Descriptor(
   serialized_end=175,
 )
 
+
+_PROJECTAPPSERVICE_PROJECTSREQUEST = _descriptor.Descriptor(
+  name='ProjectAppService_projectsRequest',
+  full_name='cafm.identity.project.ProjectAppService_projectsRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='resultFrom', full_name='cafm.identity.project.ProjectAppService_projectsRequest.resultFrom', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='resultSize', full_name='cafm.identity.project.ProjectAppService_projectsRequest.resultSize', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=177,
+  serialized_end=252,
+)
+
+
+_PROJECTAPPSERVICE_PROJECTSRESPONSE = _descriptor.Descriptor(
+  name='ProjectAppService_projectsResponse',
+  full_name='cafm.identity.project.ProjectAppService_projectsResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='response', full_name='cafm.identity.project.ProjectAppService_projectsResponse.response', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=254,
+  serialized_end=308,
+)
+
 DESCRIPTOR.message_types_by_name['ProjectAppService_projectByNameRequest'] = _PROJECTAPPSERVICE_PROJECTBYNAMEREQUEST
 DESCRIPTOR.message_types_by_name['ProjectAppService_projectByNameResponse'] = _PROJECTAPPSERVICE_PROJECTBYNAMERESPONSE
+DESCRIPTOR.message_types_by_name['ProjectAppService_projectsRequest'] = _PROJECTAPPSERVICE_PROJECTSREQUEST
+DESCRIPTOR.message_types_by_name['ProjectAppService_projectsResponse'] = _PROJECTAPPSERVICE_PROJECTSRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ProjectAppService_projectByNameRequest = _reflection.GeneratedProtocolMessageType('ProjectAppService_projectByNameRequest', (_message.Message,), {
@@ -113,6 +186,20 @@ ProjectAppService_projectByNameResponse = _reflection.GeneratedProtocolMessageTy
   })
 _sym_db.RegisterMessage(ProjectAppService_projectByNameResponse)
 
+ProjectAppService_projectsRequest = _reflection.GeneratedProtocolMessageType('ProjectAppService_projectsRequest', (_message.Message,), {
+  'DESCRIPTOR' : _PROJECTAPPSERVICE_PROJECTSREQUEST,
+  '__module__' : 'project_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.project.ProjectAppService_projectsRequest)
+  })
+_sym_db.RegisterMessage(ProjectAppService_projectsRequest)
+
+ProjectAppService_projectsResponse = _reflection.GeneratedProtocolMessageType('ProjectAppService_projectsResponse', (_message.Message,), {
+  'DESCRIPTOR' : _PROJECTAPPSERVICE_PROJECTSRESPONSE,
+  '__module__' : 'project_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.project.ProjectAppService_projectsResponse)
+  })
+_sym_db.RegisterMessage(ProjectAppService_projectsResponse)
+
 
 
 _PROJECTAPPSERVICE = _descriptor.ServiceDescriptor(
@@ -122,8 +209,8 @@ _PROJECTAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=178,
-  serialized_end=344,
+  serialized_start=311,
+  serialized_end=609,
   methods=[
   _descriptor.MethodDescriptor(
     name='projectByName',
@@ -132,6 +219,16 @@ _PROJECTAPPSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_PROJECTAPPSERVICE_PROJECTBYNAMEREQUEST,
     output_type=_PROJECTAPPSERVICE_PROJECTBYNAMERESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='projects',
+    full_name='cafm.identity.project.ProjectAppService.projects',
+    index=1,
+    containing_service=None,
+    input_type=_PROJECTAPPSERVICE_PROJECTSREQUEST,
+    output_type=_PROJECTAPPSERVICE_PROJECTSRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

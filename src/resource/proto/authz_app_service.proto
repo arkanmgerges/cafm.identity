@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package cafm.identity.authz;
+
+message AuthzAppService_isAllowedRequest {
+  string token = 1;
+  string data = 2;
+}
+
+message AuthzAppService_isAllowedResponse {
+  bool isAllowed = 1;
+}
+
+service AuthzAppService {
+  rpc isAllowedByToken (AuthzAppService_isAllowedRequest) returns (AuthzAppService_isAllowedResponse) {}
+}

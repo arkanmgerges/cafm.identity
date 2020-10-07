@@ -9,3 +9,4 @@ import "role_app_service.proto";
 import "user_app_service.proto";
 import "user_group_app_service.proto";
 import "auth_app_service.proto";
+import "authz_app_service.proto";

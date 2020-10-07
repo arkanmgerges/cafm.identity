@@ -12,6 +12,16 @@ message UserAppService_userByNameAndPasswordResponse {
   string name = 2;
 }
 
+message UserAppService_usersRequest {
+  int32 resultFrom = 1;
+  int32 resultSize = 2;
+}
+
+message UserAppService_usersResponse {
+  string response = 1; 
+}
+
 service UserAppService {
   rpc userByNameAndPassword (UserAppService_userByNameAndPasswordRequest) returns (UserAppService_userByNameAndPasswordResponse) {}
+  rpc users (UserAppService_usersRequest) returns (UserAppService_usersResponse) {}
 }

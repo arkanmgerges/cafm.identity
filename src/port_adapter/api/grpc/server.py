@@ -5,6 +5,7 @@ from concurrent import futures
 import grpc
 
 from src.port_adapter.api.grpc.listener.AuthAppServiceListener import AuthAppServiceListener
+from src.port_adapter.api.grpc.listener.AuthzAppServiceListener import AuthzAppServiceListener
 from src.port_adapter.api.grpc.listener.OuAppServiceListener import OuAppServiceListener
 from src.port_adapter.api.grpc.listener.PermissionAppServiceListener import PermissionAppServiceListener
 from src.port_adapter.api.grpc.listener.ProjectAppServiceListener import ProjectAppServiceListener
@@ -14,6 +15,7 @@ from src.port_adapter.api.grpc.listener.RoleAppServiceListener import RoleAppSer
 from src.port_adapter.api.grpc.listener.UserAppServiceListener import UserAppServiceListener
 from src.port_adapter.api.grpc.listener.UserGroupAppServiceListener import UserGroupAppServiceListener
 from src.resource.proto._generated.auth_app_service_pb2_grpc import add_AuthAppServiceServicer_to_server
+from src.resource.proto._generated.authz_app_service_pb2_grpc import add_AuthzAppServiceServicer_to_server
 from src.resource.proto._generated.ou_app_service_pb2_grpc import add_OuAppServiceServicer_to_server
 from src.resource.proto._generated.permission_app_service_pb2_grpc import add_PermissionAppServiceServicer_to_server
 from src.resource.proto._generated.project_app_service_pb2_grpc import add_ProjectAppServiceServicer_to_server
@@ -39,6 +41,7 @@ def serve():
     add_PermissionAppServiceServicer_to_server(PermissionAppServiceListener(), server)
     add_OuAppServiceServicer_to_server(OuAppServiceListener(), server)
     add_AuthAppServiceServicer_to_server(AuthAppServiceListener(), server)
+    add_AuthzAppServiceServicer_to_server(AuthzAppServiceListener(), server)
     server.add_insecure_port("[::]:9999")
     server.start()
 

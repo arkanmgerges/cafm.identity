@@ -39,7 +39,7 @@ class AuthenticationRepository(ABC):
         """
 
     @abstractmethod
-    def tokenExist(self, token: str) -> bool:
+    def tokenExists(self, token: str) -> bool:
         """Check if the token does exist
 
         Args:

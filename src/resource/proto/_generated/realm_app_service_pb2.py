@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x17realm_app_service.proto\x12\x13\x63\x61\x66m.identity.realm\"2\n\"RealmAppService_realmByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"?\n#RealmAppService_realmByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\x96\x01\n\x0fRealmAppService\x12\x82\x01\n\x0brealmByName\x12\x37.cafm.identity.realm.RealmAppService_realmByNameRequest\x1a\x38.cafm.identity.realm.RealmAppService_realmByNameResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x17realm_app_service.proto\x12\x13\x63\x61\x66m.identity.realm\"2\n\"RealmAppService_realmByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"?\n#RealmAppService_realmByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"G\n\x1dRealmAppService_realmsRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\"2\n\x1eRealmAppService_realmsResponse\x12\x10\n\x08response\x18\x01 \x01(\t2\x8b\x02\n\x0fRealmAppService\x12\x82\x01\n\x0brealmByName\x12\x37.cafm.identity.realm.RealmAppService_realmByNameRequest\x1a\x38.cafm.identity.realm.RealmAppService_realmByNameResponse\"\x00\x12s\n\x06realms\x12\x32.cafm.identity.realm.RealmAppService_realmsRequest\x1a\x33.cafm.identity.realm.RealmAppService_realmsResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -95,8 +95,81 @@ _REALMAPPSERVICE_REALMBYNAMERESPONSE = _descriptor.Descriptor(
   serialized_end=163,
 )
 
+
+_REALMAPPSERVICE_REALMSREQUEST = _descriptor.Descriptor(
+  name='RealmAppService_realmsRequest',
+  full_name='cafm.identity.realm.RealmAppService_realmsRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='resultFrom', full_name='cafm.identity.realm.RealmAppService_realmsRequest.resultFrom', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='resultSize', full_name='cafm.identity.realm.RealmAppService_realmsRequest.resultSize', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=165,
+  serialized_end=236,
+)
+
+
+_REALMAPPSERVICE_REALMSRESPONSE = _descriptor.Descriptor(
+  name='RealmAppService_realmsResponse',
+  full_name='cafm.identity.realm.RealmAppService_realmsResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='response', full_name='cafm.identity.realm.RealmAppService_realmsResponse.response', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=238,
+  serialized_end=288,
+)
+
 DESCRIPTOR.message_types_by_name['RealmAppService_realmByNameRequest'] = _REALMAPPSERVICE_REALMBYNAMEREQUEST
 DESCRIPTOR.message_types_by_name['RealmAppService_realmByNameResponse'] = _REALMAPPSERVICE_REALMBYNAMERESPONSE
+DESCRIPTOR.message_types_by_name['RealmAppService_realmsRequest'] = _REALMAPPSERVICE_REALMSREQUEST
+DESCRIPTOR.message_types_by_name['RealmAppService_realmsResponse'] = _REALMAPPSERVICE_REALMSRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 RealmAppService_realmByNameRequest = _reflection.GeneratedProtocolMessageType('RealmAppService_realmByNameRequest', (_message.Message,), {
@@ -113,6 +186,20 @@ RealmAppService_realmByNameResponse = _reflection.GeneratedProtocolMessageType('
   })
 _sym_db.RegisterMessage(RealmAppService_realmByNameResponse)
 
+RealmAppService_realmsRequest = _reflection.GeneratedProtocolMessageType('RealmAppService_realmsRequest', (_message.Message,), {
+  'DESCRIPTOR' : _REALMAPPSERVICE_REALMSREQUEST,
+  '__module__' : 'realm_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.realm.RealmAppService_realmsRequest)
+  })
+_sym_db.RegisterMessage(RealmAppService_realmsRequest)
+
+RealmAppService_realmsResponse = _reflection.GeneratedProtocolMessageType('RealmAppService_realmsResponse', (_message.Message,), {
+  'DESCRIPTOR' : _REALMAPPSERVICE_REALMSRESPONSE,
+  '__module__' : 'realm_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.realm.RealmAppService_realmsResponse)
+  })
+_sym_db.RegisterMessage(RealmAppService_realmsResponse)
+
 
 
 _REALMAPPSERVICE = _descriptor.ServiceDescriptor(
@@ -122,8 +209,8 @@ _REALMAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=166,
-  serialized_end=316,
+  serialized_start=291,
+  serialized_end=558,
   methods=[
   _descriptor.MethodDescriptor(
     name='realmByName',
@@ -132,6 +219,16 @@ _REALMAPPSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_REALMAPPSERVICE_REALMBYNAMEREQUEST,
     output_type=_REALMAPPSERVICE_REALMBYNAMERESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='realms',
+    full_name='cafm.identity.realm.RealmAppService.realms',
+    index=1,
+    containing_service=None,
+    input_type=_REALMAPPSERVICE_REALMSREQUEST,
+    output_type=_REALMAPPSERVICE_REALMSRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

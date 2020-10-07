@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1fresource_type_app_service.proto\x12\x1a\x63\x61\x66m.identity.resourceType\"@\n0ResourceTypeAppService_resourceTypeByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"M\n1ResourceTypeAppService_resourceTypeByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xce\x01\n\x16ResourceTypeAppService\x12\xb3\x01\n\x12resourceTypeByName\x12L.cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameRequest\x1aM.cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x1fresource_type_app_service.proto\x12\x1a\x63\x61\x66m.identity.resourceType\"@\n0ResourceTypeAppService_resourceTypeByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"M\n1ResourceTypeAppService_resourceTypeByNameResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"U\n+ResourceTypeAppService_resourceTypesRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\"@\n,ResourceTypeAppService_resourceTypesResponse\x12\x10\n\x08response\x18\x01 \x01(\t2\xf5\x02\n\x16ResourceTypeAppService\x12\xb3\x01\n\x12resourceTypeByName\x12L.cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameRequest\x1aM.cafm.identity.resourceType.ResourceTypeAppService_resourceTypeByNameResponse\"\x00\x12\xa4\x01\n\rresourceTypes\x12G.cafm.identity.resourceType.ResourceTypeAppService_resourceTypesRequest\x1aH.cafm.identity.resourceType.ResourceTypeAppService_resourceTypesResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -95,8 +95,81 @@ _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMERESPONSE = _descriptor.Descriptor(
   serialized_end=206,
 )
 
+
+_RESOURCETYPEAPPSERVICE_RESOURCETYPESREQUEST = _descriptor.Descriptor(
+  name='ResourceTypeAppService_resourceTypesRequest',
+  full_name='cafm.identity.resourceType.ResourceTypeAppService_resourceTypesRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='resultFrom', full_name='cafm.identity.resourceType.ResourceTypeAppService_resourceTypesRequest.resultFrom', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='resultSize', full_name='cafm.identity.resourceType.ResourceTypeAppService_resourceTypesRequest.resultSize', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=208,
+  serialized_end=293,
+)
+
+
+_RESOURCETYPEAPPSERVICE_RESOURCETYPESRESPONSE = _descriptor.Descriptor(
+  name='ResourceTypeAppService_resourceTypesResponse',
+  full_name='cafm.identity.resourceType.ResourceTypeAppService_resourceTypesResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='response', full_name='cafm.identity.resourceType.ResourceTypeAppService_resourceTypesResponse.response', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=295,
+  serialized_end=359,
+)
+
 DESCRIPTOR.message_types_by_name['ResourceTypeAppService_resourceTypeByNameRequest'] = _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMEREQUEST
 DESCRIPTOR.message_types_by_name['ResourceTypeAppService_resourceTypeByNameResponse'] = _RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMERESPONSE
+DESCRIPTOR.message_types_by_name['ResourceTypeAppService_resourceTypesRequest'] = _RESOURCETYPEAPPSERVICE_RESOURCETYPESREQUEST
+DESCRIPTOR.message_types_by_name['ResourceTypeAppService_resourceTypesResponse'] = _RESOURCETYPEAPPSERVICE_RESOURCETYPESRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ResourceTypeAppService_resourceTypeByNameRequest = _reflection.GeneratedProtocolMessageType('ResourceTypeAppService_resourceTypeByNameRequest', (_message.Message,), {
@@ -113,6 +186,20 @@ ResourceTypeAppService_resourceTypeByNameResponse = _reflection.GeneratedProtoco
   })
 _sym_db.RegisterMessage(ResourceTypeAppService_resourceTypeByNameResponse)
 
+ResourceTypeAppService_resourceTypesRequest = _reflection.GeneratedProtocolMessageType('ResourceTypeAppService_resourceTypesRequest', (_message.Message,), {
+  'DESCRIPTOR' : _RESOURCETYPEAPPSERVICE_RESOURCETYPESREQUEST,
+  '__module__' : 'resource_type_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.resourceType.ResourceTypeAppService_resourceTypesRequest)
+  })
+_sym_db.RegisterMessage(ResourceTypeAppService_resourceTypesRequest)
+
+ResourceTypeAppService_resourceTypesResponse = _reflection.GeneratedProtocolMessageType('ResourceTypeAppService_resourceTypesResponse', (_message.Message,), {
+  'DESCRIPTOR' : _RESOURCETYPEAPPSERVICE_RESOURCETYPESRESPONSE,
+  '__module__' : 'resource_type_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.resourceType.ResourceTypeAppService_resourceTypesResponse)
+  })
+_sym_db.RegisterMessage(ResourceTypeAppService_resourceTypesResponse)
+
 
 
 _RESOURCETYPEAPPSERVICE = _descriptor.ServiceDescriptor(
@@ -122,8 +209,8 @@ _RESOURCETYPEAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=209,
-  serialized_end=415,
+  serialized_start=362,
+  serialized_end=735,
   methods=[
   _descriptor.MethodDescriptor(
     name='resourceTypeByName',
@@ -132,6 +219,16 @@ _RESOURCETYPEAPPSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMEREQUEST,
     output_type=_RESOURCETYPEAPPSERVICE_RESOURCETYPEBYNAMERESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='resourceTypes',
+    full_name='cafm.identity.resourceType.ResourceTypeAppService.resourceTypes',
+    index=1,
+    containing_service=None,
+    input_type=_RESOURCETYPEAPPSERVICE_RESOURCETYPESREQUEST,
+    output_type=_RESOURCETYPEAPPSERVICE_RESOURCETYPESRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

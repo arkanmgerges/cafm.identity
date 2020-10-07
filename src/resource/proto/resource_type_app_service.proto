@@ -11,6 +11,16 @@ message ResourceTypeAppService_resourceTypeByNameResponse {
   string name = 2;
 }
 
+message ResourceTypeAppService_resourceTypesRequest {
+  int32 resultFrom = 1;
+  int32 resultSize = 2;
+}
+
+message ResourceTypeAppService_resourceTypesResponse {
+  string response = 1; 
+}
+
 service ResourceTypeAppService {
   rpc resourceTypeByName (ResourceTypeAppService_resourceTypeByNameRequest) returns (ResourceTypeAppService_resourceTypeByNameResponse) {}
+  rpc resourceTypes (ResourceTypeAppService_resourceTypesRequest) returns (ResourceTypeAppService_resourceTypesResponse) {}
 }

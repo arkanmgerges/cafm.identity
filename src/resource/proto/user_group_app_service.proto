@@ -12,6 +12,16 @@ message UserGroupAppService_userGroupByNameResponse {
   string name = 2;
 }
 
+message UserGroupAppService_userGroupsRequest {
+  int32 resultFrom = 1;
+  int32 resultSize = 2;
+}
+
+message UserGroupAppService_userGroupsResponse {
+  string response = 1; 
+}
+
 service UserGroupAppService {
   rpc userGroupByName (UserGroupAppService_userGroupByNameRequest) returns (UserGroupAppService_userGroupByNameResponse) {}
+  rpc userGroups (UserGroupAppService_userGroupsRequest) returns (UserGroupAppService_userGroupsResponse) {}
 }

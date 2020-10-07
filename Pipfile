@@ -68,6 +68,7 @@ Sphinx = "==2.4.3"
 mock = "*"
 pyarango = "*"
 authlib = "*"
+redis = "*"
 
 [requires]
 python_version = "3.8"

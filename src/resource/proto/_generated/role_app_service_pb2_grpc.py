@@ -19,12 +19,23 @@ class RoleAppServiceStub(object):
                 request_serializer=role__app__service__pb2.RoleAppService_roleByNameRequest.SerializeToString,
                 response_deserializer=role__app__service__pb2.RoleAppService_roleByNameResponse.FromString,
                 )
+        self.roles = channel.unary_unary(
+                '/cafm.identity.role.RoleAppService/roles',
+                request_serializer=role__app__service__pb2.RoleAppService_rolesRequest.SerializeToString,
+                response_deserializer=role__app__service__pb2.RoleAppService_rolesResponse.FromString,
+                )
 
 
 class RoleAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def roleByName(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def roles(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_RoleAppServiceServicer_to_server(servicer, server):
                     servicer.roleByName,
                     request_deserializer=role__app__service__pb2.RoleAppService_roleByNameRequest.FromString,
                     response_serializer=role__app__service__pb2.RoleAppService_roleByNameResponse.SerializeToString,
+            ),
+            'roles': grpc.unary_unary_rpc_method_handler(
+                    servicer.roles,
+                    request_deserializer=role__app__service__pb2.RoleAppService_rolesRequest.FromString,
+                    response_serializer=role__app__service__pb2.RoleAppService_rolesResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class RoleAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.role.RoleAppService/roleByName',
             role__app__service__pb2.RoleAppService_roleByNameRequest.SerializeToString,
             role__app__service__pb2.RoleAppService_roleByNameResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def roles(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.role.RoleAppService/roles',
+            role__app__service__pb2.RoleAppService_rolesRequest.SerializeToString,
+            role__app__service__pb2.RoleAppService_rolesResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

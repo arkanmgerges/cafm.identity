@@ -19,12 +19,23 @@ class UserGroupAppServiceStub(object):
                 request_serializer=user__group__app__service__pb2.UserGroupAppService_userGroupByNameRequest.SerializeToString,
                 response_deserializer=user__group__app__service__pb2.UserGroupAppService_userGroupByNameResponse.FromString,
                 )
+        self.userGroups = channel.unary_unary(
+                '/cafm.identity.userGroup.UserGroupAppService/userGroups',
+                request_serializer=user__group__app__service__pb2.UserGroupAppService_userGroupsRequest.SerializeToString,
+                response_deserializer=user__group__app__service__pb2.UserGroupAppService_userGroupsResponse.FromString,
+                )
 
 
 class UserGroupAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def userGroupByName(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def userGroups(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_UserGroupAppServiceServicer_to_server(servicer, server):
                     servicer.userGroupByName,
                     request_deserializer=user__group__app__service__pb2.UserGroupAppService_userGroupByNameRequest.FromString,
                     response_serializer=user__group__app__service__pb2.UserGroupAppService_userGroupByNameResponse.SerializeToString,
+            ),
+            'userGroups': grpc.unary_unary_rpc_method_handler(
+                    servicer.userGroups,
+                    request_deserializer=user__group__app__service__pb2.UserGroupAppService_userGroupsRequest.FromString,
+                    response_serializer=user__group__app__service__pb2.UserGroupAppService_userGroupsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class UserGroupAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.userGroup.UserGroupAppService/userGroupByName',
             user__group__app__service__pb2.UserGroupAppService_userGroupByNameRequest.SerializeToString,
             user__group__app__service__pb2.UserGroupAppService_userGroupByNameResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def userGroups(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.userGroup.UserGroupAppService/userGroups',
+            user__group__app__service__pb2.UserGroupAppService_userGroupsRequest.SerializeToString,
+            user__group__app__service__pb2.UserGroupAppService_userGroupsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -1,8 +1,13 @@
+import os
 from uuid import uuid4
 
-from injector import Module, Injector, singleton, provider, inject
+import redis
+from injector import ClassAssistedBuilder
+from injector import Module, Injector, singleton, provider
+from pyArango.connection import Connection
 
 from src.application.AuthenticationApplicationService import AuthenticationApplicationService
+from src.application.AuthorizationApplicationService import AuthorizationApplicationService
 from src.application.OuApplicationService import OuApplicationService
 from src.application.PermissionApplicationService import PermissionApplicationService
 from src.application.ProjectApplicationService import ProjectApplicationService
@@ -13,6 +18,8 @@ from src.application.UserApplicationService import UserApplicationService
 from src.application.UserGroupApplicationService import UserGroupApplicationService
 from src.domain_model.AuthenticationRepository import AuthenticationRepository
 from src.domain_model.AuthenticationService import AuthenticationService
+from src.domain_model.AuthorizationRepository import AuthorizationRepository
+from src.domain_model.AuthorizationService import AuthorizationService
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.permission.PermissionRepository import PermissionRepository
 from src.domain_model.project.ProjectRepository import ProjectRepository
@@ -27,9 +34,8 @@ from src.port_adapter.messaging.common.SimpleProducer import SimpleProducer
 from src.port_adapter.messaging.common.TransactionalProducer import TransactionalProducer
 from src.port_adapter.messaging.common.kafka.KafkaConsumer import KafkaConsumer
 from src.port_adapter.messaging.common.kafka.KafkaProducer import KafkaProducer
-from injector import ClassAssistedBuilder
-
 from src.port_adapter.repository.domain_model.AuthenticationRepositoryImpl import AuthenticationRepositoryImpl
+from src.port_adapter.repository.domain_model.AuthorizationRepositoryImpl import AuthorizationRepositoryImpl
 from src.port_adapter.repository.domain_model.ou.OuRepositoryImpl import OuRepositoryImpl
 from src.port_adapter.repository.domain_model.permission.PermissionRepositoryImpl import PermissionRepositoryImpl
 from src.port_adapter.repository.domain_model.project.ProjectRepositoryImpl import ProjectRepositoryImpl
@@ -51,17 +57,17 @@ class AppDi(Module):
     @provider
     def provideUserApplicationService(self) -> UserApplicationService:
         return UserApplicationService(self.__injector__.get(UserRepository))
-    
+
     @singleton
     @provider
     def provideRoleApplicationService(self) -> RoleApplicationService:
-        return RoleApplicationService(self.__injector__.get(RoleRepository))   
-    
+        return RoleApplicationService(self.__injector__.get(RoleRepository))
+
     @singleton
     @provider
     def provideOuApplicationService(self) -> OuApplicationService:
         return OuApplicationService(self.__injector__.get(OuRepository))
-    
+
     @singleton
     @provider
     def provideRealmApplicationService(self) -> RealmApplicationService:
@@ -71,12 +77,12 @@ class AppDi(Module):
     @provider
     def providePermissionApplicationService(self) -> PermissionApplicationService:
         return PermissionApplicationService(self.__injector__.get(PermissionRepository))
-    
+
     @singleton
     @provider
     def provideProjectApplicationService(self) -> ProjectApplicationService:
         return ProjectApplicationService(self.__injector__.get(ProjectRepository))
-    
+
     @singleton
     @provider
     def provideResourceTypeApplicationService(self) -> ResourceTypeApplicationService:
@@ -90,7 +96,13 @@ class AppDi(Module):
     @singleton
     @provider
     def provideAuthenticationApplicationService(self) -> AuthenticationApplicationService:
-        return AuthenticationApplicationService(self.__injector__.get(AuthenticationService))
+        return AuthenticationApplicationService(self.__injector__.get(AuthenticationService))    \
+
+    @singleton
+    @provider
+    def provideAuthorizationApplicationService(self) -> AuthorizationApplicationService:
+        return AuthorizationApplicationService(self.__injector__.get(AuthorizationService))
+
     # endregion
 
     # region Repository
@@ -98,32 +110,32 @@ class AppDi(Module):
     @provider
     def provideUserRepository(self) -> UserRepository:
         return UserRepositoryImpl()
-    
+
     @singleton
     @provider
     def provideRoleRepository(self) -> RoleRepository:
         return RoleRepositoryImpl()
-    
+
     @singleton
     @provider
     def provideOuRepository(self) -> OuRepository:
         return OuRepositoryImpl()
-    
+
     @singleton
     @provider
     def provideRealmRepository(self) -> RealmRepository:
         return RealmRepositoryImpl()
-    
+
     @singleton
     @provider
     def providePermissionRepository(self) -> PermissionRepository:
         return PermissionRepositoryImpl()
-    
+
     @singleton
     @provider
     def provideProjectRepository(self) -> ProjectRepository:
         return ProjectRepositoryImpl()
-    
+
     @singleton
     @provider
     def provideResourceTypeRepository(self) -> ResourceTypeRepository:
@@ -138,13 +150,23 @@ class AppDi(Module):
     @provider
     def provideAuthenticationRepository(self) -> AuthenticationRepository:
         return AuthenticationRepositoryImpl()
-    # endregion
+
+    @singleton
+    @provider
+    def provideAuthorizationRepository(self) -> AuthorizationRepository:
+        return AuthorizationRepositoryImpl()
+    # endregion Repository
 
     # region domain service
     @singleton
     @provider
     def provideAuthenticationService(self) -> AuthenticationService:
         return AuthenticationService(self.__injector__.get(AuthenticationRepository))
+
+    @singleton
+    @provider
+    def provideAuthorizationService(self) -> AuthorizationService:
+        return AuthorizationService(self.__injector__.get(AuthorizationRepository))
     # endregion
 
     # region Messaging
@@ -161,9 +183,11 @@ class AppDi(Module):
     @singleton
     @provider
     def provideConsumer(self, groupId: str = uuid4(), autoCommit: bool = False,
-                        partitionEof: bool = True, autoOffsetReset: str = ConsumerOffsetReset.earliest.name) -> Consumer:
+                        partitionEof: bool = True,
+                        autoOffsetReset: str = ConsumerOffsetReset.earliest.name) -> Consumer:
         return KafkaConsumer(groupId=groupId, autoCommit=autoCommit, partitionEof=partitionEof,
                              autoOffsetReset=autoOffsetReset)
+
     # endregion
 
 

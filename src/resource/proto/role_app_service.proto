@@ -11,7 +11,17 @@ message RoleAppService_roleByNameResponse {
   string name = 2;
 }
 
+message RoleAppService_rolesRequest {
+  int32 resultFrom = 1;
+  int32 resultSize = 2;
+}
+
+message RoleAppService_rolesResponse {
+  string response = 1;
+}
+
 
 service RoleAppService {
   rpc roleByName (RoleAppService_roleByNameRequest) returns (RoleAppService_roleByNameResponse) {}
+  rpc roles (RoleAppService_rolesRequest) returns (RoleAppService_rolesResponse) {}
 }
