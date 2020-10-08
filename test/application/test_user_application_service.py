@@ -87,3 +87,14 @@ def test_create_user_raise_exception_when_user_exists():
     appService = UserApplicationService(repo)
     with pytest.raises(UserAlreadyExistException):
         user = appService.createUser(id='1', name=name, password='1234')
+
+def test_get_user_by_id_when_user_exists():
+    repo = Mock(spec=UserRepository)
+    name = 'me'
+    user = User(id='1234', name=name)
+
+    repo.userById = Mock(return_value=user)
+    appService = UserApplicationService(repo)
+    appService.userById(id='1234')
+
+    repo.userById.assert_called_once_with(id='1234')

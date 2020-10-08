@@ -29,11 +29,22 @@ class RoleRepository(ABC):
         """
 
     @abstractmethod
+    def roleById(self, id: str) -> Role:
+        """Get role by id
+
+        Args:
+            id (str): The id of the role
+
+        Returns:
+            Role: role object
+        """
+
+    @abstractmethod
     def rolesByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Role]:
         """Get list of roles based on the owned roles that the user has
 
         Args:
-            ownedRoles (List[str]): A list of the roles that the user has
+            ownedRoles (List[str]): A list of the roles that the user or user group has
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
 

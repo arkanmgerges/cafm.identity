@@ -85,3 +85,14 @@ def test_create_resourceType_raise_exception_when_resourceType_exists():
     appService = ResourceTypeApplicationService(repo)
     with pytest.raises(ResourceTypeAlreadyExistException):
         resourceType = appService.createResourceType(id='1', name=name)
+
+def test_get_resourceType_by_id_when_resourceType_exists():
+    repo = Mock(spec=ResourceTypeRepository)
+    name = 'me'
+    resourceType = ResourceType(id='1234', name=name)
+
+    repo.resourceTypeById = Mock(return_value=resourceType)
+    appService = ResourceTypeApplicationService(repo)
+    appService.resourceTypeById(id='1234')
+
+    repo.resourceTypeById.assert_called_once_with(id='1234')

@@ -24,6 +24,11 @@ class AuthAppServiceStub(object):
                 request_serializer=auth__app__service__pb2.AuthAppService_isAuthenticatedRequest.SerializeToString,
                 response_deserializer=auth__app__service__pb2.AuthAppService_isAuthenticatedResponse.FromString,
                 )
+        self.logout = channel.unary_unary(
+                '/cafm.identity.auth.AuthAppService/logout',
+                request_serializer=auth__app__service__pb2.AuthAppService_logoutRequest.SerializeToString,
+                response_deserializer=auth__app__service__pb2.AuthAppService_logoutResponse.FromString,
+                )
 
 
 class AuthAppServiceServicer(object):
@@ -41,6 +46,12 @@ class AuthAppServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def logout(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_AuthAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -53,6 +64,11 @@ def add_AuthAppServiceServicer_to_server(servicer, server):
                     servicer.isAuthenticated,
                     request_deserializer=auth__app__service__pb2.AuthAppService_isAuthenticatedRequest.FromString,
                     response_serializer=auth__app__service__pb2.AuthAppService_isAuthenticatedResponse.SerializeToString,
+            ),
+            'logout': grpc.unary_unary_rpc_method_handler(
+                    servicer.logout,
+                    request_deserializer=auth__app__service__pb2.AuthAppService_logoutRequest.FromString,
+                    response_serializer=auth__app__service__pb2.AuthAppService_logoutResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -95,5 +111,22 @@ class AuthAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.auth.AuthAppService/isAuthenticated',
             auth__app__service__pb2.AuthAppService_isAuthenticatedRequest.SerializeToString,
             auth__app__service__pb2.AuthAppService_isAuthenticatedResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def logout(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.auth.AuthAppService/logout',
+            auth__app__service__pb2.AuthAppService_logoutRequest.SerializeToString,
+            auth__app__service__pb2.AuthAppService_logoutResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

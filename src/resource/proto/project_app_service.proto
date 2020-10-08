@@ -2,13 +2,22 @@ syntax = "proto3";
 
 package cafm.identity.project;
 
+import "project.proto";
+
 message ProjectAppService_projectByNameRequest {
   string name = 1;
 }
 
 message ProjectAppService_projectByNameResponse {
+  Project project = 1;
+}
+
+message ProjectAppService_projectByIdRequest {
   string id = 1;
-  string name = 2;
+}
+
+message ProjectAppService_projectByIdResponse {
+  Project project = 1;
 }
 
 message ProjectAppService_projectsRequest {
@@ -17,11 +26,12 @@ message ProjectAppService_projectsRequest {
 }
 
 message ProjectAppService_projectsResponse {
-  string response = 1; 
+  repeated Project projects = 1;
 }
 
 
 service ProjectAppService {
   rpc projectByName (ProjectAppService_projectByNameRequest) returns (ProjectAppService_projectByNameResponse) {}
+  rpc projectById (ProjectAppService_projectByIdRequest) returns (ProjectAppService_projectByIdResponse) {}
   rpc projects (ProjectAppService_projectsRequest) returns (ProjectAppService_projectsResponse) {}
 }

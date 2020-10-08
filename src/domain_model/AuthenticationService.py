@@ -53,7 +53,7 @@ class AuthenticationService:
             token (str): The token to be checked
 
         Returns:
-            bool: If the token exists and tnen it's valid then the response is True, and it returns False otherwise
+            bool: If the token exists and then it's valid then the response is True, and it returns False otherwise
         """
         try:
             exists = self._authRepo.tokenExists(token=token)
@@ -62,3 +62,13 @@ class AuthenticationService:
             return exists
         except:
             return False
+
+    def logout(self, token: str) -> None:
+        """Logout the user
+
+        Args:
+            token (str): The token to be used for logging out the user
+        """
+        exists = self._authRepo.tokenExists(token=token)
+        if exists:
+            self._authRepo.deleteToken(token=token)

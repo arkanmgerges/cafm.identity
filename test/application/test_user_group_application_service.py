@@ -85,3 +85,14 @@ def test_create_userGroup_raise_exception_when_userGroup_exists():
     appService = UserGroupApplicationService(repo)
     with pytest.raises(UserGroupAlreadyExistException):
         userGroup = appService.createUserGroup(id='1', name=name)
+
+def test_get_userGroup_by_id_when_userGroup_exists():
+    repo = Mock(spec=UserGroupRepository)
+    name = 'me'
+    userGroup = UserGroup(id='1234', name=name)
+
+    repo.userGroupById = Mock(return_value=userGroup)
+    appService = UserGroupApplicationService(repo)
+    appService.userGroupById(id='1234')
+
+    repo.userGroupById.assert_called_once_with(id='1234')

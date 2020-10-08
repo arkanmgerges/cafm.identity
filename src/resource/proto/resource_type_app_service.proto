@@ -1,14 +1,23 @@
 syntax = "proto3";
 
-package cafm.identity.resourceType;
+package cafm.identity.resource_type;
+
+import "resource_type.proto";
 
 message ResourceTypeAppService_resourceTypeByNameRequest {
   string name = 1;
 }
 
 message ResourceTypeAppService_resourceTypeByNameResponse {
+  ResourceType resourceType = 1;
+}
+
+message ResourceTypeAppService_resourceTypeByIdRequest {
   string id = 1;
-  string name = 2;
+}
+
+message ResourceTypeAppService_resourceTypeByIdResponse {
+  ResourceType resourceType = 1;
 }
 
 message ResourceTypeAppService_resourceTypesRequest {
@@ -17,10 +26,12 @@ message ResourceTypeAppService_resourceTypesRequest {
 }
 
 message ResourceTypeAppService_resourceTypesResponse {
-  string response = 1; 
+  repeated ResourceType resourceTypes = 1;
 }
+
 
 service ResourceTypeAppService {
   rpc resourceTypeByName (ResourceTypeAppService_resourceTypeByNameRequest) returns (ResourceTypeAppService_resourceTypeByNameResponse) {}
+  rpc resourceTypeById (ResourceTypeAppService_resourceTypeByIdRequest) returns (ResourceTypeAppService_resourceTypeByIdResponse) {}
   rpc resourceTypes (ResourceTypeAppService_resourceTypesRequest) returns (ResourceTypeAppService_resourceTypesResponse) {}
 }

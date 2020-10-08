@@ -11,6 +11,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+import user_pb2 as user__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -19,8 +20,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x16user_app_service.proto\x12\x12\x63\x61\x66m.identity.user\"M\n+UserAppService_userByNameAndPasswordRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"H\n,UserAppService_userByNameAndPasswordResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"E\n\x1bUserAppService_usersRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\"0\n\x1cUserAppService_usersResponse\x12\x10\n\x08response\x18\x01 \x01(\t2\x9d\x02\n\x0eUserAppService\x12\x9c\x01\n\x15userByNameAndPassword\x12?.cafm.identity.user.UserAppService_userByNameAndPasswordRequest\x1a@.cafm.identity.user.UserAppService_userByNameAndPasswordResponse\"\x00\x12l\n\x05users\x12/.cafm.identity.user.UserAppService_usersRequest\x1a\x30.cafm.identity.user.UserAppService_usersResponse\"\x00\x62\x06proto3'
-)
+  serialized_pb=b'\n\x16user_app_service.proto\x12\x12\x63\x61\x66m.identity.user\x1a\nuser.proto\"M\n+UserAppService_userByNameAndPasswordRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"V\n,UserAppService_userByNameAndPasswordResponse\x12&\n\x04user\x18\x01 \x01(\x0b\x32\x18.cafm.identity.user.User\",\n\x1eUserAppService_userByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"I\n\x1fUserAppService_userByIdResponse\x12&\n\x04user\x18\x01 \x01(\x0b\x32\x18.cafm.identity.user.User\"E\n\x1bUserAppService_usersRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\"G\n\x1cUserAppService_usersResponse\x12\'\n\x05users\x18\x01 \x03(\x0b\x32\x18.cafm.identity.user.User2\x89\x03\n\x0eUserAppService\x12\x91\x01\n\nuserByName\x12?.cafm.identity.user.UserAppService_userByNameAndPasswordRequest\x1a@.cafm.identity.user.UserAppService_userByNameAndPasswordResponse\"\x00\x12u\n\x08userById\x12\x32.cafm.identity.user.UserAppService_userByIdRequest\x1a\x33.cafm.identity.user.UserAppService_userByIdResponse\"\x00\x12l\n\x05users\x12/.cafm.identity.user.UserAppService_usersRequest\x1a\x30.cafm.identity.user.UserAppService_usersResponse\"\x00\x62\x06proto3'
+  ,
+  dependencies=[user__pb2.DESCRIPTOR,])
 
 
 
@@ -59,8 +61,8 @@ _USERAPPSERVICE_USERBYNAMEANDPASSWORDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=46,
-  serialized_end=123,
+  serialized_start=58,
+  serialized_end=135,
 )
 
 
@@ -73,15 +75,40 @@ _USERAPPSERVICE_USERBYNAMEANDPASSWORDRESPONSE = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='cafm.identity.user.UserAppService_userByNameAndPasswordResponse.id', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='user', full_name='cafm.identity.user.UserAppService_userByNameAndPasswordResponse.user', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=137,
+  serialized_end=223,
+)
+
+
+_USERAPPSERVICE_USERBYIDREQUEST = _descriptor.Descriptor(
+  name='UserAppService_userByIdRequest',
+  full_name='cafm.identity.user.UserAppService_userByIdRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='cafm.identity.user.UserAppService_userByNameAndPasswordResponse.name', index=1,
-      number=2, type=9, cpp_type=9, label=1,
+      name='id', full_name='cafm.identity.user.UserAppService_userByIdRequest.id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -98,8 +125,40 @@ _USERAPPSERVICE_USERBYNAMEANDPASSWORDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=125,
-  serialized_end=197,
+  serialized_start=225,
+  serialized_end=269,
+)
+
+
+_USERAPPSERVICE_USERBYIDRESPONSE = _descriptor.Descriptor(
+  name='UserAppService_userByIdResponse',
+  full_name='cafm.identity.user.UserAppService_userByIdResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='user', full_name='cafm.identity.user.UserAppService_userByIdResponse.user', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=271,
+  serialized_end=344,
 )
 
 
@@ -137,8 +196,8 @@ _USERAPPSERVICE_USERSREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=199,
-  serialized_end=268,
+  serialized_start=346,
+  serialized_end=415,
 )
 
 
@@ -151,9 +210,9 @@ _USERAPPSERVICE_USERSRESPONSE = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='response', full_name='cafm.identity.user.UserAppService_usersResponse.response', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='users', full_name='cafm.identity.user.UserAppService_usersResponse.users', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -169,12 +228,17 @@ _USERAPPSERVICE_USERSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=270,
-  serialized_end=318,
+  serialized_start=417,
+  serialized_end=488,
 )
 
+_USERAPPSERVICE_USERBYNAMEANDPASSWORDRESPONSE.fields_by_name['user'].message_type = user__pb2._USER
+_USERAPPSERVICE_USERBYIDRESPONSE.fields_by_name['user'].message_type = user__pb2._USER
+_USERAPPSERVICE_USERSRESPONSE.fields_by_name['users'].message_type = user__pb2._USER
 DESCRIPTOR.message_types_by_name['UserAppService_userByNameAndPasswordRequest'] = _USERAPPSERVICE_USERBYNAMEANDPASSWORDREQUEST
 DESCRIPTOR.message_types_by_name['UserAppService_userByNameAndPasswordResponse'] = _USERAPPSERVICE_USERBYNAMEANDPASSWORDRESPONSE
+DESCRIPTOR.message_types_by_name['UserAppService_userByIdRequest'] = _USERAPPSERVICE_USERBYIDREQUEST
+DESCRIPTOR.message_types_by_name['UserAppService_userByIdResponse'] = _USERAPPSERVICE_USERBYIDRESPONSE
 DESCRIPTOR.message_types_by_name['UserAppService_usersRequest'] = _USERAPPSERVICE_USERSREQUEST
 DESCRIPTOR.message_types_by_name['UserAppService_usersResponse'] = _USERAPPSERVICE_USERSRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -192,6 +256,20 @@ UserAppService_userByNameAndPasswordResponse = _reflection.GeneratedProtocolMess
   # @@protoc_insertion_point(class_scope:cafm.identity.user.UserAppService_userByNameAndPasswordResponse)
   })
 _sym_db.RegisterMessage(UserAppService_userByNameAndPasswordResponse)
+
+UserAppService_userByIdRequest = _reflection.GeneratedProtocolMessageType('UserAppService_userByIdRequest', (_message.Message,), {
+  'DESCRIPTOR' : _USERAPPSERVICE_USERBYIDREQUEST,
+  '__module__' : 'user_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.user.UserAppService_userByIdRequest)
+  })
+_sym_db.RegisterMessage(UserAppService_userByIdRequest)
+
+UserAppService_userByIdResponse = _reflection.GeneratedProtocolMessageType('UserAppService_userByIdResponse', (_message.Message,), {
+  'DESCRIPTOR' : _USERAPPSERVICE_USERBYIDRESPONSE,
+  '__module__' : 'user_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.user.UserAppService_userByIdResponse)
+  })
+_sym_db.RegisterMessage(UserAppService_userByIdResponse)
 
 UserAppService_usersRequest = _reflection.GeneratedProtocolMessageType('UserAppService_usersRequest', (_message.Message,), {
   'DESCRIPTOR' : _USERAPPSERVICE_USERSREQUEST,
@@ -216,12 +294,12 @@ _USERAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=321,
-  serialized_end=606,
+  serialized_start=491,
+  serialized_end=884,
   methods=[
   _descriptor.MethodDescriptor(
-    name='userByNameAndPassword',
-    full_name='cafm.identity.user.UserAppService.userByNameAndPassword',
+    name='userByName',
+    full_name='cafm.identity.user.UserAppService.userByName',
     index=0,
     containing_service=None,
     input_type=_USERAPPSERVICE_USERBYNAMEANDPASSWORDREQUEST,
@@ -230,9 +308,19 @@ _USERAPPSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
+    name='userById',
+    full_name='cafm.identity.user.UserAppService.userById',
+    index=1,
+    containing_service=None,
+    input_type=_USERAPPSERVICE_USERBYIDREQUEST,
+    output_type=_USERAPPSERVICE_USERBYIDRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
     name='users',
     full_name='cafm.identity.user.UserAppService.users',
-    index=1,
+    index=2,
     containing_service=None,
     input_type=_USERAPPSERVICE_USERSREQUEST,
     output_type=_USERAPPSERVICE_USERSRESPONSE,

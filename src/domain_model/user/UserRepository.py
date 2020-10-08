@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 from abc import ABC, abstractmethod
+from typing import List
 
 from src.domain_model.user.User import User
 
@@ -37,4 +38,28 @@ class UserRepository(ABC):
 
         Returns:
             User: user object
+        """
+
+    @abstractmethod
+    def userById(self, id: str) -> User:
+        """Get user by id
+
+        Args:
+            id (str): The id of the user
+
+        Returns:
+            User: user object
+        """
+
+    @abstractmethod
+    def usersByOwnedUsers(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[User]:
+        """Get list of users based on the owned roles that the user has
+
+        Args:
+            ownedRoles (List[str]): A list of the roles that the user or user group has
+            resultFrom (int): The start offset of the result item
+            resultSize (int): The size of the items in the result
+
+        Returns:
+            List[User]: A list of users
         """

@@ -2,13 +2,22 @@ syntax = "proto3";
 
 package cafm.identity.permission;
 
+import "permission.proto";
+
 message PermissionAppService_permissionByNameRequest {
   string name = 1;
 }
 
 message PermissionAppService_permissionByNameResponse {
+  Permission permission = 1;
+}
+
+message PermissionAppService_permissionByIdRequest {
   string id = 1;
-  string name = 2;
+}
+
+message PermissionAppService_permissionByIdResponse {
+  Permission permission = 1;
 }
 
 message PermissionAppService_permissionsRequest {
@@ -17,11 +26,12 @@ message PermissionAppService_permissionsRequest {
 }
 
 message PermissionAppService_permissionsResponse {
-  string response = 1; 
+  repeated Permission permissions = 1;
 }
 
 
 service PermissionAppService {
   rpc permissionByName (PermissionAppService_permissionByNameRequest) returns (PermissionAppService_permissionByNameResponse) {}
+  rpc permissionById (PermissionAppService_permissionByIdRequest) returns (PermissionAppService_permissionByIdResponse) {}
   rpc permissions (PermissionAppService_permissionsRequest) returns (PermissionAppService_permissionsResponse) {}
 }

@@ -20,7 +20,6 @@ def test_create_role_object_when_role_already_exist():
     with pytest.raises(RoleAlreadyExistException):
         role = appService.createObjectOnly(name=name)
 
-
 def test_create_role_object_when_role_does_not_exist():
     from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
     DomainEventPublisher.cleanup()
@@ -32,7 +31,6 @@ def test_create_role_object_when_role_does_not_exist():
     role = appService.createObjectOnly(name=name)
     assert isinstance(role, Role)
     assert role.name() == name
-
 
 def test_create_role_with_event_publishing_when_role_does_not_exist():
     from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
@@ -50,7 +48,6 @@ def test_create_role_with_event_publishing_when_role_does_not_exist():
     repo.createRole.assert_called_once()
     assert len(DomainEventPublisher.postponedEvents()) > 0
 
-
 def test_get_role_by_name_when_role_exists():
     repo = Mock(spec=RoleRepository)
     name = 'me'
@@ -61,7 +58,6 @@ def test_get_role_by_name_when_role_exists():
     appService.roleByName(name=name)
 
     repo.roleByName.assert_called_once_with(name=name)
-
 
 def test_create_object_only_raise_exception_when_role_exists():
     from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
@@ -74,7 +70,6 @@ def test_create_object_only_raise_exception_when_role_exists():
     with pytest.raises(RoleAlreadyExistException):
         role = appService.createObjectOnly(name=name)
 
-
 def test_create_role_raise_exception_when_role_exists():
     from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
     repo = Mock(spec=RoleRepository)
@@ -85,3 +80,14 @@ def test_create_role_raise_exception_when_role_exists():
     appService = RoleApplicationService(repo)
     with pytest.raises(RoleAlreadyExistException):
         role = appService.createRole(id='1', name=name)
+
+def test_get_role_by_id_when_role_exists():
+    repo = Mock(spec=RoleRepository)
+    name = 'me'
+    role = Role(id='1234', name=name)
+
+    repo.roleById = Mock(return_value=role)
+    appService = RoleApplicationService(repo)
+    appService.roleById(id='1234')
+
+    repo.roleById.assert_called_once_with(id='1234')

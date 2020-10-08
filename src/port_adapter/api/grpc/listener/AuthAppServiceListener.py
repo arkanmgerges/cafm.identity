@@ -11,7 +11,7 @@ from src.domain_model.resource.exception.InvalidCredentialsException import Inva
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.auth_app_service_pb2 import AuthAppService_authenticateUserByNameAndPasswordResponse, \
-    AuthAppService_isAuthenticatedResponse
+    AuthAppService_isAuthenticatedResponse, AuthAppService_logoutResponse
 from src.resource.proto._generated.auth_app_service_pb2_grpc import AuthAppServiceServicer
 
 
@@ -74,15 +74,26 @@ class AuthAppServiceListener(AuthAppServiceServicer):
     #             context.set_details(e)
     #             return AuthAppService_isAuthenticatedResponse()
 
-
     def isAuthenticated(self, request, context):
         try:
             authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
             logger.debug(f'[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Call with token: {request.token}')
             result = authAppService.isAuthenticated(token=request.token)
-            logger.debug(f'[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Receive response with result: {result}')
+            logger.debug(
+                f'[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Receive response with result: {result}')
             return AuthAppService_isAuthenticatedResponse(response=result)
         except Exception as e:
             context.set_code(grpc.StatusCode.ERROR)
             context.set_details(e)
             return AuthAppService_isAuthenticatedResponse()
+
+    def logout(self, request, context):
+        try:
+            authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
+            logger.debug(f'[{AuthAppServiceListener.logout.__qualname__}] - Call with token: {request.token}')
+            authAppService.logout(token=request.token)
+            return AuthAppService_logoutResponse()
+        except Exception as e:
+            context.set_code(grpc.StatusCode.ERROR)
+            context.set_details(e)
+            return AuthAppService_logoutResponse()

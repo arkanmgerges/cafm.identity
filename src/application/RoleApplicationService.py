@@ -31,5 +31,8 @@ class RoleApplicationService:
     def roleByName(self, name: str):
         return self._roleRepository.roleByName(name=name)
 
+    def roleById(self, id: str):
+        return self._roleRepository.roleById(id=id)
+
     def roles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Role]:
         return self._roleRepository.rolesByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom, resultSize=resultSize)

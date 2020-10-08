@@ -19,6 +19,11 @@ class OuAppServiceStub(object):
                 request_serializer=ou__app__service__pb2.OuAppService_ouByNameRequest.SerializeToString,
                 response_deserializer=ou__app__service__pb2.OuAppService_ouByNameResponse.FromString,
                 )
+        self.ouById = channel.unary_unary(
+                '/cafm.identity.ou.OuAppService/ouById',
+                request_serializer=ou__app__service__pb2.OuAppService_ouByIdRequest.SerializeToString,
+                response_deserializer=ou__app__service__pb2.OuAppService_ouByIdResponse.FromString,
+                )
         self.ous = channel.unary_unary(
                 '/cafm.identity.ou.OuAppService/ous',
                 request_serializer=ou__app__service__pb2.OuAppService_ousRequest.SerializeToString,
@@ -30,6 +35,12 @@ class OuAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def ouByName(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ouById(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -48,6 +59,11 @@ def add_OuAppServiceServicer_to_server(servicer, server):
                     servicer.ouByName,
                     request_deserializer=ou__app__service__pb2.OuAppService_ouByNameRequest.FromString,
                     response_serializer=ou__app__service__pb2.OuAppService_ouByNameResponse.SerializeToString,
+            ),
+            'ouById': grpc.unary_unary_rpc_method_handler(
+                    servicer.ouById,
+                    request_deserializer=ou__app__service__pb2.OuAppService_ouByIdRequest.FromString,
+                    response_serializer=ou__app__service__pb2.OuAppService_ouByIdResponse.SerializeToString,
             ),
             'ous': grpc.unary_unary_rpc_method_handler(
                     servicer.ous,
@@ -78,6 +94,23 @@ class OuAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.ou.OuAppService/ouByName',
             ou__app__service__pb2.OuAppService_ouByNameRequest.SerializeToString,
             ou__app__service__pb2.OuAppService_ouByNameResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ouById(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.ou.OuAppService/ouById',
+            ou__app__service__pb2.OuAppService_ouByIdRequest.SerializeToString,
+            ou__app__service__pb2.OuAppService_ouByIdResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

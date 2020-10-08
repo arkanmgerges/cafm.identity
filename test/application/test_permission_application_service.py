@@ -85,3 +85,14 @@ def test_create_permission_raise_exception_when_permission_exists():
     appService = PermissionApplicationService(repo)
     with pytest.raises(PermissionAlreadyExistException):
         permission = appService.createPermission(id='1', name=name)
+
+def test_get_permission_by_id_when_permission_exists():
+    repo = Mock(spec=PermissionRepository)
+    name = 'me'
+    permission = Permission(id='1234', name=name)
+
+    repo.permissionById = Mock(return_value=permission)
+    appService = PermissionApplicationService(repo)
+    appService.permissionById(id='1234')
+
+    repo.permissionById.assert_called_once_with(id='1234')

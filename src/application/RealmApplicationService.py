@@ -1,6 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from typing import List
+
 from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
 from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
 from src.domain_model.realm.Realm import Realm
@@ -28,3 +30,9 @@ class RealmApplicationService:
 
     def realmByName(self, name: str):
         return self._realmRepository.realmByName(name=name)
+
+    def realmById(self, id: str):
+        return self._realmRepository.realmById(id=id)
+
+    def realms(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Realm]:
+        return self._realmRepository.realmsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom, resultSize=resultSize)

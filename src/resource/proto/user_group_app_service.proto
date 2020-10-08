@@ -1,15 +1,23 @@
-// python -m grpc_tools.protoc -I./proto --python_out=. --grpc_python_out=. ./proto/pingpong.proto
 syntax = "proto3";
 
-package cafm.identity.userGroup;
+package cafm.identity.user_group;
+
+import "user_group.proto";
 
 message UserGroupAppService_userGroupByNameRequest {
   string name = 1;
 }
 
 message UserGroupAppService_userGroupByNameResponse {
+  UserGroup userGroup = 1;
+}
+
+message UserGroupAppService_userGroupByIdRequest {
   string id = 1;
-  string name = 2;
+}
+
+message UserGroupAppService_userGroupByIdResponse {
+  UserGroup userGroup = 1;
 }
 
 message UserGroupAppService_userGroupsRequest {
@@ -18,10 +26,12 @@ message UserGroupAppService_userGroupsRequest {
 }
 
 message UserGroupAppService_userGroupsResponse {
-  string response = 1; 
+  repeated UserGroup userGroups = 1;
 }
+
 
 service UserGroupAppService {
   rpc userGroupByName (UserGroupAppService_userGroupByNameRequest) returns (UserGroupAppService_userGroupByNameResponse) {}
+  rpc userGroupById (UserGroupAppService_userGroupByIdRequest) returns (UserGroupAppService_userGroupByIdResponse) {}
   rpc userGroups (UserGroupAppService_userGroupsRequest) returns (UserGroupAppService_userGroupsResponse) {}
 }

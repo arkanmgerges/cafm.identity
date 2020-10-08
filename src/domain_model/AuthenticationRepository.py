@@ -48,3 +48,11 @@ class AuthenticationRepository(ABC):
         Returns:
             bool: If True then the token exists, False if it does not exist
         """
+
+    @abstractmethod
+    def deleteToken(self, token: str) -> None:
+        """Delete the token
+
+        Args:
+            token (str): The token to be deleted
+        """

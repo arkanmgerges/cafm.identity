@@ -15,12 +15,17 @@ class ResourceTypeAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.resourceTypeByName = channel.unary_unary(
-                '/cafm.identity.resourceType.ResourceTypeAppService/resourceTypeByName',
+                '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypeByName',
                 request_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameRequest.SerializeToString,
                 response_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameResponse.FromString,
                 )
+        self.resourceTypeById = channel.unary_unary(
+                '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypeById',
+                request_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdRequest.SerializeToString,
+                response_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdResponse.FromString,
+                )
         self.resourceTypes = channel.unary_unary(
-                '/cafm.identity.resourceType.ResourceTypeAppService/resourceTypes',
+                '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypes',
                 request_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypesRequest.SerializeToString,
                 response_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypesResponse.FromString,
                 )
@@ -30,6 +35,12 @@ class ResourceTypeAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def resourceTypeByName(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def resourceTypeById(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -49,6 +60,11 @@ def add_ResourceTypeAppServiceServicer_to_server(servicer, server):
                     request_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameRequest.FromString,
                     response_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameResponse.SerializeToString,
             ),
+            'resourceTypeById': grpc.unary_unary_rpc_method_handler(
+                    servicer.resourceTypeById,
+                    request_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdRequest.FromString,
+                    response_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdResponse.SerializeToString,
+            ),
             'resourceTypes': grpc.unary_unary_rpc_method_handler(
                     servicer.resourceTypes,
                     request_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypesRequest.FromString,
@@ -56,7 +72,7 @@ def add_ResourceTypeAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'cafm.identity.resourceType.ResourceTypeAppService', rpc_method_handlers)
+            'cafm.identity.resource_type.ResourceTypeAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -75,9 +91,26 @@ class ResourceTypeAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.resourceType.ResourceTypeAppService/resourceTypeByName',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypeByName',
             resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameRequest.SerializeToString,
             resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def resourceTypeById(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypeById',
+            resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdRequest.SerializeToString,
+            resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -92,7 +125,7 @@ class ResourceTypeAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.resourceType.ResourceTypeAppService/resourceTypes',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypes',
             resource__type__app__service__pb2.ResourceTypeAppService_resourceTypesRequest.SerializeToString,
             resource__type__app__service__pb2.ResourceTypeAppService_resourceTypesResponse.FromString,
             options, channel_credentials,

@@ -2,13 +2,22 @@ syntax = "proto3";
 
 package cafm.identity.ou;
 
+import "ou.proto";
+
 message OuAppService_ouByNameRequest {
   string name = 1;
 }
 
 message OuAppService_ouByNameResponse {
+  Ou ou = 1;
+}
+
+message OuAppService_ouByIdRequest {
   string id = 1;
-  string name = 2;
+}
+
+message OuAppService_ouByIdResponse {
+  Ou ou = 1;
 }
 
 message OuAppService_ousRequest {
@@ -17,11 +26,12 @@ message OuAppService_ousRequest {
 }
 
 message OuAppService_ousResponse {
-  string response = 1;
+  repeated Ou ous = 1;
 }
 
 service OuAppService {
   rpc ouByName (OuAppService_ouByNameRequest) returns (OuAppService_ouByNameResponse) {}
+  rpc ouById (OuAppService_ouByIdRequest) returns (OuAppService_ouByIdResponse) {}
   rpc ous (OuAppService_ousRequest) returns (OuAppService_ousResponse) {}
 }
 

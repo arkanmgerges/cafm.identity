@@ -1,6 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from typing import List
+
 from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
 from src.domain_model.ou.Ou import Ou
@@ -28,3 +30,9 @@ class OuApplicationService:
 
     def ouByName(self, name: str):
         return self._ouRepository.ouByName(name=name)
+
+    def ouById(self, id: str):
+        return self._ouRepository.ouById(id=id)
+
+    def ous(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Ou]:
+        return self._ouRepository.ousByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom, resultSize=resultSize)

@@ -2,13 +2,22 @@ syntax = "proto3";
 
 package cafm.identity.role;
 
+import "role.proto";
+
 message RoleAppService_roleByNameRequest {
   string name = 1;
 }
 
 message RoleAppService_roleByNameResponse {
+  Role role = 1;
+}
+
+message RoleAppService_roleByIdRequest {
   string id = 1;
-  string name = 2;
+}
+
+message RoleAppService_roleByIdResponse {
+  Role role = 1;
 }
 
 message RoleAppService_rolesRequest {
@@ -17,11 +26,12 @@ message RoleAppService_rolesRequest {
 }
 
 message RoleAppService_rolesResponse {
-  string response = 1;
+  repeated Role roles = 1;
 }
 
 
 service RoleAppService {
   rpc roleByName (RoleAppService_roleByNameRequest) returns (RoleAppService_roleByNameResponse) {}
+  rpc roleById (RoleAppService_roleByIdRequest) returns (RoleAppService_roleByIdResponse) {}
   rpc roles (RoleAppService_rolesRequest) returns (RoleAppService_rolesResponse) {}
 }

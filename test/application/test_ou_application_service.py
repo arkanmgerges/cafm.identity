@@ -85,3 +85,14 @@ def test_create_ou_raise_exception_when_ou_exists():
     appService = OuApplicationService(repo)
     with pytest.raises(OuAlreadyExistException):
         ou = appService.createOu(id='1', name=name)
+
+def test_get_ou_by_id_when_ou_exists():
+    repo = Mock(spec=OuRepository)
+    name = 'me'
+    ou = Ou(id='1234', name=name)
+
+    repo.ouById = Mock(return_value=ou)
+    appService = OuApplicationService(repo)
+    appService.ouById(id='1234')
+
+    repo.ouById.assert_called_once_with(id='1234')

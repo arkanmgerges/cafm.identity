@@ -18,3 +18,17 @@ def test_authenticate_user_when_exist():
     assert isinstance(token, str)
     assert len(token) > 0
     authRepo.persistToken.assert_called()
+
+
+def test_logout_user_when_exist():
+    authRepo = Mock(spec=AuthenticationRepository)
+    authRepo.authenticateUserByNameAndPassword = Mock(return_value={'id': '1234', 'name': 'john', 'role': ['admin']})
+    authAppService = AuthenticationApplicationService(AuthenticationService(authRepo))
+
+    token = authAppService.authenticateUserByNameAndPassword(name='john', password='1234')
+    authAppService.logout(token=token)
+
+    assert isinstance(token, str)
+    assert len(token) > 0
+    authRepo.persistToken.assert_called()
+    authRepo.deleteToken.assert_called_with(token=token)

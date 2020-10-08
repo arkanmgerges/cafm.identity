@@ -85,3 +85,14 @@ def test_create_role_raise_exception_when_role_exists():
     appService = ProjectApplicationService(repo)
     with pytest.raises(ProjectAlreadyExistException):
         role = appService.createProject(id='1', name=name)
+
+def test_get_project_by_id_when_project_exists():
+    repo = Mock(spec=ProjectRepository)
+    name = 'me'
+    project = Project(id='1234', name=name)
+
+    repo.projectById = Mock(return_value=project)
+    appService = ProjectApplicationService(repo)
+    appService.projectById(id='1234')
+
+    repo.projectById.assert_called_once_with(id='1234')

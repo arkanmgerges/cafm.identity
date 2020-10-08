@@ -85,3 +85,14 @@ def test_create_realm_raise_exception_when_realm_exists():
     appService = RealmApplicationService(repo)
     with pytest.raises(RealmAlreadyExistException):
         realm = appService.createRealm(id='1', name=name)
+
+def test_get_realm_by_id_when_realm_exists():
+    repo = Mock(spec=RealmRepository)
+    name = 'me'
+    realm = Realm(id='1234', name=name)
+
+    repo.realmById = Mock(return_value=realm)
+    appService = RealmApplicationService(repo)
+    appService.realmById(id='1234')
+
+    repo.realmById.assert_called_once_with(id='1234')

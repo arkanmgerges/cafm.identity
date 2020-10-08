@@ -1,6 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from typing import List
+
 from src.domain_model.resource.exception.UserGroupAlreadyExistException import UserGroupAlreadyExistException
 from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
 from src.domain_model.user_group.UserGroup import UserGroup
@@ -28,3 +30,9 @@ class UserGroupApplicationService:
 
     def userGroupByName(self, name: str):
         return self._userGroupRepository.userGroupByName(name=name)
+
+    def userGroupById(self, id: str):
+        return self._userGroupRepository.userGroupById(id=id)
+
+    def userGroups(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[UserGroup]:
+        return self._userGroupRepository.userGroupsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom, resultSize=resultSize)

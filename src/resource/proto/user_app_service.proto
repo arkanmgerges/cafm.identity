@@ -2,14 +2,23 @@ syntax = "proto3";
 
 package cafm.identity.user;
 
+import "user.proto";
+
 message UserAppService_userByNameAndPasswordRequest {
   string name = 1;
   string password = 2;
 }
 
 message UserAppService_userByNameAndPasswordResponse {
+  User user = 1;
+}
+
+message UserAppService_userByIdRequest {
   string id = 1;
-  string name = 2;
+}
+
+message UserAppService_userByIdResponse {
+  User user = 1;
 }
 
 message UserAppService_usersRequest {
@@ -18,10 +27,12 @@ message UserAppService_usersRequest {
 }
 
 message UserAppService_usersResponse {
-  string response = 1; 
+  repeated User users = 1;
 }
 
+
 service UserAppService {
-  rpc userByNameAndPassword (UserAppService_userByNameAndPasswordRequest) returns (UserAppService_userByNameAndPasswordResponse) {}
+  rpc userByName (UserAppService_userByNameAndPasswordRequest) returns (UserAppService_userByNameAndPasswordResponse) {}
+  rpc userById (UserAppService_userByIdRequest) returns (UserAppService_userByIdResponse) {}
   rpc users (UserAppService_usersRequest) returns (UserAppService_usersResponse) {}
 }
