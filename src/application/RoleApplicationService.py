@@ -27,6 +27,7 @@ class RoleApplicationService:
         except RoleDoesNotExistException:
             role = Role.createFrom(id=id, name=name, publishEvent=True)
             self._roleRepository.createRole(role)
+            return role
 
     def roleByName(self, name: str):
         return self._roleRepository.roleByName(name=name)

@@ -15,6 +15,7 @@ from src.port_adapter.messaging.common.ConsumerOffsetReset import ConsumerOffset
 from src.port_adapter.messaging.common.TransactionalProducer import TransactionalProducer
 from src.port_adapter.messaging.common.model.ApiResponse import ApiResponse
 from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
+from src.port_adapter.messaging.listener.identity_command.handler.CreateRoleHandler import CreateRoleHandler
 from src.port_adapter.messaging.listener.identity_command.handler.CreateUserHandler import CreateUserHandler
 from src.resource.logging.logger import logger
 
@@ -67,10 +68,10 @@ class IdentityCommandListener:
 
                     try:
                         msgData = msg.value()
-                        handledResult = self.handleCommand(name=msgData['name'], data=msgData['data'])
+                        handledResult = self.handleCommand(name=msgData['name'], data=msgData['data'], metadata=msgData['metadata'])
                         if handledResult is None:  # Consume the offset since there is no handler for it
                             logger.info(
-                                f'[{IdentityCommandListener.run.__qualname__}] - Consume the offset for handleCommand(name={msgData["name"]}, data={msgData["data"]})')
+                                f'[{IdentityCommandListener.run.__qualname__}] - Command handle result is None, The offset is consumed for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})')
                             producer.sendOffsetsToTransaction(consumer)
                             producer.commitTransaction()
                             producer.beginTransaction()
@@ -137,15 +138,16 @@ class IdentityCommandListener:
             # Close down consumer to commit final offsets.
             consumer.close()
 
-    def handleCommand(self, name, data):
+    def handleCommand(self, name, data, metadata: str):
         for handler in self._handlers:
             if handler.canHandle(name):
-                result = handler.handleCommand(name=name, data=data)
-                return {"data": ""} if result is None else result
+                result = handler.handleCommand(name=name, data=data, metadata=metadata)
+                return {"data": "", "metadata": metadata} if result is None else result
         return None
 
     def addHandlers(self):
         self._handlers.append(CreateUserHandler())
+        self._handlers.append(CreateRoleHandler())
 
 
 IdentityCommandListener().run()

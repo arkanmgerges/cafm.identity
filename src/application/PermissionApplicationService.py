@@ -27,6 +27,7 @@ class PermissionApplicationService:
         except PermissionDoesNotExistException:
             permission = Permission.createFrom(id=id, name=name, publishEvent=True)
             self._permissionRepository.createPermission(permission)
+            return permission
 
     def permissionByName(self, name: str):
         return self._permissionRepository.permissionByName(name=name)

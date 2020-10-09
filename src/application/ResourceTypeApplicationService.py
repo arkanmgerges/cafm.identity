@@ -27,6 +27,7 @@ class ResourceTypeApplicationService:
         except ResourceTypeDoesNotExistException:
             resourceType = ResourceType.createFrom(id=id, name=name, publishEvent=True)
             self._resourceTypeRepository.createResourceType(resourceType)
+            return resourceType
 
     def resourceTypeByName(self, name: str):
         return self._resourceTypeRepository.resourceTypeByName(name=name)

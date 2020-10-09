@@ -17,12 +17,13 @@ class Handler(ABC):
         """
 
     @abstractmethod
-    def handleCommand(self, name: str, data: str) -> dict:
+    def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         """Handle the command
 
         Args:
             name (str): Command name to handle
             data (str): The associated data for the command to handle
+            metadata (str): The associated metadata for the command to handle
 
         Returns:
             dict: The result of the handler

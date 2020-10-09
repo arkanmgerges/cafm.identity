@@ -27,6 +27,7 @@ class ProjectApplicationService:
         except ProjectDoesNotExistException:
             project = Project.createFrom(id=id, name=name, publishEvent=True)
             self._projectRepository.createProject(project)
+            return project
 
     def projectByName(self, name: str):
         return self._projectRepository.projectByName(name=name)

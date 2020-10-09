@@ -27,6 +27,7 @@ class UserGroupApplicationService:
         except UserGroupDoesNotExistException:
             userGroup = UserGroup.createFrom(id=id, name=name, publishEvent=True)
             self._userGroupRepository.createUserGroup(userGroup)
+            return userGroup
 
     def userGroupByName(self, name: str):
         return self._userGroupRepository.userGroupByName(name=name)

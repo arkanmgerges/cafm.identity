@@ -27,6 +27,7 @@ class RealmApplicationService:
         except RealmDoesNotExistException:
             realm = Realm.createFrom(id=id, name=name, publishEvent=True)
             self._realmRepository.createRealm(realm)
+            return realm
 
     def realmByName(self, name: str):
         return self._realmRepository.realmByName(name=name)

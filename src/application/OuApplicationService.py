@@ -27,6 +27,7 @@ class OuApplicationService:
         except OuDoesNotExistException:
             ou = Ou.createFrom(id=id, name=name, publishEvent=True)
             self._ouRepository.createOu(ou)
+            return ou
 
     def ouByName(self, name: str):
         return self._ouRepository.ouByName(name=name)
