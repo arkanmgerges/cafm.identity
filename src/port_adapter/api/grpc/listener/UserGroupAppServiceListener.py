@@ -25,7 +25,6 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
         self.last_print_time = time.time()
         self._tokenService = TokenService()
 
-
     def __str__(self):
         return self.__class__.__name__
 
@@ -51,13 +50,15 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
-            ownedUserGroups = claims['userGroup'] if 'userGroup' in claims else []
-            logger.debug(f'[{UserGroupAppServiceListener.userGroups.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedUserGroups {ownedUserGroups}\n\t \
+            ownedRoles = claims['role'] if 'role' in claims else []
+            logger.debug(
+                f'[{UserGroupAppServiceListener.userGroups.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             userGroupAppService: UserGroupApplicationService = AppDi.instance.get(UserGroupApplicationService)
 
-            userGroups: List[UserGroup] = userGroupAppService.userGroups(ownedUserGroups=ownedUserGroups, resultFrom=request.resultFrom,
-                                                     resultSize=resultSize)
+            userGroups: List[UserGroup] = userGroupAppService.userGroups(ownedRoles=ownedRoles,
+                                                                         resultFrom=request.resultFrom,
+                                                                         resultSize=resultSize)
             response = UserGroupAppService_userGroupsResponse()
             for userGroup in userGroups:
                 response.userGroups.add(id=userGroup.id(), name=userGroup.name())

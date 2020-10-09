@@ -52,7 +52,7 @@ class UserRepository(ABC):
         """
 
     @abstractmethod
-    def usersByOwnedUsers(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[User]:
+    def usersByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[User]:
         """Get list of users based on the owned roles that the user has
 
         Args:

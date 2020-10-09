@@ -40,7 +40,7 @@ class UserGroupRepository(ABC):
         """
 
     @abstractmethod
-    def userGroupsByOwnedUserGroups(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[UserGroup]:
+    def userGroupsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[UserGroup]:
         """Get list of userGroups based on the owned roles that the user has
 
         Args:

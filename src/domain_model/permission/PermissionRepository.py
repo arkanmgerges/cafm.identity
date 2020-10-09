@@ -40,7 +40,7 @@ class PermissionRepository(ABC):
         """
 
     @abstractmethod
-    def permissionsByOwnedPermissions(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Permission]:
+    def permissionsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Permission]:
         """Get list of permissions based on the owned roles that the user has
 
         Args:

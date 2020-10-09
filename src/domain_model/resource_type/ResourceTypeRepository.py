@@ -40,7 +40,7 @@ class ResourceTypeRepository(ABC):
         """
 
     @abstractmethod
-    def resourceTypesByOwnedResourceTypes(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[ResourceType]:
+    def resourceTypesByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[ResourceType]:
         """Get list of resourceTypes based on the owned roles that the user has
 
         Args:

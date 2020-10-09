@@ -26,7 +26,6 @@ class ResourceTypeAppServiceListener(ResourceTypeAppServiceServicer):
         self.last_print_time = time.time()
         self._tokenService = TokenService()
 
-
     def __str__(self):
         return self.__class__.__name__
 
@@ -52,13 +51,15 @@ class ResourceTypeAppServiceListener(ResourceTypeAppServiceServicer):
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
-            ownedResourceTypes = claims['resourceType'] if 'resourceType' in claims else []
-            logger.debug(f'[{ResourceTypeAppServiceListener.resourceTypes.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedResourceTypes {ownedResourceTypes}\n\t \
+            ownedRoles = claims['role'] if 'role' in claims else []
+            logger.debug(
+                f'[{ResourceTypeAppServiceListener.resourceTypes.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             resourceTypeAppService: ResourceTypeApplicationService = AppDi.instance.get(ResourceTypeApplicationService)
 
-            resourceTypes: List[ResourceType] = resourceTypeAppService.resourceTypes(ownedResourceTypes=ownedResourceTypes, resultFrom=request.resultFrom,
-                                                     resultSize=resultSize)
+            resourceTypes: List[ResourceType] = resourceTypeAppService.resourceTypes(ownedRoles=ownedRoles,
+                                                                                     resultFrom=request.resultFrom,
+                                                                                     resultSize=resultSize)
             response = ResourceTypeAppService_resourceTypesResponse()
             for resourceType in resourceTypes:
                 response.resourceTypes.add(id=resourceType.id(), name=resourceType.name())

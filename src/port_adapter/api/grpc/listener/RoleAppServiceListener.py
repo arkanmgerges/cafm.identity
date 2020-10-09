@@ -1,7 +1,6 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-import json
 import time
 from typing import List
 

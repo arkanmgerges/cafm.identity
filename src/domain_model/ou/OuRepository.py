@@ -40,7 +40,7 @@ class OuRepository(ABC):
         """
 
     @abstractmethod
-    def ousByOwnedOus(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Ou]:
+    def ousByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Ou]:
         """Get list of ous based on the owned roles that the user has
 
         Args:

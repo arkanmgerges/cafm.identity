@@ -44,18 +44,20 @@ class OuAppServiceListener(OuAppServiceServicer):
         #     context.set_code(grpc.StatusCode.UNKNOWN)
         #     context.set_details(f'{e}')
         #     return identity_pb2.OuResponse()
+
     def ous(self, request, context):
         try:
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
-            ownedOus = claims['ou'] if 'ou' in claims else []
-            logger.debug(f'[{OuAppServiceListener.ous.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedOus {ownedOus}\n\t \
+            ownedRoles = claims['role'] if 'role' in claims else []
+            logger.debug(
+                f'[{OuAppServiceListener.ous.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
 
-            ous: List[Ou] = ouAppService.ous(ownedOus=ownedOus, resultFrom=request.resultFrom,
-                                                     resultSize=resultSize)
+            ous: List[Ou] = ouAppService.ous(ownedRoles=ownedRoles, resultFrom=request.resultFrom,
+                                             resultSize=resultSize)
             response = OuAppService_ousResponse()
             for ou in ous:
                 response.ous.add(id=ou.id(), name=ou.name())

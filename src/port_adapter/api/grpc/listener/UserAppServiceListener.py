@@ -12,7 +12,7 @@ from src.domain_model.TokenService import TokenService
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.domain_model.user.User import User
 from src.resource.logging.logger import logger
-from src.resource.proto._generated.user_app_service_pb2 import UserAppService_userByNameResponse, \
+from src.resource.proto._generated.user_app_service_pb2 import UserAppService_userByNameAndPasswordResponse, \
     UserAppService_usersResponse, UserAppService_userByIdResponse
 from src.resource.proto._generated.user_app_service_pb2_grpc import UserAppServiceServicer
 
@@ -51,13 +51,13 @@ class UserAppServiceListener(UserAppServiceServicer):
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
-            ownedUsers = claims['user'] if 'user' in claims else []
+            ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
-                f'[{UserAppServiceListener.users.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedUsers {ownedUsers}\n\t \
+                f'[{UserAppServiceListener.users.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
 
-            users: List[User] = userAppService.users(ownedUsers=ownedUsers, resultFrom=request.resultFrom,
+            users: List[User] = userAppService.users(ownedRoles=ownedRoles, resultFrom=request.resultFrom,
                                                      resultSize=resultSize)
             response = UserAppService_usersResponse()
             for user in users:
@@ -67,7 +67,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No users found')
-            return UserAppService_userByNameResponse()
+            return UserAppService_usersResponse()
 
     def userById(self, request, context):
         try:

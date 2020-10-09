@@ -35,7 +35,7 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
             response = PermissionAppService_permissionByNameResponse()
             response.permission.id = permission.id()
             response.permission.name = permission.name()
-            return response        
+            return response
         except PermissionDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Permission does not exist')
@@ -50,13 +50,15 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
-            ownedPermissions = claims['permission'] if 'permission' in claims else []
-            logger.debug(f'[{PermissionAppServiceListener.permissions.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedPermissions {ownedPermissions}\n\t \
+            ownedRoles = claims['role'] if 'role' in claims else []
+            logger.debug(
+                f'[{PermissionAppServiceListener.permissions.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             permissionAppService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
 
-            permissions: List[Permission] = permissionAppService.permissions(ownedPermissions=ownedPermissions, resultFrom=request.resultFrom,
-                                                     resultSize=resultSize)
+            permissions: List[Permission] = permissionAppService.permissions(ownedRoles=ownedRoles,
+                                                                             resultFrom=request.resultFrom,
+                                                                             resultSize=resultSize)
             response = PermissionAppService_permissionsResponse()
             for permission in permissions:
                 response.permissions.add(id=permission.id(), name=permission.name())
