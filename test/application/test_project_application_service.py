@@ -18,7 +18,7 @@ def test_create_project_object_when_project_already_exist():
     repo.projectByProjectName = Mock(side_effect=ProjectAlreadyExistException)
     appService = ProjectApplicationService(repo)
     with pytest.raises(ProjectAlreadyExistException):
-        project = appService.createObjectOnly(name=name)
+        project = appService.createProject(name=name, objectOnly=True)
 
 
 def test_create_project_object_when_project_does_not_exist():
@@ -29,7 +29,7 @@ def test_create_project_object_when_project_does_not_exist():
 
     repo.projectByName = Mock(side_effect=ProjectDoesNotExistException)
     appService = ProjectApplicationService(repo)
-    project = appService.createObjectOnly(name=name)
+    project = appService.createProject(name=name, objectOnly=True)
     assert isinstance(project, Project)
     assert project.name() == name
 
@@ -72,7 +72,7 @@ def test_create_object_only_raise_exception_when_role_exists():
     repo.roleByName = Mock(return_value=role)
     appService = ProjectApplicationService(repo)
     with pytest.raises(ProjectAlreadyExistException):
-        role = appService.createObjectOnly(name=name)
+        role = appService.createProject(name=name, objectOnly=True)
 
 
 def test_create_role_raise_exception_when_role_exists():

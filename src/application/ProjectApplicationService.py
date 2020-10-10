@@ -13,21 +13,17 @@ class ProjectApplicationService:
     def __init__(self, projectRepository: ProjectRepository):
         self._projectRepository = projectRepository
 
-    def createObjectOnly(self, name: str):
+    def createProject(self, id: str = '', name: str = '', objectOnly: bool = False):
         try:
             self._projectRepository.projectByName(name=name)
             raise ProjectAlreadyExistException(name=name)
         except ProjectDoesNotExistException:
-            return Project.createFrom(name=name)
-
-    def createProject(self, id: str, name: str):
-        try:
-            self._projectRepository.projectByName(name=name)
-            raise ProjectAlreadyExistException(name=name)
-        except ProjectDoesNotExistException:
-            project = Project.createFrom(id=id, name=name, publishEvent=True)
-            self._projectRepository.createProject(project)
-            return project
+            if objectOnly:                
+                return Project.createFrom(name=name)
+            else:
+                project = Project.createFrom(id=id, name=name, publishEvent=True)
+                self._projectRepository.createProject(project)
+                return project
 
     def projectByName(self, name: str):
         return self._projectRepository.projectByName(name=name)

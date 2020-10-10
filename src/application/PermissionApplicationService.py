@@ -13,21 +13,17 @@ class PermissionApplicationService:
     def __init__(self, permissionRepository: PermissionRepository):
         self._permissionRepository = permissionRepository
 
-    def createObjectOnly(self, name: str):
+    def createPermission(self, id: str = '', name: str = '', objectOnly: bool = False):
         try:
             self._permissionRepository.permissionByName(name=name)
             raise PermissionAlreadyExistException(name=name)
         except PermissionDoesNotExistException:
-            return Permission.createFrom(name=name)
-
-    def createPermission(self, id: str, name: str):
-        try:
-            self._permissionRepository.permissionByName(name=name)
-            raise PermissionAlreadyExistException(name=name)
-        except PermissionDoesNotExistException:
-            permission = Permission.createFrom(id=id, name=name, publishEvent=True)
-            self._permissionRepository.createPermission(permission)
-            return permission
+            if objectOnly:                
+                return Permission.createFrom(name=name)
+            else:
+                permission = Permission.createFrom(id=id, name=name, publishEvent=True)
+                self._permissionRepository.createPermission(permission)
+                return permission
 
     def permissionByName(self, name: str):
         return self._permissionRepository.permissionByName(name=name)

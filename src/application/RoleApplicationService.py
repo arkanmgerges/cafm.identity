@@ -13,21 +13,17 @@ class RoleApplicationService:
     def __init__(self, roleRepository: RoleRepository):
         self._roleRepository = roleRepository
 
-    def createObjectOnly(self, name: str):
+    def createRole(self, id: str = '', name: str = '', objectOnly: bool = False):
         try:
             self._roleRepository.roleByName(name=name)
             raise RoleAlreadyExistException(name=name)
         except RoleDoesNotExistException:
-            return Role.createFrom(name=name)
-
-    def createRole(self, id: str, name: str):
-        try:
-            self._roleRepository.roleByName(name=name)
-            raise RoleAlreadyExistException(name=name)
-        except RoleDoesNotExistException:
-            role = Role.createFrom(id=id, name=name, publishEvent=True)
-            self._roleRepository.createRole(role)
-            return role
+            if objectOnly:
+                return Role.createFrom(name=name)
+            else:
+                role = Role.createFrom(id=id, name=name, publishEvent=True)
+                self._roleRepository.createRole(role)
+                return role
 
     def roleByName(self, name: str):
         return self._roleRepository.roleByName(name=name)

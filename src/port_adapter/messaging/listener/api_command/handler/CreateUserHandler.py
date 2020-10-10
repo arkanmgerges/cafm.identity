@@ -22,7 +22,7 @@ class CreateUserHandler(Handler):
         appService: UserApplicationService = AppDi.instance.get(UserApplicationService)
         dataDict = json.loads(data)
         metadataDict = json.loads(metadata)
-        obj = appService.createObjectOnly(name=dataDict['name'], password=dataDict['password'])
+        obj = appService.createUser(name=dataDict['name'], password=dataDict['password'], objectOnly=True)
         return {'name': IdentityCommandConstant.CREATE_USER.value, 'createdOn': round(time.time() * 1000),
                 'data': {'id': obj.id(), 'name': obj.name(), 'password': obj.password()},
                 'metadata': metadataDict}

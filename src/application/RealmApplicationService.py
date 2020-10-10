@@ -13,21 +13,17 @@ class RealmApplicationService:
     def __init__(self, realmRepository: RealmRepository):
         self._realmRepository = realmRepository
 
-    def createObjectOnly(self, name: str):
+    def createRealm(self, id: str = '', name: str = '', objectOnly: bool = False):
         try:
             self._realmRepository.realmByName(name=name)
             raise RealmAlreadyExistException(name=name)
         except RealmDoesNotExistException:
-            return Realm.createFrom(name=name)
-
-    def createRealm(self, id: str, name: str):
-        try:
-            self._realmRepository.realmByName(name=name)
-            raise RealmAlreadyExistException(name=name)
-        except RealmDoesNotExistException:
-            realm = Realm.createFrom(id=id, name=name, publishEvent=True)
-            self._realmRepository.createRealm(realm)
-            return realm
+            if objectOnly:
+                return Realm.createFrom(name=name)
+            else:
+                realm = Realm.createFrom(id=id, name=name, publishEvent=True)
+                self._realmRepository.createRealm(realm)
+                return realm
 
     def realmByName(self, name: str):
         return self._realmRepository.realmByName(name=name)

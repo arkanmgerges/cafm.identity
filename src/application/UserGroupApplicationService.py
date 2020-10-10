@@ -13,21 +13,17 @@ class UserGroupApplicationService:
     def __init__(self, userGroupRepository: UserGroupRepository):
         self._userGroupRepository = userGroupRepository
 
-    def createObjectOnly(self, name: str):
+    def createUserGroup(self, id: str = '', name: str = '', objectOnly: bool = False):
         try:
             self._userGroupRepository.userGroupByName(name=name)
             raise UserGroupAlreadyExistException(name=name)
         except UserGroupDoesNotExistException:
-            return UserGroup.createFrom(name=name)
-
-    def createUserGroup(self, id: str, name: str):
-        try:
-            self._userGroupRepository.userGroupByName(name=name)
-            raise UserGroupAlreadyExistException(name=name)
-        except UserGroupDoesNotExistException:
-            userGroup = UserGroup.createFrom(id=id, name=name, publishEvent=True)
-            self._userGroupRepository.createUserGroup(userGroup)
-            return userGroup
+            if objectOnly:
+                return UserGroup.createFrom(name=name)
+            else:
+                userGroup = UserGroup.createFrom(id=id, name=name, publishEvent=True)
+                self._userGroupRepository.createUserGroup(userGroup)
+                return userGroup
 
     def userGroupByName(self, name: str):
         return self._userGroupRepository.userGroupByName(name=name)

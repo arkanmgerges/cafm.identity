@@ -18,7 +18,7 @@ def test_create_ou_object_when_ou_already_exist():
     repo.ouByName = Mock(side_effect=OuAlreadyExistException)
     appService = OuApplicationService(repo)
     with pytest.raises(OuAlreadyExistException):
-        ou = appService.createObjectOnly(name=name)
+        ou = appService.createOu(name=name, objectOnly=True)
 
 
 def test_create_ou_object_when_ou_does_not_exist():
@@ -29,7 +29,7 @@ def test_create_ou_object_when_ou_does_not_exist():
 
     repo.ouByName = Mock(side_effect=OuDoesNotExistException)
     appService = OuApplicationService(repo)
-    ou = appService.createObjectOnly(name=name)
+    ou = appService.createOu(name=name, objectOnly=True)
     assert isinstance(ou, Ou)
     assert ou.name() == name
 
@@ -72,7 +72,7 @@ def test_create_object_only_raise_exception_when_ou_exists():
     repo.ouByName = Mock(return_value=ou)
     appService = OuApplicationService(repo)
     with pytest.raises(OuAlreadyExistException):
-        ou = appService.createObjectOnly(name=name)
+        ou = appService.createOu(name=name, objectOnly=True)
 
 
 def test_create_ou_raise_exception_when_ou_exists():

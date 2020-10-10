@@ -18,7 +18,7 @@ def test_create_realm_object_when_realm_already_exist():
     repo.realmByName = Mock(side_effect=RealmAlreadyExistException)
     appService = RealmApplicationService(repo)
     with pytest.raises(RealmAlreadyExistException):
-        realm = appService.createObjectOnly(name=name)
+        realm = appService.createRealm(name=name, objectOnly=True)
 
 
 def test_create_realm_object_when_realm_does_not_exist():
@@ -29,7 +29,7 @@ def test_create_realm_object_when_realm_does_not_exist():
 
     repo.realmByName = Mock(side_effect=RealmDoesNotExistException)
     appService = RealmApplicationService(repo)
-    realm = appService.createObjectOnly(name=name)
+    realm = appService.createRealm(name=name, objectOnly=True)
     assert isinstance(realm, Realm)
     assert realm.name() == name
 
@@ -72,7 +72,7 @@ def test_create_object_only_raise_exception_when_realm_exists():
     repo.realmByName = Mock(return_value=realm)
     appService = RealmApplicationService(repo)
     with pytest.raises(RealmAlreadyExistException):
-        realm = appService.createObjectOnly(name=name)
+        realm = appService.createRealm(name=name, objectOnly=True)
 
 
 def test_create_realm_raise_exception_when_realm_exists():

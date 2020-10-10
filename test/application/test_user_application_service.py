@@ -18,7 +18,7 @@ def test_create_user_object_when_user_already_exist():
     repo.userByName = Mock(side_effect=UserAlreadyExistException)
     appService = UserApplicationService(repo)
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createObjectOnly(name=name, password='1234')
+        user = appService.createUser(name=name, password='1234', objectOnly=True)
 
 
 def test_create_user_object_when_user_does_not_exist():
@@ -29,7 +29,7 @@ def test_create_user_object_when_user_does_not_exist():
 
     repo.userByName = Mock(side_effect=UserDoesNotExistException)
     appService = UserApplicationService(repo)
-    user = appService.createObjectOnly(name=name, password='1234')
+    user = appService.createUser(name=name, password='1234', objectOnly=True)
     assert isinstance(user, User)
     assert user.name() == name
 
@@ -74,7 +74,7 @@ def test_create_object_only_raise_exception_when_user_exists():
     repo.userByName = Mock(return_value=user)
     appService = UserApplicationService(repo)
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createObjectOnly(name=name, password='1234')
+        user = appService.createUser(name=name, password='1234', objectOnly=True)
 
 
 def test_create_user_raise_exception_when_user_exists():

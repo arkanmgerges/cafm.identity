@@ -25,7 +25,7 @@ class CreateRoleHandler(Handler):
 
         # Check the permission here
 
-        obj = appService.createObjectOnly(name=dataDict['name'])
+        obj = appService.createRole(name=dataDict['name'], objectOnly=True)
         return {'name': IdentityCommandConstant.CREATE_ROLE.value, 'createdOn': round(time.time() * 1000),
                 'data': {'id': obj.id(), 'name': obj.name()},
                 'metadata': metadataDict}

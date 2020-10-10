@@ -18,7 +18,7 @@ def test_create_userGroup_object_when_userGroup_already_exist():
     repo.userGroupByName = Mock(side_effect=UserGroupAlreadyExistException)
     appService = UserGroupApplicationService(repo)
     with pytest.raises(UserGroupAlreadyExistException):
-        userGroup = appService.createObjectOnly(name=name)
+        userGroup = appService.createUserGroup(name=name, objectOnly=True)
 
 
 def test_create_userGroup_object_when_userGroup_does_not_exist():
@@ -29,7 +29,7 @@ def test_create_userGroup_object_when_userGroup_does_not_exist():
 
     repo.userGroupByName = Mock(side_effect=UserGroupDoesNotExistException)
     appService = UserGroupApplicationService(repo)
-    userGroup = appService.createObjectOnly(name=name)
+    userGroup = appService.createUserGroup(name=name, objectOnly=True)
     assert isinstance(userGroup, UserGroup)
     assert userGroup.name() == name
 
@@ -72,7 +72,7 @@ def test_create_object_only_raise_exception_when_userGroup_exists():
     repo.userGroupByName = Mock(return_value=userGroup)
     appService = UserGroupApplicationService(repo)
     with pytest.raises(UserGroupAlreadyExistException):
-        userGroup = appService.createObjectOnly(name=name)
+        userGroup = appService.createUserGroup(name=name, objectOnly=True)
 
 
 def test_create_userGroup_raise_exception_when_userGroup_exists():

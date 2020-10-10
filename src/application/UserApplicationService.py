@@ -14,23 +14,18 @@ class UserApplicationService:
     def __init__(self, userRepository: UserRepository):
         self._userRepository = userRepository
 
-    def createObjectOnly(self, name: str, password: str):
+    def createUser(self, id: str = '', name: str = '', password: str = '', objectOnly: bool = False):
         try:
             self._userRepository.userByName(name=name)
             raise UserAlreadyExistException(name=name)
         except UserDoesNotExistException:
-            logger.debug(f'[{UserApplicationService.createObjectOnly.__qualname__}] - with name = {name}')
-            return User.createFrom(name=name, password=password)
-
-    def createUser(self, id: str, name: str, password: str):
-        try:
-            self._userRepository.userByName(name=name)
-            raise UserAlreadyExistException(name=name)
-        except UserDoesNotExistException:
-            logger.debug(f'[{UserApplicationService.createUser.__qualname__}] - with name = {name}')
-            user = User.createFrom(id=id, name=name, password=password, publishEvent=True)
-            self._userRepository.createUser(user)
-            return user
+            logger.debug(f'[{UserApplicationService.createUser.__qualname__}] - with name: {name}, objectOnly: {objectOnly}')
+            if objectOnly:
+                return User.createFrom(name=name, password=password)
+            else:
+                user = User.createFrom(id=id, name=name, password=password, publishEvent=True)
+                self._userRepository.createUser(user)
+                return user
 
     def userByNameAndPassword(self, name: str, password: str):
         return self._userRepository.userByNameAndPassword(name=name, password=password)

@@ -13,21 +13,17 @@ class OuApplicationService:
     def __init__(self, ouRepository: OuRepository):
         self._ouRepository = ouRepository
 
-    def createObjectOnly(self, name: str):
+    def createOu(self, id: str = '', name: str = '', objectOnly: bool = False):
         try:
             self._ouRepository.ouByName(name=name)
             raise OuAlreadyExistException(name=name)
         except OuDoesNotExistException:
-            return Ou.createFrom(name=name)
-
-    def createOu(self, id: str, name: str):
-        try:
-            self._ouRepository.ouByName(name=name)
-            raise OuAlreadyExistException(name=name)
-        except OuDoesNotExistException:
-            ou = Ou.createFrom(id=id, name=name, publishEvent=True)
-            self._ouRepository.createOu(ou)
-            return ou
+            if objectOnly:
+                return Ou.createFrom(name=name)
+            else:
+                ou = Ou.createFrom(id=id, name=name, publishEvent=True)
+                self._ouRepository.createOu(ou)
+                return ou
 
     def ouByName(self, name: str):
         return self._ouRepository.ouByName(name=name)

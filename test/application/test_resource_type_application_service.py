@@ -18,7 +18,7 @@ def test_create_resourceType_object_when_resourceType_already_exist():
     repo.resourceTypeByName = Mock(side_effect=ResourceTypeAlreadyExistException)
     appService = ResourceTypeApplicationService(repo)
     with pytest.raises(ResourceTypeAlreadyExistException):
-        resourceType = appService.createObjectOnly(name=name)
+        resourceType = appService.createResourceType(name=name, objectOnly=True)
 
 
 def test_create_resourceType_object_when_resourceType_does_not_exist():
@@ -29,7 +29,7 @@ def test_create_resourceType_object_when_resourceType_does_not_exist():
 
     repo.resourceTypeByName = Mock(side_effect=ResourceTypeDoesNotExistException)
     appService = ResourceTypeApplicationService(repo)
-    resourceType = appService.createObjectOnly(name=name)
+    resourceType = appService.createResourceType(name=name, objectOnly=True)
     assert isinstance(resourceType, ResourceType)
     assert resourceType.name() == name
 
@@ -72,7 +72,7 @@ def test_create_object_only_raise_exception_when_resourceType_exists():
     repo.resourceTypeByName = Mock(return_value=resourceType)
     appService = ResourceTypeApplicationService(repo)
     with pytest.raises(ResourceTypeAlreadyExistException):
-        resourceType = appService.createObjectOnly(name=name)
+        resourceType = appService.createResourceType(name=name, objectOnly=True)
 
 
 def test_create_resourceType_raise_exception_when_resourceType_exists():

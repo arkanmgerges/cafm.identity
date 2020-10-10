@@ -18,7 +18,7 @@ def test_create_permission_object_when_permission_already_exist():
     repo.permissionByName = Mock(side_effect=PermissionAlreadyExistException)
     appService = PermissionApplicationService(repo)
     with pytest.raises(PermissionAlreadyExistException):
-        permission = appService.createObjectOnly(name=name)
+        permission = appService.createPermission(name=name, objectOnly=True)
 
 
 def test_create_permission_object_when_permission_does_not_exist():
@@ -29,7 +29,7 @@ def test_create_permission_object_when_permission_does_not_exist():
 
     repo.permissionByName = Mock(side_effect=PermissionDoesNotExistException)
     appService = PermissionApplicationService(repo)
-    permission = appService.createObjectOnly(name=name)
+    permission = appService.createPermission(name=name, objectOnly=True)
     assert isinstance(permission, Permission)
     assert permission.name() == name
 
@@ -72,7 +72,7 @@ def test_create_object_only_raise_exception_when_permission_exists():
     repo.permissionByName = Mock(return_value=permission)
     appService = PermissionApplicationService(repo)
     with pytest.raises(PermissionAlreadyExistException):
-        permission = appService.createObjectOnly(name=name)
+        permission = appService.createPermission(name=name, objectOnly=True)
 
 
 def test_create_permission_raise_exception_when_permission_exists():
