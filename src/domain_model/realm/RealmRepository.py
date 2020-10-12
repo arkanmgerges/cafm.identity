@@ -40,14 +40,30 @@ class RealmRepository(ABC):
         """
 
     @abstractmethod
-    def realmsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Realm]:
-        """Get list of realms based on the owned roles that the user has
+    def realmsByOwnedRealms(self, ownedRealms: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Realm]:
+        """Get list of realms based on the owned realms that the user has
 
         Args:
-            ownedRoles (List[str]): A list of the roles that the user or user group has
+            ownedRealms (List[str]): A list of the realms that the user or user group has
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
 
         Returns:
             List[Realm]: A list of realms
+        """
+        
+    @abstractmethod
+    def deleteRealm(self, realm: Realm) -> None:
+        """Delete a realm
+
+        Args:
+            realm (Realm): The realm that needs to be deleted
+        """
+
+    @abstractmethod
+    def updateRealm(self, realm: Realm) -> None:
+        """Update a realm
+
+        Args:
+            realm (Realm): The realm that needs to be updated
         """

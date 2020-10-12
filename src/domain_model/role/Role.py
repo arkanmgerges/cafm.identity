@@ -1,6 +1,9 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from copy import copy
+
+from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 from src.resource.logging.logger import logger
 
 """
@@ -32,5 +35,27 @@ class Role:
     def name(self) -> str:
         return self._name
 
+    def publishDelete(self):
+        from src.domain_model.role.RoleDeleted import RoleDeleted
+        DomainEventPublisher.addEventForPublishing(RoleDeleted(self))
+
+    def publishUpdate(self, old):
+        from src.domain_model.role.RoleUpdated import RoleUpdated
+        DomainEventPublisher.addEventForPublishing(RoleUpdated(old, self))
+
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name()}
+
+    def update(self, data: dict):
+        updated = False
+        old = copy(self)
+        if 'name' in data and data['name'] != self._name:
+            updated = True
+            self._name = data['name']
+        if updated:
+            self.publishUpdate(old)
+
+    def __eq__(self, other):
+        if not isinstance(other, Role):
+            raise NotImplementedError(f'other: {other} is can not be compared with Role class')
+        return self.id() == other.id() and self.name() == other.name()

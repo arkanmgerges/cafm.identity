@@ -16,6 +16,8 @@ from src.port_adapter.messaging.common.model.ApiResponse import ApiResponse
 from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.port_adapter.messaging.listener.api_command.handler.CreateRoleHandler import CreateRoleHandler
 from src.port_adapter.messaging.listener.api_command.handler.CreateUserHandler import CreateUserHandler
+from src.port_adapter.messaging.listener.api_command.handler.DeleteRoleHandler import DeleteRoleHandler
+from src.port_adapter.messaging.listener.api_command.handler.UpdateRoleHandler import UpdateRoleHandler
 from src.resource.logging.logger import logger
 
 
@@ -134,6 +136,8 @@ class ApiCommandListener:
     def addHandlers(self):
         self._handlers.append(CreateUserHandler())
         self._handlers.append(CreateRoleHandler())
+        self._handlers.append(DeleteRoleHandler())
+        self._handlers.append(UpdateRoleHandler())
 
 
 ApiCommandListener().run()

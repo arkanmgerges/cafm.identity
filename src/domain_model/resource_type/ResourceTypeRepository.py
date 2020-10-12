@@ -40,14 +40,30 @@ class ResourceTypeRepository(ABC):
         """
 
     @abstractmethod
-    def resourceTypesByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[ResourceType]:
-        """Get list of resourceTypes based on the owned roles that the user has
+    def resourceTypesByOwnedResourceTypes(self, ownedResourceTypes: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[ResourceType]:
+        """Get list of resourceTypes based on the owned resourceTypes that the user has
 
         Args:
-            ownedRoles (List[str]): A list of the roles that the user or user group has
+            ownedResourceTypes (List[str]): A list of the resourceTypes that the user or user group has
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
 
         Returns:
             List[ResourceType]: A list of resourceTypes
+        """
+        
+    @abstractmethod
+    def deleteResourceType(self, resourceType: ResourceType) -> None:
+        """Delete a resourceType
+
+        Args:
+            resourceType (ResourceType): The resourceType that needs to be deleted
+        """
+
+    @abstractmethod
+    def updateResourceType(self, resourceType: ResourceType) -> None:
+        """Update a resourceType
+
+        Args:
+            resourceType (ResourceType): The resourceType that needs to be updated
         """

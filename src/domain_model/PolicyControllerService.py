@@ -11,6 +11,7 @@ class PolicyActionConstant(Enum):
     READ = 'read'
     WRITE = 'write'
     DELETE = 'delete'
+    UPDATE = 'update'
     ASSIGN = 'assign'
 
 

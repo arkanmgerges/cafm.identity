@@ -1,8 +1,10 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-
+from copy import copy
 from uuid import uuid4
+
+from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 
 
 class UserGroup:
@@ -25,5 +27,27 @@ class UserGroup:
     def name(self) -> str:
         return self._name
 
+    def update(self, data: dict):
+        updated = False
+        old = copy(self)
+        if 'name' in data and data['name'] != self._name:
+            updated = True
+            self._name = data['name']
+        if updated:
+            self.publishUpdate(old)
+
+    def publishDelete(self):
+        from src.domain_model.user_group.UserGroupDeleted import UserGroupDeleted
+        DomainEventPublisher.addEventForPublishing(UserGroupDeleted(self))
+
+    def publishUpdate(self, old):
+        from src.domain_model.user_group.UserGroupUpdated import UserGroupUpdated
+        DomainEventPublisher.addEventForPublishing(UserGroupUpdated(old, self))
+
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name()}
+
+    def __eq__(self, other):
+        if not isinstance(other, UserGroup):
+            raise NotImplementedError(f'other: {other} is can not be compared with UserGroup class')
+        return self.id() == other.id() and self.name() == other.name()

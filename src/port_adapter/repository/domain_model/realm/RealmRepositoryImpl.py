@@ -6,11 +6,16 @@ from typing import List
 
 from pyArango.query import AQLQuery
 
+from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
+from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
+from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
 from src.domain_model.realm.Realm import Realm
 from src.domain_model.realm.RealmRepository import RealmRepository
 
 from pyArango.connection import *
+
+from src.resource.logging.logger import logger
 
 
 class RealmRepositoryImpl(RealmRepository):
@@ -81,3 +86,43 @@ class RealmRepositoryImpl(RealmRepository):
                 return []
 
             return [Realm.createFrom(id=x['id'], name=x['name']) for x in result]
+
+    def deleteRealm(self, realm: Realm) -> None:
+        aql = '''
+            FOR d IN realm
+            FILTER d.id == @id
+            REMOVE d IN realm
+        '''
+
+        bindVars = {"id": realm.id()}
+        logger.debug(f'[{RealmRepositoryImpl.deleteRealm.__qualname__}] - Delete realm with id: {realm.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is deleted
+        try:
+            self.realmById(realm.id())
+            raise ObjectCouldNotBeDeletedException()
+        except RealmDoesNotExistException:
+            realm.publishDelete()
+
+    def updateRealm(self, realm: Realm) -> None:
+        oldRealm = self.realmById(realm.id())
+        if oldRealm == realm:
+            raise ObjectIdenticalException()
+
+        aql = '''
+            FOR d IN realm
+            FILTER d.id == @id
+            UPDATE d WITH {name: @name} IN realm
+        '''
+
+        bindVars = {"id": realm.id(), "name": realm.name()}
+        logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] - Update realm with id: {realm.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is updated
+        aRealm = self.realmById(realm.id())
+        if aRealm != realm:
+            raise ObjectCouldNotBeUpdatedException()

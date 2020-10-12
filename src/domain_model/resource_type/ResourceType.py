@@ -1,9 +1,11 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from copy import copy
 from enum import Enum
 from uuid import uuid4
 
+from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 from src.resource.logging.logger import logger
 
 
@@ -15,7 +17,7 @@ class ResourceTypeConstant(Enum):
     PERMISSION = 'permission'
     USER = 'user'
     USER_GROUP = 'user_group'
-    ROLE = 'role'
+    ROLE = 'resourceType'
     ALL = '*'
 
 
@@ -41,5 +43,27 @@ class ResourceType:
     def name(self) -> str:
         return self._name
 
+    def update(self, data: dict):
+        updated = False
+        old = copy(self)
+        if 'name' in data and data['name'] != self._name:
+            updated = True
+            self._name = data['name']
+        if updated:
+            self.publishUpdate(old)
+
+    def publishDelete(self):
+        from src.domain_model.resource_type.ResourceTypeDeleted import ResourceTypeDeleted
+        DomainEventPublisher.addEventForPublishing(ResourceTypeDeleted(self))
+
+    def publishUpdate(self, old):
+        from src.domain_model.resource_type.ResourceTypeUpdated import ResourceTypeUpdated
+        DomainEventPublisher.addEventForPublishing(ResourceTypeUpdated(old, self))
+
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name()}
+
+    def __eq__(self, other):
+        if not isinstance(other, ResourceType):
+            raise NotImplementedError(f'other: {other} is can not be compared with ResourceType class')
+        return self.id() == other.id() and self.name() == other.name()

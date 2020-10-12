@@ -40,14 +40,30 @@ class ProjectRepository(ABC):
         """
 
     @abstractmethod
-    def projectsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Project]:
-        """Get list of projects based on the owned roles that the user has
+    def projectsByOwnedProjects(self, ownedProjects: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Project]:
+        """Get list of projects based on the owned projects that the user has
 
         Args:
-            ownedRoles (List[str]): A list of the roles that the user or user group has
+            ownedProjects (List[str]): A list of the projects that the user or user group has
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
 
         Returns:
             List[Project]: A list of projects
+        """
+
+    @abstractmethod
+    def deleteProject(self, project: Project) -> None:
+        """Delete a project
+
+        Args:
+            project (Project): The project that needs to be deleted
+        """
+
+    @abstractmethod
+    def updateProject(self, project: Project) -> None:
+        """Update a project
+
+        Args:
+            project (Project): The project that needs to be updated
         """

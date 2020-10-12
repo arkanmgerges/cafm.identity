@@ -48,6 +48,23 @@ class RoleApplicationService:
         else:
             raise UnAuthorizedException()
 
+    def deleteRole(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
+                                        resourceType=ResourceTypeConstant.ROLE.value):
+            role = self._roleRepository.roleById(id=id)
+            self._roleRepository.deleteRole(role)
+        else:
+            raise UnAuthorizedException()
+
+    def updateRole(self, id: str, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
+                                        resourceType=ResourceTypeConstant.ROLE.value):
+            role = self._roleRepository.roleById(id=id)
+            role.update({'name': name})
+            self._roleRepository.updateRole(role)
+        else:
+            raise UnAuthorizedException()
+
     def roles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[Role]:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         resourceType=ResourceTypeConstant.ROLE.value):

@@ -6,6 +6,9 @@ from typing import List
 
 from pyArango.query import AQLQuery
 
+from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
+from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
+from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.domain_model.user.User import User
 from src.domain_model.user.UserRepository import UserRepository
@@ -100,3 +103,43 @@ class UserRepositoryImpl(UserRepository):
                 return []
 
             return [User.createFrom(id=x['id'], name=x['name']) for x in result]
+
+    def deleteUser(self, user: User) -> None:
+        aql = '''
+            FOR d IN user
+            FILTER d.id == @id
+            REMOVE d IN user
+        '''
+
+        bindVars = {"id": user.id()}
+        logger.debug(f'[{UserRepositoryImpl.deleteUser.__qualname__}] - Delete user with id: {user.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is deleted
+        try:
+            self.userById(user.id())
+            raise ObjectCouldNotBeDeletedException()
+        except UserDoesNotExistException:
+            user.publishDelete()
+
+    def updateUser(self, user: User) -> None:
+        oldUser = self.userById(user.id())
+        if oldUser == user:
+            raise ObjectIdenticalException()
+
+        aql = '''
+            FOR d IN user
+            FILTER d.id == @id
+            UPDATE d WITH {name: @name} IN user
+        '''
+
+        bindVars = {"id": user.id(), "name": user.name()}
+        logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {user.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is updated
+        aUser = self.userById(user.id())
+        if aUser != user:
+            raise ObjectCouldNotBeUpdatedException()

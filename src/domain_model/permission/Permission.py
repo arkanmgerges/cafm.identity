@@ -1,8 +1,10 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from copy import copy
 from typing import List
 
+from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 from src.resource.logging.logger import logger
 
 """
@@ -33,5 +35,27 @@ class Permission:
     def name(self) -> str:
         return self._name
 
+    def update(self, data: dict):
+        updated = False
+        old = copy(self)
+        if 'name' in data and data['name'] != self._name:
+            updated = True
+            self._name = data['name']
+        if updated:
+            self.publishUpdate(old)
+
+    def publishDelete(self):
+        from src.domain_model.permission.PermissionDeleted import PermissionDeleted
+        DomainEventPublisher.addEventForPublishing(PermissionDeleted(self))
+
+    def publishUpdate(self, old):
+        from src.domain_model.permission.PermissionUpdated import PermissionUpdated
+        DomainEventPublisher.addEventForPublishing(PermissionUpdated(old, self))
+
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name()}
+
+    def __eq__(self, other):
+        if not isinstance(other, Permission):
+            raise NotImplementedError(f'other: {other} is can not be compared with Permission class')
+        return self.id() == other.id() and self.name() == other.name()

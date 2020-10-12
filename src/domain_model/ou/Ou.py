@@ -1,6 +1,9 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from copy import copy
+
+from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 from src.resource.logging.logger import logger
 
 """
@@ -30,5 +33,27 @@ class Ou:
     def name(self) -> str:
         return self._name
 
+    def update(self, data: dict):
+        updated = False
+        old = copy(self)
+        if 'name' in data and data['name'] != self._name:
+            updated = True
+            self._name = data['name']
+        if updated:
+            self.publishUpdate(old)
+
+    def publishDelete(self):
+        from src.domain_model.ou.OuDeleted import OuDeleted
+        DomainEventPublisher.addEventForPublishing(OuDeleted(self))
+
+    def publishUpdate(self, old):
+        from src.domain_model.ou.OuUpdated import OuUpdated
+        DomainEventPublisher.addEventForPublishing(OuUpdated(old, self))
+
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name()}
+
+    def __eq__(self, other):
+        if not isinstance(other, Ou):
+            raise NotImplementedError(f'other: {other} is can not be compared with Ou class')
+        return self.id() == other.id() and self.name() == other.name()

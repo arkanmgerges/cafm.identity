@@ -6,11 +6,16 @@ from typing import List
 
 from pyArango.query import AQLQuery
 
+from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
+from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
+from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
 
 from pyArango.connection import *
+
+from src.resource.logging.logger import logger
 
 
 class UserGroupRepositoryImpl(UserGroupRepository):
@@ -81,3 +86,43 @@ class UserGroupRepositoryImpl(UserGroupRepository):
                 return []
 
             return [UserGroup.createFrom(id=x['id'], name=x['name']) for x in result]
+
+    def deleteUserGroup(self, userGroup: UserGroup) -> None:
+        aql = '''
+            FOR d IN userGroup
+            FILTER d.id == @id
+            REMOVE d IN userGroup
+        '''
+
+        bindVars = {"id": userGroup.id()}
+        logger.debug(f'[{UserGroupRepositoryImpl.deleteUserGroup.__qualname__}] - Delete userGroup with id: {userGroup.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is deleted
+        try:
+            self.userGroupById(userGroup.id())
+            raise ObjectCouldNotBeDeletedException()
+        except UserGroupDoesNotExistException:
+            userGroup.publishDelete()
+
+    def updateUserGroup(self, userGroup: UserGroup) -> None:
+        oldUserGroup = self.userGroupById(userGroup.id())
+        if oldUserGroup == userGroup:
+            raise ObjectIdenticalException()
+
+        aql = '''
+            FOR d IN userGroup
+            FILTER d.id == @id
+            UPDATE d WITH {name: @name} IN userGroup
+        '''
+
+        bindVars = {"id": userGroup.id(), "name": userGroup.name()}
+        logger.debug(f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] - Update userGroup with id: {userGroup.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is updated
+        aUserGroup = self.userGroupById(userGroup.id())
+        if aUserGroup != userGroup:
+            raise ObjectCouldNotBeUpdatedException()

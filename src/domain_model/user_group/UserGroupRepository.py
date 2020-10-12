@@ -40,14 +40,30 @@ class UserGroupRepository(ABC):
         """
 
     @abstractmethod
-    def userGroupsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[UserGroup]:
-        """Get list of userGroups based on the owned roles that the user has
+    def userGroupsByOwnedUserGroups(self, ownedUserGroups: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[UserGroup]:
+        """Get list of userGroups based on the owned userGroups that the user has
 
         Args:
-            ownedRoles (List[str]): A list of the roles that the user or user group has
+            ownedUserGroups (List[str]): A list of the userGroups that the user or user group has
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
 
         Returns:
             List[UserGroup]: A list of userGroups
+        """
+        
+    @abstractmethod
+    def deleteUserGroup(self, userGroup: UserGroup) -> None:
+        """Delete a userGroup
+
+        Args:
+            userGroup (UserGroup): The userGroup that needs to be deleted
+        """
+
+    @abstractmethod
+    def updateUserGroup(self, userGroup: UserGroup) -> None:
+        """Update a userGroup
+
+        Args:
+            userGroup (UserGroup): The userGroup that needs to be updated
         """

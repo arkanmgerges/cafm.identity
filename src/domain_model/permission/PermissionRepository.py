@@ -40,14 +40,30 @@ class PermissionRepository(ABC):
         """
 
     @abstractmethod
-    def permissionsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Permission]:
-        """Get list of permissions based on the owned roles that the user has
+    def permissionsByOwnedPermissions(self, ownedPermissions: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Permission]:
+        """Get list of permissions based on the owned permissions that the user has
 
         Args:
-            ownedRoles (List[str]): A list of the roles that the user or user group has
+            ownedPermissions (List[str]): A list of the permissions that the user or user group has
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
 
         Returns:
             List[Permission]: A list of permissions
+        """
+        
+    @abstractmethod
+    def deletePermission(self, permission: Permission) -> None:
+        """Delete a permission
+
+        Args:
+            permission (Permission): The permission that needs to be deleted
+        """
+
+    @abstractmethod
+    def updatePermission(self, permission: Permission) -> None:
+        """Update a permission
+
+        Args:
+            permission (Permission): The permission that needs to be updated
         """

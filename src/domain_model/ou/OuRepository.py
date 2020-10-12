@@ -51,3 +51,19 @@ class OuRepository(ABC):
         Returns:
             List[Ou]: A list of ous
         """
+        
+    @abstractmethod
+    def deleteOu(self, ou: Ou) -> None:
+        """Delete a ou
+
+        Args:
+            ou (Ou): The ou that needs to be deleted
+        """
+
+    @abstractmethod
+    def updateOu(self, ou: Ou) -> None:
+        """Update a ou
+
+        Args:
+            ou (Ou): The ou that needs to be updated
+        """

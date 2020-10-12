@@ -6,11 +6,16 @@ from typing import List
 
 from pyArango.query import AQLQuery
 
+from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
+from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
+from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.permission.PermissionRepository import PermissionRepository
 
 from pyArango.connection import *
+
+from src.resource.logging.logger import logger
 
 
 class PermissionRepositoryImpl(PermissionRepository):
@@ -81,3 +86,43 @@ class PermissionRepositoryImpl(PermissionRepository):
                 return []
 
             return [Permission.createFrom(id=x['id'], name=x['name']) for x in result]
+
+    def deletePermission(self, permission: Permission) -> None:
+        aql = '''
+            FOR d IN permission
+            FILTER d.id == @id
+            REMOVE d IN permission
+        '''
+
+        bindVars = {"id": permission.id()}
+        logger.debug(f'[{PermissionRepositoryImpl.deletePermission.__qualname__}] - Delete permission with id: {permission.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is deleted
+        try:
+            self.permissionById(permission.id())
+            raise ObjectCouldNotBeDeletedException()
+        except PermissionDoesNotExistException:
+            permission.publishDelete()
+
+    def updatePermission(self, permission: Permission) -> None:
+        oldPermission = self.permissionById(permission.id())
+        if oldPermission == permission:
+            raise ObjectIdenticalException()
+
+        aql = '''
+            FOR d IN permission
+            FILTER d.id == @id
+            UPDATE d WITH {name: @name} IN permission
+        '''
+
+        bindVars = {"id": permission.id(), "name": permission.name()}
+        logger.debug(f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] - Update permission with id: {permission.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is updated
+        aPermission = self.permissionById(permission.id())
+        if aPermission != permission:
+            raise ObjectCouldNotBeUpdatedException()

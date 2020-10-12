@@ -6,11 +6,16 @@ from typing import List
 
 from pyArango.query import AQLQuery
 
+from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
+from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
+from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
 from src.domain_model.ou.Ou import Ou
 from src.domain_model.ou.OuRepository import OuRepository
 
 from pyArango.connection import *
+
+from src.resource.logging.logger import logger
 
 
 class OuRepositoryImpl(OuRepository):
@@ -81,3 +86,43 @@ class OuRepositoryImpl(OuRepository):
                 return []
 
             return [Ou.createFrom(id=x['id'], name=x['name']) for x in result]
+
+    def deleteOu(self, ou: Ou) -> None:
+        aql = '''
+            FOR d IN ou
+            FILTER d.id == @id
+            REMOVE d IN ou
+        '''
+
+        bindVars = {"id": ou.id()}
+        logger.debug(f'[{OuRepositoryImpl.deleteOu.__qualname__}] - Delete ou with id: {ou.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is deleted
+        try:
+            self.ouById(ou.id())
+            raise ObjectCouldNotBeDeletedException()
+        except OuDoesNotExistException:
+            ou.publishDelete()
+
+    def updateOu(self, ou: Ou) -> None:
+        oldOu = self.ouById(ou.id())
+        if oldOu == ou:
+            raise ObjectIdenticalException()
+
+        aql = '''
+            FOR d IN ou
+            FILTER d.id == @id
+            UPDATE d WITH {name: @name} IN ou
+        '''
+
+        bindVars = {"id": ou.id(), "name": ou.name()}
+        logger.debug(f'[{OuRepositoryImpl.updateOu.__qualname__}] - Update ou with id: {ou.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is updated
+        aOu = self.ouById(ou.id())
+        if aOu != ou:
+            raise ObjectCouldNotBeUpdatedException()

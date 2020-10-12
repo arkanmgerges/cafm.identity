@@ -6,11 +6,16 @@ from typing import List
 
 from pyArango.query import AQLQuery
 
+from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
+from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
+from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
 from src.domain_model.project.Project import Project
 from src.domain_model.project.ProjectRepository import ProjectRepository
 
 from pyArango.connection import *
+
+from src.resource.logging.logger import logger
 
 
 class ProjectRepositoryImpl(ProjectRepository):
@@ -81,3 +86,43 @@ class ProjectRepositoryImpl(ProjectRepository):
                 return []
 
             return [Project.createFrom(id=x['id'], name=x['name']) for x in result]
+
+    def deleteProject(self, project: Project) -> None:
+        aql = '''
+            FOR d IN project
+            FILTER d.id == @id
+            REMOVE d IN project
+        '''
+
+        bindVars = {"id": project.id()}
+        logger.debug(f'[{ProjectRepositoryImpl.deleteProject.__qualname__}] - Delete project with id: {project.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is deleted
+        try:
+            self.projectById(project.id())
+            raise ObjectCouldNotBeDeletedException()
+        except ProjectDoesNotExistException:
+            project.publishDelete()
+
+    def updateProject(self, project: Project) -> None:
+        oldProject = self.projectById(project.id())
+        if oldProject == project:
+            raise ObjectIdenticalException()
+
+        aql = '''
+            FOR d IN project
+            FILTER d.id == @id
+            UPDATE d WITH {name: @name} IN project
+        '''
+
+        bindVars = {"id": project.id(), "name": project.name()}
+        logger.debug(f'[{ProjectRepositoryImpl.updateProject.__qualname__}] - Update project with id: {project.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        # Check if it is updated
+        aProject = self.projectById(project.id())
+        if aProject != project:
+            raise ObjectCouldNotBeUpdatedException()

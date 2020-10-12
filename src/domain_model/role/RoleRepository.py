@@ -40,6 +40,22 @@ class RoleRepository(ABC):
         """
 
     @abstractmethod
+    def deleteRole(self, role: Role) -> None:
+        """Delete a role
+
+        Args:
+            role (Role): The role that needs to be deleted
+        """
+
+    @abstractmethod
+    def updateRole(self, role: Role) -> None:
+        """Update a role
+
+        Args:
+            role (Role): The role that needs to be updated
+        """
+
+    @abstractmethod
     def rolesByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Role]:
         """Get list of roles based on the owned roles that the user has
 

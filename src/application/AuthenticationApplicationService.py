@@ -25,8 +25,10 @@ class AuthenticationApplicationService:
         return self._authService.authenticateUser(name=name, password=password)
 
     def isAuthenticated(self, token: str) -> bool:
-        logger.debug(f'[{AuthenticationApplicationService.isAuthenticated.__qualname__}] - Received token: {token}')
-        return self._authService.isAuthenticated(token=token)
+        return True
+        # todo: remove the above true and uncomment the following lines
+        # logger.debug(f'[{AuthenticationApplicationService.isAuthenticated.__qualname__}] - Received token: {token}')
+        # return self._authService.isAuthenticated(token=token)
 
     def logout(self, token: str) -> None:
         logger.debug(f'[{AuthenticationApplicationService.logout.__qualname__}] - Received token: {token}')
