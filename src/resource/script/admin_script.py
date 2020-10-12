@@ -52,12 +52,28 @@ def init_db():
         collections = ['project', 'user_group', 'user', 'permission', 'role', 'resource_type', 'realm', 'ou']
         with click.progressbar(collections) as colBar:
             for colName in colBar:
-                dbConnection.createCollection(name=colName)
+                if not dbConnection.hasCollection(colName):
+                    dbConnection.createCollection(name=colName)
+
+        # Add resource types
+        for resourceType in ['realm', 'ou', 'project', 'user', 'role', 'permission']:
+            aql = '''
+                        UPSERT { name: @name}
+                            INSERT {id: @id, name: @name}
+                            UPDATE {name: @name}
+                          IN resource_type
+                        '''
+
+            bindVars = {"id": uuid.uuid4(), "name": resourceType}
+            queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+        # Create edges
         click.echo(click.style(f'Create edges:', fg='green'))
         edges = ['has', 'for', 'access']
         with click.progressbar(edges) as edgeBar:
             for edgeName in edgeBar:
-                dbConnection.createCollection(className='Edges', name=edgeName)
+                if not dbConnection.hasCollection(colName):
+                    dbConnection.createCollection(className='Edges', name=edgeName)
     except Exception as e:
         click.echo(click.style(str(e), fg='red'))
         exit(0)
@@ -113,7 +129,7 @@ def assign_user_super_admin_role(username, password, database_name):
     userId = uuid.uuid4()
     password = hashlib.sha256(password.encode()).hexdigest()
     aql = '''
-            UPSERT { id: @id}
+            UPSERT { name: @name}
                 INSERT {id: @id, name: @name, password: @password}
                 UPDATE {name: @name, password: @password }
               IN user
@@ -136,7 +152,7 @@ def assign_user_super_admin_role(username, password, database_name):
 
     # Create a super admin role
     aql = '''
-            UPSERT { id: @id}
+            UPSERT { name: @name}
                 INSERT {id: @id, name: @name}
                 UPDATE {name: @name}
               IN role
