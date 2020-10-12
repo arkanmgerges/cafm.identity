@@ -9,6 +9,7 @@ import grpc
 import src.port_adapter.AppDi as AppDi
 from src.application.UserGroupApplicationService import UserGroupApplicationService
 from src.domain_model.TokenService import TokenService
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.resource.logging.logger import logger
@@ -41,6 +42,10 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('UserGroup does not exist')
             return UserGroupAppService_userGroupByNameResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return UserGroupAppService_userGroupByNameResponse()
         # except Exception as e:
         #     context.set_code(grpc.StatusCode.UNKNOWN)
         #     context.set_details(f'{e}')
@@ -71,6 +76,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No userGroups found')
             return UserGroupAppService_userGroupByNameResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return UserGroupAppService_userGroupByNameResponse()
 
     def userGroupById(self, request, context):
         try:
@@ -85,6 +94,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         except UserGroupDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('UserGroup does not exist')
+            return UserGroupAppService_userGroupByIdResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
             return UserGroupAppService_userGroupByIdResponse()
 
     def _token(self, context) -> str:

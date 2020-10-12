@@ -9,6 +9,7 @@ import grpc
 import src.port_adapter.AppDi as AppDi
 from src.application.UserApplicationService import UserApplicationService
 from src.domain_model.TokenService import TokenService
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.domain_model.user.User import User
 from src.resource.logging.logger import logger
@@ -71,6 +72,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No users found')
             return UserAppService_usersResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return UserAppService_usersResponse()
 
     def userById(self, request, context):
         try:
@@ -85,6 +90,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('User does not exist')
+            return UserAppService_userByIdResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
             return UserAppService_userByIdResponse()
 
     def _token(self, context) -> str:

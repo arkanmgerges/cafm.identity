@@ -5,7 +5,6 @@ from enum import Enum
 
 from src.domain_model.TokenService import TokenService
 from src.domain_model.policy.PolicyRepository import PolicyRepository
-from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 
 
 class PolicyActionConstant(Enum):
@@ -13,6 +12,7 @@ class PolicyActionConstant(Enum):
     WRITE = 'write'
     DELETE = 'delete'
     ASSIGN = 'assign'
+
 
 class PolicyControllerService:
     def __init__(self, policyRepo: PolicyRepository):
@@ -29,4 +29,3 @@ class PolicyControllerService:
             tree = self._policyRepo.allTreeByRoleName(role)
 
         return False
-

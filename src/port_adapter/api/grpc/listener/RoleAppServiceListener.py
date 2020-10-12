@@ -72,7 +72,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No roles found')
             return RoleAppService_roleByNameResponse()
-
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return RoleAppService_roleByNameResponse()
     def roleById(self, request, context):
         try:
             token = self._token(context)

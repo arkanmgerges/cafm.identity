@@ -11,6 +11,7 @@ from src.application.OuApplicationService import OuApplicationService
 from src.domain_model.TokenService import TokenService
 from src.domain_model.ou.Ou import Ou
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.ou_app_service_pb2 import OuAppService_ouByNameResponse, OuAppService_ousResponse, \
     OuAppService_ouByIdResponse
@@ -69,6 +70,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No ous found')
             return OuAppService_ouByNameResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return OuAppService_ouByNameResponse()
 
     def ouById(self, request, context):
         try:
@@ -83,6 +88,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         except OuDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Ou does not exist')
+            return OuAppService_ouByIdResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
             return OuAppService_ouByIdResponse()
 
     def _token(self, context) -> str:

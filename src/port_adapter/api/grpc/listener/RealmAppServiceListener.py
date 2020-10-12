@@ -11,6 +11,7 @@ from src.application.RealmApplicationService import RealmApplicationService
 from src.domain_model.TokenService import TokenService
 from src.domain_model.realm.Realm import Realm
 from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.realm_app_service_pb2 import RealmAppService_realmByNameResponse, \
     RealmAppService_realmsResponse, RealmAppService_realmByIdResponse
@@ -40,6 +41,10 @@ class RealmAppServiceListener(RealmAppServiceServicer):
         except RealmDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Realm does not exist')
+            return RealmAppService_realmByNameResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
             return RealmAppService_realmByNameResponse()
         # except Exception as e:
         #     context.set_code(grpc.StatusCode.UNKNOWN)
@@ -71,6 +76,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No realms found')
             return RealmAppService_realmByNameResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return RealmAppService_realmByNameResponse()
 
     def realmById(self, request, context):
         try:
@@ -85,6 +94,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         except RealmDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Realm does not exist')
+            return RealmAppService_realmByIdResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
             return RealmAppService_realmByIdResponse()
 
     def _token(self, context) -> str:

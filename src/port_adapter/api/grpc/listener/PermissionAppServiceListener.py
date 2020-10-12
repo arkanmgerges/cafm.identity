@@ -11,6 +11,7 @@ from src.application.PermissionApplicationService import PermissionApplicationSe
 from src.domain_model.TokenService import TokenService
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.permission_app_service_pb2 import PermissionAppService_permissionByNameResponse, \
     PermissionAppService_permissionsResponse, PermissionAppService_permissionByIdResponse
@@ -40,6 +41,10 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
         except PermissionDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Permission does not exist')
+            return PermissionAppService_permissionByNameResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
             return PermissionAppService_permissionByNameResponse()
         # except Exception as e:
         #     context.set_code(grpc.StatusCode.UNKNOWN)
@@ -71,6 +76,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No permissions found')
             return PermissionAppService_permissionByNameResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return PermissionAppService_permissionByNameResponse()
 
     def permissionById(self, request, context):
         try:
@@ -85,6 +94,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         except PermissionDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Permission does not exist')
+            return PermissionAppService_permissionByIdResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
             return PermissionAppService_permissionByIdResponse()
 
     def _token(self, context) -> str:
