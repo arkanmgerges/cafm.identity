@@ -15,7 +15,7 @@ class AuthzAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.isAllowedByToken = channel.unary_unary(
-                '/cafm.identity.authz.AuthzAppService/isAllowedByToken',
+                '/cafm.identity.authz.AuthzAppService/isAllowed',
                 request_serializer=authz__app__service__pb2.AuthzAppService_isAllowedRequest.SerializeToString,
                 response_deserializer=authz__app__service__pb2.AuthzAppService_isAllowedResponse.FromString,
                 )
@@ -33,8 +33,8 @@ class AuthzAppServiceServicer(object):
 
 def add_AuthzAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'isAllowedByToken': grpc.unary_unary_rpc_method_handler(
-                    servicer.isAllowedByToken,
+            'isAllowed': grpc.unary_unary_rpc_method_handler(
+                    servicer.isAllowed,
                     request_deserializer=authz__app__service__pb2.AuthzAppService_isAllowedRequest.FromString,
                     response_serializer=authz__app__service__pb2.AuthzAppService_isAllowedResponse.SerializeToString,
             ),
@@ -59,7 +59,7 @@ class AuthzAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.authz.AuthzAppService/isAllowedByToken',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.authz.AuthzAppService/isAllowed',
             authz__app__service__pb2.AuthzAppService_isAllowedRequest.SerializeToString,
             authz__app__service__pb2.AuthzAppService_isAllowedResponse.FromString,
             options, channel_credentials,

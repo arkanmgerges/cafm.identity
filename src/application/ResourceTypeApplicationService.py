@@ -3,20 +3,25 @@
 """
 from typing import List
 
+from src.domain_model.AuthorizationService import AuthorizationService
+from src.domain_model.PolicyControllerService import PolicyActionConstant
 from src.domain_model.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException
 from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
-from src.domain_model.resource_type.ResourceType import ResourceType
+from src.domain_model.resource_type.ResourceType import ResourceType, ResourceTypeConstant
 from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
 
 
 class ResourceTypeApplicationService:
-    def __init__(self, resourceTypeRepository: ResourceTypeRepository):
+    def __init__(self, resourceTypeRepository: ResourceTypeRepository, authzService: AuthorizationService):
         self._resourceTypeRepository = resourceTypeRepository
+        self._authzService: AuthorizationService = authzService
 
-    def createResourceType(self, id: str = '', name: str = '', objectOnly: bool = False):
+    def createResourceType(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         try:
-            self._resourceTypeRepository.resourceTypeByName(name=name)
-            raise ResourceTypeAlreadyExistException(name=name)
+            if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
+                                            resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
+                self._resourceTypeRepository.resourceTypeByName(name=name)
+                raise ResourceTypeAlreadyExistException(name=name)
         except ResourceTypeDoesNotExistException:
             if objectOnly:
                 return ResourceType.createFrom(name=name)

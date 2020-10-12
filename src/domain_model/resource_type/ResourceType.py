@@ -1,9 +1,22 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from enum import Enum
 from uuid import uuid4
 
 from src.resource.logging.logger import logger
+
+
+class ResourceTypeConstant(Enum):
+    REALM = 'realm'
+    OU = 'ou'
+    PROJECT = 'project'
+    RESOURCE_TYPE = 'resource_type'
+    PERMISSION = 'permission'
+    USER = 'user'
+    USER_GROUP = 'user_group'
+    ROLE = 'role'
+    ALL = '*'
 
 
 class ResourceType:
@@ -17,7 +30,8 @@ class ResourceType:
         if publishEvent:
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
             from src.domain_model.resource_type.ResourceTypeCreated import ResourceTypeCreated
-            logger.debug(f'[{ResourceType.createFrom.__qualname__}] - Create ResourceType with name = {name} and id = {id}')
+            logger.debug(
+                f'[{ResourceType.createFrom.__qualname__}] - Create ResourceType with name = {name} and id = {id}')
             DomainEventPublisher.addEventForPublishing(ResourceTypeCreated(resourceType))
         return resourceType
 

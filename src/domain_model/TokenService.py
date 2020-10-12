@@ -1,6 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+import os
+
 from authlib.jose import jwt
 
 from src.resource.logging.logger import logger
@@ -26,3 +28,17 @@ class TokenService:
         claims = jwt.decode(token, key)
         claims.validate()
         return claims
+
+    def generateToken(self, payload: dict) -> str:
+        """Generate token by payload
+
+        Args:
+            payload (dict): Data that is used to generate the token
+
+        Returns:
+            str: Token string
+        """
+        header = {'alg': 'HS256'}
+        key = os.getenv('CAFM_JWT_SECRET', 'secret')
+        token = jwt.encode(header, payload, key).decode('utf-8')
+        return token

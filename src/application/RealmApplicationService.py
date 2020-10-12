@@ -3,20 +3,26 @@
 """
 from typing import List
 
-from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
-from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+from src.domain_model.AuthorizationService import AuthorizationService
+from src.domain_model.PolicyControllerService import PolicyActionConstant
 from src.domain_model.realm.Realm import Realm
 from src.domain_model.realm.RealmRepository import RealmRepository
+from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
+from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
 
 
 class RealmApplicationService:
-    def __init__(self, realmRepository: RealmRepository):
+    def __init__(self, realmRepository: RealmRepository, authzService: AuthorizationService):
         self._realmRepository = realmRepository
+        self._authzService: AuthorizationService = authzService
 
-    def createRealm(self, id: str = '', name: str = '', objectOnly: bool = False):
+    def createRealm(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         try:
-            self._realmRepository.realmByName(name=name)
-            raise RealmAlreadyExistException(name=name)
+            if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
+                                            resourceType=ResourceTypeConstant.REALM.value):
+                self._realmRepository.realmByName(name=name)
+                raise RealmAlreadyExistException(name=name)
         except RealmDoesNotExistException:
             if objectOnly:
                 return Realm.createFrom(name=name)
@@ -32,4 +38,5 @@ class RealmApplicationService:
         return self._realmRepository.realmById(id=id)
 
     def realms(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Realm]:
-        return self._realmRepository.realmsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom, resultSize=resultSize)
+        return self._realmRepository.realmsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
+                                                        resultSize=resultSize)

@@ -126,8 +126,8 @@ _AUTHZAPPSERVICE = _descriptor.ServiceDescriptor(
   serialized_end=321,
   methods=[
   _descriptor.MethodDescriptor(
-    name='isAllowedByToken',
-    full_name='cafm.identity.authz.AuthzAppService.isAllowedByToken',
+    name='isAllowed',
+    full_name='cafm.identity.authz.AuthzAppService.isAllowed',
     index=0,
     containing_service=None,
     input_type=_AUTHZAPPSERVICE_ISALLOWEDREQUEST,

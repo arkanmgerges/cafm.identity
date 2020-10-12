@@ -1,7 +1,6 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domain_model.AuthenticationService import AuthenticationService
 from src.domain_model.AuthorizationService import AuthorizationService
 
 
@@ -9,14 +8,18 @@ class AuthorizationApplicationService:
     def __init__(self, authzService: AuthorizationService):
         self._authzService: AuthorizationService = authzService
 
-    def isAllowedByToken(self, token: str, data: str) -> bool:
+    def isAllowed(self, token: str, action: str = '', resourceType: str = '', resourceId: str = None) -> bool:
         """Check if the token has access to the context provided by data
 
         Args:
-            token (str): Token to be checked for access
-            data (str): Context that is used for verification
+            token (str): Token that is used for authorization check
+            action (str): An action that can be applied over the resource or/and resource type
+            resourceType (str): The type of the resource that the action will be applied to
+            resourceId (str): The id of the resource that the action will be applied to
+
 
         Returns:
             bool: True if the token has access or False otherwise
         """
-        return self._authzService.isAllowedByToken(token=token, data=data)
+        return self._authzService.isAllowed(token=token, action=action, resourceType=resourceType,
+                                            resourceId=resourceId)

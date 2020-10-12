@@ -15,6 +15,7 @@ def setup_function():
 
 
 def test_add_event_to_postponed_list_and_verify_that_it_is_added():
+    # Arrange, Act
     userCreatedMock = Mock(spec=UserCreated)
     userCreatedMock.data = Mock(return_value='{"id": "1"}')
     DomainEventPublisher.addEventForPublishing(userCreatedMock)
@@ -25,6 +26,7 @@ def test_add_event_to_postponed_list_and_verify_that_it_is_added():
     userCreatedMock.data = Mock(return_value='{"id": "3"}')
     DomainEventPublisher.addEventForPublishing(userCreatedMock)
 
+    # Assert
     i = 0
     for evt in DomainEventPublisher.postponedEvents():
         assert isinstance(evt, DomainEvent)
@@ -34,9 +36,12 @@ def test_add_event_to_postponed_list_and_verify_that_it_is_added():
 
 
 def test_clean_domain_event():
+    # Arrange
     userCreatedMock = Mock(spec=UserCreated)
     userCreatedMock.data = Mock(return_value='{"id": "1"}')
+    # Act
     DomainEventPublisher.addEventForPublishing(userCreatedMock)
+    # Assert
     assert len(DomainEventPublisher.postponedEvents()) == 1
     DomainEventPublisher.cleanup()
     assert len(DomainEventPublisher.postponedEvents()) == 0

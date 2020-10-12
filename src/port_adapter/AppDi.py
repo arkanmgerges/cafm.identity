@@ -20,8 +20,10 @@ from src.domain_model.AuthenticationRepository import AuthenticationRepository
 from src.domain_model.AuthenticationService import AuthenticationService
 from src.domain_model.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.AuthorizationService import AuthorizationService
+from src.domain_model.PolicyControllerService import PolicyControllerService
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.permission.PermissionRepository import PermissionRepository
+from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.project.ProjectRepository import ProjectRepository
 from src.domain_model.realm.RealmRepository import RealmRepository
 from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
@@ -38,6 +40,7 @@ from src.port_adapter.repository.domain_model.AuthenticationRepositoryImpl impor
 from src.port_adapter.repository.domain_model.AuthorizationRepositoryImpl import AuthorizationRepositoryImpl
 from src.port_adapter.repository.domain_model.ou.OuRepositoryImpl import OuRepositoryImpl
 from src.port_adapter.repository.domain_model.permission.PermissionRepositoryImpl import PermissionRepositoryImpl
+from src.port_adapter.repository.domain_model.policy.PolicyRepositoryImpl import PolicyRepositoryImpl
 from src.port_adapter.repository.domain_model.project.ProjectRepositoryImpl import ProjectRepositoryImpl
 from src.port_adapter.repository.domain_model.realm.RealmRepositoryImpl import RealmRepositoryImpl
 from src.port_adapter.repository.domain_model.resource_type.ResourceTypeRepositoryImpl import ResourceTypeRepositoryImpl
@@ -56,32 +59,32 @@ class AppDi(Module):
     @singleton
     @provider
     def provideUserApplicationService(self) -> UserApplicationService:
-        return UserApplicationService(self.__injector__.get(UserRepository))
+        return UserApplicationService(self.__injector__.get(UserRepository), self.__injector__.get(AuthorizationService))
 
     @singleton
     @provider
     def provideRoleApplicationService(self) -> RoleApplicationService:
-        return RoleApplicationService(self.__injector__.get(RoleRepository))
+        return RoleApplicationService(self.__injector__.get(RoleRepository), self.__injector__.get(AuthorizationService))
 
     @singleton
     @provider
     def provideOuApplicationService(self) -> OuApplicationService:
-        return OuApplicationService(self.__injector__.get(OuRepository))
+        return OuApplicationService(self.__injector__.get(OuRepository), self.__injector__.get(AuthorizationService))
 
     @singleton
     @provider
     def provideRealmApplicationService(self) -> RealmApplicationService:
-        return RealmApplicationService(self.__injector__.get(RealmRepository))
+        return RealmApplicationService(self.__injector__.get(RealmRepository), self.__injector__.get(AuthorizationService))
 
     @singleton
     @provider
     def providePermissionApplicationService(self) -> PermissionApplicationService:
-        return PermissionApplicationService(self.__injector__.get(PermissionRepository))
+        return PermissionApplicationService(self.__injector__.get(PermissionRepository), self.__injector__.get(AuthorizationService))
 
     @singleton
     @provider
     def provideProjectApplicationService(self) -> ProjectApplicationService:
-        return ProjectApplicationService(self.__injector__.get(ProjectRepository))
+        return ProjectApplicationService(self.__injector__.get(ProjectRepository), self.__injector__.get(AuthorizationService))
 
     @singleton
     @provider
@@ -91,12 +94,12 @@ class AppDi(Module):
     @singleton
     @provider
     def provideUserGroupApplicationService(self) -> UserGroupApplicationService:
-        return UserGroupApplicationService(self.__injector__.get(UserGroupRepository))
+        return UserGroupApplicationService(self.__injector__.get(UserGroupRepository), self.__injector__.get(AuthorizationService))
 
     @singleton
     @provider
     def provideAuthenticationApplicationService(self) -> AuthenticationApplicationService:
-        return AuthenticationApplicationService(self.__injector__.get(AuthenticationService))    \
+        return AuthenticationApplicationService(self.__injector__.get(AuthenticationService))
 
     @singleton
     @provider
@@ -155,6 +158,11 @@ class AppDi(Module):
     @provider
     def provideAuthorizationRepository(self) -> AuthorizationRepository:
         return AuthorizationRepositoryImpl()
+
+    @singleton
+    @provider
+    def providePolicyRepository(self) -> PolicyRepository:
+        return PolicyRepositoryImpl()
     # endregion Repository
 
     # region domain service
@@ -166,7 +174,12 @@ class AppDi(Module):
     @singleton
     @provider
     def provideAuthorizationService(self) -> AuthorizationService:
-        return AuthorizationService(self.__injector__.get(AuthorizationRepository))
+        return AuthorizationService(self.__injector__.get(AuthorizationRepository), self.__injector__.get(PolicyControllerService))
+
+    @singleton
+    @provider
+    def providePolicyControllerService(self) -> PolicyControllerService:
+        return PolicyControllerService(self.__injector__.get(PolicyRepository))
     # endregion
 
     # region Messaging

@@ -3,21 +3,28 @@
 """
 from typing import List
 
+from src.domain_model.AuthorizationService import AuthorizationService
+from src.domain_model.PolicyControllerService import PolicyActionConstant
 from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
+from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
 from src.domain_model.user.User import User
 from src.domain_model.user.UserRepository import UserRepository
 from src.resource.logging.logger import logger
 
 
 class UserApplicationService:
-    def __init__(self, userRepository: UserRepository):
+    def __init__(self, userRepository: UserRepository, authzService: AuthorizationService):
         self._userRepository = userRepository
+        self._authzService: AuthorizationService = authzService
 
-    def createUser(self, id: str = '', name: str = '', password: str = '', objectOnly: bool = False):
+
+    def createUser(self, id: str = '', name: str = '', password: str = '', objectOnly: bool = False, token: str = ''):
         try:
-            self._userRepository.userByName(name=name)
-            raise UserAlreadyExistException(name=name)
+            if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
+                                            resourceType=ResourceTypeConstant.USER.value):
+                self._userRepository.userByName(name=name)
+                raise UserAlreadyExistException(name=name)
         except UserDoesNotExistException:
             logger.debug(f'[{UserApplicationService.createUser.__qualname__}] - with name: {name}, objectOnly: {objectOnly}')
             if objectOnly:

@@ -3,20 +3,27 @@
 """
 from typing import List
 
+from src.domain_model.AuthorizationService import AuthorizationService
+from src.domain_model.PolicyControllerService import PolicyActionConstant
 from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
 from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
+from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
 from src.domain_model.role.Role import Role
 from src.domain_model.role.RoleRepository import RoleRepository
 
 
 class RoleApplicationService:
-    def __init__(self, roleRepository: RoleRepository):
+    def __init__(self, roleRepository: RoleRepository, authzService: AuthorizationService):
         self._roleRepository = roleRepository
+        self._authzService: AuthorizationService = authzService
 
-    def createRole(self, id: str = '', name: str = '', objectOnly: bool = False):
+
+    def createRole(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         try:
-            self._roleRepository.roleByName(name=name)
-            raise RoleAlreadyExistException(name=name)
+            if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
+                                            resourceType=ResourceTypeConstant.ROLE.value):
+                self._roleRepository.roleByName(name=name)
+                raise RoleAlreadyExistException(name=name)
         except RoleDoesNotExistException:
             if objectOnly:
                 return Role.createFrom(name=name)

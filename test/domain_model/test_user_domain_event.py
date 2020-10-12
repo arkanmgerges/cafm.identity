@@ -9,8 +9,10 @@ from src.domain_model.user.UserCreated import UserCreated
 
 
 def test_event_UserCreated():
+    # Act
     user = User.createFrom('1', 'john', '1234')
     domainEvent = UserCreated(user)
+    # Assert
     assert isinstance(domainEvent, DomainEvent)
     assert json.dumps(domainEvent.data()) == json.dumps({"id": user.id(), "name": user.name()})
     assert isinstance(domainEvent.id(), str)

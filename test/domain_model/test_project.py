@@ -7,12 +7,18 @@ from src.domain_model.project.Project import Project
 
 
 def test_create_project():
+    # Act
     project = Project('1', '2')
+    # Assert
     assert isinstance(project, Project)
 
+
 def test_create_project_with_semantic_constructor():
+    # Arrange
     id = str(uuid4())
+    # Act
     project = Project.createFrom(id=id, name='Prj1')
+    # Assert
     assert isinstance(project, Project)
     assert project.id() == id
     assert project.name() == 'Prj1'
