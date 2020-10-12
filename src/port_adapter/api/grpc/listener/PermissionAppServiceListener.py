@@ -30,8 +30,9 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
 
     def permissionByName(self, request, context):
         try:
+            token = self._token(context)
             permissionAppService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
-            permission: Permission = permissionAppService.permissionByName(name=request.name)
+            permission: Permission = permissionAppService.permissionByName(name=request.name, token=token)
             response = PermissionAppService_permissionByNameResponse()
             response.permission.id = permission.id()
             response.permission.name = permission.name()
@@ -48,17 +49,19 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
     def permissions(self, request, context):
         try:
             metadata = context.invocation_metadata()
+            token = self._token(context)
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
             ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
                 f'[{PermissionAppServiceListener.permissions.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}')
+resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             permissionAppService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
 
             permissions: List[Permission] = permissionAppService.permissions(ownedRoles=ownedRoles,
                                                                              resultFrom=request.resultFrom,
-                                                                             resultSize=resultSize)
+                                                                             resultSize=resultSize,
+                                                                             token=token)
             response = PermissionAppService_permissionsResponse()
             for permission in permissions:
                 response.permissions.add(id=permission.id(), name=permission.name())
@@ -71,8 +74,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
 
     def permissionById(self, request, context):
         try:
+            token = self._token(context)
             permissionAppService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
-            permission: Permission = permissionAppService.permissionById(id=request.id)
+            permission: Permission = permissionAppService.permissionById(id=request.id, token=token)
             logger.debug(f'[{PermissionAppServiceListener.permissionById.__qualname__}] - response: {permission}')
             response = PermissionAppService_permissionByIdResponse()
             response.permission.id = permission.id()
@@ -82,3 +86,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Permission does not exist')
             return PermissionAppService_permissionByIdResponse()
+
+    def _token(self, context) -> str:
+        metadata = context.invocation_metadata()
+        if 'token' in metadata[0]:
+            return metadata[0].value
+        return ''

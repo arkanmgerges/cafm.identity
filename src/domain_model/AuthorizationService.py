@@ -42,7 +42,7 @@ class AuthorizationService:
             return False
         except Exception as e:
             logger.exception(f'[{AuthorizationService.isAllowed.__qualname__}] - exception raised with e: {e}')
-            return False
+            raise e
 
     def claimsFromToken(self, token: str) -> dict:
         """Get claims by decoding and validating the token

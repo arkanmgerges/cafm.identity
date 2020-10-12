@@ -9,6 +9,7 @@ from src.domain_model.ou.Ou import Ou
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
 
 
@@ -23,6 +24,8 @@ class OuApplicationService:
                                             resourceType=ResourceTypeConstant.OU.value):
                 self._ouRepository.ouByName(name=name)
                 raise OuAlreadyExistException(name=name)
+            else:
+                raise UnAuthorizedException()
         except OuDoesNotExistException:
             if objectOnly:
                 return Ou.createFrom(name=name)
@@ -31,11 +34,23 @@ class OuApplicationService:
                 self._ouRepository.createOu(ou)
                 return ou
 
-    def ouByName(self, name: str):
-        return self._ouRepository.ouByName(name=name)
+    def ouByName(self, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.OU.value):
+            return self._ouRepository.ouByName(name=name)
 
-    def ouById(self, id: str):
-        return self._ouRepository.ouById(id=id)
+    def ouById(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.OU.value):
+            return self._ouRepository.ouById(id=id)
 
-    def ous(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Ou]:
-        return self._ouRepository.ousByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom, resultSize=resultSize)
+        else:
+            raise UnAuthorizedException()
+
+    def ous(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[Ou]:
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.OU.value):
+            return self._ouRepository.ousByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
+                                                      resultSize=resultSize)
+        else:
+            raise UnAuthorizedException()

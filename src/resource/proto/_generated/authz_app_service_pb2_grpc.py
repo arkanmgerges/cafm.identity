@@ -14,7 +14,7 @@ class AuthzAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.isAllowedByToken = channel.unary_unary(
+        self.isAllowed = channel.unary_unary(
                 '/cafm.identity.authz.AuthzAppService/isAllowed',
                 request_serializer=authz__app__service__pb2.AuthzAppService_isAllowedRequest.SerializeToString,
                 response_deserializer=authz__app__service__pb2.AuthzAppService_isAllowedResponse.FromString,
@@ -24,7 +24,7 @@ class AuthzAppServiceStub(object):
 class AuthzAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def isAllowedByToken(self, request, context):
+    def isAllowed(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -49,7 +49,7 @@ class AuthzAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def isAllowedByToken(request,
+    def isAllowed(request,
             target,
             options=(),
             channel_credentials=None,

@@ -85,7 +85,7 @@ def test_get_project_by_name_when_project_exists():
     repo.projectByName = Mock(return_value=project)
     appService = ProjectApplicationService(repo, authzService)
     # Act
-    appService.projectByName(name=name)
+    appService.projectByName(name=name, token=token)
     # Assert
     repo.projectByName.assert_called_once_with(name=name)
 
@@ -124,6 +124,6 @@ def test_get_project_by_id_when_project_exists():
     repo.projectById = Mock(return_value=project)
     appService = ProjectApplicationService(repo, authzService)
     # Act
-    appService.projectById(id='1234')
+    appService.projectById(id='1234', token=token)
     # Assert
     repo.projectById.assert_called_once_with(id='1234')

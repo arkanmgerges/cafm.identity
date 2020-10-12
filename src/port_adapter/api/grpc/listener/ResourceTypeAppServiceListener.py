@@ -31,8 +31,9 @@ class ResourceTypeAppServiceListener(ResourceTypeAppServiceServicer):
 
     def resourceTypeByName(self, request, context):
         try:
+            token = self._token(context)
             resourceTypeAppService: ResourceTypeApplicationService = AppDi.instance.get(ResourceTypeApplicationService)
-            resourceType: ResourceType = resourceTypeAppService.resourceTypeByName(name=request.name)
+            resourceType: ResourceType = resourceTypeAppService.resourceTypeByName(name=request.name, token=token)
             response = ResourceTypeAppService_resourceTypeByNameResponse()
             response.resourceType.id = resourceType.id()
             response.resourceType.name = resourceType.name()
@@ -48,18 +49,20 @@ class ResourceTypeAppServiceListener(ResourceTypeAppServiceServicer):
 
     def resourceTypes(self, request, context):
         try:
+            token = self._token(context)
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
             ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
                 f'[{ResourceTypeAppServiceListener.resourceTypes.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}')
+resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             resourceTypeAppService: ResourceTypeApplicationService = AppDi.instance.get(ResourceTypeApplicationService)
 
             resourceTypes: List[ResourceType] = resourceTypeAppService.resourceTypes(ownedRoles=ownedRoles,
                                                                                      resultFrom=request.resultFrom,
-                                                                                     resultSize=resultSize)
+                                                                                     resultSize=resultSize,
+                                                                                     token=token)
             response = ResourceTypeAppService_resourceTypesResponse()
             for resourceType in resourceTypes:
                 response.resourceTypes.add(id=resourceType.id(), name=resourceType.name())
@@ -72,8 +75,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
 
     def resourceTypeById(self, request, context):
         try:
+            token = self._token(context)
             resourceTypeAppService: ResourceTypeApplicationService = AppDi.instance.get(ResourceTypeApplicationService)
-            resourceType: ResourceType = resourceTypeAppService.resourceTypeById(id=request.id)
+            resourceType: ResourceType = resourceTypeAppService.resourceTypeById(id=request.id, token=token)
             logger.debug(f'[{ResourceTypeAppServiceListener.resourceTypeById.__qualname__}] - response: {resourceType}')
             response = ResourceTypeAppService_resourceTypeByIdResponse()
             response.resourceType.id = resourceType.id()
@@ -83,3 +87,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('ResourceType does not exist')
             return ResourceTypeAppService_resourceTypeByIdResponse()
+
+    def _token(self, context) -> str:
+        metadata = context.invocation_metadata()
+        if 'token' in metadata[0]:
+            return metadata[0].value
+        return ''

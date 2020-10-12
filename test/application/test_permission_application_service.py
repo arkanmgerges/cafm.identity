@@ -85,7 +85,7 @@ def test_get_permission_by_name_when_permission_exists():
     repo.permissionByName = Mock(return_value=permission)
     appService = PermissionApplicationService(repo, authzService)
     # Act
-    appService.permissionByName(name=name)
+    appService.permissionByName(name=name, token=token)
     # Assert
     repo.permissionByName.assert_called_once_with(name=name)
 
@@ -124,6 +124,6 @@ def test_get_permission_by_id_when_permission_exists():
     repo.permissionById = Mock(return_value=permission)
     appService = PermissionApplicationService(repo, authzService)
     # Act
-    appService.permissionById(id='1234')
+    appService.permissionById(id='1234', token=token)
     # Assert
     repo.permissionById.assert_called_once_with(id='1234')

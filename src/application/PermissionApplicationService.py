@@ -9,6 +9,7 @@ from src.domain_model.permission.Permission import Permission
 from src.domain_model.permission.PermissionRepository import PermissionRepository
 from src.domain_model.resource.exception.PermissionAlreadyExistException import PermissionAlreadyExistException
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
 
 
@@ -23,6 +24,8 @@ class PermissionApplicationService:
                                             resourceType=ResourceTypeConstant.PERMISSION.value):
                 self._permissionRepository.permissionByName(name=name)
                 raise PermissionAlreadyExistException(name=name)
+            else:
+                raise UnAuthorizedException()
         except PermissionDoesNotExistException:
             if objectOnly:
                 return Permission.createFrom(name=name)
@@ -31,12 +34,25 @@ class PermissionApplicationService:
                 self._permissionRepository.createPermission(permission)
                 return permission
 
-    def permissionByName(self, name: str):
-        return self._permissionRepository.permissionByName(name=name)
+    def permissionByName(self, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.PERMISSION.value):
+            return self._permissionRepository.permissionByName(name=name)
+        else:
+            raise UnAuthorizedException()
 
-    def permissionById(self, id: str):
-        return self._permissionRepository.permissionById(id=id)
+    def permissionById(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.PERMISSION.value):
+            return self._permissionRepository.permissionById(id=id)
+        else:
+            raise UnAuthorizedException()
 
-    def permissions(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Permission]:
-        return self._permissionRepository.permissionsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                                  resultSize=resultSize)
+    def permissions(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[
+        Permission]:
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.PERMISSION.value):
+            return self._permissionRepository.permissionsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
+                                                                      resultSize=resultSize)
+        else:
+            raise UnAuthorizedException()

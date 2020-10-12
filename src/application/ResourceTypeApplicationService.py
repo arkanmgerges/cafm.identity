@@ -7,6 +7,7 @@ from src.domain_model.AuthorizationService import AuthorizationService
 from src.domain_model.PolicyControllerService import PolicyActionConstant
 from src.domain_model.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException
 from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource_type.ResourceType import ResourceType, ResourceTypeConstant
 from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
 
@@ -22,6 +23,8 @@ class ResourceTypeApplicationService:
                                             resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
                 self._resourceTypeRepository.resourceTypeByName(name=name)
                 raise ResourceTypeAlreadyExistException(name=name)
+            else:
+                raise UnAuthorizedException()
         except ResourceTypeDoesNotExistException:
             if objectOnly:
                 return ResourceType.createFrom(name=name)
@@ -30,11 +33,25 @@ class ResourceTypeApplicationService:
                 self._resourceTypeRepository.createResourceType(resourceType)
                 return resourceType
 
-    def resourceTypeByName(self, name: str):
-        return self._resourceTypeRepository.resourceTypeByName(name=name)
+    def resourceTypeByName(self, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
+            return self._resourceTypeRepository.resourceTypeByName(name=name)
+        else:
+            raise UnAuthorizedException()
 
-    def resourceTypeById(self, id: str):
-        return self._resourceTypeRepository.resourceTypeById(id=id)
+    def resourceTypeById(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
+            return self._resourceTypeRepository.resourceTypeById(id=id)
+        else:
+            raise UnAuthorizedException()
 
-    def resourceTypes(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[ResourceType]:
-        return self._resourceTypeRepository.resourceTypesByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom, resultSize=resultSize)
+    def resourceTypes(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[
+        ResourceType]:
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
+            return self._resourceTypeRepository.resourceTypesByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
+                                                                          resultSize=resultSize)
+        else:
+            raise UnAuthorizedException()

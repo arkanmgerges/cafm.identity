@@ -85,7 +85,7 @@ def test_get_realm_by_name_when_realm_exists():
     repo.realmByName = Mock(return_value=realm)
     appService = RealmApplicationService(repo, authzService)
     # Act
-    appService.realmByName(name=name)
+    appService.realmByName(name=name, token=token)
     # Assert
     repo.realmByName.assert_called_once_with(name=name)
 
@@ -124,6 +124,6 @@ def test_get_realm_by_id_when_realm_exists():
     repo.realmById = Mock(return_value=realm)
     appService = RealmApplicationService(repo, authzService)
     # Act
-    appService.realmById(id='1234')
+    appService.realmById(id='1234', token=token)
     # Assert
     repo.realmById.assert_called_once_with(id='1234')

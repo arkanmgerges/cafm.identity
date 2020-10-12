@@ -6,6 +6,7 @@ import time
 
 import src.port_adapter.AppDi as AppDi
 from src.application.UserApplicationService import UserApplicationService
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
@@ -22,7 +23,11 @@ class CreateUserHandler(Handler):
         appService: UserApplicationService = AppDi.instance.get(UserApplicationService)
         dataDict = json.loads(data)
         metadataDict = json.loads(metadata)
-        obj = appService.createUser(name=dataDict['name'], password=dataDict['password'], objectOnly=True)
+
+        if 'token' not in metadataDict:
+            raise UnAuthorizedException()
+
+        obj = appService.createUser(name=dataDict['name'], password=dataDict['password'], objectOnly=True, token=metadataDict['token'])
         return {'name': IdentityCommandConstant.CREATE_USER.value, 'createdOn': round(time.time() * 1000),
                 'data': {'id': obj.id(), 'name': obj.name(), 'password': obj.password()},
                 'metadata': metadataDict}

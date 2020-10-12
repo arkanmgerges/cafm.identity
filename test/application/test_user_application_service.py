@@ -126,6 +126,6 @@ def test_get_user_by_id_when_user_exists():
     repo.userById = Mock(return_value=user)
     appService = UserApplicationService(repo, authzService)
     # Act
-    appService.userById(id='1234')
+    appService.userById(id='1234', token=token)
     # Assert
     repo.userById.assert_called_once_with(id='1234')

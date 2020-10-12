@@ -10,6 +10,7 @@ import src.port_adapter.AppDi as AppDi
 from src.application.RoleApplicationService import RoleApplicationService
 from src.domain_model.TokenService import TokenService
 from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.role.Role import Role
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.role_app_service_pb2 import RoleAppService_roleByNameResponse, \
@@ -30,8 +31,9 @@ class RoleAppServiceListener(RoleAppServiceServicer):
 
     def roleByName(self, request, context):
         try:
+            token = self._token(context)
             roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
-            role: Role = roleAppService.roleByName(name=request.name)
+            role: Role = roleAppService.roleByName(name=request.name, token=token)
             response = RoleAppService_roleByNameResponse()
             response.role.id = role.id()
             response.role.name = role.name()
@@ -47,17 +49,20 @@ class RoleAppServiceListener(RoleAppServiceServicer):
 
     def roles(self, request, context):
         try:
+            token = self._token(context)
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
             ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
                 f'[{RoleAppServiceListener.roles.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}')
+resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
 
-            roles: List[Role] = roleAppService.roles(ownedRoles=ownedRoles, resultFrom=request.resultFrom,
-                                                     resultSize=resultSize)
+            roles: List[Role] = roleAppService.roles(ownedRoles=ownedRoles,
+                                                     resultFrom=request.resultFrom,
+                                                     resultSize=resultSize,
+                                                     token=token)
             response = RoleAppService_rolesResponse()
             for role in roles:
                 response.roles.add(id=role.id(), name=role.name())
@@ -70,8 +75,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
 
     def roleById(self, request, context):
         try:
+            token = self._token(context)
             roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
-            role: Role = roleAppService.roleById(id=request.id)
+            role: Role = roleAppService.roleById(id=request.id, token=token)
             logger.debug(f'[{RoleAppServiceListener.roleById.__qualname__}] - response: {role}')
             response = RoleAppService_roleByIdResponse()
             response.role.id = role.id()
@@ -81,3 +87,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Role does not exist')
             return RoleAppService_roleByIdResponse()
+
+    def _token(self, context) -> str:
+        metadata = context.invocation_metadata()
+        if 'token' in metadata[0]:
+            return metadata[0].value
+        raise UnAuthorizedException()

@@ -31,7 +31,8 @@ class OuAppServiceListener(OuAppServiceServicer):
     def ouByName(self, request, context):
         try:
             ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
-            ou: Ou = ouAppService.ouByName(name=request.name)
+            token = self._token(context)
+            ou: Ou = ouAppService.ouByName(name=request.name, token=token)
             response = OuAppService_ouByNameResponse()
             response.ou.id = ou.id()
             response.ou.name = ou.name()
@@ -50,14 +51,15 @@ class OuAppServiceListener(OuAppServiceServicer):
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
+            token = self._token(context)
             ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
                 f'[{OuAppServiceListener.ous.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}')
+resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
 
             ous: List[Ou] = ouAppService.ous(ownedRoles=ownedRoles, resultFrom=request.resultFrom,
-                                             resultSize=resultSize)
+                                             resultSize=resultSize, token=token)
             response = OuAppService_ousResponse()
             for ou in ous:
                 response.ous.add(id=ou.id(), name=ou.name())
@@ -71,7 +73,8 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
     def ouById(self, request, context):
         try:
             ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
-            ou: Ou = ouAppService.ouById(id=request.id)
+            token = self._token(context)
+            ou: Ou = ouAppService.ouById(id=request.id, token=token)
             logger.debug(f'[{OuAppServiceListener.ouById.__qualname__}] - response: {ou}')
             response = OuAppService_ouByIdResponse()
             response.ou.id = ou.id()
@@ -81,3 +84,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Ou does not exist')
             return OuAppService_ouByIdResponse()
+
+    def _token(self, context) -> str:
+        metadata = context.invocation_metadata()
+        if 'token' in metadata[0]:
+            return metadata[0].value
+        return ''

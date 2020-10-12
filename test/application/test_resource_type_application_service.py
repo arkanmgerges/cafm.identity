@@ -85,7 +85,7 @@ def test_get_resourceType_by_name_when_resourceType_exists():
     repo.resourceTypeByName = Mock(return_value=resourceType)
     appService = ResourceTypeApplicationService(repo, authzService)
     # Act
-    appService.resourceTypeByName(name=name)
+    appService.resourceTypeByName(name=name, token=token)
     # Assert
     repo.resourceTypeByName.assert_called_once_with(name=name)
 
@@ -124,6 +124,6 @@ def test_get_resourceType_by_id_when_resourceType_exists():
     repo.resourceTypeById = Mock(return_value=resourceType)
     appService = ResourceTypeApplicationService(repo, authzService)
     # Act
-    appService.resourceTypeById(id='1234')
+    appService.resourceTypeById(id='1234', token=token)
     # Assert
     repo.resourceTypeById.assert_called_once_with(id='1234')

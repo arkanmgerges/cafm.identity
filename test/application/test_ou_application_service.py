@@ -85,7 +85,7 @@ def test_get_ou_by_name_when_ou_exists():
     repo.ouByName = Mock(return_value=ou)
     appService = OuApplicationService(repo, authzService)
     # Act
-    appService.ouByName(name=name)
+    appService.ouByName(name=name, token=token)
     # Assert
     repo.ouByName.assert_called_once_with(name=name)
 
@@ -124,6 +124,6 @@ def test_get_ou_by_id_when_ou_exists():
     repo.ouById = Mock(return_value=ou)
     appService = OuApplicationService(repo, authzService)
     # Act
-    appService.ouById(id='1234')
+    appService.ouById(id='1234', token=token)
     # Assert
     repo.ouById.assert_called_once_with(id='1234')

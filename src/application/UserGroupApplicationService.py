@@ -5,6 +5,7 @@ from typing import List
 
 from src.domain_model.AuthorizationService import AuthorizationService
 from src.domain_model.PolicyControllerService import PolicyActionConstant
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource.exception.UserGroupAlreadyExistException import UserGroupAlreadyExistException
 from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
 from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
@@ -23,6 +24,8 @@ class UserGroupApplicationService:
                                             resourceType=ResourceTypeConstant.USER_GROUP.value):
                 self._userGroupRepository.userGroupByName(name=name)
                 raise UserGroupAlreadyExistException(name=name)
+            else:
+                raise UnAuthorizedException()
         except UserGroupDoesNotExistException:
             if objectOnly:
                 return UserGroup.createFrom(name=name)
@@ -31,12 +34,25 @@ class UserGroupApplicationService:
                 self._userGroupRepository.createUserGroup(userGroup)
                 return userGroup
 
-    def userGroupByName(self, name: str):
-        return self._userGroupRepository.userGroupByName(name=name)
+    def userGroupByName(self, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.USER_GROUP.value):
+            return self._userGroupRepository.userGroupByName(name=name)
+        else:
+            raise UnAuthorizedException()
 
-    def userGroupById(self, id: str):
-        return self._userGroupRepository.userGroupById(id=id)
+    def userGroupById(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.USER_GROUP.value):
+            return self._userGroupRepository.userGroupById(id=id)
+        else:
+            raise UnAuthorizedException()
 
-    def userGroups(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[UserGroup]:
-        return self._userGroupRepository.userGroupsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                                resultSize=resultSize)
+    def userGroups(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[
+        UserGroup]:
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.USER_GROUP.value):
+            return self._userGroupRepository.userGroupsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
+                                                                    resultSize=resultSize)
+        else:
+            raise UnAuthorizedException()

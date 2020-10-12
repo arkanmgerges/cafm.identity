@@ -9,6 +9,7 @@ from src.domain_model.project.Project import Project
 from src.domain_model.project.ProjectRepository import ProjectRepository
 from src.domain_model.resource.exception.ProjectAlreadyExistException import ProjectAlreadyExistException
 from src.domain_model.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
 
 
@@ -23,6 +24,8 @@ class ProjectApplicationService:
                                             resourceType=ResourceTypeConstant.PROJECT.value):
                 self._projectRepository.projectByName(name=name)
                 raise ProjectAlreadyExistException(name=name)
+            else:
+                raise UnAuthorizedException()
         except ProjectDoesNotExistException:
             if objectOnly:
                 return Project.createFrom(name=name)
@@ -31,12 +34,25 @@ class ProjectApplicationService:
                 self._projectRepository.createProject(project)
                 return project
 
-    def projectByName(self, name: str):
-        return self._projectRepository.projectByName(name=name)
+    def projectByName(self, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.PROJECT.value):
+            return self._projectRepository.projectByName(name=name)
+        else:
+            raise UnAuthorizedException()
 
-    def projectById(self, id: str):
-        return self._projectRepository.projectById(id=id)
+    def projectById(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.PROJECT.value):
+            return self._projectRepository.projectById(id=id)
+        else:
+            raise UnAuthorizedException()
 
-    def projects(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Project]:
-        return self._projectRepository.projectsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                            resultSize=resultSize)
+    def projects(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[
+        Project]:
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.PROJECT.value):
+            return self._projectRepository.projectsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
+                                                                resultSize=resultSize)
+        else:
+            raise UnAuthorizedException()

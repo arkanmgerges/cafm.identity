@@ -30,8 +30,9 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
 
     def userGroupByName(self, request, context):
         try:
+            token = self._token(context)
             userGroupAppService: UserGroupApplicationService = AppDi.instance.get(UserGroupApplicationService)
-            userGroup: UserGroup = userGroupAppService.userGroupByName(name=request.name)
+            userGroup: UserGroup = userGroupAppService.userGroupByName(name=request.name, token=token)
             response = UserGroupAppService_userGroupByNameResponse()
             response.userGroup.id = userGroup.id()
             response.userGroup.name = userGroup.name()
@@ -47,18 +48,20 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
 
     def userGroups(self, request, context):
         try:
+            token = self._token(context)
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
             ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
                 f'[{UserGroupAppServiceListener.userGroups.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}')
+resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             userGroupAppService: UserGroupApplicationService = AppDi.instance.get(UserGroupApplicationService)
 
             userGroups: List[UserGroup] = userGroupAppService.userGroups(ownedRoles=ownedRoles,
                                                                          resultFrom=request.resultFrom,
-                                                                         resultSize=resultSize)
+                                                                         resultSize=resultSize,
+                                                                         token=token)
             response = UserGroupAppService_userGroupsResponse()
             for userGroup in userGroups:
                 response.userGroups.add(id=userGroup.id(), name=userGroup.name())
@@ -71,8 +74,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
 
     def userGroupById(self, request, context):
         try:
+            token = self._token(context)
             userGroupAppService: UserGroupApplicationService = AppDi.instance.get(UserGroupApplicationService)
-            userGroup: UserGroup = userGroupAppService.userGroupById(id=request.id)
+            userGroup: UserGroup = userGroupAppService.userGroupById(id=request.id, token=token)
             logger.debug(f'[{UserGroupAppServiceListener.userGroupById.__qualname__}] - response: {userGroup}')
             response = UserGroupAppService_userGroupByIdResponse()
             response.userGroup.id = userGroup.id()
@@ -82,3 +86,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('UserGroup does not exist')
             return UserGroupAppService_userGroupByIdResponse()
+
+    def _token(self, context) -> str:
+        metadata = context.invocation_metadata()
+        if 'token' in metadata[0]:
+            return metadata[0].value
+        return ''

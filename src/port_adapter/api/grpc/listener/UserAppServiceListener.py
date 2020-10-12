@@ -48,17 +48,20 @@ class UserAppServiceListener(UserAppServiceServicer):
 
     def users(self, request, context):
         try:
+            token = self._token(context)
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
             ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
                 f'[{UserAppServiceListener.users.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}')
+resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
 
-            users: List[User] = userAppService.users(ownedRoles=ownedRoles, resultFrom=request.resultFrom,
-                                                     resultSize=resultSize)
+            users: List[User] = userAppService.users(ownedRoles=ownedRoles,
+                                                     resultFrom=request.resultFrom,
+                                                     resultSize=resultSize,
+                                                     token=token)
             response = UserAppService_usersResponse()
             for user in users:
                 response.users.add(id=user.id(), name=user.name())
@@ -71,8 +74,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
 
     def userById(self, request, context):
         try:
+            token = self._token(context)
             userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
-            user: User = userAppService.userById(id=request.id)
+            user: User = userAppService.userById(id=request.id, token=token)
             logger.debug(f'[{UserAppServiceListener.userById.__qualname__}] - response: {user}')
             response = UserAppService_userByIdResponse()
             response.user.id = user.id()
@@ -82,3 +86,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('User does not exist')
             return UserAppService_userByIdResponse()
+
+    def _token(self, context) -> str:
+        metadata = context.invocation_metadata()
+        if 'token' in metadata[0]:
+            return metadata[0].value
+        return ''

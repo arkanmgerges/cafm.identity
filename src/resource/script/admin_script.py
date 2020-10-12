@@ -175,8 +175,8 @@ def assign_user_super_admin_role(username, password, database_name):
     # Assign super admin role to the user
     aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId}
-                    UPDATE {_from: @fromId, _to: @toId}
+                    INSERT {_from: @fromId, _to: @toId, from_type: 'user', to_type: 'role'}
+                    UPDATE {_from: @fromId, _to: @toId, from_type: 'user', to_type: 'role'}
                   IN has                  
                 '''
     bindVars = {"fromId": userDocId, "toId": roleDocId}

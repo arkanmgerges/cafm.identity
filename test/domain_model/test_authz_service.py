@@ -3,6 +3,7 @@
 """
 import os
 
+import pytest
 from authlib.jose import jwt
 from mock import Mock
 
@@ -10,6 +11,7 @@ from src.domain_model.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.AuthorizationService import AuthorizationService
 from src.domain_model.PolicyControllerService import PolicyControllerService
 from src.domain_model.policy.PolicyRepository import PolicyRepository
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 
 
 def test_is_allowed_when_user_has_super_admin_role_in_token():
@@ -42,5 +44,7 @@ def test_is_allowed_when_user_does_not_have_super_admin_role_in_token():
     payload = {'id': '1234', 'name': 'john', 'role': ['admin']}
     # Act
     token = jwt.encode(header, payload, key).decode('utf-8')
+    # Act
+    isAllowed = authzService.isAllowed(token=token)
     # Assert
-    assert authzService.isAllowed(token=token) is False
+    assert isAllowed is False

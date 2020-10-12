@@ -7,6 +7,7 @@ from src.domain_model.AuthorizationService import AuthorizationService
 from src.domain_model.PolicyControllerService import PolicyActionConstant
 from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
 from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
 from src.domain_model.role.Role import Role
 from src.domain_model.role.RoleRepository import RoleRepository
@@ -17,13 +18,14 @@ class RoleApplicationService:
         self._roleRepository = roleRepository
         self._authzService: AuthorizationService = authzService
 
-
     def createRole(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         try:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
                                             resourceType=ResourceTypeConstant.ROLE.value):
                 self._roleRepository.roleByName(name=name)
                 raise RoleAlreadyExistException(name=name)
+            else:
+                raise UnAuthorizedException()
         except RoleDoesNotExistException:
             if objectOnly:
                 return Role.createFrom(name=name)
@@ -32,11 +34,24 @@ class RoleApplicationService:
                 self._roleRepository.createRole(role)
                 return role
 
-    def roleByName(self, name: str):
-        return self._roleRepository.roleByName(name=name)
+    def roleByName(self, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.ROLE.value):
+            return self._roleRepository.roleByName(name=name)
+        else:
+            raise UnAuthorizedException()
 
-    def roleById(self, id: str):
-        return self._roleRepository.roleById(id=id)
+    def roleById(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.ROLE.value):
+            return self._roleRepository.roleById(id=id)
+        else:
+            raise UnAuthorizedException()
 
-    def roles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Role]:
-        return self._roleRepository.rolesByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom, resultSize=resultSize)
+    def roles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[Role]:
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.ROLE.value):
+            return self._roleRepository.rolesByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
+                                                          resultSize=resultSize)
+        else:
+            raise UnAuthorizedException()

@@ -85,7 +85,7 @@ def test_get_userGroup_by_name_when_userGroup_exists():
     repo.userGroupByName = Mock(return_value=userGroup)
     appService = UserGroupApplicationService(repo, authzService)
     # Act
-    appService.userGroupByName(name=name)
+    appService.userGroupByName(name=name, token=token)
     # Assert
     repo.userGroupByName.assert_called_once_with(name=name)
 
@@ -124,6 +124,6 @@ def test_get_userGroup_by_id_when_userGroup_exists():
     repo.userGroupById = Mock(return_value=userGroup)
     appService = UserGroupApplicationService(repo, authzService)
     # Act
-    appService.userGroupById(id='1234')
+    appService.userGroupById(id='1234', token=token)
     # Assert
     repo.userGroupById.assert_called_once_with(id='1234')

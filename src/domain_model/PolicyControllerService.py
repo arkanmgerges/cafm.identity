@@ -19,7 +19,7 @@ class PolicyControllerService:
         self._tokenService = TokenService()
         self._policyRepo = policyRepo
 
-    def isAllowed(self, token: str, action: str = '', resourceType: str = '', resourceId: str = None):
+    def isAllowed(self, token: str, action: str = '', resourceType: str = '', resourceId: str = None) -> bool:
         claims = self._tokenService.claimsFromToken(token=token)
         roles = claims['role']
         for role in roles:
@@ -28,5 +28,5 @@ class PolicyControllerService:
 
             tree = self._policyRepo.allTreeByRoleName(role)
 
-        raise UnAuthorizedException()
+        return False
 

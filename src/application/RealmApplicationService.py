@@ -9,6 +9,7 @@ from src.domain_model.realm.Realm import Realm
 from src.domain_model.realm.RealmRepository import RealmRepository
 from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
 from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
 
 
@@ -23,6 +24,8 @@ class RealmApplicationService:
                                             resourceType=ResourceTypeConstant.REALM.value):
                 self._realmRepository.realmByName(name=name)
                 raise RealmAlreadyExistException(name=name)
+            else:
+                raise UnAuthorizedException()
         except RealmDoesNotExistException:
             if objectOnly:
                 return Realm.createFrom(name=name)
@@ -31,12 +34,24 @@ class RealmApplicationService:
                 self._realmRepository.createRealm(realm)
                 return realm
 
-    def realmByName(self, name: str):
-        return self._realmRepository.realmByName(name=name)
+    def realmByName(self, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.REALM.value):
+            return self._realmRepository.realmByName(name=name)
+        else:
+            raise UnAuthorizedException()
 
-    def realmById(self, id: str):
-        return self._realmRepository.realmById(id=id)
+    def realmById(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.REALM.value):
+            return self._realmRepository.realmById(id=id)
+        else:
+            raise UnAuthorizedException()
 
-    def realms(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Realm]:
-        return self._realmRepository.realmsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                        resultSize=resultSize)
+    def realms(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[Realm]:
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
+                                        resourceType=ResourceTypeConstant.REALM.value):
+            return self._realmRepository.realmsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
+                                                            resultSize=resultSize)
+        else:
+            raise UnAuthorizedException()

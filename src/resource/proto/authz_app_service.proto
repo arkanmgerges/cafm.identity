@@ -4,7 +4,9 @@ package cafm.identity.authz;
 
 message AuthzAppService_isAllowedRequest {
   string token = 1;
-  string data = 2;
+  string action = 2;
+  string resource_type = 3;
+  string resource_id = 4;
 }
 
 message AuthzAppService_isAllowedResponse {
@@ -12,5 +14,5 @@ message AuthzAppService_isAllowedResponse {
 }
 
 service AuthzAppService {
-  rpc isAllowedByToken (AuthzAppService_isAllowedRequest) returns (AuthzAppService_isAllowedResponse) {}
+  rpc isAllowed (AuthzAppService_isAllowedRequest) returns (AuthzAppService_isAllowedResponse) {}
 }

@@ -30,8 +30,9 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
 
     def projectByName(self, request, context):
         try:
+            token = self._token(context)
             projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
-            project: Project = projectAppService.projectByName(name=request.name)
+            project: Project = projectAppService.projectByName(name=request.name, token=token)
             response = ProjectAppService_projectByNameResponse()
             response.project.id = project.id()
             response.project.name = project.name()
@@ -47,17 +48,20 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
 
     def projects(self, request, context):
         try:
+            token = self._token(context)
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
             ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
                 f'[{ProjectAppServiceListener.projects.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}')
+resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
 
-            projects: List[Project] = projectAppService.projects(ownedRoles=ownedRoles, resultFrom=request.resultFrom,
-                                                                 resultSize=resultSize)
+            projects: List[Project] = projectAppService.projects(ownedRoles=ownedRoles,
+                                                                 resultFrom=request.resultFrom,
+                                                                 resultSize=resultSize,
+                                                                 token=token)
             response = ProjectAppService_projectsResponse()
             for project in projects:
                 response.projects.add(id=project.id(), name=project.name())
@@ -70,8 +74,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
 
     def projectById(self, request, context):
         try:
+            token = self._token(context)
             projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
-            project: Project = projectAppService.projectById(id=request.id)
+            project: Project = projectAppService.projectById(id=request.id, token=token)
             logger.debug(f'[{ProjectAppServiceListener.projectById.__qualname__}] - response: {project}')
             response = ProjectAppService_projectByIdResponse()
             response.project.id = project.id()
@@ -81,3 +86,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Project does not exist')
             return ProjectAppService_projectByIdResponse()
+
+    def _token(self, context) -> str:
+        metadata = context.invocation_metadata()
+        if 'token' in metadata[0]:
+            return metadata[0].value
+        return ''
