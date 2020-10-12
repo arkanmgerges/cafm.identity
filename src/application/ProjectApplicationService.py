@@ -56,3 +56,20 @@ class ProjectApplicationService:
                                                                 resultSize=resultSize)
         else:
             raise UnAuthorizedException()
+
+    def deleteProject(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
+                                        resourceType=ResourceTypeConstant.PROJECT.value):
+            project = self._projectRepository.projectById(id=id)
+            self._projectRepository.deleteProject(project)
+        else:
+            raise UnAuthorizedException()
+
+    def updateProject(self, id: str, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
+                                        resourceType=ResourceTypeConstant.PROJECT.value):
+            project = self._projectRepository.projectById(id=id)
+            project.update({'name': name})
+            self._projectRepository.updateProject(project)
+        else:
+            raise UnAuthorizedException()

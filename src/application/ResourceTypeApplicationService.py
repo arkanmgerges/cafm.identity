@@ -55,3 +55,20 @@ class ResourceTypeApplicationService:
                                                                           resultSize=resultSize)
         else:
             raise UnAuthorizedException()
+
+    def deleteResourceType(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
+                                        resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
+            resourceType = self._resourceTypeRepository.resourceTypeById(id=id)
+            self._resourceTypeRepository.deleteResourceType(resourceType)
+        else:
+            raise UnAuthorizedException()
+
+    def updateResourceType(self, id: str, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
+                                        resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
+            resourceType = self._resourceTypeRepository.resourceTypeById(id=id)
+            resourceType.update({'name': name})
+            self._resourceTypeRepository.updateResourceType(resourceType)
+        else:
+            raise UnAuthorizedException()

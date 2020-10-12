@@ -56,3 +56,20 @@ class UserGroupApplicationService:
                                                                     resultSize=resultSize)
         else:
             raise UnAuthorizedException()
+
+    def deleteUserGroup(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
+                                        resourceType=ResourceTypeConstant.USER_GROUP.value):
+            userGroup = self._userGroupRepository.userGroupById(id=id)
+            self._userGroupRepository.deleteUserGroup(userGroup)
+        else:
+            raise UnAuthorizedException()
+
+    def updateUserGroup(self, id: str, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
+                                        resourceType=ResourceTypeConstant.USER_GROUP.value):
+            userGroup = self._userGroupRepository.userGroupById(id=id)
+            userGroup.update({'name': name})
+            self._userGroupRepository.updateUserGroup(userGroup)
+        else:
+            raise UnAuthorizedException()

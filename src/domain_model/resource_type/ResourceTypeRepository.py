@@ -40,11 +40,11 @@ class ResourceTypeRepository(ABC):
         """
 
     @abstractmethod
-    def resourceTypesByOwnedResourceTypes(self, ownedResourceTypes: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[ResourceType]:
-        """Get list of resourceTypes based on the owned resourceTypes that the user has
+    def resourceTypesByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[ResourceType]:
+        """Get list of resourceTypes based on the owned roles that the user has
 
         Args:
-            ownedResourceTypes (List[str]): A list of the resourceTypes that the user or user group has
+            ownedRoles (List[str]): A list of the roles that the user or user group has
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
 

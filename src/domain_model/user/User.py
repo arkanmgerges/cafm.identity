@@ -34,10 +34,10 @@ class User:
     def update(self, data: dict):
         updated = False
         old = copy(self)
-        if 'name' in data and data['name'] != self._name:
+        if 'name' in data and data['name'] != self._name and data['name'] is not None:
             updated = True
             self._name = data['name']
-        if 'password' in data and data['password'] != self._password:
+        if 'password' in data and data['password'] != self._password and data['password'] is not None:
             updated = True
             self._password = data['password']
         if updated:

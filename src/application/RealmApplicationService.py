@@ -55,3 +55,20 @@ class RealmApplicationService:
                                                             resultSize=resultSize)
         else:
             raise UnAuthorizedException()
+
+    def deleteRealm(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
+                                        resourceType=ResourceTypeConstant.REALM.value):
+            realm = self._realmRepository.realmById(id=id)
+            self._realmRepository.deleteRealm(realm)
+        else:
+            raise UnAuthorizedException()
+
+    def updateRealm(self, id: str, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
+                                        resourceType=ResourceTypeConstant.REALM.value):
+            realm = self._realmRepository.realmById(id=id)
+            realm.update({'name': name})
+            self._realmRepository.updateRealm(realm)
+        else:
+            raise UnAuthorizedException()

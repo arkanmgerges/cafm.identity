@@ -54,3 +54,20 @@ class UserApplicationService:
                                                           resultSize=resultSize)
         else:
             raise UnAuthorizedException()
+
+    def deleteUser(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
+                                        resourceType=ResourceTypeConstant.USER.value):
+            user = self._userRepository.userById(id=id)
+            self._userRepository.deleteUser(user)
+        else:
+            raise UnAuthorizedException()
+
+    def updateUser(self, id: str, name: str = None, password: str = None, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
+                                        resourceType=ResourceTypeConstant.USER.value):
+            user = self._userRepository.userById(id=id)
+            user.update({'name': name, 'password': password})
+            self._userRepository.updateUser(user)
+        else:
+            raise UnAuthorizedException()

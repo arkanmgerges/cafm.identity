@@ -40,11 +40,11 @@ class ProjectRepository(ABC):
         """
 
     @abstractmethod
-    def projectsByOwnedProjects(self, ownedProjects: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Project]:
-        """Get list of projects based on the owned projects that the user has
+    def projectsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Project]:
+        """Get list of projects based on the owned roles that the user has
 
         Args:
-            ownedProjects (List[str]): A list of the projects that the user or user group has
+            ownedRoles (List[str]): A list of the roles that the user or user group has
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
 

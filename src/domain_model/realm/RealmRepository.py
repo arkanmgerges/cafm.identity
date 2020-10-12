@@ -40,11 +40,11 @@ class RealmRepository(ABC):
         """
 
     @abstractmethod
-    def realmsByOwnedRealms(self, ownedRealms: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Realm]:
-        """Get list of realms based on the owned realms that the user has
+    def realmsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Realm]:
+        """Get list of realms based on the owned roles that the user has
 
         Args:
-            ownedRealms (List[str]): A list of the realms that the user or user group has
+            ownedRoles (List[str]): A list of the roles that the user or user group has
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
 

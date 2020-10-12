@@ -56,3 +56,20 @@ class PermissionApplicationService:
                                                                       resultSize=resultSize)
         else:
             raise UnAuthorizedException()
+        
+    def deletePermission(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
+                                        resourceType=ResourceTypeConstant.PERMISSION.value):
+            permission = self._permissionRepository.permissionById(id=id)
+            self._permissionRepository.deletePermission(permission)
+        else:
+            raise UnAuthorizedException()
+
+    def updatePermission(self, id: str, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
+                                        resourceType=ResourceTypeConstant.PERMISSION.value):
+            permission = self._permissionRepository.permissionById(id=id)
+            permission.update({'name': name})
+            self._permissionRepository.updatePermission(permission)
+        else:
+            raise UnAuthorizedException()

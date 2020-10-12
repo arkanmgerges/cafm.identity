@@ -54,3 +54,20 @@ class OuApplicationService:
                                                       resultSize=resultSize)
         else:
             raise UnAuthorizedException()
+        
+    def deleteOu(self, id: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
+                                        resourceType=ResourceTypeConstant.OU.value):
+            ou = self._ouRepository.ouById(id=id)
+            self._ouRepository.deleteOu(ou)
+        else:
+            raise UnAuthorizedException()
+
+    def updateOu(self, id: str, name: str, token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
+                                        resourceType=ResourceTypeConstant.OU.value):
+            ou = self._ouRepository.ouById(id=id)
+            ou.update({'name': name})
+            self._ouRepository.updateOu(ou)
+        else:
+            raise UnAuthorizedException()
