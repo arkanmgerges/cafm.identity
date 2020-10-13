@@ -89,7 +89,7 @@ class AppDi(Module):
     @singleton
     @provider
     def provideResourceTypeApplicationService(self) -> ResourceTypeApplicationService:
-        return ResourceTypeApplicationService(self.__injector__.get(ResourceTypeRepository))
+        return ResourceTypeApplicationService(self.__injector__.get(ResourceTypeRepository), self.__injector__.get(AuthorizationService))
 
     @singleton
     @provider
