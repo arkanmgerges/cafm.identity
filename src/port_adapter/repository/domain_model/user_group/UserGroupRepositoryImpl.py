@@ -89,9 +89,9 @@ class UserGroupRepositoryImpl(UserGroupRepository):
 
     def deleteUserGroup(self, userGroup: UserGroup) -> None:
         aql = '''
-            FOR d IN userGroup
+            FOR d IN user_group
             FILTER d.id == @id
-            REMOVE d IN userGroup
+            REMOVE d IN user_group
         '''
 
         bindVars = {"id": userGroup.id()}
@@ -112,9 +112,9 @@ class UserGroupRepositoryImpl(UserGroupRepository):
             raise ObjectIdenticalException()
 
         aql = '''
-            FOR d IN userGroup
+            FOR d IN user_group
             FILTER d.id == @id
-            UPDATE d WITH {name: @name} IN userGroup
+            UPDATE d WITH {name: @name} IN user_group
         '''
 
         bindVars = {"id": userGroup.id(), "name": userGroup.name()}

@@ -89,9 +89,9 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
 
     def deleteResourceType(self, resourceType: ResourceType) -> None:
         aql = '''
-            FOR d IN resourceType
+            FOR d IN resource_type
             FILTER d.id == @id
-            REMOVE d IN resourceType
+            REMOVE d IN resource_type
         '''
 
         bindVars = {"id": resourceType.id()}
@@ -112,9 +112,9 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
             raise ObjectIdenticalException()
 
         aql = '''
-            FOR d IN resourceType
+            FOR d IN resource_type
             FILTER d.id == @id
-            UPDATE d WITH {name: @name} IN resourceType
+            UPDATE d WITH {name: @name} IN resource_type
         '''
 
         bindVars = {"id": resourceType.id(), "name": resourceType.name()}
