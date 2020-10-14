@@ -4,17 +4,15 @@
 import os
 from typing import List
 
+from pyArango.connection import *
 from pyArango.query import AQLQuery
 
+from src.domain_model.project.Project import Project
+from src.domain_model.project.ProjectRepository import ProjectRepository
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
 from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
 from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
-from src.domain_model.project.Project import Project
-from src.domain_model.project.ProjectRepository import ProjectRepository
-
-from pyArango.connection import *
-
 from src.resource.logging.logger import logger
 
 
@@ -28,7 +26,8 @@ class ProjectRepositoryImpl(ProjectRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
-            raise Exception(f'[{ProjectRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+            raise Exception(
+                f'[{ProjectRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
 
     def createProject(self, project: Project):
         aql = '''
@@ -72,20 +71,32 @@ class ProjectRepositoryImpl(ProjectRepository):
 
         return Project.createFrom(id=result[0]['id'], name=result[0]['name'])
 
-    def projectsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Project]:
+    def projectsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
+                             order: List[dict] = None) -> dict:
+        sortData = ''
+        if order is None:
+            order = []
+        else:
+            for item in order:
+                sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
+            sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                FOR r IN project
-                Limit @resultFrom, @resultSize
-                RETURN r
+                LET ds = (FOR d IN project #sortData RETURN d)
+                RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
+            if sortData != '':
+                aql = aql.replace('#sortData', f'SORT {sortData}')
+            else:
+                aql = aql.replace('#sortData', '')
+
             bindVars = {"resultFrom": resultFrom, "resultSize": resultSize}
             queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
             result = queryResult.result
             if len(result) == 0:
-                return []
-
-            return [Project.createFrom(id=x['id'], name=x['name']) for x in result]
+                return {"items": [], "itemCount": 0}
+            return {"items": [Project.createFrom(id=x['id'], name=x['name']) for x in result[0]['items']],
+                    "itemCount": result[0]["itemCount"]}
 
     def deleteProject(self, project: Project) -> None:
         aql = '''

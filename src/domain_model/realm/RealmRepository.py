@@ -27,7 +27,7 @@ class RealmRepository(ABC):
         Returns:
             Realm: realm object
         """
-        
+
     @abstractmethod
     def realmById(self, id: str) -> Realm:
         """Get realm by id
@@ -40,18 +40,20 @@ class RealmRepository(ABC):
         """
 
     @abstractmethod
-    def realmsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Realm]:
+    def realmsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
+                           order: List[dict] = None) -> dict:
         """Get list of realms based on the owned roles that the user has
 
         Args:
             ownedRoles (List[str]): A list of the roles that the user or user group has
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
+            order (List[dict]): A list of order e.g. [{'orderBy': 'name', 'direction': 'asc'}, {'orderBy': 'age', 'direction': 'desc'}]
 
         Returns:
-            List[Realm]: A list of realms
+            dict: A dict that has {"items": [], "itemCount": 0}
         """
-        
+
     @abstractmethod
     def deleteRealm(self, realm: Realm) -> None:
         """Delete a realm

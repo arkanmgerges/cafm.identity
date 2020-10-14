@@ -22,3 +22,19 @@ def test_create_resourceType_with_semantic_constructor():
     assert isinstance(resourceType, ResourceType)
     assert resourceType.id() == id
     assert resourceType.name() == 'Prj1'
+
+
+def test_that_two_objects_with_same_attributes_are_equal():
+    # Arrange
+    object1 = ResourceType.createFrom('1234', 'test')
+    object2 = ResourceType.createFrom('1234', 'test')
+    # Assert
+    assert object1 == object2
+
+
+def test_that_two_objects_with_different_attributes_are_not_equal():
+    # Arrange
+    object1 = ResourceType.createFrom('1234', 'test')
+    object2 = ResourceType.createFrom('1234', 'test2')
+    # Assert
+    assert object1 != object2

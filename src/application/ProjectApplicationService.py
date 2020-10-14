@@ -48,12 +48,13 @@ class ProjectApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def projects(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[
-        Project]:
+    def projects(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         resourceType=ResourceTypeConstant.PROJECT.value):
-            return self._projectRepository.projectsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                                resultSize=resultSize)
+            return self._projectRepository.projectsByOwnedRoles(ownedRoles=ownedRoles,
+                                                                resultFrom=resultFrom,
+                                                                resultSize=resultSize,
+                                                                order=order)
         else:
             raise UnAuthorizedException()
 

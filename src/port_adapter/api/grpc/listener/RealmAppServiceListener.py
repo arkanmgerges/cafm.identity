@@ -2,7 +2,6 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
-from typing import List
 
 import grpc
 
@@ -63,15 +62,18 @@ class RealmAppServiceListener(RealmAppServiceServicer):
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             realmAppService: RealmApplicationService = AppDi.instance.get(RealmApplicationService)
 
-            realms: List[Realm] = realmAppService.realms(ownedRoles=ownedRoles,
-                                                         resultFrom=request.resultFrom,
-                                                         resultSize=resultSize,
-                                                         token=token)
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            result: dict = realmAppService.realms(ownedRoles=ownedRoles,
+                                                  resultFrom=request.resultFrom,
+                                                  resultSize=resultSize,
+                                                  token=token,
+                                                  order=orderData)
             response = RealmAppService_realmsResponse()
-            for realm in realms:
+            for realm in result['items']:
                 response.realms.add(id=realm.id(), name=realm.name())
+            response.itemCount = result['itemCount']
             logger.debug(f'[{RealmAppServiceListener.realms.__qualname__}] - response: {response}')
-            return RealmAppService_realmsResponse(realms=response.realms)
+            return RealmAppService_realmsResponse(realms=response.realms, itemCount=response.itemCount)
         except RealmDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No realms found')

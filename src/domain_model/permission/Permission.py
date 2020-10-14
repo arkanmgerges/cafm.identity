@@ -14,13 +14,13 @@ from uuid import uuid4
 
 
 class Permission:
-    def __init__(self, id: str = str(uuid4()), name='', allowedActions=None):
-        self._id = id
+    def __init__(self, id: str = None, name='', allowedActions=None):
+        self._id = str(uuid4()) if id is None else id
         self._name = name
         self._allowedActions = [] if allowedActions is None else allowedActions
 
     @classmethod
-    def createFrom(cls, id: str = str(uuid4()), name='', publishEvent: bool = False, allowedActions: List[str] = None):
+    def createFrom(cls, id: str = None, name='', publishEvent: bool = False, allowedActions: List[str] = None):
         permission = Permission(id, name, allowedActions)
         if publishEvent:
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher

@@ -3,6 +3,7 @@ syntax = "proto3";
 package cafm.identity.permission;
 
 import "permission.proto";
+import "order.proto";
 
 message PermissionAppService_permissionByNameRequest {
   string name = 1;
@@ -23,10 +24,12 @@ message PermissionAppService_permissionByIdResponse {
 message PermissionAppService_permissionsRequest {
   int32 resultFrom = 1;
   int32 resultSize = 2;
+  repeated order.Order order = 3;
 }
 
 message PermissionAppService_permissionsResponse {
   repeated Permission permissions = 1;
+  int32 itemCount = 2;
 }
 
 

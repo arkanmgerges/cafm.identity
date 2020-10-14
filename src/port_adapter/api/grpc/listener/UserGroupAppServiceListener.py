@@ -2,7 +2,6 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
-from typing import List
 
 import grpc
 
@@ -63,15 +62,18 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             userGroupAppService: UserGroupApplicationService = AppDi.instance.get(UserGroupApplicationService)
 
-            userGroups: List[UserGroup] = userGroupAppService.userGroups(ownedRoles=ownedRoles,
-                                                                         resultFrom=request.resultFrom,
-                                                                         resultSize=resultSize,
-                                                                         token=token)
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            result: dict = userGroupAppService.userGroups(ownedRoles=ownedRoles,
+                                                          resultFrom=request.resultFrom,
+                                                          resultSize=resultSize,
+                                                          token=token,
+                                                          order=orderData)
             response = UserGroupAppService_userGroupsResponse()
-            for userGroup in userGroups:
+            for userGroup in result['items']:
                 response.userGroups.add(id=userGroup.id(), name=userGroup.name())
+            response.itemCount = result['itemCount']
             logger.debug(f'[{UserGroupAppServiceListener.userGroups.__qualname__}] - response: {response}')
-            return UserGroupAppService_userGroupsResponse(userGroups=response.userGroups)
+            return UserGroupAppService_userGroupsResponse(userGroups=response.userGroups, itemCount=response.itemCount)
         except UserGroupDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No userGroups found')

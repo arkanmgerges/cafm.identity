@@ -2,7 +2,6 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
-from typing import List
 
 import grpc
 
@@ -64,15 +63,19 @@ class ResourceTypeAppServiceListener(ResourceTypeAppServiceServicer):
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             resourceTypeAppService: ResourceTypeApplicationService = AppDi.instance.get(ResourceTypeApplicationService)
 
-            resourceTypes: List[ResourceType] = resourceTypeAppService.resourceTypes(ownedRoles=ownedRoles,
-                                                                                     resultFrom=request.resultFrom,
-                                                                                     resultSize=resultSize,
-                                                                                     token=token)
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            result: dict = resourceTypeAppService.resourceTypes(ownedRoles=ownedRoles,
+                                                                resultFrom=request.resultFrom,
+                                                                resultSize=resultSize,
+                                                                token=token,
+                                                                order=orderData)
             response = ResourceTypeAppService_resourceTypesResponse()
-            for resourceType in resourceTypes:
+            for resourceType in result['items']:
                 response.resourceTypes.add(id=resourceType.id(), name=resourceType.name())
+            response.itemCount = result['itemCount']
             logger.debug(f'[{ResourceTypeAppServiceListener.resourceTypes.__qualname__}] - response: {response}')
-            return ResourceTypeAppService_resourceTypesResponse(resourceTypes=response.resourceTypes)
+            return ResourceTypeAppService_resourceTypesResponse(resourceTypes=response.resourceTypes,
+                                                                itemCount=response.itemCount)
         except ResourceTypeDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No resourceTypes found')

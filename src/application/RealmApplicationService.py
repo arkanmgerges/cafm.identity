@@ -48,11 +48,13 @@ class RealmApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def realms(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[Realm]:
+    def realms(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         resourceType=ResourceTypeConstant.REALM.value):
-            return self._realmRepository.realmsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                            resultSize=resultSize)
+            return self._realmRepository.realmsByOwnedRoles(ownedRoles=ownedRoles,
+                                                            resultFrom=resultFrom,
+                                                            resultSize=resultSize,
+                                                            order=order)
         else:
             raise UnAuthorizedException()
 

@@ -47,14 +47,16 @@ class OuApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def ous(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[Ou]:
+    def ous(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '',
+            order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         resourceType=ResourceTypeConstant.OU.value):
             return self._ouRepository.ousByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                      resultSize=resultSize)
+                                                      resultSize=resultSize,
+                                                      order=order)
         else:
             raise UnAuthorizedException()
-        
+
     def deleteOu(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
                                         resourceType=ResourceTypeConstant.OU.value):

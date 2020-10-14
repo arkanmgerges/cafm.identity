@@ -22,3 +22,19 @@ def test_create_permission_with_semantic_constructor():
     assert isinstance(permission, Permission)
     assert permission.id() == id
     assert permission.name() == 'Prj1'
+
+
+def test_that_two_objects_with_same_attributes_are_equal():
+    # Arrange
+    object1 = Permission.createFrom('1234', 'test')
+    object2 = Permission.createFrom('1234', 'test')
+    # Assert
+    assert object1 == object2
+
+
+def test_that_two_objects_with_different_attributes_are_not_equal():
+    # Arrange
+    object1 = Permission.createFrom('1234', 'test')
+    object2 = Permission.createFrom('1234', 'test2')
+    # Assert
+    assert object1 != object2

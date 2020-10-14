@@ -2,7 +2,6 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
-from typing import List
 
 import grpc
 
@@ -59,15 +58,18 @@ class UserAppServiceListener(UserAppServiceServicer):
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
 
-            users: List[User] = userAppService.users(ownedRoles=ownedRoles,
-                                                     resultFrom=request.resultFrom,
-                                                     resultSize=resultSize,
-                                                     token=token)
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            result: dict = userAppService.users(ownedRoles=ownedRoles,
+                                                resultFrom=request.resultFrom,
+                                                resultSize=resultSize,
+                                                token=token,
+                                                order=orderData)
             response = UserAppService_usersResponse()
-            for user in users:
+            for user in result['items']:
                 response.users.add(id=user.id(), name=user.name())
+            response.itemCount = result['itemCount']
             logger.debug(f'[{UserAppServiceListener.users.__qualname__}] - response: {response}')
-            return UserAppService_usersResponse(users=response.users)
+            return UserAppService_usersResponse(users=response.users, itemCount=response.itemCount)
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No users found')

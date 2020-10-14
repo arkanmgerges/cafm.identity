@@ -48,12 +48,12 @@ class PermissionApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def permissions(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[
-        Permission]:
+    def permissions(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         resourceType=ResourceTypeConstant.PERMISSION.value):
             return self._permissionRepository.permissionsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                                      resultSize=resultSize)
+                                                                      resultSize=resultSize,
+                                                                      order=order)
         else:
             raise UnAuthorizedException()
         

@@ -3,6 +3,7 @@ syntax = "proto3";
 package cafm.identity.resource_type;
 
 import "resource_type.proto";
+import "order.proto";
 
 message ResourceTypeAppService_resourceTypeByNameRequest {
   string name = 1;
@@ -23,10 +24,12 @@ message ResourceTypeAppService_resourceTypeByIdResponse {
 message ResourceTypeAppService_resourceTypesRequest {
   int32 resultFrom = 1;
   int32 resultSize = 2;
+  repeated order.Order order = 3;
 }
 
 message ResourceTypeAppService_resourceTypesResponse {
   repeated ResourceType resourceTypes = 1;
+  int32 itemCount = 2;
 }
 
 

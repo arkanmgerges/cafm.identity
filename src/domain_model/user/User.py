@@ -9,13 +9,13 @@ from src.resource.logging.logger import logger
 
 
 class User:
-    def __init__(self, id: str = str(uuid4()), name='', password=''):
-        self._id = id
+    def __init__(self, id: str = None, name='', password=''):
+        self._id = str(uuid4()) if id is None else id
         self._name = name
         self._password = password
 
     @classmethod
-    def createFrom(cls, id: str = str(uuid4()), name='', password='', publishEvent: bool = False):
+    def createFrom(cls, id: str = None, name='', password='', publishEvent: bool = False):
         logger.debug(f'[{User.createFrom.__qualname__}] - with name {name}')
         user = User(id, name, password)
         if publishEvent:

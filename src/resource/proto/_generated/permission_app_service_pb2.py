@@ -12,6 +12,7 @@ _sym_db = _symbol_database.Default()
 
 
 import permission_pb2 as permission__pb2
+import order_pb2 as order__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1cpermission_app_service.proto\x12\x18\x63\x61\x66m.identity.permission\x1a\x10permission.proto\"<\n,PermissionAppService_permissionByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"i\n-PermissionAppService_permissionByNameResponse\x12\x38\n\npermission\x18\x01 \x01(\x0b\x32$.cafm.identity.permission.Permission\"8\n*PermissionAppService_permissionByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"g\n+PermissionAppService_permissionByIdResponse\x12\x38\n\npermission\x18\x01 \x01(\x0b\x32$.cafm.identity.permission.Permission\"Q\n\'PermissionAppService_permissionsRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\"e\n(PermissionAppService_permissionsResponse\x12\x39\n\x0bpermissions\x18\x01 \x03(\x0b\x32$.cafm.identity.permission.Permission2\xf9\x03\n\x14PermissionAppService\x12\xa5\x01\n\x10permissionByName\x12\x46.cafm.identity.permission.PermissionAppService_permissionByNameRequest\x1aG.cafm.identity.permission.PermissionAppService_permissionByNameResponse\"\x00\x12\x9f\x01\n\x0epermissionById\x12\x44.cafm.identity.permission.PermissionAppService_permissionByIdRequest\x1a\x45.cafm.identity.permission.PermissionAppService_permissionByIdResponse\"\x00\x12\x96\x01\n\x0bpermissions\x12\x41.cafm.identity.permission.PermissionAppService_permissionsRequest\x1a\x42.cafm.identity.permission.PermissionAppService_permissionsResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x1cpermission_app_service.proto\x12\x18\x63\x61\x66m.identity.permission\x1a\x10permission.proto\x1a\x0border.proto\"<\n,PermissionAppService_permissionByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"i\n-PermissionAppService_permissionByNameResponse\x12\x38\n\npermission\x18\x01 \x01(\x0b\x32$.cafm.identity.permission.Permission\"8\n*PermissionAppService_permissionByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"g\n+PermissionAppService_permissionByIdResponse\x12\x38\n\npermission\x18\x01 \x01(\x0b\x32$.cafm.identity.permission.Permission\"|\n\'PermissionAppService_permissionsRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\x12)\n\x05order\x18\x03 \x03(\x0b\x32\x1a.cafm.identity.order.Order\"x\n(PermissionAppService_permissionsResponse\x12\x39\n\x0bpermissions\x18\x01 \x03(\x0b\x32$.cafm.identity.permission.Permission\x12\x11\n\titemCount\x18\x02 \x01(\x05\x32\xf9\x03\n\x14PermissionAppService\x12\xa5\x01\n\x10permissionByName\x12\x46.cafm.identity.permission.PermissionAppService_permissionByNameRequest\x1aG.cafm.identity.permission.PermissionAppService_permissionByNameResponse\"\x00\x12\x9f\x01\n\x0epermissionById\x12\x44.cafm.identity.permission.PermissionAppService_permissionByIdRequest\x1a\x45.cafm.identity.permission.PermissionAppService_permissionByIdResponse\"\x00\x12\x96\x01\n\x0bpermissions\x12\x41.cafm.identity.permission.PermissionAppService_permissionsRequest\x1a\x42.cafm.identity.permission.PermissionAppService_permissionsResponse\"\x00\x62\x06proto3'
   ,
-  dependencies=[permission__pb2.DESCRIPTOR,])
+  dependencies=[permission__pb2.DESCRIPTOR,order__pb2.DESCRIPTOR,])
 
 
 
@@ -54,8 +55,8 @@ _PERMISSIONAPPSERVICE_PERMISSIONBYNAMEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=76,
-  serialized_end=136,
+  serialized_start=89,
+  serialized_end=149,
 )
 
 
@@ -86,8 +87,8 @@ _PERMISSIONAPPSERVICE_PERMISSIONBYNAMERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=138,
-  serialized_end=243,
+  serialized_start=151,
+  serialized_end=256,
 )
 
 
@@ -118,8 +119,8 @@ _PERMISSIONAPPSERVICE_PERMISSIONBYIDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=245,
-  serialized_end=301,
+  serialized_start=258,
+  serialized_end=314,
 )
 
 
@@ -150,8 +151,8 @@ _PERMISSIONAPPSERVICE_PERMISSIONBYIDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=303,
-  serialized_end=406,
+  serialized_start=316,
+  serialized_end=419,
 )
 
 
@@ -177,6 +178,13 @@ _PERMISSIONAPPSERVICE_PERMISSIONSREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='order', full_name='cafm.identity.permission.PermissionAppService_permissionsRequest.order', index=2,
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -189,8 +197,8 @@ _PERMISSIONAPPSERVICE_PERMISSIONSREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=408,
-  serialized_end=489,
+  serialized_start=421,
+  serialized_end=545,
 )
 
 
@@ -209,6 +217,13 @@ _PERMISSIONAPPSERVICE_PERMISSIONSRESPONSE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='itemCount', full_name='cafm.identity.permission.PermissionAppService_permissionsResponse.itemCount', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -221,12 +236,13 @@ _PERMISSIONAPPSERVICE_PERMISSIONSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=491,
-  serialized_end=592,
+  serialized_start=547,
+  serialized_end=667,
 )
 
 _PERMISSIONAPPSERVICE_PERMISSIONBYNAMERESPONSE.fields_by_name['permission'].message_type = permission__pb2._PERMISSION
 _PERMISSIONAPPSERVICE_PERMISSIONBYIDRESPONSE.fields_by_name['permission'].message_type = permission__pb2._PERMISSION
+_PERMISSIONAPPSERVICE_PERMISSIONSREQUEST.fields_by_name['order'].message_type = order__pb2._ORDER
 _PERMISSIONAPPSERVICE_PERMISSIONSRESPONSE.fields_by_name['permissions'].message_type = permission__pb2._PERMISSION
 DESCRIPTOR.message_types_by_name['PermissionAppService_permissionByNameRequest'] = _PERMISSIONAPPSERVICE_PERMISSIONBYNAMEREQUEST
 DESCRIPTOR.message_types_by_name['PermissionAppService_permissionByNameResponse'] = _PERMISSIONAPPSERVICE_PERMISSIONBYNAMERESPONSE
@@ -287,8 +303,8 @@ _PERMISSIONAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=595,
-  serialized_end=1100,
+  serialized_start=670,
+  serialized_end=1175,
   methods=[
   _descriptor.MethodDescriptor(
     name='permissionByName',

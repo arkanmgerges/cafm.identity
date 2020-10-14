@@ -48,12 +48,13 @@ class UserGroupApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def userGroups(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[
-        UserGroup]:
+    def userGroups(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         resourceType=ResourceTypeConstant.USER_GROUP.value):
-            return self._userGroupRepository.userGroupsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                                    resultSize=resultSize)
+            return self._userGroupRepository.userGroupsByOwnedRoles(ownedRoles=ownedRoles,
+                                                                    resultFrom=resultFrom,
+                                                                    resultSize=resultSize,
+                                                                    order=order)
         else:
             raise UnAuthorizedException()
 

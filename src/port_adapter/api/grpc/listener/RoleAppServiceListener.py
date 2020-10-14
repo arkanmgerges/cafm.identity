@@ -2,7 +2,6 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
-from typing import List
 
 import grpc
 
@@ -57,17 +56,21 @@ class RoleAppServiceListener(RoleAppServiceServicer):
             logger.debug(
                 f'[{RoleAppServiceListener.roles.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
+            logger.debug(f'request: {request}')
             roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
 
-            roles: List[Role] = roleAppService.roles(ownedRoles=ownedRoles,
-                                                     resultFrom=request.resultFrom,
-                                                     resultSize=resultSize,
-                                                     token=token)
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            result: dict = roleAppService.roles(ownedRoles=ownedRoles,
+                                                resultFrom=request.resultFrom,
+                                                resultSize=resultSize,
+                                                token=token,
+                                                order=orderData)
             response = RoleAppService_rolesResponse()
-            for role in roles:
+            for role in result['items']:
                 response.roles.add(id=role.id(), name=role.name())
+            response.itemCount = result['itemCount']
             logger.debug(f'[{RoleAppServiceListener.roles.__qualname__}] - response: {response}')
-            return RoleAppService_rolesResponse(roles=response.roles)
+            return RoleAppService_rolesResponse(roles=response.roles, itemCount=response.itemCount)
         except RoleDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No roles found')
@@ -76,6 +79,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
             return RoleAppService_roleByNameResponse()
+
     def roleById(self, request, context):
         try:
             token = self._token(context)

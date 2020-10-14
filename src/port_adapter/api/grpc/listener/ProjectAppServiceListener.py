@@ -2,7 +2,6 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
-from typing import List
 
 import grpc
 
@@ -63,15 +62,18 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
 
-            projects: List[Project] = projectAppService.projects(ownedRoles=ownedRoles,
-                                                                 resultFrom=request.resultFrom,
-                                                                 resultSize=resultSize,
-                                                                 token=token)
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            result: dict = projectAppService.projects(ownedRoles=ownedRoles,
+                                                      resultFrom=request.resultFrom,
+                                                      resultSize=resultSize,
+                                                      token=token,
+                                                      order=orderData)
             response = ProjectAppService_projectsResponse()
-            for project in projects:
+            for project in result['items']:
                 response.projects.add(id=project.id(), name=project.name())
+            response.itemCount = result['itemCount']
             logger.debug(f'[{ProjectAppServiceListener.projects.__qualname__}] - response: {response}')
-            return ProjectAppService_projectsResponse(projects=response.projects)
+            return ProjectAppService_projectsResponse(projects=response.projects, itemCount=response.itemCount)
         except ProjectDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No projects found')

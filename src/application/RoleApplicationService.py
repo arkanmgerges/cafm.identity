@@ -65,10 +65,12 @@ class RoleApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def roles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[Role]:
+    def roles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         resourceType=ResourceTypeConstant.ROLE.value):
-            return self._roleRepository.rolesByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                          resultSize=resultSize)
+            return self._roleRepository.rolesByOwnedRoles(ownedRoles=ownedRoles,
+                                                          resultFrom=resultFrom,
+                                                          resultSize=resultSize,
+                                                          order=order)
         else:
             raise UnAuthorizedException()

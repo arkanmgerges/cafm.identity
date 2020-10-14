@@ -14,11 +14,11 @@ from uuid import uuid4
 
 class Ou:
     def __init__(self, id: str = str(uuid4()), name=''):
-        self._id = id
+        self._id = str(uuid4()) if id is None else id
         self._name = name
 
     @classmethod
-    def createFrom(cls, id: str = str(uuid4()), name='', publishEvent: bool = False):
+    def createFrom(cls, id: str = None, name='', publishEvent: bool = False):
         ou = Ou(id, name)
         if publishEvent:
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher

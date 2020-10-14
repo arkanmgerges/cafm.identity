@@ -47,12 +47,13 @@ class ResourceTypeApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def resourceTypes(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[
-        ResourceType]:
+    def resourceTypes(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
-            return self._resourceTypeRepository.resourceTypesByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                                          resultSize=resultSize)
+            return self._resourceTypeRepository.resourceTypesByOwnedRoles(ownedRoles=ownedRoles,
+                                                                          resultFrom=resultFrom,
+                                                                          resultSize=resultSize,
+                                                                          order=order)
         else:
             raise UnAuthorizedException()
 

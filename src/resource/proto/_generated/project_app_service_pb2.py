@@ -12,6 +12,7 @@ _sym_db = _symbol_database.Default()
 
 
 import project_pb2 as project__pb2
+import order_pb2 as order__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x19project_app_service.proto\x12\x15\x63\x61\x66m.identity.project\x1a\rproject.proto\"6\n&ProjectAppService_projectByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"Z\n\'ProjectAppService_projectByNameResponse\x12/\n\x07project\x18\x01 \x01(\x0b\x32\x1e.cafm.identity.project.Project\"2\n$ProjectAppService_projectByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"X\n%ProjectAppService_projectByIdResponse\x12/\n\x07project\x18\x01 \x01(\x0b\x32\x1e.cafm.identity.project.Project\"K\n!ProjectAppService_projectsRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\"V\n\"ProjectAppService_projectsResponse\x12\x30\n\x08projects\x18\x01 \x03(\x0b\x32\x1e.cafm.identity.project.Project2\xb7\x03\n\x11ProjectAppService\x12\x90\x01\n\rprojectByName\x12=.cafm.identity.project.ProjectAppService_projectByNameRequest\x1a>.cafm.identity.project.ProjectAppService_projectByNameResponse\"\x00\x12\x8a\x01\n\x0bprojectById\x12;.cafm.identity.project.ProjectAppService_projectByIdRequest\x1a<.cafm.identity.project.ProjectAppService_projectByIdResponse\"\x00\x12\x81\x01\n\x08projects\x12\x38.cafm.identity.project.ProjectAppService_projectsRequest\x1a\x39.cafm.identity.project.ProjectAppService_projectsResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x19project_app_service.proto\x12\x15\x63\x61\x66m.identity.project\x1a\rproject.proto\x1a\x0border.proto\"6\n&ProjectAppService_projectByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"Z\n\'ProjectAppService_projectByNameResponse\x12/\n\x07project\x18\x01 \x01(\x0b\x32\x1e.cafm.identity.project.Project\"2\n$ProjectAppService_projectByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"X\n%ProjectAppService_projectByIdResponse\x12/\n\x07project\x18\x01 \x01(\x0b\x32\x1e.cafm.identity.project.Project\"v\n!ProjectAppService_projectsRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\x12)\n\x05order\x18\x03 \x03(\x0b\x32\x1a.cafm.identity.order.Order\"i\n\"ProjectAppService_projectsResponse\x12\x30\n\x08projects\x18\x01 \x03(\x0b\x32\x1e.cafm.identity.project.Project\x12\x11\n\titemCount\x18\x02 \x01(\x05\x32\xb7\x03\n\x11ProjectAppService\x12\x90\x01\n\rprojectByName\x12=.cafm.identity.project.ProjectAppService_projectByNameRequest\x1a>.cafm.identity.project.ProjectAppService_projectByNameResponse\"\x00\x12\x8a\x01\n\x0bprojectById\x12;.cafm.identity.project.ProjectAppService_projectByIdRequest\x1a<.cafm.identity.project.ProjectAppService_projectByIdResponse\"\x00\x12\x81\x01\n\x08projects\x12\x38.cafm.identity.project.ProjectAppService_projectsRequest\x1a\x39.cafm.identity.project.ProjectAppService_projectsResponse\"\x00\x62\x06proto3'
   ,
-  dependencies=[project__pb2.DESCRIPTOR,])
+  dependencies=[project__pb2.DESCRIPTOR,order__pb2.DESCRIPTOR,])
 
 
 
@@ -54,8 +55,8 @@ _PROJECTAPPSERVICE_PROJECTBYNAMEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=67,
-  serialized_end=121,
+  serialized_start=80,
+  serialized_end=134,
 )
 
 
@@ -86,8 +87,8 @@ _PROJECTAPPSERVICE_PROJECTBYNAMERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=123,
-  serialized_end=213,
+  serialized_start=136,
+  serialized_end=226,
 )
 
 
@@ -118,8 +119,8 @@ _PROJECTAPPSERVICE_PROJECTBYIDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=215,
-  serialized_end=265,
+  serialized_start=228,
+  serialized_end=278,
 )
 
 
@@ -150,8 +151,8 @@ _PROJECTAPPSERVICE_PROJECTBYIDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=267,
-  serialized_end=355,
+  serialized_start=280,
+  serialized_end=368,
 )
 
 
@@ -177,6 +178,13 @@ _PROJECTAPPSERVICE_PROJECTSREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='order', full_name='cafm.identity.project.ProjectAppService_projectsRequest.order', index=2,
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -189,8 +197,8 @@ _PROJECTAPPSERVICE_PROJECTSREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=357,
-  serialized_end=432,
+  serialized_start=370,
+  serialized_end=488,
 )
 
 
@@ -209,6 +217,13 @@ _PROJECTAPPSERVICE_PROJECTSRESPONSE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='itemCount', full_name='cafm.identity.project.ProjectAppService_projectsResponse.itemCount', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -221,12 +236,13 @@ _PROJECTAPPSERVICE_PROJECTSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=434,
-  serialized_end=520,
+  serialized_start=490,
+  serialized_end=595,
 )
 
 _PROJECTAPPSERVICE_PROJECTBYNAMERESPONSE.fields_by_name['project'].message_type = project__pb2._PROJECT
 _PROJECTAPPSERVICE_PROJECTBYIDRESPONSE.fields_by_name['project'].message_type = project__pb2._PROJECT
+_PROJECTAPPSERVICE_PROJECTSREQUEST.fields_by_name['order'].message_type = order__pb2._ORDER
 _PROJECTAPPSERVICE_PROJECTSRESPONSE.fields_by_name['projects'].message_type = project__pb2._PROJECT
 DESCRIPTOR.message_types_by_name['ProjectAppService_projectByNameRequest'] = _PROJECTAPPSERVICE_PROJECTBYNAMEREQUEST
 DESCRIPTOR.message_types_by_name['ProjectAppService_projectByNameResponse'] = _PROJECTAPPSERVICE_PROJECTBYNAMERESPONSE
@@ -287,8 +303,8 @@ _PROJECTAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=523,
-  serialized_end=962,
+  serialized_start=598,
+  serialized_end=1037,
   methods=[
   _descriptor.MethodDescriptor(
     name='projectByName',

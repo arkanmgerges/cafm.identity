@@ -4,17 +4,15 @@
 import os
 from typing import List
 
+from pyArango.connection import *
 from pyArango.query import AQLQuery
 
+from src.domain_model.realm.Realm import Realm
+from src.domain_model.realm.RealmRepository import RealmRepository
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
 from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
 from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
-from src.domain_model.realm.Realm import Realm
-from src.domain_model.realm.RealmRepository import RealmRepository
-
-from pyArango.connection import *
-
 from src.resource.logging.logger import logger
 
 
@@ -32,15 +30,15 @@ class RealmRepositoryImpl(RealmRepository):
 
     def createRealm(self, realm: Realm):
         aql = '''
-        UPSERT { id: @id}
+        UPSERT {id: @id}
             INSERT {id: @id, name: @name}
             UPDATE {name: @name}
           IN realm
         '''
 
         bindVars = {"id": realm.id(), "name": realm.name()}
+        logger.debug(f'[{RealmRepositoryImpl.createRealm.__qualname__}] - Upsert for id: {realm.id()}, name: {realm.name()}')
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        print(queryResult)
 
     def realmByName(self, name: str) -> Realm:
         aql = '''
@@ -72,20 +70,32 @@ class RealmRepositoryImpl(RealmRepository):
 
         return Realm.createFrom(id=result[0]['id'], name=result[0]['name'])
 
-    def realmsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Realm]:
+    def realmsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
+                           order: List[dict] = None) -> dict:
+        sortData = ''
+        if order is None:
+            order = []
+        else:
+            for item in order:
+                sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
+            sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                FOR r IN realm
-                Limit @resultFrom, @resultSize
-                RETURN r
+                LET ds = (FOR d IN realm #sortData RETURN d)
+                RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
+            if sortData != '':
+                aql = aql.replace('#sortData', f'SORT {sortData}')
+            else:
+                aql = aql.replace('#sortData', '')
+
             bindVars = {"resultFrom": resultFrom, "resultSize": resultSize}
             queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
             result = queryResult.result
             if len(result) == 0:
-                return []
-
-            return [Realm.createFrom(id=x['id'], name=x['name']) for x in result]
+                return {"items": [], "itemCount": 0}
+            return {"items": [Realm.createFrom(id=x['id'], name=x['name']) for x in result[0]['items']],
+                    "itemCount": result[0]["itemCount"]}
 
     def deleteRealm(self, realm: Realm) -> None:
         aql = '''

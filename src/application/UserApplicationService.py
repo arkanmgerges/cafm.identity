@@ -47,11 +47,13 @@ class UserApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def users(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '') -> List[User]:
+    def users(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         resourceType=ResourceTypeConstant.USER.value):
-            return self._userRepository.usersByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                          resultSize=resultSize)
+            return self._userRepository.usersByOwnedRoles(ownedRoles=ownedRoles,
+                                                          resultFrom=resultFrom,
+                                                          resultSize=resultSize,
+                                                          order=order)
         else:
             raise UnAuthorizedException()
 

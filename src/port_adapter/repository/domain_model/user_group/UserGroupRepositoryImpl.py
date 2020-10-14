@@ -4,6 +4,7 @@
 import os
 from typing import List
 
+from pyArango.connection import *
 from pyArango.query import AQLQuery
 
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
@@ -12,9 +13,6 @@ from src.domain_model.resource.exception.ObjectIdenticalException import ObjectI
 from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
-
-from pyArango.connection import *
-
 from src.resource.logging.logger import logger
 
 
@@ -72,20 +70,32 @@ class UserGroupRepositoryImpl(UserGroupRepository):
 
         return UserGroup.createFrom(id=result[0]['id'], name=result[0]['name'])
 
-    def userGroupsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[UserGroup]:
+    def userGroupsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
+                               order: List[dict] = None) -> dict:
+        sortData = ''
+        if order is None:
+            order = []
+        else:
+            for item in order:
+                sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
+            sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                FOR r IN user_group
-                Limit @resultFrom, @resultSize
-                RETURN r
+                LET ds = (FOR d IN user_group #sortData RETURN d)
+                RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
+            if sortData != '':
+                aql = aql.replace('#sortData', f'SORT {sortData}')
+            else:
+                aql = aql.replace('#sortData', '')
+
             bindVars = {"resultFrom": resultFrom, "resultSize": resultSize}
             queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
             result = queryResult.result
             if len(result) == 0:
-                return []
-
-            return [UserGroup.createFrom(id=x['id'], name=x['name']) for x in result]
+                return {"items": [], "itemCount": 0}
+            return {"items": [UserGroup.createFrom(id=x['id'], name=x['name']) for x in result[0]['items']],
+                    "itemCount": result[0]["itemCount"]}
 
     def deleteUserGroup(self, userGroup: UserGroup) -> None:
         aql = '''
@@ -95,7 +105,8 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         '''
 
         bindVars = {"id": userGroup.id()}
-        logger.debug(f'[{UserGroupRepositoryImpl.deleteUserGroup.__qualname__}] - Delete userGroup with id: {userGroup.id()}')
+        logger.debug(
+            f'[{UserGroupRepositoryImpl.deleteUserGroup.__qualname__}] - Delete userGroup with id: {userGroup.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
 
@@ -118,7 +129,8 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         '''
 
         bindVars = {"id": userGroup.id(), "name": userGroup.name()}
-        logger.debug(f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] - Update userGroup with id: {userGroup.id()}')
+        logger.debug(
+            f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] - Update userGroup with id: {userGroup.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
 

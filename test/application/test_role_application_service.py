@@ -126,3 +126,17 @@ def test_get_role_by_id_when_role_exists():
     appService.roleById(id='1234', token=token)
     # Assert
     repo.roleById.assert_called_once_with(id='1234')
+
+# def test_delete_role_and_check_that_event_is_published():
+#     # Arrange
+#     repo = Mock(spec=RoleRepository)
+#     name = 'me'
+#     role = Role(id='1234', name=name)
+#     repo.roleById = Mock(return_value=role)
+#     def func(o): o.publishDelete()
+#     repo.deleteRole = func
+#     appService = RoleApplicationService(repo, authzService)
+#     # Act
+#     appService.deleteRole(id='1234', token=token)
+#     # Assert
+#     repo.roleById.assert_called_once_with(id='1234')

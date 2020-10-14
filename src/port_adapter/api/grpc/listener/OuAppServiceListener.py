@@ -2,7 +2,6 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
-from typing import List
 
 import grpc
 
@@ -59,13 +58,18 @@ class OuAppServiceListener(OuAppServiceServicer):
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
 
-            ous: List[Ou] = ouAppService.ous(ownedRoles=ownedRoles, resultFrom=request.resultFrom,
-                                             resultSize=resultSize, token=token)
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            result: dict = ouAppService.ous(ownedRoles=ownedRoles,
+                                            resultFrom=request.resultFrom,
+                                            resultSize=resultSize,
+                                            token=token,
+                                            order=orderData)
             response = OuAppService_ousResponse()
-            for ou in ous:
+            for ou in result['items']:
                 response.ous.add(id=ou.id(), name=ou.name())
+            response.itemCount = result['itemCount']
             logger.debug(f'[{OuAppServiceListener.ous.__qualname__}] - response: {response}')
-            return OuAppService_ousResponse(ous=response.ous)
+            return OuAppService_ousResponse(ous=response.ous, itemCount=response.itemCount)
         except OuDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No ous found')

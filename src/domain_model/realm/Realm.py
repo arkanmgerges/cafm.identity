@@ -13,17 +13,18 @@ from uuid import uuid4
 
 
 class Realm:
-    def __init__(self, id: str = str(uuid4()), name=''):
-        self._id = id
+    def __init__(self, id: str = None, name=''):
+        self._id = str(uuid4()) if id is None else id
         self._name = name
 
     @classmethod
-    def createFrom(cls, id: str = str(uuid4()), name='', publishEvent: bool = False):
+    def createFrom(cls, id: str = None, name='', publishEvent: bool = False):
+        logger.debug(f'[{Realm.createFrom.__qualname__}] - Create Realm with name: {name} and id: {id}')
         realm = Realm(id, name)
         if publishEvent:
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
             from src.domain_model.realm.RealmCreated import RealmCreated
-            logger.debug(f'[{Realm.createFrom.__qualname__}] - Create Realm with name = {name} and id = {id}')
+            logger.debug(f'[{Realm.createFrom.__qualname__}] - Publish event for realm with name: {name} and id: {id}')
             DomainEventPublisher.addEventForPublishing(RealmCreated(realm))
         return realm
 

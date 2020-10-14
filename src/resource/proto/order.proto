@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package cafm.identity.order;
+
+message Order {
+  string orderBy = 1;
+  string direction = 2;
+}

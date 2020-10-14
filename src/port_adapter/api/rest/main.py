@@ -74,4 +74,4 @@ app.include_router(opabundle.router, prefix="/v1/opa-bundles", tags=["OPA Bundle
                               500: {"model": Message}})
 
 from src.resource.logging.logger import logger
-logger.info('Starting Coral Identity API Gateway')
+logger.info('Starting CAFM Identity API Gateway')

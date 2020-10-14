@@ -4,17 +4,15 @@
 import os
 from typing import List
 
+from pyArango.connection import *
 from pyArango.query import AQLQuery
 
+from src.domain_model.ou.Ou import Ou
+from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
 from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
 from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
-from src.domain_model.ou.Ou import Ou
-from src.domain_model.ou.OuRepository import OuRepository
-
-from pyArango.connection import *
-
 from src.resource.logging.logger import logger
 
 
@@ -72,20 +70,32 @@ class OuRepositoryImpl(OuRepository):
 
         return Ou.createFrom(id=result[0]['id'], name=result[0]['name'])
 
-    def ousByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100) -> List[Ou]:
+    def ousByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
+                        order: List[dict] = None) -> dict:
+        sortData = ''
+        if order is None:
+            order = []
+        else:
+            for item in order:
+                sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
+            sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                FOR r IN ou
-                Limit @resultFrom, @resultSize
-                RETURN r
+                LET ds = (FOR d IN ou #sortData RETURN d)
+                RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
+            if sortData != '':
+                aql = aql.replace('#sortData', f'SORT {sortData}')
+            else:
+                aql = aql.replace('#sortData', '')
+
             bindVars = {"resultFrom": resultFrom, "resultSize": resultSize}
             queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
             result = queryResult.result
             if len(result) == 0:
-                return []
-
-            return [Ou.createFrom(id=x['id'], name=x['name']) for x in result]
+                return {"items": [], "itemCount": 0}
+            return {"items": [Ou.createFrom(id=x['id'], name=x['name']) for x in result[0]['items']],
+                    "itemCount": result[0]["itemCount"]}
 
     def deleteOu(self, ou: Ou) -> None:
         aql = '''

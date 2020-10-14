@@ -2,7 +2,6 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
-from typing import List
 
 import grpc
 
@@ -63,15 +62,19 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             permissionAppService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
 
-            permissions: List[Permission] = permissionAppService.permissions(ownedRoles=ownedRoles,
-                                                                             resultFrom=request.resultFrom,
-                                                                             resultSize=resultSize,
-                                                                             token=token)
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            result: dict = permissionAppService.permissions(ownedRoles=ownedRoles,
+                                                            resultFrom=request.resultFrom,
+                                                            resultSize=resultSize,
+                                                            token=token,
+                                                            order=orderData)
             response = PermissionAppService_permissionsResponse()
-            for permission in permissions:
+            for permission in result['items']:
                 response.permissions.add(id=permission.id(), name=permission.name())
+            response.itemCount = result['itemCount']
             logger.debug(f'[{PermissionAppServiceListener.permissions.__qualname__}] - response: {response}')
-            return PermissionAppService_permissionsResponse(permissions=response.permissions)
+            return PermissionAppService_permissionsResponse(permissions=response.permissions,
+                                                            itemCount=response.itemCount)
         except PermissionDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No permissions found')
