@@ -48,27 +48,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         #
         # return Project.createFrom(id=result[0]['id'], name=result[0]['name'])
         return []
-
-    def assignRoleToUser(self, role: Role, user: User) -> None:
-        userDocId = self.userDocumentId(user)
-        roleDocId = self.roleDocumentId(role)
-
-        # Check if there is any already exist link?
-        result = self.assignmentRoleToUser(role, roleDocId, user, userDocId)
-        if len(result) > 0:
-            raise ResourceAssignmentAlreadyExistException(
-                f'Resource already assigned for user: {user.id()}, role: {role.id()}')
-
-        # Assign a role to the user
-        aql = '''
-                UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, from_type: 'user', to_type: 'role'}
-                    UPDATE {_from: @fromId, _to: @toId, from_type: 'user', to_type: 'role'}
-                  IN has                  
-                '''
-        bindVars = {"fromId": userDocId, "toId": roleDocId}
-        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-
+    
     def roleDocumentId(self, role):
         # Get the role doc id
         aql = '''
@@ -115,20 +95,26 @@ class PolicyRepositoryImpl(PolicyRepository):
         userDocId = result['_id']
         return userDocId
 
-    def assignmentRoleToUser(self, roleDocId, userDocId) -> List:
-        # Check if there is a link
+    # region Assignment Role - User
+    def assignRoleToUser(self, role: Role, user: User) -> None:
+        userDocId = self.userDocumentId(user)
+        roleDocId = self.roleDocumentId(role)
+
+        # Check if there is any already exist link?
+        result = self.assignmentRoleToUser(roleDocId, userDocId)
+        if len(result) > 0:
+            raise ResourceAssignmentAlreadyExistException(
+                f'Resource already assigned for user: {user.id()}, role: {role.id()}')
+
+        # Assign a role to the user
         aql = '''
-            FOR d IN has
-              FILTER 
-                d._from == @fromId AND d._to == @toId
-                AND d.from_type == 'user' AND d.to_type == 'role'
-              RETURN d
-        '''
+                UPSERT {_from: @fromId, _to: @toId}
+                    INSERT {_from: @fromId, _to: @toId, from_type: 'user', to_type: 'role'}
+                    UPDATE {_from: @fromId, _to: @toId, from_type: 'user', to_type: 'role'}
+                  IN has                  
+                '''
         bindVars = {"fromId": userDocId, "toId": roleDocId}
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
-
-        return result
 
     def revokeRoleFromUser(self, role: Role, user: User) -> None:
         userDocId = self.userDocumentId(user)
@@ -150,6 +136,23 @@ class PolicyRepositoryImpl(PolicyRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
 
+    def assignmentRoleToUser(self, roleDocId, userDocId) -> List:
+        # Check if there is a link
+        aql = '''
+            FOR d IN has
+              FILTER 
+                d._from == @fromId AND d._to == @toId
+                AND d.from_type == 'user' AND d.to_type == 'role'
+              RETURN d
+        '''
+        bindVars = {"fromId": userDocId, "toId": roleDocId}
+        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        return result
+    # endregion
+
+    # region Assignment Role - User Group
     def assignRoleToUserGroup(self, role: Role, userGroup: UserGroup) -> None:
         userGroupDocId = self.userGroupDocumentId(userGroup)
         roleDocId = self.roleDocumentId(role)
@@ -170,21 +173,6 @@ class PolicyRepositoryImpl(PolicyRepository):
         bindVars = {"fromId": userGroupDocId, "toId": roleDocId}
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
-    def assignmentRoleToUserGroup(self, roleDocId, userGroupDocId) -> List:
-        # Check if there is a link
-        aql = '''
-            FOR d IN has
-              FILTER 
-                d._from == @fromId AND d._to == @toId
-                AND d.from_type == 'user_group' AND d.to_type == 'role'
-              RETURN d
-        '''
-        bindVars = {"fromId": userGroupDocId, "toId": roleDocId}
-        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
-
-        return result
-
     def revokeRoleFromUserGroup(self, role: Role, userGroup: UserGroup) -> None:
         userGroupDocId = self.userGroupDocumentId(userGroup)
         roleDocId = self.roleDocumentId(role)
@@ -204,3 +192,77 @@ class PolicyRepositoryImpl(PolicyRepository):
         logger.debug(f'[{PolicyRepositoryImpl.revokeRoleFromUserGroup.__qualname__}] - Revoke role with id: {role.id()} from user group with id: {userGroup.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
+
+    def assignmentRoleToUserGroup(self, roleDocId, userGroupDocId) -> List:
+        # Check if there is a link
+        aql = '''
+            FOR d IN has
+              FILTER 
+                d._from == @fromId AND d._to == @toId
+                AND d.from_type == 'user_group' AND d.to_type == 'role'
+              RETURN d
+        '''
+        bindVars = {"fromId": userGroupDocId, "toId": roleDocId}
+        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        return result
+    # endregion
+
+    # region Assignment User - User Group
+    def assignUserToUserGroup(self, user: User, userGroup: UserGroup) -> None:
+        userGroupDocId = self.userGroupDocumentId(userGroup)
+        userDocId = self.userDocumentId(user)
+
+        # Check if there is any already exist link?
+        result = self.assignmentUserToUserGroup(userDocId, userGroupDocId)
+        if len(result) > 0:
+            raise ResourceAssignmentAlreadyExistException(
+                f'Resource already assigned for user group: {userGroup.id()}, user: {user.id()}')
+
+        # Assign a user to the user group
+        aql = '''
+                UPSERT {_from: @fromId, _to: @toId}
+                    INSERT {_from: @fromId, _to: @toId, from_type: 'user_group', to_type: 'user'}
+                    UPDATE {_from: @fromId, _to: @toId, from_type: 'user_group', to_type: 'user'}
+                  IN has                  
+                '''
+        bindVars = {"fromId": userGroupDocId, "toId": userDocId}
+        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+    def revokeUserFromUserGroup(self, user: User, userGroup: UserGroup) -> None:
+        userGroupDocId = self.userGroupDocumentId(userGroup)
+        userDocId = self.userDocumentId(user)
+        result = self.assignmentUserToUserGroup(userDocId, userGroupDocId)
+        if len(result) == 0:
+            raise ResourceAssignmentDoesNotExistException(
+                f'Resource assignment for user group: {userGroup.id()} and user: {user.id()}')
+        result = result[0]
+
+        # Delete the document
+        aql = '''
+            FOR d IN has
+                FILTER d._id == @_id
+                REMOVE d IN has
+        '''
+        bindVars = {"_id": result['_id']}
+        logger.debug(f'[{PolicyRepositoryImpl.revokeUserFromUserGroup.__qualname__}] - Revoke user with id: {user.id()} from user group with id: {userGroup.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+    def assignmentUserToUserGroup(self, userDocId, userGroupDocId) -> List:
+        # Check if there is a link
+        aql = '''
+            FOR d IN has
+              FILTER 
+                d._from == @fromId AND d._to == @toId
+                AND d.from_type == 'user_group' AND d.to_type == 'user'
+              RETURN d
+        '''
+        bindVars = {"fromId": userGroupDocId, "toId": userDocId}
+        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        return result
+    # endregion
+

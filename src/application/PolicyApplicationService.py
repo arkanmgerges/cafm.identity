@@ -72,6 +72,30 @@ class PolicyApplicationService:
         finally:
             pass
 
+    def assignUserToUserGroup(self, userId: str = '', userGroupId: str = '', token: str = ''):
+        try:
+            if self._authzService.isAllowed(token=token, action=PolicyActionConstant.ASSIGN.value,
+                                            resourceType=ResourceTypeConstant.ASSIGNMENT_USER_TO_USER_GROUP.value):
+                user = self._userRepository.userById(id=userId)
+                userGroup = self._userGroupRepository.userGroupById(id=userGroupId)
+                self._policyRepository.assignUserToUserGroup(user, userGroup)
+            else:
+                raise UnAuthorizedException()
+        finally:
+            pass
+
+    def revokeAssignmentUserToUserGroup(self, userId: str = '', userGroupId: str = '', token: str = ''):
+        try:
+            if self._authzService.isAllowed(token=token, action=PolicyActionConstant.REVOKE.value,
+                                            resourceType=ResourceTypeConstant.ASSIGNMENT_USER_TO_USER_GROUP.value):
+                user = self._userRepository.userById(id=userId)
+                userGroup = self._userGroupRepository.userGroupById(id=userGroupId)
+                self._policyRepository.revokeUserFromUserGroup(user, userGroup)
+            else:
+                raise UnAuthorizedException()
+        finally:
+            pass
+
     def roleByName(self, name: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         resourceType=ResourceTypeConstant.ROLE.value):

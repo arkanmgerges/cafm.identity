@@ -66,3 +66,27 @@ class PolicyRepository(ABC):
         :raises:
             `ResourceAssignmentDoesNotExistException <src.domain_model.resource.exception.ResourceAssignmentDoesNotExistException>` Raise an exception if the resource assignment does not exist
         """
+
+    @abstractmethod
+    def assignUserToUserGroup(self, user: User, userGroup: UserGroup) -> None:
+        """Assign user to user group
+
+        Args:
+            user (User): User object to be assigned to user group
+            userGroup (UserGroup): User group object to have the user assigned to
+
+        :raises:
+            `ResourceAssignmentAlreadyExistException <src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException>` Raise an exception if the resource assignment already exist
+        """
+
+    @abstractmethod
+    def revokeUserFromUserGroup(self, user: User, userGroup: UserGroup) -> None:
+        """Revoke user from user group
+
+        Args:
+            user (User): User object to be revoked from user group
+            userGroup (UserGroup): User group object to remove the user that it has
+
+        :raises:
+            `ResourceAssignmentDoesNotExistException <src.domain_model.resource.exception.ResourceAssignmentDoesNotExistException>` Raise an exception if the resource assignment does not exist
+        """
