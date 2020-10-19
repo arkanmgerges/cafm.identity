@@ -14,7 +14,6 @@ class ProjectRepository(ABC):
 
         Args:
             project (Project): The project that needs to be created
-
         """
 
     @abstractmethod
@@ -26,6 +25,9 @@ class ProjectRepository(ABC):
 
         Returns:
             Project: project object
+
+        :raises:
+            `ProjectDoesNotExistException <src.domain_model.resource.exception.ProjectDoesNotExistException>` Raise an exception if the project does not exist            
         """
 
     @abstractmethod
@@ -37,6 +39,9 @@ class ProjectRepository(ABC):
 
         Returns:
             Project: project object
+
+        :raises:
+            `ProjectDoesNotExistException <src.domain_model.resource.exception.ProjectDoesNotExistException>` Raise an exception if the project does not exist            
         """
 
     @abstractmethod
@@ -60,6 +65,9 @@ class ProjectRepository(ABC):
 
         Args:
             project (Project): The project that needs to be deleted
+            
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the project could not be deleted            
         """
 
     @abstractmethod
@@ -68,4 +76,7 @@ class ProjectRepository(ABC):
 
         Args:
             project (Project): The project that needs to be updated
+            
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the project could not be updated
         """

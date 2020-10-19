@@ -26,6 +26,9 @@ class OuRepository(ABC):
 
         Returns:
             Ou: ou object
+            
+        :raises:
+            `OuDoesNotExistException <src.domain_model.resource.exception.OuDoesNotExistException>` Raise an exception if the ou does not exist
         """
         
     @abstractmethod
@@ -37,6 +40,9 @@ class OuRepository(ABC):
 
         Returns:
             Ou: ou object
+
+        :raises:
+            `OuDoesNotExistException <src.domain_model.resource.exception.OuDoesNotExistException>` Raise an exception if the ou does not exist            
         """
 
     @abstractmethod
@@ -59,6 +65,9 @@ class OuRepository(ABC):
 
         Args:
             ou (Ou): The ou that needs to be deleted
+            
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the ou could not be deleted            
         """
 
     @abstractmethod
@@ -67,4 +76,7 @@ class OuRepository(ABC):
 
         Args:
             ou (Ou): The ou that needs to be updated
+        
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the ou could not be updated
         """

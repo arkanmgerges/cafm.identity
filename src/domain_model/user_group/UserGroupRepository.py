@@ -26,6 +26,9 @@ class UserGroupRepository(ABC):
 
         Returns:
             UserGroup: userGroup object
+            
+        :raises:
+            `UserGroupDoesNotExistException <src.domain_model.resource.exception.UserGroupDoesNotExistException>` Raise an exception if the user group does not exist            
         """
 
     @abstractmethod
@@ -37,6 +40,9 @@ class UserGroupRepository(ABC):
 
         Returns:
             UserGroup: userGroup object
+            
+        :raises:
+            `UserGroupDoesNotExistException <src.domain_model.resource.exception.UserGroupDoesNotExistException>` Raise an exception if the user group does not exist            
         """
 
     @abstractmethod
@@ -60,6 +66,9 @@ class UserGroupRepository(ABC):
 
         Args:
             userGroup (UserGroup): The userGroup that needs to be deleted
+            
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the user group could not be deleted            
         """
 
     @abstractmethod
@@ -68,4 +77,7 @@ class UserGroupRepository(ABC):
 
         Args:
             userGroup (UserGroup): The userGroup that needs to be updated
+            
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the user group could not be updated            
         """

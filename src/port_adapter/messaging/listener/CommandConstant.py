@@ -41,6 +41,10 @@ class CommonCommandConstant(Enum):
     CREATE_USER_GROUP = 'create_user_group'
     DELETE_USER_GROUP = 'delete_user_group'
     UPDATE_USER_GROUP = 'update_user_group'
+    ASSIGN_ROLE_TO_USER = 'assign_role_to_user'
+    REVOKE_ASSIGNMENT_ROLE_TO_USER = 'revoke_assignment_role_to_user'
+    ASSIGN_ROLE_TO_USER_GROUP = 'assign_role_to_user_group'
+    REVOKE_ASSIGNMENT_ROLE_TO_USER_GROUP = 'revoke_assignment_role_to_user_group'
 
 @extendEnum(CommonCommandConstant)
 class ApiCommandConstant(Enum):

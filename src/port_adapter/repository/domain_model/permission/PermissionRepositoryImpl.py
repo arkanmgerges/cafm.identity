@@ -67,7 +67,7 @@ class PermissionRepositoryImpl(PermissionRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            raise PermissionDoesNotExistException(name=f'permission id: {id}')
+            raise PermissionDoesNotExistException(f'permission id: {id}')
 
         return Permission.createFrom(id=result[0]['id'], name=result[0]['name'])
 

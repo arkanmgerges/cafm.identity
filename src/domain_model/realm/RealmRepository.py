@@ -13,8 +13,7 @@ class RealmRepository(ABC):
         """Create realm
 
         Args:
-            realm (Realm): The realm that needs to be created
-
+            realm (Realm): The realm that needs to be created            
         """
 
     @abstractmethod
@@ -26,6 +25,9 @@ class RealmRepository(ABC):
 
         Returns:
             Realm: realm object
+
+        :raises:
+            `RealmDoesNotExistException <src.domain_model.resource.exception.RealmDoesNotExistException>` Raise an exception if the realm does not exist            
         """
 
     @abstractmethod
@@ -37,6 +39,9 @@ class RealmRepository(ABC):
 
         Returns:
             Realm: realm object
+
+        :raises:
+            `RealmDoesNotExistException <src.domain_model.resource.exception.RealmDoesNotExistException>` Raise an exception if the realm does not exist            
         """
 
     @abstractmethod
@@ -60,6 +65,9 @@ class RealmRepository(ABC):
 
         Args:
             realm (Realm): The realm that needs to be deleted
+
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the realm could not be deleted            
         """
 
     @abstractmethod
@@ -68,4 +76,7 @@ class RealmRepository(ABC):
 
         Args:
             realm (Realm): The realm that needs to be updated
+            
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the realm could not be updated            
         """

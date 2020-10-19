@@ -14,7 +14,6 @@ class ResourceTypeRepository(ABC):
 
         Args:
             resourceType (ResourceType): The resourceType that needs to be created
-
         """
 
     @abstractmethod
@@ -26,6 +25,9 @@ class ResourceTypeRepository(ABC):
 
         Returns:
             ResourceType: resourceType object
+            
+        :raises:
+            `ResourceTypeDoesNotExistException <src.domain_model.resource.exception.ResourceTypeDoesNotExistException>` Raise an exception if the resource type does not exist            
         """
 
     @abstractmethod
@@ -37,6 +39,9 @@ class ResourceTypeRepository(ABC):
 
         Returns:
             ResourceType: resourceType object
+            
+        :raises:
+            `ResourceTypeDoesNotExistException <src.domain_model.resource.exception.ResourceTypeDoesNotExistException>` Raise an exception if the resource type does not exist            
         """
 
     @abstractmethod
@@ -60,6 +65,9 @@ class ResourceTypeRepository(ABC):
 
         Args:
             resourceType (ResourceType): The resourceType that needs to be deleted
+            
+        :raises:        
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the resource type could not be deleted            
         """
 
     @abstractmethod
@@ -68,4 +76,7 @@ class ResourceTypeRepository(ABC):
 
         Args:
             resourceType (ResourceType): The resourceType that needs to be updated
+            
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the resource type could not be updated            
         """

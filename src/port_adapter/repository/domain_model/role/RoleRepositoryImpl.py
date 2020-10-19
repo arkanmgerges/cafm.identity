@@ -38,7 +38,7 @@ class RoleRepositoryImpl(RoleRepository):
 
         bindVars = {"id": role.id(), "name": role.name()}
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        print(queryResult)
+        logger.debug(f'[{RoleRepositoryImpl.createRole.__qualname__}] - Create role with id: {role.id()}, name: {role.name()}. Query result: {queryResult}')
 
     def roleByName(self, name: str) -> Role:
         aql = '''
@@ -66,7 +66,7 @@ class RoleRepositoryImpl(RoleRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            raise RoleDoesNotExistException(name=f'role id: {id}')
+            raise RoleDoesNotExistException(f'role id: {id}')
 
         return Role.createFrom(id=result[0]['id'], name=result[0]['name'])
 

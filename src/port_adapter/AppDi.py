@@ -10,6 +10,7 @@ from src.application.AuthenticationApplicationService import AuthenticationAppli
 from src.application.AuthorizationApplicationService import AuthorizationApplicationService
 from src.application.OuApplicationService import OuApplicationService
 from src.application.PermissionApplicationService import PermissionApplicationService
+from src.application.PolicyApplicationService import PolicyApplicationService
 from src.application.ProjectApplicationService import ProjectApplicationService
 from src.application.RealmApplicationService import RealmApplicationService
 from src.application.ResourceTypeApplicationService import ResourceTypeApplicationService
@@ -106,6 +107,15 @@ class AppDi(Module):
     def provideAuthorizationApplicationService(self) -> AuthorizationApplicationService:
         return AuthorizationApplicationService(self.__injector__.get(AuthorizationService))
 
+
+    @singleton
+    @provider
+    def providePolicyApplicationService(self) -> PolicyApplicationService:
+        return PolicyApplicationService(roleRepository=self.__injector__.get(RoleRepository),
+                                        userRepository=self.__injector__.get(UserRepository),
+                                        userGroupRepository=self.__injector__.get(UserGroupRepository),
+                                        policyRepository=self.__injector__.get(PolicyRepository),
+                                        authzService=self.__injector__.get(AuthorizationService))
     # endregion
 
     # region Repository

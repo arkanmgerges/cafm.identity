@@ -22,7 +22,7 @@ class ResourceTypeApplicationService:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
                                             resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
                 self._resourceTypeRepository.resourceTypeByName(name=name)
-                raise ResourceTypeAlreadyExistException(name=name)
+                raise ResourceTypeAlreadyExistException(name)
             else:
                 raise UnAuthorizedException()
         except ResourceTypeDoesNotExistException:

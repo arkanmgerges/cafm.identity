@@ -26,6 +26,9 @@ class RoleRepository(ABC):
 
         Returns:
             Role: role object
+
+        :raises:
+            `RoleDoesNotExistException <src.domain_model.resource.exception.RoleDoesNotExistException>` Raise an exception if the role does not exist
         """
 
     @abstractmethod
@@ -37,6 +40,9 @@ class RoleRepository(ABC):
 
         Returns:
             Role: role object
+
+        :raises:
+            `RoleDoesNotExistException <src.domain_model.resource.exception.RoleDoesNotExistException>` Raise an exception if the role does not exist
         """
 
     @abstractmethod
@@ -45,6 +51,9 @@ class RoleRepository(ABC):
 
         Args:
             role (Role): The role that needs to be deleted
+
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the role could not be deleted
         """
 
     @abstractmethod
@@ -53,6 +62,9 @@ class RoleRepository(ABC):
 
         Args:
             role (Role): The role that needs to be updated
+
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the role could not be updated
         """
 
     @abstractmethod

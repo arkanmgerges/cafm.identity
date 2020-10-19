@@ -23,7 +23,7 @@ class OuApplicationService:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
                                             resourceType=ResourceTypeConstant.OU.value):
                 self._ouRepository.ouByName(name=name)
-                raise OuAlreadyExistException(name=name)
+                raise OuAlreadyExistException(name)
             else:
                 raise UnAuthorizedException()
         except OuDoesNotExistException:

@@ -83,7 +83,7 @@ class UserRepositoryImpl(UserRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            raise UserDoesNotExistException(name=f'user id: {id}')
+            raise UserDoesNotExistException(f'user id: {id}')
 
         return User.createFrom(id=result[0]['id'], name=result[0]['name'])
 

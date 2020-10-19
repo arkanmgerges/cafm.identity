@@ -1,6 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+import glob
+import importlib
 import json
 import os
 import signal
@@ -15,42 +17,6 @@ from src.port_adapter.messaging.common.ConsumerOffsetReset import ConsumerOffset
 from src.port_adapter.messaging.common.TransactionalProducer import TransactionalProducer
 from src.port_adapter.messaging.common.model.ApiResponse import ApiResponse
 from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
-from src.port_adapter.messaging.listener.identity_command.handler.ou.CreateOuHandler import CreateOuHandler
-from src.port_adapter.messaging.listener.identity_command.handler.ou.DeleteOuHandler import DeleteOuHandler
-from src.port_adapter.messaging.listener.identity_command.handler.ou.UpdateOuHandler import UpdateOuHandler
-from src.port_adapter.messaging.listener.identity_command.handler.permission.CreatePermissionHandler import \
-    CreatePermissionHandler
-from src.port_adapter.messaging.listener.identity_command.handler.permission.DeletePermissionHandler import \
-    DeletePermissionHandler
-from src.port_adapter.messaging.listener.identity_command.handler.permission.UpdatePermissionHandler import \
-    UpdatePermissionHandler
-from src.port_adapter.messaging.listener.identity_command.handler.project.CreateProjectHandler import \
-    CreateProjectHandler
-from src.port_adapter.messaging.listener.identity_command.handler.project.DeleteProjectHandler import \
-    DeleteProjectHandler
-from src.port_adapter.messaging.listener.identity_command.handler.project.UpdateProjectHandler import \
-    UpdateProjectHandler
-from src.port_adapter.messaging.listener.identity_command.handler.realm.CreateRealmHandler import CreateRealmHandler
-from src.port_adapter.messaging.listener.identity_command.handler.realm.DeleteRealmHandler import DeleteRealmHandler
-from src.port_adapter.messaging.listener.identity_command.handler.realm.UpdateRealmHandler import UpdateRealmHandler
-from src.port_adapter.messaging.listener.identity_command.handler.resource_type.CreateResourceTypeHandler import \
-    CreateResourceTypeHandler
-from src.port_adapter.messaging.listener.identity_command.handler.resource_type.DeleteResourceTypeHandler import \
-    DeleteResourceTypeHandler
-from src.port_adapter.messaging.listener.identity_command.handler.resource_type.UpdateResourceTypeHandler import \
-    UpdateResourceTypeHandler
-from src.port_adapter.messaging.listener.identity_command.handler.role.CreateRoleHandler import CreateRoleHandler
-from src.port_adapter.messaging.listener.identity_command.handler.user.CreateUserHandler import CreateUserHandler
-from src.port_adapter.messaging.listener.identity_command.handler.role.DeleteRoleHandler import DeleteRoleHandler
-from src.port_adapter.messaging.listener.identity_command.handler.role.UpdateRoleHandler import UpdateRoleHandler
-from src.port_adapter.messaging.listener.identity_command.handler.user.DeleteUserHandler import DeleteUserHandler
-from src.port_adapter.messaging.listener.identity_command.handler.user.UpdateUserHandler import UpdateUserHandler
-from src.port_adapter.messaging.listener.identity_command.handler.user_group.CreateUserGroupHandler import \
-    CreateUserGroupHandler
-from src.port_adapter.messaging.listener.identity_command.handler.user_group.DeleteUserGroupHandler import \
-    DeleteUserGroupHandler
-from src.port_adapter.messaging.listener.identity_command.handler.user_group.UpdateUserGroupHandler import \
-    UpdateUserGroupHandler
 from src.resource.logging.logger import logger
 
 
@@ -181,30 +147,17 @@ class IdentityCommandListener:
         return None
 
     def addHandlers(self):
-        self._handlers.append(CreateOuHandler())
-        self._handlers.append(UpdateOuHandler())
-        self._handlers.append(DeleteOuHandler())
-        self._handlers.append(CreatePermissionHandler())
-        self._handlers.append(UpdatePermissionHandler())
-        self._handlers.append(DeletePermissionHandler())
-        self._handlers.append(CreateProjectHandler())
-        self._handlers.append(UpdateProjectHandler())
-        self._handlers.append(DeleteProjectHandler())
-        self._handlers.append(CreateRealmHandler())
-        self._handlers.append(UpdateRealmHandler())
-        self._handlers.append(DeleteRealmHandler())
-        self._handlers.append(CreateResourceTypeHandler())
-        self._handlers.append(UpdateResourceTypeHandler())
-        self._handlers.append(DeleteResourceTypeHandler())
-        self._handlers.append(CreateRoleHandler())
-        self._handlers.append(DeleteRoleHandler())
-        self._handlers.append(UpdateRoleHandler())
-        self._handlers.append(CreateUserHandler())
-        self._handlers.append(UpdateUserHandler())
-        self._handlers.append(DeleteUserHandler())
-        self._handlers.append(CreateUserGroupHandler())
-        self._handlers.append(UpdateUserGroupHandler())
-        self._handlers.append(DeleteUserGroupHandler())
+        handlers = list(
+            map(lambda x: x.strip('.py'),
+                list(map(lambda x: x[x.find('src.port_adapter.messaging'):],
+                         map(lambda x: x.replace('/', '.'),
+                             filter(lambda x: x.find('__init__.py') == -1,
+                                    glob.glob(f'{os.path.dirname(os.path.abspath(__file__))}/handler/**/*.py')))))))
+        for handlerStr in handlers:
+            m = importlib.import_module(handlerStr)
+            handlerCls = getattr(m, handlerStr[handlerStr.rfind('.') + 1:])
+            handler = handlerCls()
+            self._handlers.append(handler)
 
 
 

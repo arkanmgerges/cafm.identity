@@ -67,7 +67,7 @@ class ProjectRepositoryImpl(ProjectRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            raise ProjectDoesNotExistException(name=f'project id: {id}')
+            raise ProjectDoesNotExistException(f'project id: {id}')
 
         return Project.createFrom(id=result[0]['id'], name=result[0]['name'])
 

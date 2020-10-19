@@ -26,6 +26,9 @@ class UserRepository(ABC):
 
         Returns:
             User: user object
+            
+        :raises:
+            `UserDoesNotExistException <src.domain_model.resource.exception.UserDoesNotExistException>` Raise an exception if the user does not exist            
         """
 
     @abstractmethod
@@ -38,6 +41,9 @@ class UserRepository(ABC):
 
         Returns:
             User: user object
+            
+        :raises:
+            `UserDoesNotExistException <src.domain_model.resource.exception.UserDoesNotExistException>` Raise an exception if the user does not exist            
         """
 
     @abstractmethod
@@ -49,6 +55,9 @@ class UserRepository(ABC):
 
         Returns:
             User: user object
+            
+        :raises:
+            `UserDoesNotExistException <src.domain_model.resource.exception.UserDoesNotExistException>` Raise an exception if the user does not exist
         """
 
     @abstractmethod
@@ -72,6 +81,9 @@ class UserRepository(ABC):
 
         Args:
             user (User): The user that needs to be deleted
+            
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the user could not be deleted
         """
 
     @abstractmethod
@@ -80,4 +92,7 @@ class UserRepository(ABC):
 
         Args:
             user (User): The user that needs to be updated
+            
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the user could not be updated            
         """

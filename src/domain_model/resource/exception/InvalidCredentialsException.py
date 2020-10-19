@@ -6,7 +6,7 @@ from src.domain_model.resource.exception.CodeExceptionConstant import CodeExcept
 
 
 class InvalidCredentialsException(DomainModelException):
-    def __init__(self, name:str = ''):
-        self.message = f'Invalid credentials for user {name}'
+    def __init__(self, message:str = ''):
+        self.message = f'Invalid credentials for user {message}'
         self.code = CodeExceptionConstant.INVALID_CREDENTIALS.value
         super().__init__(self.message, self.code)

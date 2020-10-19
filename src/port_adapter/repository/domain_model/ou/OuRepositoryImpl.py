@@ -66,7 +66,7 @@ class OuRepositoryImpl(OuRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            raise OuDoesNotExistException(name=f'ou id: {id}')
+            raise OuDoesNotExistException(f'ou id: {id}')
 
         return Ou.createFrom(id=result[0]['id'], name=result[0]['name'])
 

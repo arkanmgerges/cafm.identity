@@ -13,6 +13,7 @@ class PolicyActionConstant(Enum):
     DELETE = 'delete'
     UPDATE = 'update'
     ASSIGN = 'assign'
+    REVOKE = 'revoke'
 
 
 class PolicyControllerService:

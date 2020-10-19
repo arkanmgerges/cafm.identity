@@ -14,7 +14,6 @@ class PermissionRepository(ABC):
 
         Args:
             permission (Permission): The permission that needs to be created
-
         """
 
     @abstractmethod
@@ -26,6 +25,9 @@ class PermissionRepository(ABC):
 
         Returns:
             Permission: permission object
+
+        :raises:
+            `PermissionDoesNotExistException <src.domain_model.resource.exception.PermissionDoesNotExistException>` Raise an exception if the permission does not exist            
         """
 
     @abstractmethod
@@ -37,6 +39,9 @@ class PermissionRepository(ABC):
 
         Returns:
             Permission: permission object
+            
+        :raises:
+            `PermissionDoesNotExistException <src.domain_model.resource.exception.PermissionDoesNotExistException>` Raise an exception if the permission does not exist
         """
 
     @abstractmethod
@@ -60,6 +65,9 @@ class PermissionRepository(ABC):
 
         Args:
             permission (Permission): The permission that needs to be deleted
+
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the permission could not be deleted
         """
 
     @abstractmethod
@@ -68,4 +76,7 @@ class PermissionRepository(ABC):
 
         Args:
             permission (Permission): The permission that needs to be updated
+            
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the permission could not be updated
         """
