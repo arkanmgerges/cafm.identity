@@ -74,9 +74,7 @@ class ProjectRepositoryImpl(ProjectRepository):
     def projectsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
                              order: List[dict] = None) -> dict:
         sortData = ''
-        if order is None:
-            order = []
-        else:
+        if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
@@ -108,7 +106,7 @@ class ProjectRepositoryImpl(ProjectRepository):
         bindVars = {"id": project.id()}
         logger.debug(f'[{ProjectRepositoryImpl.deleteProject.__qualname__}] - Delete project with id: {project.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is deleted
         try:
@@ -131,7 +129,7 @@ class ProjectRepositoryImpl(ProjectRepository):
         bindVars = {"id": project.id(), "name": project.name()}
         logger.debug(f'[{ProjectRepositoryImpl.updateProject.__qualname__}] - Update project with id: {project.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is updated
         aProject = self.projectById(project.id())

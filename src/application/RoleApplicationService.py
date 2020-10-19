@@ -23,7 +23,7 @@ class RoleApplicationService:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
                                             resourceType=ResourceTypeConstant.ROLE.value):
                 self._roleRepository.roleByName(name=name)
-                raise RoleAlreadyExistException(name=name)
+                raise RoleAlreadyExistException(name)
             else:
                 raise UnAuthorizedException()
         except RoleDoesNotExistException:

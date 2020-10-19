@@ -55,5 +55,5 @@ class Project:
 
     def __eq__(self, other):
         if not isinstance(other, Project):
-            raise NotImplementedError(f'other: {other} is can not be compared with Project class')
+            raise NotImplementedError(f'other: {other} can not be compared with Project class')
         return self.id() == other.id() and self.name() == other.name()

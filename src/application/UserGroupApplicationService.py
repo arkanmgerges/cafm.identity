@@ -23,7 +23,7 @@ class UserGroupApplicationService:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
                                             resourceType=ResourceTypeConstant.USER_GROUP.value):
                 self._userGroupRepository.userGroupByName(name=name)
-                raise UserGroupAlreadyExistException(name=name)
+                raise UserGroupAlreadyExistException(name)
             else:
                 raise UnAuthorizedException()
         except UserGroupDoesNotExistException:

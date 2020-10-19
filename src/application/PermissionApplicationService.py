@@ -18,19 +18,20 @@ class PermissionApplicationService:
         self._permissionRepository = permissionRepository
         self._authzService: AuthorizationService = authzService
 
-    def createPermission(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
+    def createPermission(self, id: str = '', name: str = '', allowedActions: List[str] = None, objectOnly: bool = False, token: str = ''):
+        allowedActions = [] if allowedActions is None else allowedActions
         try:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
                                             resourceType=ResourceTypeConstant.PERMISSION.value):
                 self._permissionRepository.permissionByName(name=name)
-                raise PermissionAlreadyExistException(name=name)
+                raise PermissionAlreadyExistException(name)
             else:
                 raise UnAuthorizedException()
         except PermissionDoesNotExistException:
             if objectOnly:
-                return Permission.createFrom(name=name)
+                return Permission.createFrom(name=name, allowedActions=allowedActions)
             else:
-                permission = Permission.createFrom(id=id, name=name, publishEvent=True)
+                permission = Permission.createFrom(id=id, name=name, allowedActions=allowedActions, publishEvent=True)
                 self._permissionRepository.createPermission(permission)
                 return permission
 
@@ -65,11 +66,11 @@ class PermissionApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def updatePermission(self, id: str, name: str, token: str = ''):
+    def updatePermission(self, id: str, name: str, allowedActions: List[str] = None, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
                                         resourceType=ResourceTypeConstant.PERMISSION.value):
             permission = self._permissionRepository.permissionById(id=id)
-            permission.update({'name': name})
+            permission.update({'name': name, 'allowedActions': allowedActions})
             self._permissionRepository.updatePermission(permission)
         else:
             raise UnAuthorizedException()

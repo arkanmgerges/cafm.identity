@@ -23,7 +23,7 @@ class ProjectApplicationService:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
                                             resourceType=ResourceTypeConstant.PROJECT.value):
                 self._projectRepository.projectByName(name=name)
-                raise ProjectAlreadyExistException(name=name)
+                raise ProjectAlreadyExistException(name)
             else:
                 raise UnAuthorizedException()
         except ProjectDoesNotExistException:

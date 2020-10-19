@@ -4,6 +4,7 @@
 import os
 from typing import List
 
+from pyArango.connection import *
 from pyArango.query import AQLQuery
 
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
@@ -12,9 +13,6 @@ from src.domain_model.resource.exception.ObjectIdenticalException import ObjectI
 from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
 from src.domain_model.resource_type.ResourceType import ResourceType
 from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
-
-from pyArango.connection import *
-
 from src.resource.logging.logger import logger
 
 
@@ -28,7 +26,8 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
-            raise Exception(f'[{ResourceTypeRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+            raise Exception(
+                f'[{ResourceTypeRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
 
     def createResourceType(self, resourceType: ResourceType):
         aql = '''
@@ -68,16 +67,14 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            raise ResourceTypeDoesNotExistException(name=f'resourceType id: {id}')
+            raise ResourceTypeDoesNotExistException(f'resourceType id: {id}')
 
         return ResourceType.createFrom(id=result[0]['id'], name=result[0]['name'])
 
     def resourceTypesByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
-                          order: List[dict] = None) -> dict:
+                                  order: List[dict] = None) -> dict:
         sortData = ''
-        if order is None:
-            order = []
-        else:
+        if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
@@ -107,9 +104,10 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
         '''
 
         bindVars = {"id": resourceType.id()}
-        logger.debug(f'[{ResourceTypeRepositoryImpl.deleteResourceType.__qualname__}] - Delete resourceType with id: {resourceType.id()}')
+        logger.debug(
+            f'[{ResourceTypeRepositoryImpl.deleteResourceType.__qualname__}] - Delete resourceType with id: {resourceType.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is deleted
         try:
@@ -130,9 +128,10 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
         '''
 
         bindVars = {"id": resourceType.id(), "name": resourceType.name()}
-        logger.debug(f'[{ResourceTypeRepositoryImpl.updateResourceType.__qualname__}] - Update resourceType with id: {resourceType.id()}')
+        logger.debug(
+            f'[{ResourceTypeRepositoryImpl.updateResourceType.__qualname__}] - Update resourceType with id: {resourceType.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is updated
         aResourceType = self.resourceTypeById(resourceType.id())

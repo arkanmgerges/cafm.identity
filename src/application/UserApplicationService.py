@@ -24,7 +24,7 @@ class UserApplicationService:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
                                             resourceType=ResourceTypeConstant.USER.value):
                 self._userRepository.userByName(name=name)
-                raise UserAlreadyExistException(name=name)
+                raise UserAlreadyExistException(name)
             else:
                 raise UnAuthorizedException()
         except UserDoesNotExistException:

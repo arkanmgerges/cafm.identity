@@ -66,16 +66,14 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            raise UserGroupDoesNotExistException(name=f'userGroup id: {id}')
+            raise UserGroupDoesNotExistException(f'userGroup id: {id}')
 
         return UserGroup.createFrom(id=result[0]['id'], name=result[0]['name'])
 
     def userGroupsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
                                order: List[dict] = None) -> dict:
         sortData = ''
-        if order is None:
-            order = []
-        else:
+        if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
@@ -108,7 +106,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         logger.debug(
             f'[{UserGroupRepositoryImpl.deleteUserGroup.__qualname__}] - Delete userGroup with id: {userGroup.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is deleted
         try:
@@ -132,7 +130,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         logger.debug(
             f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] - Update userGroup with id: {userGroup.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is updated
         aUserGroup = self.userGroupById(userGroup.id())

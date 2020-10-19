@@ -80,7 +80,7 @@ class RoleRepositoryImpl(RoleRepository):
         bindVars = {"id": role.id()}
         logger.debug(f'[{RoleRepositoryImpl.deleteRole.__qualname__}] - Delete role with id: {role.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is deleted
         try:
@@ -103,7 +103,7 @@ class RoleRepositoryImpl(RoleRepository):
         bindVars = {"id": role.id(), "name": role.name()}
         logger.debug(f'[{RoleRepositoryImpl.updateRole.__qualname__}] - Update role with id: {role.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is updated
         aRole = self.roleById(role.id())
@@ -112,9 +112,7 @@ class RoleRepositoryImpl(RoleRepository):
 
     def rolesByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
         sortData = ''
-        if order is None:
-            order = []
-        else:
+        if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]

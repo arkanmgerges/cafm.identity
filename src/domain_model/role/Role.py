@@ -57,5 +57,5 @@ class Role:
 
     def __eq__(self, other):
         if not isinstance(other, Role):
-            raise NotImplementedError(f'other: {other} is can not be compared with Role class')
+            raise NotImplementedError(f'other: {other} can not be compared with Role class')
         return self.id() == other.id() and self.name() == other.name()

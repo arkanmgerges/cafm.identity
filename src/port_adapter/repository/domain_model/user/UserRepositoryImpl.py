@@ -38,7 +38,7 @@ class UserRepositoryImpl(UserRepository):
         '''
 
         bindVars = {"id": user.id(), "name": user.name(), "password": user.password()}
-        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
     def userByName(self, name: str) -> User:
         logger.debug(f'[{UserRepositoryImpl.userByName.__qualname__}] - with name = {name}')
@@ -90,9 +90,7 @@ class UserRepositoryImpl(UserRepository):
     def usersByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
                           order: List[dict] = None) -> dict:
         sortData = ''
-        if order is None:
-            order = []
-        else:
+        if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
@@ -124,7 +122,7 @@ class UserRepositoryImpl(UserRepository):
         bindVars = {"id": user.id()}
         logger.debug(f'[{UserRepositoryImpl.deleteUser.__qualname__}] - Delete user with id: {user.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is deleted
         try:
@@ -147,7 +145,7 @@ class UserRepositoryImpl(UserRepository):
         bindVars = {"id": user.id(), "name": user.name()}
         logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {user.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is updated
         aUser = self.userById(user.id())

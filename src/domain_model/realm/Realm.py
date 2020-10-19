@@ -56,5 +56,5 @@ class Realm:
 
     def __eq__(self, other):
         if not isinstance(other, Realm):
-            raise NotImplementedError(f'other: {other} is can not be compared with Realm class')
+            raise NotImplementedError(f'other: {other} can not be compared with Realm class')
         return self.id() == other.id() and self.name() == other.name()

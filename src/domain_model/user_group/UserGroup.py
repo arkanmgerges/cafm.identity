@@ -49,5 +49,5 @@ class UserGroup:
 
     def __eq__(self, other):
         if not isinstance(other, UserGroup):
-            raise NotImplementedError(f'other: {other} is can not be compared with UserGroup class')
+            raise NotImplementedError(f'other: {other} can not be compared with UserGroup class')
         return self.id() == other.id() and self.name() == other.name()

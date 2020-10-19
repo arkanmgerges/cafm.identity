@@ -19,7 +19,7 @@ class ResourceTypeConstant(Enum):
     USER_GROUP = 'user_group'
     ASSIGNMENT_ROLE_TO_USER = 'assignment:role_to_user'
     ASSIGNMENT_USER_TO_USER_GROUP = 'assignment:user_to_user_group'
-    ROLE = 'resourceType'
+    ROLE = 'role'
     ALL = '*'
 
 
@@ -67,5 +67,5 @@ class ResourceType:
 
     def __eq__(self, other):
         if not isinstance(other, ResourceType):
-            raise NotImplementedError(f'other: {other} is can not be compared with ResourceType class')
+            raise NotImplementedError(f'other: {other} can not be compared with ResourceType class')
         return self.id() == other.id() and self.name() == other.name()

@@ -59,5 +59,5 @@ class User:
 
     def __eq__(self, other):
         if not isinstance(other, User):
-            raise NotImplementedError(f'other: {other} is can not be compared with User class')
+            raise NotImplementedError(f'other: {other} can not be compared with User class')
         return self.id() == other.id() and self.name() == other.name()

@@ -29,5 +29,5 @@ class UpdatePermissionHandler(Handler):
 
         # Put the command into the messaging system, in order to be processed later
         return {'name': IdentityCommandConstant.UPDATE_PERMISSION.value, 'createdOn': round(time.time() * 1000),
-                'data': {'id': dataDict['id'], 'name': dataDict['name']},
+                'data': {'id': dataDict['id'], 'name': dataDict['name'], 'allowed_actions': dataDict['allowed_actions']},
                 'metadata': metadataDict}

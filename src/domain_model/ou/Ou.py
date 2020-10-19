@@ -55,5 +55,5 @@ class Ou:
 
     def __eq__(self, other):
         if not isinstance(other, Ou):
-            raise NotImplementedError(f'other: {other} is can not be compared with Ou class')
+            raise NotImplementedError(f'other: {other} can not be compared with Ou class')
         return self.id() == other.id() and self.name() == other.name()

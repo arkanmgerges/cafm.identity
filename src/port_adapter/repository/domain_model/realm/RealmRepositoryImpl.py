@@ -38,7 +38,7 @@ class RealmRepositoryImpl(RealmRepository):
 
         bindVars = {"id": realm.id(), "name": realm.name()}
         logger.debug(f'[{RealmRepositoryImpl.createRealm.__qualname__}] - Upsert for id: {realm.id()}, name: {realm.name()}')
-        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
     def realmByName(self, name: str) -> Realm:
         aql = '''
@@ -66,16 +66,14 @@ class RealmRepositoryImpl(RealmRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            raise RealmDoesNotExistException(name=f'realm id: {id}')
+            raise RealmDoesNotExistException(f'realm id: {id}')
 
         return Realm.createFrom(id=result[0]['id'], name=result[0]['name'])
 
     def realmsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
                            order: List[dict] = None) -> dict:
         sortData = ''
-        if order is None:
-            order = []
-        else:
+        if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
@@ -107,7 +105,7 @@ class RealmRepositoryImpl(RealmRepository):
         bindVars = {"id": realm.id()}
         logger.debug(f'[{RealmRepositoryImpl.deleteRealm.__qualname__}] - Delete realm with id: {realm.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is deleted
         try:
@@ -130,7 +128,7 @@ class RealmRepositoryImpl(RealmRepository):
         bindVars = {"id": realm.id(), "name": realm.name()}
         logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] - Update realm with id: {realm.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is updated
         aRealm = self.realmById(realm.id())

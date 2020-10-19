@@ -73,9 +73,7 @@ class OuRepositoryImpl(OuRepository):
     def ousByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
                         order: List[dict] = None) -> dict:
         sortData = ''
-        if order is None:
-            order = []
-        else:
+        if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
@@ -107,7 +105,7 @@ class OuRepositoryImpl(OuRepository):
         bindVars = {"id": ou.id()}
         logger.debug(f'[{OuRepositoryImpl.deleteOu.__qualname__}] - Delete ou with id: {ou.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is deleted
         try:
@@ -130,7 +128,7 @@ class OuRepositoryImpl(OuRepository):
         bindVars = {"id": ou.id(), "name": ou.name()}
         logger.debug(f'[{OuRepositoryImpl.updateOu.__qualname__}] - Update ou with id: {ou.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is updated
         aOu = self.ouById(ou.id())

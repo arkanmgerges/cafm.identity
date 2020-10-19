@@ -31,21 +31,21 @@ class PermissionRepositoryImpl(PermissionRepository):
 
     def createPermission(self, permission: Permission):
         aql = '''
-        UPSERT { id: @id}
-            INSERT {id: @id, name: @name}
-            UPDATE {name: @name}
-          IN permission
+        UPSERT {id: @id}
+            INSERT {id: @id, name: @name, allowed_actions: @allowedActions}
+            UPDATE {name: @name, allowed_actions: @allowedActions}
+            IN permission
         '''
 
-        bindVars = {"id": permission.id(), "name": permission.name()}
+        bindVars = {"id": permission.id(), "name": permission.name(), "allowedActions": permission.allowedActions()}
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         print(queryResult)
 
     def permissionByName(self, name: str) -> Permission:
         aql = '''
             FOR u IN permission
-            FILTER u.name == @name
-            RETURN u
+                FILTER u.name == @name
+                RETURN u
         '''
 
         bindVars = {"name": name}
@@ -54,13 +54,14 @@ class PermissionRepositoryImpl(PermissionRepository):
         if len(result) == 0:
             raise PermissionDoesNotExistException(name)
 
-        return Permission.createFrom(id=result[0]['id'], name=result[0]['name'])
+        return Permission.createFrom(id=result[0]['id'], name=result[0]['name'],
+                                     allowedActions=result[0]['allowed_actions'])
 
     def permissionById(self, id: str) -> Permission:
         aql = '''
             FOR u IN permission
-            FILTER u.id == @id
-            RETURN u
+                FILTER u.id == @id
+                RETURN u
         '''
 
         bindVars = {"id": id}
@@ -69,14 +70,13 @@ class PermissionRepositoryImpl(PermissionRepository):
         if len(result) == 0:
             raise PermissionDoesNotExistException(f'permission id: {id}')
 
-        return Permission.createFrom(id=result[0]['id'], name=result[0]['name'])
+        return Permission.createFrom(id=result[0]['id'], name=result[0]['name'],
+                                     allowedActions=result[0]['allowed_actions'])
 
     def permissionsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
                                 order: List[dict] = None) -> dict:
         sortData = ''
-        if order is None:
-            order = []
-        else:
+        if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
@@ -95,8 +95,10 @@ class PermissionRepositoryImpl(PermissionRepository):
             result = queryResult.result
             if len(result) == 0:
                 return {"items": [], "itemCount": 0}
-            return {"items": [Permission.createFrom(id=x['id'], name=x['name']) for x in result[0]['items']],
-                    "itemCount": result[0]["itemCount"]}
+            return {
+                "items": [Permission.createFrom(id=x['id'], name=x['name'], allowedActions=x['allowed_actions']) for x
+                          in result[0]['items']],
+                "itemCount": result[0]["itemCount"]}
 
     def deletePermission(self, permission: Permission) -> None:
         aql = '''
@@ -109,7 +111,7 @@ class PermissionRepositoryImpl(PermissionRepository):
         logger.debug(
             f'[{PermissionRepositoryImpl.deletePermission.__qualname__}] - Delete permission with id: {permission.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is deleted
         try:
@@ -125,15 +127,15 @@ class PermissionRepositoryImpl(PermissionRepository):
 
         aql = '''
             FOR d IN permission
-            FILTER d.id == @id
-            UPDATE d WITH {name: @name} IN permission
+                FILTER d.id == @id
+                UPDATE d WITH {name: @name} IN permission
         '''
 
         bindVars = {"id": permission.id(), "name": permission.name()}
         logger.debug(
             f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] - Update permission with id: {permission.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        result = queryResult.result
+        _ = queryResult.result
 
         # Check if it is updated
         aPermission = self.permissionById(permission.id())

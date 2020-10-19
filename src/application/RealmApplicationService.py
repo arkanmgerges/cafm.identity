@@ -23,7 +23,7 @@ class RealmApplicationService:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
                                             resourceType=ResourceTypeConstant.REALM.value):
                 self._realmRepository.realmByName(name=name)
-                raise RealmAlreadyExistException(name=name)
+                raise RealmAlreadyExistException(name)
             else:
                 raise UnAuthorizedException()
         except RealmDoesNotExistException:
