@@ -26,7 +26,8 @@ class UserGroupRepositoryImpl(UserGroupRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
-            raise Exception(f'[UserGroupRepository::__init__] Could not connect to the db, message: {e}')
+            logger.warn(f'[{UserGroupRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+            raise Exception(f'Could not connect to the db, message: {e}')
 
     def createUserGroup(self, userGroup: UserGroup):
         aql = '''
@@ -51,6 +52,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{UserGroupRepositoryImpl.userGroupByName.__qualname__}] {name}')
             raise UserGroupDoesNotExistException(name)
 
         return UserGroup.createFrom(id=result[0]['id'], name=result[0]['name'])
@@ -66,7 +68,8 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            raise UserGroupDoesNotExistException(f'userGroup id: {id}')
+            logger.debug(f'[{UserGroupRepositoryImpl.userGroupById.__qualname__}] user group id: {id}')
+            raise UserGroupDoesNotExistException(f'user group id: {id}')
 
         return UserGroup.createFrom(id=result[0]['id'], name=result[0]['name'])
 
@@ -111,13 +114,16 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         # Check if it is deleted
         try:
             self.userGroupById(userGroup.id())
-            raise ObjectCouldNotBeDeletedException()
+            logger.debug(f'[{UserGroupRepositoryImpl.deleteUserGroup.__qualname__}] Object could not be deleted exception for user group id: {userGroup.id()}')
+            raise ObjectCouldNotBeDeletedException(f'user group id: {userGroup.id()}')
         except UserGroupDoesNotExistException:
             userGroup.publishDelete()
 
     def updateUserGroup(self, userGroup: UserGroup) -> None:
         oldUserGroup = self.userGroupById(userGroup.id())
         if oldUserGroup == userGroup:
+            logger.debug(
+                f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] Object identical exception for old user group: {oldUserGroup}\nuser group: {userGroup}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -135,4 +141,6 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         # Check if it is updated
         aUserGroup = self.userGroupById(userGroup.id())
         if aUserGroup != userGroup:
-            raise ObjectCouldNotBeUpdatedException()
+            logger.warn(
+                f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] The object user group: {userGroup} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'user group: {userGroup}')

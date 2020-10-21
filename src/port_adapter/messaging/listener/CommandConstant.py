@@ -47,6 +47,8 @@ class CommonCommandConstant(Enum):
     REVOKE_ASSIGNMENT_ROLE_TO_USER_GROUP = 'revoke_assignment_role_to_user_group'
     ASSIGN_USER_TO_USER_GROUP = 'assign_user_to_user_group'
     REVOKE_ASSIGNMENT_USER_TO_USER_GROUP = 'revoke_assignment_user_to_user_group'
+    ASSIGN_ROLE_TO_PERMISSION_FOR_RESOURCE_TYPE = 'assignment_role_to_permission_for_resource_type'
+    REVOKE_ASSIGNMENT_ROLE_TO_PERMISSION_FOR_RESOURCE_TYPE = 'revoke_assignment_role_to_permission_for_resource_type'
 
 
 @extendEnum(CommonCommandConstant)

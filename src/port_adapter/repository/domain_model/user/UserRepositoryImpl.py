@@ -26,7 +26,8 @@ class UserRepositoryImpl(UserRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
-            raise Exception(f'[{UserRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+            logger.warn(f'[{UserRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+            raise Exception(f'Could not connect to the db, message: {e}')
 
     def createUser(self, user: User):
         logger.debug(f'[{UserRepositoryImpl.createUser.__qualname__}] - with name = {user.name()}')
@@ -52,6 +53,7 @@ class UserRepositoryImpl(UserRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{UserRepositoryImpl.userByName.__qualname__}] {name}')
             raise UserDoesNotExistException(name)
 
         return User.createFrom(id=result[0]['id'], name=result[0]['name'], password=result[0]['password'])
@@ -68,6 +70,7 @@ class UserRepositoryImpl(UserRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{UserRepositoryImpl.userByNameAndPassword.__qualname__}] name: {name}')
             raise UserDoesNotExistException(name)
 
         return User.createFrom(id=result[0]['id'], name=result[0]['name'], password=result[0]['password'])
@@ -83,6 +86,7 @@ class UserRepositoryImpl(UserRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{UserRepositoryImpl.userById.__qualname__}] user id: {id}')
             raise UserDoesNotExistException(f'user id: {id}')
 
         return User.createFrom(id=result[0]['id'], name=result[0]['name'])
@@ -127,14 +131,16 @@ class UserRepositoryImpl(UserRepository):
         # Check if it is deleted
         try:
             self.userById(user.id())
-            raise ObjectCouldNotBeDeletedException()
+            logger.debug(f'[{UserRepositoryImpl.deleteUser.__qualname__}] Object could not be deleted exception for user id: {user.id()}')
+            raise ObjectCouldNotBeDeletedException(f'user id: {user.id()}')
         except UserDoesNotExistException:
             user.publishDelete()
 
     def updateUser(self, user: User) -> None:
         oldUser = self.userById(user.id())
         if oldUser == user:
-            raise ObjectIdenticalException()
+            logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] Object identical exception for user id: {user.id()}')
+            raise ObjectIdenticalException(f'user id: {user.id()}')
 
         aql = '''
             FOR d IN user
@@ -143,11 +149,13 @@ class UserRepositoryImpl(UserRepository):
         '''
 
         bindVars = {"id": user.id(), "name": user.name()}
-        logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {user.id()}')
+        logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] Update user with id: {user.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is updated
         aUser = self.userById(user.id())
         if aUser != user:
+            logger.warn(
+                f'[{UserRepositoryImpl.updateUser.__qualname__}] The object user: {user} could not be updated in the database')
             raise ObjectCouldNotBeUpdatedException()

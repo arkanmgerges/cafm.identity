@@ -26,8 +26,9 @@ class PermissionRepositoryImpl(PermissionRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
+            logger.warn(f'[{PermissionRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(
-                f'[{PermissionRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+                f'Could not connect to the db, message: {e}')
 
     def createPermission(self, permission: Permission):
         aql = '''
@@ -52,6 +53,7 @@ class PermissionRepositoryImpl(PermissionRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{PermissionRepositoryImpl.permissionByName.__qualname__}] {name}')
             raise PermissionDoesNotExistException(name)
 
         return Permission.createFrom(id=result[0]['id'], name=result[0]['name'],
@@ -68,7 +70,9 @@ class PermissionRepositoryImpl(PermissionRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            raise PermissionDoesNotExistException(f'permission id: {id}')
+            logger.debug(f'[{PermissionRepositoryImpl.permissionById.__qualname__}] permission id: {id}')
+            raise PermissionDoesNotExistException(
+                f'permission id: {id}')
 
         return Permission.createFrom(id=result[0]['id'], name=result[0]['name'],
                                      allowedActions=result[0]['allowed_actions'])
@@ -116,13 +120,16 @@ class PermissionRepositoryImpl(PermissionRepository):
         # Check if it is deleted
         try:
             self.permissionById(permission.id())
-            raise ObjectCouldNotBeDeletedException()
+            logger.debug(f'[{PermissionRepository.deletePermission.__qualname__}] Object could not be found exception for permission id: {permission.id()}')
+            raise ObjectCouldNotBeDeletedException(f'permission id: {permission.id()}')
         except PermissionDoesNotExistException:
             permission.publishDelete()
 
     def updatePermission(self, permission: Permission) -> None:
         oldPermission = self.permissionById(permission.id())
         if oldPermission == permission:
+            logger.debug(
+                f'[{PermissionRepository.updatePermission.__qualname__}] Object identical exception for old permission: {oldPermission}\npermission: {permission}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -140,4 +147,5 @@ class PermissionRepositoryImpl(PermissionRepository):
         # Check if it is updated
         aPermission = self.permissionById(permission.id())
         if aPermission != permission:
-            raise ObjectCouldNotBeUpdatedException()
+            logger.warn(f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] The object permission: {permission} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'permission: {permission} ')

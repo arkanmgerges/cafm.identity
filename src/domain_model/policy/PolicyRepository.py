@@ -4,6 +4,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Any
 
+from src.domain_model.permission.Permission import Permission
+from src.domain_model.resource_type.ResourceType import ResourceType
 from src.domain_model.role.Role import Role
 from src.domain_model.user.User import User
 from src.domain_model.user_group.UserGroup import UserGroup
@@ -89,4 +91,30 @@ class PolicyRepository(ABC):
 
         :raises:
             `ResourceAssignmentDoesNotExistException <src.domain_model.resource.exception.ResourceAssignmentDoesNotExistException>` Raise an exception if the resource assignment does not exist
+        """
+
+    @abstractmethod
+    def assignRoleToPermissionForResourceType(self, role: Role, permission: Permission, resourceType: ResourceType) -> None:
+        """Assign a role to a permission for a resource type
+
+        Args:
+            role (Role): The role to be assigned to the permission for a resource type
+            permission (Permission): The permission that will get a role for a resource type
+            resourceType (ResourceType): The resource type to be linked to the permission
+
+        :raises:
+            `ResourceAssignmentAlreadyExistException <src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException>` Raise an exception if the resource assignment already exist
+        """
+
+    @abstractmethod
+    def revokeRoleFromPermissionForResourceType(self, role: Role, permission: Permission, resourceType: ResourceType) -> None:
+        """Revoke a role from a permission for a resource type
+
+        Args:
+            role (Role): The role to be revoked from the permission for a resource type
+            permission (Permission): The permission that will be separated from the role for a resource type
+            resourceType (ResourceType): The resource type to be unlinked from the permission
+
+        :raises:
+            `ResourceAssignmentAlreadyExistException <src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException>` Raise an exception if the resource assignment already exist
         """

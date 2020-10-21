@@ -26,7 +26,8 @@ class RealmRepositoryImpl(RealmRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
-            raise Exception(f'[{RealmRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+            logger.warn(f'[{RealmRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+            raise Exception(f'Could not connect to the db, message: {e}')
 
     def createRealm(self, realm: Realm):
         aql = '''
@@ -37,7 +38,7 @@ class RealmRepositoryImpl(RealmRepository):
         '''
 
         bindVars = {"id": realm.id(), "name": realm.name()}
-        logger.debug(f'[{RealmRepositoryImpl.createRealm.__qualname__}] - Upsert for id: {realm.id()}, name: {realm.name()}')
+        logger.debug(f'[{RealmRepositoryImpl.createRealm.__qualname__}] Upsert for id: {realm.id()}, name: {realm.name()}')
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
     def realmByName(self, name: str) -> Realm:
@@ -51,6 +52,7 @@ class RealmRepositoryImpl(RealmRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{RealmRepositoryImpl.realmByName.__qualname__}] {name}')
             raise RealmDoesNotExistException(name)
 
         return Realm.createFrom(id=result[0]['id'], name=result[0]['name'])
@@ -66,6 +68,7 @@ class RealmRepositoryImpl(RealmRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{RealmRepositoryImpl.realmById.__qualname__}] realm id: {id}')
             raise RealmDoesNotExistException(f'realm id: {id}')
 
         return Realm.createFrom(id=result[0]['id'], name=result[0]['name'])
@@ -110,13 +113,15 @@ class RealmRepositoryImpl(RealmRepository):
         # Check if it is deleted
         try:
             self.realmById(realm.id())
-            raise ObjectCouldNotBeDeletedException()
+            logger.debug(f'[{RealmRepositoryImpl.deleteRealm.__qualname__}] Object could not be found exception for realm id: {realm.id()}')
+            raise ObjectCouldNotBeDeletedException(f'realm id: {realm.id()}')
         except RealmDoesNotExistException:
             realm.publishDelete()
 
     def updateRealm(self, realm: Realm) -> None:
         oldRealm = self.realmById(realm.id())
         if oldRealm == realm:
+            logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] Object identical exception for old realm: {oldRealm}\nrealm: {realm}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -133,4 +138,5 @@ class RealmRepositoryImpl(RealmRepository):
         # Check if it is updated
         aRealm = self.realmById(realm.id())
         if aRealm != realm:
-            raise ObjectCouldNotBeUpdatedException()
+            logger.warn(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] The object realm: {realm} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'realm: {realm}')

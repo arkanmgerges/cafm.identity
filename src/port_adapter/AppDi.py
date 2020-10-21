@@ -114,6 +114,8 @@ class AppDi(Module):
         return PolicyApplicationService(roleRepository=self.__injector__.get(RoleRepository),
                                         userRepository=self.__injector__.get(UserRepository),
                                         userGroupRepository=self.__injector__.get(UserGroupRepository),
+                                        permissionRepository=self.__injector__.get(PermissionRepository),
+                                        resourceTypeRepository=self.__injector__.get(ResourceTypeRepository),
                                         policyRepository=self.__injector__.get(PolicyRepository),
                                         authzService=self.__injector__.get(AuthorizationService))
     # endregion

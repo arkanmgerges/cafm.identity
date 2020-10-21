@@ -5,22 +5,28 @@ from typing import List
 
 from src.domain_model.AuthorizationService import AuthorizationService
 from src.domain_model.PolicyControllerService import PolicyActionConstant
+from src.domain_model.permission.PermissionRepository import PermissionRepository
 from src.domain_model.policy.PolicyRepository import PolicyRepository
-from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
+from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
 from src.domain_model.role.RoleRepository import RoleRepository
 from src.domain_model.user.UserRepository import UserRepository
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
 
 
 class PolicyApplicationService:
-    def __init__(self, roleRepository: RoleRepository, userRepository: UserRepository, policyRepository: PolicyRepository,
+    def __init__(self, roleRepository: RoleRepository, userRepository: UserRepository,
+                 policyRepository: PolicyRepository,
                  userGroupRepository: UserGroupRepository,
+                 permissionRepository: PermissionRepository,
+                 resourceTypeRepository: ResourceTypeRepository,
                  authzService: AuthorizationService):
         self._roleRepository = roleRepository
         self._userRepository = userRepository
         self._userGroupRepository = userGroupRepository
+        self._permissionRepository = permissionRepository
+        self._resourceTypeRepository = resourceTypeRepository
         self._policyRepository = policyRepository
         self._authzService: AuthorizationService = authzService
 
@@ -91,6 +97,42 @@ class PolicyApplicationService:
                 user = self._userRepository.userById(id=userId)
                 userGroup = self._userGroupRepository.userGroupById(id=userGroupId)
                 self._policyRepository.revokeUserFromUserGroup(user, userGroup)
+            else:
+                raise UnAuthorizedException()
+        finally:
+            pass
+
+    def assignRoleToPermissionForResourceType(self, roleId: str = '',
+                                              permissionId: str = '',
+                                              resourceTypeId: str = '',
+                                              token: str = ''):
+        try:
+            if self._authzService.isAllowed(token=token, action=PolicyActionConstant.ASSIGN.value,
+                                            resourceType=ResourceTypeConstant.ASSIGNMENT_ROLE_TO_PERMISSION_FOR_RESOURCE_TYPE.value):
+                role = self._roleRepository.roleById(id=roleId)
+                permission = self._permissionRepository.permissionById(id=permissionId)
+                resourceType = self._resourceTypeRepository.resourceTypeById(id=resourceTypeId)
+                self._policyRepository.assignRoleToPermissionForResourceType(role=role,
+                                                                             permission=permission,
+                                                                             resourceType=resourceType)
+            else:
+                raise UnAuthorizedException()
+        finally:
+            pass
+
+    def revokeRoleFromPermissionForResourceType(self, roleId: str = '',
+                                                permissionId: str = '',
+                                                resourceTypeId: str = '',
+                                                token: str = ''):
+        try:
+            if self._authzService.isAllowed(token=token, action=PolicyActionConstant.REVOKE.value,
+                                            resourceType=ResourceTypeConstant.ASSIGNMENT_ROLE_TO_PERMISSION_FOR_RESOURCE_TYPE.value):
+                role = self._roleRepository.roleById(id=roleId)
+                permission = self._permissionRepository.permissionById(id=permissionId)
+                resourceType = self._resourceTypeRepository.resourceTypeById(id=resourceTypeId)
+                self._policyRepository.revokeRoleFromPermissionForResourceType(role=role,
+                                                                               permission=permission,
+                                                                               resourceType=resourceType)
             else:
                 raise UnAuthorizedException()
         finally:

@@ -26,7 +26,8 @@ class OuRepositoryImpl(OuRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
-            raise Exception(f'[{OuRepository.__init__.__qualname__}] Could not connect to the db, message: {e}')
+            logger.warn(f'[{OuRepository.__init__.__qualname__}] Could not connect to the db, message: {e}')
+            raise Exception(f'Could not connect to the db, message: {e}')
 
     def createOu(self, ou: Ou):
         aql = '''
@@ -51,6 +52,7 @@ class OuRepositoryImpl(OuRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{OuRepository.ouByName.__qualname__}] {name}')
             raise OuDoesNotExistException(name)
 
         return Ou.createFrom(id=result[0]['id'], name=result[0]['name'])
@@ -66,6 +68,7 @@ class OuRepositoryImpl(OuRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{OuRepository.ouById.__qualname__}] ou id: {id}')
             raise OuDoesNotExistException(f'ou id: {id}')
 
         return Ou.createFrom(id=result[0]['id'], name=result[0]['name'])
@@ -110,13 +113,16 @@ class OuRepositoryImpl(OuRepository):
         # Check if it is deleted
         try:
             self.ouById(ou.id())
-            raise ObjectCouldNotBeDeletedException()
+            logger.debug(
+                f'[{OuRepository.deleteOu.__qualname__}] Object could not be found exception for ou id: {ou.id()}')
+            raise ObjectCouldNotBeDeletedException(f'ou id: {ou.id()}')
         except OuDoesNotExistException:
             ou.publishDelete()
 
     def updateOu(self, ou: Ou) -> None:
         oldOu = self.ouById(ou.id())
         if oldOu == ou:
+            logger.debug(f'[{OuRepository.updateOu.__qualname__}] Object identical exception for old ou: {oldOu}\nou: {ou}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -133,4 +139,5 @@ class OuRepositoryImpl(OuRepository):
         # Check if it is updated
         aOu = self.ouById(ou.id())
         if aOu != ou:
-            raise ObjectCouldNotBeUpdatedException()
+            logger.warn(f'[{OuRepositoryImpl.updateOu.__qualname__}] The object ou: {ou} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'ou: {ou}')

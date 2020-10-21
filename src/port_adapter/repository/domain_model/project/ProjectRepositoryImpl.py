@@ -26,8 +26,9 @@ class ProjectRepositoryImpl(ProjectRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
+            logger.warn(f'[{ProjectRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(
-                f'[{ProjectRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+                f'Could not connect to the db, message: {e}')
 
     def createProject(self, project: Project):
         aql = '''
@@ -52,6 +53,7 @@ class ProjectRepositoryImpl(ProjectRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{ProjectRepositoryImpl.projectByName.__qualname__}] {name}')
             raise ProjectDoesNotExistException(name)
 
         return Project.createFrom(id=result[0]['id'], name=result[0]['name'])
@@ -67,6 +69,7 @@ class ProjectRepositoryImpl(ProjectRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{ProjectRepositoryImpl.projectById.__qualname__}] project id: {id}')
             raise ProjectDoesNotExistException(f'project id: {id}')
 
         return Project.createFrom(id=result[0]['id'], name=result[0]['name'])
@@ -111,13 +114,15 @@ class ProjectRepositoryImpl(ProjectRepository):
         # Check if it is deleted
         try:
             self.projectById(project.id())
-            raise ObjectCouldNotBeDeletedException()
+            logger.debug(f'[{ProjectRepositoryImpl.deleteProject.__qualname__}] Object could not be found exception for project id: {project.id()}')
+            raise ObjectCouldNotBeDeletedException(f'project id: {project.id()}')
         except ProjectDoesNotExistException:
             project.publishDelete()
 
     def updateProject(self, project: Project) -> None:
         oldProject = self.projectById(project.id())
         if oldProject == project:
+            logger.debug(f'[{ProjectRepositoryImpl.updateProject.__qualname__}] Object identical exception for old project: {oldProject}\nproject: {project}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -127,11 +132,12 @@ class ProjectRepositoryImpl(ProjectRepository):
         '''
 
         bindVars = {"id": project.id(), "name": project.name()}
-        logger.debug(f'[{ProjectRepositoryImpl.updateProject.__qualname__}] - Update project with id: {project.id()}')
+        logger.debug(f'[{ProjectRepositoryImpl.updateProject.__qualname__}] Update project with id: {project.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is updated
         aProject = self.projectById(project.id())
         if aProject != project:
-            raise ObjectCouldNotBeUpdatedException()
+            logger.warn(f'[{ProjectRepositoryImpl.updateProject.__qualname__}] The object project: {project} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'project: {project}')

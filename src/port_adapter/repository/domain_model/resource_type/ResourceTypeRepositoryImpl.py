@@ -26,8 +26,9 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
+            logger.warn(f'[{ResourceTypeRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(
-                f'[{ResourceTypeRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+                f'Could not connect to the db, message: {e}')
 
     def createResourceType(self, resourceType: ResourceType):
         aql = '''
@@ -52,6 +53,7 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            logger.debug(f'[{ResourceTypeRepositoryImpl.resourceTypeByName.__qualname__}] {name}')
             raise ResourceTypeDoesNotExistException(name)
 
         return ResourceType.createFrom(id=result[0]['id'], name=result[0]['name'])
@@ -67,7 +69,8 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            raise ResourceTypeDoesNotExistException(f'resourceType id: {id}')
+            logger.debug(f'[{ResourceTypeRepositoryImpl.resourceTypeById.__qualname__}] resourceType id: {id}')
+            raise ResourceTypeDoesNotExistException(f'resource type id: {id}')
 
         return ResourceType.createFrom(id=result[0]['id'], name=result[0]['name'])
 
@@ -112,13 +115,16 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
         # Check if it is deleted
         try:
             self.resourceTypeById(resourceType.id())
-            raise ObjectCouldNotBeDeletedException()
+            logger.debug(f'[{ResourceTypeRepositoryImpl.deleteResourceType.__qualname__}] Object could not be found exception for resource type id: {resourceType.id()}')
+            raise ObjectCouldNotBeDeletedException(f'resource type id: {resourceType.id()}')
         except ResourceTypeDoesNotExistException:
             resourceType.publishDelete()
 
     def updateResourceType(self, resourceType: ResourceType) -> None:
         oldResourceType = self.resourceTypeById(resourceType.id())
         if oldResourceType == resourceType:
+            logger.debug(
+                f'[{ResourceTypeRepositoryImpl.updateResourceType.__qualname__}] Object identical exception for old resource type: {oldResourceType}\nresource type: {resourceType}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -136,4 +142,6 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
         # Check if it is updated
         aResourceType = self.resourceTypeById(resourceType.id())
         if aResourceType != resourceType:
-            raise ObjectCouldNotBeUpdatedException()
+            logger.warn(
+                f'[{ResourceTypeRepositoryImpl.updateResourceType.__qualname__}] The object resource type: {resourceType} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'resource type: {resourceType}')
