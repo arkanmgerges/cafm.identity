@@ -32,10 +32,10 @@ class ProjectRepositoryImpl(ProjectRepository):
 
     def createProject(self, project: Project):
         aql = '''
-        UPSERT { id: @id}
-            INSERT {id: @id, name: @name}
+        UPSERT {id: @id, type: 'project'}
+            INSERT {id: @id, name: @name, type: 'project'}
             UPDATE {name: @name}
-          IN project
+          IN resource
         '''
 
         bindVars = {"id": project.id(), "name": project.name()}
@@ -44,9 +44,9 @@ class ProjectRepositoryImpl(ProjectRepository):
 
     def projectByName(self, name: str) -> Project:
         aql = '''
-            FOR u IN project
-            FILTER u.name == @name
-            RETURN u
+            FOR d IN resource
+                FILTER d.name == @name AND d.type == 'project'
+                RETURN d
         '''
 
         bindVars = {"name": name}
@@ -60,9 +60,9 @@ class ProjectRepositoryImpl(ProjectRepository):
 
     def projectById(self, id: str) -> Project:
         aql = '''
-            FOR u IN project
-            FILTER u.id == @id
-            RETURN u
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'project'
+                RETURN d
         '''
 
         bindVars = {"id": id}
@@ -83,7 +83,7 @@ class ProjectRepositoryImpl(ProjectRepository):
             sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                LET ds = (FOR d IN project #sortData RETURN d)
+                LET ds = (FOR d IN resource FILTER d.type == 'project' #sortData RETURN d)
                 RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
             if sortData != '':
@@ -101,9 +101,9 @@ class ProjectRepositoryImpl(ProjectRepository):
 
     def deleteProject(self, project: Project) -> None:
         aql = '''
-            FOR d IN project
-            FILTER d.id == @id
-            REMOVE d IN project
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'project'
+                REMOVE d IN resource
         '''
 
         bindVars = {"id": project.id()}
@@ -126,9 +126,9 @@ class ProjectRepositoryImpl(ProjectRepository):
             raise ObjectIdenticalException()
 
         aql = '''
-            FOR d IN project
-            FILTER d.id == @id
-            UPDATE d WITH {name: @name} IN project
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'project'
+                UPDATE d WITH {name: @name} IN resource
         '''
 
         bindVars = {"id": project.id(), "name": project.name()}

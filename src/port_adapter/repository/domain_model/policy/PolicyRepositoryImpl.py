@@ -58,8 +58,8 @@ class PolicyRepositoryImpl(PolicyRepository):
     def roleDocumentId(self, role):
         # Get the role doc id
         aql = '''
-            FOR d IN role
-                FILTER d.id == @id
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'role'
                 RETURN d
         '''
         bindVars = {"id": role.id()}
@@ -75,8 +75,8 @@ class PolicyRepositoryImpl(PolicyRepository):
 
     def userDocumentId(self, user):
         aql = '''
-            FOR d IN user
-                FILTER d.id == @id
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'user'
                 RETURN d
         '''
         bindVars = {"id": user.id()}
@@ -92,8 +92,8 @@ class PolicyRepositoryImpl(PolicyRepository):
 
     def userGroupDocumentId(self, userGroup):
         aql = '''
-            FOR d IN user_group
-                FILTER d.id == @id
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'user_group'
                 RETURN d
         '''
         bindVars = {"id": userGroup.id()}
@@ -334,8 +334,8 @@ class PolicyRepositoryImpl(PolicyRepository):
     def permissionDocumentId(self, permission: Permission):
         # Get the doc id
         aql = '''
-            FOR d IN permission
-                FILTER d.id == @id
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'permission'
                 RETURN d
         '''
         bindVars = {"id": permission.id()}
@@ -352,8 +352,8 @@ class PolicyRepositoryImpl(PolicyRepository):
     def resourceTypeDocumentId(self, resourceType: ResourceType):
         # Get the doc id
         aql = '''
-            FOR d IN resource_type
-                FILTER d.id == @id
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'resource_type'
                 RETURN d
         '''
         bindVars = {"id": resourceType.id()}
@@ -371,9 +371,9 @@ class PolicyRepositoryImpl(PolicyRepository):
     def assignmentRoleToPermissionForResourceType(self, roleDocId, permissionDocId, resourceTypeDocId) -> List:
         # Check if there is a link
         aql = '''
-            WITH `has`, `for`, `role`, `permission`, `resource_type`
-            FOR d IN role
-                FILTER d._id == @roleDocId
+            WITH `has`, `for`, `resource`
+            FOR d IN `resource`
+                FILTER d._id == @roleDocId AND d.type == 'role'
                 LET r = (
                     FOR v1,e1 IN OUTBOUND d._id `has` FILTER e1.to_type == "permission" AND v1._id == @permissionDocId
                         FOR v2,e2 IN OUTBOUND v1._id `for` FILTER e2.to_type == "resource_type" AND v2._id == @resourceTypeDocId
@@ -490,13 +490,13 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return result
 
-    def resourceDocumentId(self, resource):
+    def resourceDocumentId(self, resource: Resource):
         aql = '''
-            FOR d IN @@resourceTypeName
-                FILTER d.id == @id
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == @type
                 RETURN d
         '''
-        bindVars = {"id": resource.id(), "resourceTypeName": resource.type()}
+        bindVars = {"id": resource.id(), "type": resource.type()}
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:

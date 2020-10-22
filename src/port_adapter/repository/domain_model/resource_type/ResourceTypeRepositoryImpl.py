@@ -32,10 +32,10 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
 
     def createResourceType(self, resourceType: ResourceType):
         aql = '''
-        UPSERT { id: @id}
-            INSERT {id: @id, name: @name}
+        UPSERT {id: @id, type: 'resource_type'}
+            INSERT {id: @id, name: @name, type: 'resource_type'}
             UPDATE {name: @name}
-          IN resource_type
+          IN resource
         '''
 
         bindVars = {"id": resourceType.id(), "name": resourceType.name()}
@@ -44,9 +44,9 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
 
     def resourceTypeByName(self, name: str) -> ResourceType:
         aql = '''
-            FOR u IN resource_type
-            FILTER u.name == @name
-            RETURN u
+            FOR d IN resource
+            FILTER d.name == @name AND d.type == 'resource_type'
+            RETURN d
         '''
 
         bindVars = {"name": name}
@@ -60,9 +60,9 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
 
     def resourceTypeById(self, id: str) -> ResourceType:
         aql = '''
-            FOR u IN resource_type
-            FILTER u.id == @id
-            RETURN u
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'resource_type'
+                RETURN d
         '''
 
         bindVars = {"id": id}
@@ -83,7 +83,7 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
             sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                LET ds = (FOR d IN resource_type #sortData RETURN d)
+                LET ds = (FOR d IN resource FILTER d.type == 'resource_type' #sortData RETURN d)
                 RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
             if sortData != '':
@@ -101,9 +101,9 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
 
     def deleteResourceType(self, resourceType: ResourceType) -> None:
         aql = '''
-            FOR d IN resource_type
-            FILTER d.id == @id
-            REMOVE d IN resource_type
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'resource_type'
+                REMOVE d IN resource
         '''
 
         bindVars = {"id": resourceType.id()}
@@ -128,9 +128,9 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
             raise ObjectIdenticalException()
 
         aql = '''
-            FOR d IN resource_type
-            FILTER d.id == @id
-            UPDATE d WITH {name: @name} IN resource_type
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'resource_type'
+                UPDATE d WITH {name: @name} IN resource
         '''
 
         bindVars = {"id": resourceType.id(), "name": resourceType.name()}

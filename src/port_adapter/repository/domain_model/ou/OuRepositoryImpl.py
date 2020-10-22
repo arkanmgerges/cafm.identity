@@ -31,10 +31,10 @@ class OuRepositoryImpl(OuRepository):
 
     def createOu(self, ou: Ou):
         aql = '''
-        UPSERT { id: @id}
-            INSERT {id: @id, name: @name}
+        UPSERT {id: @id, type: 'ou'}
+            INSERT {id: @id, name: @name, type: 'ou'}
             UPDATE {name: @name}
-          IN ou
+          IN resource
         '''
 
         bindVars = {"id": ou.id(), "name": ou.name()}
@@ -43,9 +43,9 @@ class OuRepositoryImpl(OuRepository):
 
     def ouByName(self, name: str) -> Ou:
         aql = '''
-            FOR u IN ou
-            FILTER u.name == @name
-            RETURN u
+            FOR d IN resource
+                FILTER d.name == @name AND d.type == 'ou' 
+                RETURN d
         '''
 
         bindVars = {"name": name}
@@ -59,9 +59,9 @@ class OuRepositoryImpl(OuRepository):
 
     def ouById(self, id: str) -> Ou:
         aql = '''
-            FOR u IN ou
-            FILTER u.id == @id
-            RETURN u
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'ou'
+                RETURN d
         '''
 
         bindVars = {"id": id}
@@ -82,7 +82,7 @@ class OuRepositoryImpl(OuRepository):
             sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                LET ds = (FOR d IN ou #sortData RETURN d)
+                LET ds = (FOR d IN resource FILTER d.type == 'ou' #sortData RETURN d)
                 RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
             if sortData != '':
@@ -100,9 +100,9 @@ class OuRepositoryImpl(OuRepository):
 
     def deleteOu(self, ou: Ou) -> None:
         aql = '''
-            FOR d IN ou
-            FILTER d.id == @id
-            REMOVE d IN ou
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'ou'
+                REMOVE d IN resource
         '''
 
         bindVars = {"id": ou.id()}
@@ -126,9 +126,9 @@ class OuRepositoryImpl(OuRepository):
             raise ObjectIdenticalException()
 
         aql = '''
-            FOR d IN ou
-            FILTER d.id == @id
-            UPDATE d WITH {name: @name} IN ou
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'ou'
+                UPDATE d WITH {name: @name} IN resource
         '''
 
         bindVars = {"id": ou.id(), "name": ou.name()}

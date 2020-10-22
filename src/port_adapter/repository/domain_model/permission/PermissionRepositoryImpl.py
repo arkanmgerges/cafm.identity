@@ -32,10 +32,10 @@ class PermissionRepositoryImpl(PermissionRepository):
 
     def createPermission(self, permission: Permission):
         aql = '''
-        UPSERT {id: @id}
-            INSERT {id: @id, name: @name, allowed_actions: @allowedActions}
+        UPSERT {id: @id, type: 'permission'}
+            INSERT {id: @id, name: @name, allowed_actions: @allowedActions, type: 'permission'}
             UPDATE {name: @name, allowed_actions: @allowedActions}
-            IN permission
+            IN resource
         '''
 
         bindVars = {"id": permission.id(), "name": permission.name(), "allowedActions": permission.allowedActions()}
@@ -44,9 +44,9 @@ class PermissionRepositoryImpl(PermissionRepository):
 
     def permissionByName(self, name: str) -> Permission:
         aql = '''
-            FOR u IN permission
-                FILTER u.name == @name
-                RETURN u
+            FOR d IN resource
+                FILTER d.name == @name AND d.type == 'permission'
+                RETURN d
         '''
 
         bindVars = {"name": name}
@@ -61,9 +61,9 @@ class PermissionRepositoryImpl(PermissionRepository):
 
     def permissionById(self, id: str) -> Permission:
         aql = '''
-            FOR u IN permission
-                FILTER u.id == @id
-                RETURN u
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'permission'
+                RETURN d
         '''
 
         bindVars = {"id": id}
@@ -86,7 +86,7 @@ class PermissionRepositoryImpl(PermissionRepository):
             sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                LET ds = (FOR d IN permission #sortData RETURN d)
+                LET ds = (FOR d IN resource FILTER d.type == 'permission' #sortData RETURN d)
                 RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
             if sortData != '':
@@ -106,9 +106,9 @@ class PermissionRepositoryImpl(PermissionRepository):
 
     def deletePermission(self, permission: Permission) -> None:
         aql = '''
-            FOR d IN permission
-            FILTER d.id == @id
-            REMOVE d IN permission
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'permission'
+                REMOVE d IN resource
         '''
 
         bindVars = {"id": permission.id()}
@@ -133,9 +133,9 @@ class PermissionRepositoryImpl(PermissionRepository):
             raise ObjectIdenticalException()
 
         aql = '''
-            FOR d IN permission
-                FILTER d.id == @id
-                UPDATE d WITH {name: @name} IN permission
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'permission'
+                UPDATE d WITH {name: @name} IN resource
         '''
 
         bindVars = {"id": permission.id(), "name": permission.name()}

@@ -31,10 +31,10 @@ class UserGroupRepositoryImpl(UserGroupRepository):
 
     def createUserGroup(self, userGroup: UserGroup):
         aql = '''
-        UPSERT { id: @id}
-            INSERT {id: @id, name: @name}
+        UPSERT {id: @id, type: 'user_group'}
+            INSERT {id: @id, name: @name, type: 'user_group'}
             UPDATE {name: @name}
-          IN user_group
+          IN resource
         '''
 
         bindVars = {"id": userGroup.id(), "name": userGroup.name()}
@@ -43,9 +43,9 @@ class UserGroupRepositoryImpl(UserGroupRepository):
 
     def userGroupByName(self, name: str) -> UserGroup:
         aql = '''
-            FOR u IN user_group
-            FILTER u.name == @name
-            RETURN u
+            FOR d IN resource
+                FILTER d.name == @name AND d.type == 'user_group'
+                RETURN d
         '''
 
         bindVars = {"name": name}
@@ -59,9 +59,9 @@ class UserGroupRepositoryImpl(UserGroupRepository):
 
     def userGroupById(self, id: str) -> UserGroup:
         aql = '''
-            FOR u IN user_group
-            FILTER u.id == @id
-            RETURN u
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'user_group'
+                RETURN d
         '''
 
         bindVars = {"id": id}
@@ -82,7 +82,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
             sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                LET ds = (FOR d IN user_group #sortData RETURN d)
+                LET ds = (FOR d IN resource FILTER d.type == 'user_group' #sortData RETURN d)
                 RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
             if sortData != '':
@@ -100,9 +100,9 @@ class UserGroupRepositoryImpl(UserGroupRepository):
 
     def deleteUserGroup(self, userGroup: UserGroup) -> None:
         aql = '''
-            FOR d IN user_group
-            FILTER d.id == @id
-            REMOVE d IN user_group
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'user_group'
+                REMOVE d IN resource
         '''
 
         bindVars = {"id": userGroup.id()}
@@ -127,9 +127,9 @@ class UserGroupRepositoryImpl(UserGroupRepository):
             raise ObjectIdenticalException()
 
         aql = '''
-            FOR d IN user_group
-            FILTER d.id == @id
-            UPDATE d WITH {name: @name} IN user_group
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'user_group'
+                UPDATE d WITH {name: @name} IN resource
         '''
 
         bindVars = {"id": userGroup.id(), "name": userGroup.name()}

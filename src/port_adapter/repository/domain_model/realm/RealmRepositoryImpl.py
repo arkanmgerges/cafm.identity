@@ -32,9 +32,9 @@ class RealmRepositoryImpl(RealmRepository):
     def createRealm(self, realm: Realm):
         aql = '''
         UPSERT {id: @id}
-            INSERT {id: @id, name: @name}
+            INSERT {id: @id, name: @name, type: 'realm'}
             UPDATE {name: @name}
-          IN realm
+          IN resource
         '''
 
         bindVars = {"id": realm.id(), "name": realm.name()}
@@ -43,9 +43,9 @@ class RealmRepositoryImpl(RealmRepository):
 
     def realmByName(self, name: str) -> Realm:
         aql = '''
-            FOR u IN realm
-            FILTER u.name == @name
-            RETURN u
+            FOR d IN resource
+                FILTER d.name == @name AND d.type == 'realm'
+                RETURN d
         '''
 
         bindVars = {"name": name}
@@ -59,9 +59,9 @@ class RealmRepositoryImpl(RealmRepository):
 
     def realmById(self, id: str) -> Realm:
         aql = '''
-            FOR u IN realm
-            FILTER u.id == @id
-            RETURN u
+            FOR d IN realm
+                FILTER d.id == @id AND d.type == 'realm'
+                RETURN d
         '''
 
         bindVars = {"id": id}
@@ -82,7 +82,7 @@ class RealmRepositoryImpl(RealmRepository):
             sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                LET ds = (FOR d IN realm #sortData RETURN d)
+                LET ds = (FOR d IN resource FILTER d.type == 'realm' #sortData RETURN d)
                 RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
             if sortData != '':
@@ -100,9 +100,9 @@ class RealmRepositoryImpl(RealmRepository):
 
     def deleteRealm(self, realm: Realm) -> None:
         aql = '''
-            FOR d IN realm
-            FILTER d.id == @id
-            REMOVE d IN realm
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'realm'
+                REMOVE d IN resource
         '''
 
         bindVars = {"id": realm.id()}
@@ -125,9 +125,9 @@ class RealmRepositoryImpl(RealmRepository):
             raise ObjectIdenticalException()
 
         aql = '''
-            FOR d IN realm
-            FILTER d.id == @id
-            UPDATE d WITH {name: @name} IN realm
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'realm'
+                UPDATE d WITH {name: @name} IN resource
         '''
 
         bindVars = {"id": realm.id(), "name": realm.name()}

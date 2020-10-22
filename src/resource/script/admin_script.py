@@ -49,20 +49,29 @@ def init_db():
 
         dbConnection = connection[dbName]
         click.echo(click.style(f'Create collections:', fg='green'))
-        collections = ['project', 'user_group', 'user', 'permission', 'role', 'resource_type', 'realm', 'ou']
+        collections = ['resource']
         for colName in collections:
             dbConnection.createCollection(name=colName, keyOptions={"type": "autoincrement"})
 
         # Add resource types
-        for resourceType in ['realm', 'ou', 'project', 'user', 'role', 'permission']:
-            aql = '''
-                        UPSERT { name: @name}
-                            INSERT {id: @id, name: @name}
+        for resourceType in ['realm', 'ou', 'project', 'user', 'role', 'permission', 'user_group']:
+            aql = ''
+            if resourceType == 'permission':
+                aql = '''
+                        UPSERT {name: @name, type: @type}
+                            INSERT {id: @id, name: @name, type: @type, allowed_actions: ["*"]}
                             UPDATE {name: @name}
-                          IN resource_type
+                          IN resource
                         '''
+            else:
+                aql = '''
+                            UPSERT {name: @name, type: @type}
+                                INSERT {id: @id, name: @name, type: @type}
+                                UPDATE {name: @name}
+                              IN resource
+                            '''
 
-            bindVars = {"id": uuid.uuid4(), "name": resourceType}
+            bindVars = {"id": uuid.uuid4(), "name": resourceType, "type": resourceType}
             queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
         # Create edges
@@ -126,10 +135,10 @@ def assign_user_super_admin_role(username, password, database_name):
     userId = uuid.uuid4()
     password = hashlib.sha256(password.encode()).hexdigest()
     aql = '''
-            UPSERT { name: @name}
-                INSERT {id: @id, name: @name, password: @password}
-                UPDATE {name: @name, password: @password }
-              IN user
+            UPSERT {name: @name, type: 'user'}
+                INSERT {id: @id, name: @name, password: @password, type: 'user'}
+                UPDATE {name: @name, password: @password, type: 'user'}
+              IN resource
             '''
 
     bindVars = {"id": userId, "name": username, "password": password}
@@ -137,8 +146,8 @@ def assign_user_super_admin_role(username, password, database_name):
 
     # Get the user doc id
     aql = '''
-                FOR u IN user
-                FILTER u.name == @name
+                FOR u IN resource
+                FILTER u.name == @name AND u.type == 'user'
                 RETURN u
             '''
 
@@ -149,10 +158,10 @@ def assign_user_super_admin_role(username, password, database_name):
 
     # Create a super admin role
     aql = '''
-            UPSERT { name: @name}
-                INSERT {id: @id, name: @name}
+            UPSERT {name: @name, type: 'role'}
+                INSERT {id: @id, name: @name, type: 'role'}
                 UPDATE {name: @name}
-              IN role
+              IN resource
             '''
     roleId = uuid.uuid4()
     bindVars = {"id": roleId, "name": 'super_admin'}
@@ -160,10 +169,10 @@ def assign_user_super_admin_role(username, password, database_name):
 
     # Get the role doc id
     aql = '''
-                    FOR r IN role
-                    FILTER r.name == 'super_admin'
-                    RETURN r
-                '''
+        FOR r IN resource
+        FILTER r.name == 'super_admin' AND r.type == 'role'
+        RETURN r
+    '''
 
     queryResult: AQLQuery = db.AQLQuery(aql, rawResults=True)
     result = queryResult.result[0]

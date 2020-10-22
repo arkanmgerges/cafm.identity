@@ -32,10 +32,10 @@ class UserRepositoryImpl(UserRepository):
     def createUser(self, user: User):
         logger.debug(f'[{UserRepositoryImpl.createUser.__qualname__}] - with name = {user.name()}')
         aql = '''
-        UPSERT { id: @id}
-            INSERT {id: @id, name: @name, password: @password}
+        UPSERT {id: @id, type: 'user'}
+            INSERT {id: @id, name: @name, password: @password, type: 'user'}
             UPDATE {name: @name, password: @password }
-          IN user
+          IN resource
         '''
 
         bindVars = {"id": user.id(), "name": user.name(), "password": user.password()}
@@ -44,9 +44,9 @@ class UserRepositoryImpl(UserRepository):
     def userByName(self, name: str) -> User:
         logger.debug(f'[{UserRepositoryImpl.userByName.__qualname__}] - with name = {name}')
         aql = '''
-            FOR u IN user
-            FILTER u.name == @name
-            RETURN u
+            FOR d IN resource
+                FILTER d.name == @name AND d.type == 'user'
+                RETURN d
         '''
 
         bindVars = {"name": name}
@@ -61,9 +61,9 @@ class UserRepositoryImpl(UserRepository):
     def userByNameAndPassword(self, name: str, password: str) -> User:
         logger.debug(f'[{UserRepositoryImpl.userByNameAndPassword.__qualname__}] - with name = {name}')
         aql = '''
-            FOR u IN user
-            FILTER u.name == @name AND u.password == @password
-            RETURN u
+            FOR d IN resource
+                FILTER d.name == @name AND d.password == @password AND d.type == 'user'
+                RETURN d
         '''
 
         bindVars = {"name": name, "password": password}
@@ -77,9 +77,9 @@ class UserRepositoryImpl(UserRepository):
 
     def userById(self, id: str) -> User:
         aql = '''
-            FOR u IN user
-            FILTER u.id == @id
-            RETURN u
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'user'
+                RETURN d
         '''
 
         bindVars = {"id": id}
@@ -100,7 +100,7 @@ class UserRepositoryImpl(UserRepository):
             sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                LET ds = (FOR d IN user #sortData RETURN d)
+                LET ds = (FOR d IN resource FILTER d.type == 'user' #sortData RETURN d)
                 RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
             if sortData != '':
@@ -118,9 +118,9 @@ class UserRepositoryImpl(UserRepository):
 
     def deleteUser(self, user: User) -> None:
         aql = '''
-            FOR d IN user
-            FILTER d.id == @id
-            REMOVE d IN user
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'user'
+                REMOVE d IN resource
         '''
 
         bindVars = {"id": user.id()}
@@ -143,9 +143,9 @@ class UserRepositoryImpl(UserRepository):
             raise ObjectIdenticalException(f'user id: {user.id()}')
 
         aql = '''
-            FOR d IN user
-            FILTER d.id == @id
-            UPDATE d WITH {name: @name} IN user
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'user'
+                UPDATE d WITH {name: @name} IN resource
         '''
 
         bindVars = {"id": user.id(), "name": user.name()}

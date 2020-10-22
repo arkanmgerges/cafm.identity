@@ -25,7 +25,6 @@ class AuthorizationRepositoryImpl(AuthorizationRepository):
             raise Exception(
                 f'[{AuthorizationRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
 
-
         try:
             self._cache = redis.Redis(host=os.getenv('CAFM_IDENTITY_REDIS_HOST', 'localhost'),
                                       port=os.getenv('CAFM_IDENTITY_REDIS_PORT', 6379))
@@ -39,12 +38,13 @@ class AuthorizationRepositoryImpl(AuthorizationRepository):
         logger.debug(
             f'[{AuthorizationRepositoryImpl.rolesByUserId.__qualname__}] - with id: {id}')
         aql = '''
-                WITH role,user_group
-                FOR u IN user
-                FILTER u.id == @id
+                WITH resource
+                FOR u IN resource
+                FILTER u.id == @id AND u.type == 'user'
                 LET r1 = (FOR v,e IN 1..1 OUTBOUND u._id has FILTER e.to_type == "role" RETURN v)
                 LET r2 = (
-                            FOR ug IN user_group
+                            FOR ug IN resource
+                            FILTER ug.type == 'user_group'
                             FOR vUser,eUser IN 1..1 OUTBOUND ug._id has FILTER eUser.to_type == "user" AND vUser._id == u._id
                             FOR vRole,eRole IN 1..1 OUTBOUND ug._id has FILTER eRole.to_type == "role" RETURN vRole
                          )
@@ -61,7 +61,6 @@ class AuthorizationRepositoryImpl(AuthorizationRepository):
 
         result = result[0]
         return result['role']
-
 
     def tokenExists(self, token: str) -> bool:
         return self._cache.exists(f'{self._cacheSessionKeyPrefix}{token}') == 1

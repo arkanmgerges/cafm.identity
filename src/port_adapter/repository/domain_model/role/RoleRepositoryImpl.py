@@ -31,10 +31,10 @@ class RoleRepositoryImpl(RoleRepository):
 
     def createRole(self, role: Role):
         aql = '''
-        UPSERT { id: @id}
-            INSERT {id: @id, name: @name}
+        UPSERT {id: @id, type: 'role'}
+            INSERT {id: @id, name: @name, type: 'role'}
             UPDATE {name: @name}
-          IN role
+          IN resource
         '''
 
         bindVars = {"id": role.id(), "name": role.name()}
@@ -43,9 +43,9 @@ class RoleRepositoryImpl(RoleRepository):
 
     def roleByName(self, name: str) -> Role:
         aql = '''
-            FOR u IN role
-                FILTER u.name == @name
-                RETURN u
+            FOR d IN resource
+                FILTER d.name == @name AND d.type == 'role'
+                RETURN d
         '''
 
         bindVars = {"name": name}
@@ -59,9 +59,9 @@ class RoleRepositoryImpl(RoleRepository):
 
     def roleById(self, id: str) -> Role:
         aql = '''
-            FOR u IN role
-                FILTER u.id == @id
-                RETURN u
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'role'
+                RETURN d
         '''
 
         bindVars = {"id": id}
@@ -75,9 +75,9 @@ class RoleRepositoryImpl(RoleRepository):
 
     def deleteRole(self, role: Role) -> None:
         aql = '''
-            FOR d IN role
-                FILTER d.id == @id
-                REMOVE d IN role
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'role'
+                REMOVE d IN resource
         '''
 
         bindVars = {"id": role.id()}
@@ -102,9 +102,9 @@ class RoleRepositoryImpl(RoleRepository):
             raise ObjectIdenticalException()
 
         aql = '''
-            FOR d IN role
-                FILTER d.id == @id
-                UPDATE d WITH {name: @name} IN role
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'role'
+                UPDATE d WITH {name: @name} IN resource
         '''
 
         bindVars = {"id": role.id(), "name": role.name()}
@@ -127,7 +127,7 @@ class RoleRepositoryImpl(RoleRepository):
             sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                LET ds = (FOR d IN role #sortData RETURN d)
+                LET ds = (FOR d IN resource FILTER d.type == 'role' #sortData RETURN d)
                 RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
             if sortData != '':
