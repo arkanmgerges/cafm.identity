@@ -3,6 +3,7 @@
 """
 from uuid import uuid4
 
+from src.domain_model.common.Resource import Resource
 from src.domain_model.permission.Permission import Permission
 
 
@@ -20,6 +21,8 @@ def test_create_permission_with_semantic_constructor():
     permission = Permission.createFrom(id=id, name='Prj1')
     # Assert
     assert isinstance(permission, Permission)
+    assert isinstance(permission, Resource)
+    assert permission.type() == 'permission'
     assert permission.id() == id
     assert permission.name() == 'Prj1'
 

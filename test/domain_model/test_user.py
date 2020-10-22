@@ -3,6 +3,7 @@
 """
 from uuid import uuid4
 
+from src.domain_model.common.Resource import Resource
 from src.domain_model.user.User import User
 
 
@@ -20,7 +21,9 @@ def test_create_user_with_semantic_constructor():
     user = User.createFrom(id=id, name='john', password='1234')
     # Assert
     assert isinstance(user, User)
+    assert isinstance(user, Resource)
     assert user.id() == id
+    assert user.type() == 'user'
     assert user.name() == 'john'
     assert user.password() == '1234'
 

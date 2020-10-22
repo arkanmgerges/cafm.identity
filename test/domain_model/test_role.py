@@ -3,6 +3,7 @@
 """
 from uuid import uuid4
 
+from src.domain_model.common.Resource import Resource
 from src.domain_model.role.Role import Role
 
 
@@ -20,6 +21,8 @@ def test_create_role_with_semantic_constructor():
     role = Role.createFrom(id=id, name='Prj1')
     # Assert
     assert isinstance(role, Role)
+    assert isinstance(role, Resource)
+    assert role.type() == 'role'
     assert role.id() == id
     assert role.name() == 'Prj1'
 

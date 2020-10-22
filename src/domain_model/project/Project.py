@@ -3,6 +3,7 @@
 """
 from copy import copy
 
+from src.domain_model.common.Resource import Resource
 from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 from src.resource.logging.logger import logger
 
@@ -12,9 +13,10 @@ from src.resource.logging.logger import logger
 from uuid import uuid4
 
 
-class Project:
+class Project(Resource):
     def __init__(self, id: str = None, name=''):
-        self._id = str(uuid4()) if id is None else id
+        anId = str(uuid4()) if id is None else id
+        super().__init__(id=anId, type='project')
         self._name = name
 
     @classmethod
@@ -26,9 +28,6 @@ class Project:
             logger.debug(f'[{Project.createFrom.__qualname__}] - Create Project with name = {name} and id = {id}')
             DomainEventPublisher.addEventForPublishing(ProjectCreated(project))
         return project
-
-    def id(self) -> str:
-        return self._id
 
     def name(self) -> str:
         return self._name

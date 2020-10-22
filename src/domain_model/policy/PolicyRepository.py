@@ -4,6 +4,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Any
 
+from src.domain_model.common.Resource import Resource
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.resource_type.ResourceType import ResourceType
 from src.domain_model.role.Role import Role
@@ -114,6 +115,30 @@ class PolicyRepository(ABC):
             role (Role): The role to be revoked from the permission for a resource type
             permission (Permission): The permission that will be separated from the role for a resource type
             resourceType (ResourceType): The resource type to be unlinked from the permission
+
+        :raises:
+            `ResourceAssignmentAlreadyExistException <src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException>` Raise an exception if the resource assignment already exist
+        """
+
+    @abstractmethod
+    def provideAccessRoleToResource(self, role: Role, resource: Resource) -> None:
+        """Make a link access for a role to a resource
+
+        Args:
+            role (Role): The role to have access to the resource
+            resource (Resource): The resource that the role has access to
+
+        :raises:
+            `ResourceAssignmentAlreadyExistException <src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException>` Raise an exception if the resource assignment already exist
+        """
+
+    @abstractmethod
+    def revokeAccessRoleFromResource(self, role: Role, resource: Resource) -> None:
+        """Revoke the link access of a role to a resource
+
+        Args:
+            role (Role): The role to unlink the access to the resource
+            resource (Resource): The resource that the role will be unlinked from it
 
         :raises:
             `ResourceAssignmentAlreadyExistException <src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException>` Raise an exception if the resource assignment already exist

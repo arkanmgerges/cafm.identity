@@ -3,6 +3,7 @@
 """
 from uuid import uuid4
 
+from src.domain_model.common.Resource import Resource
 from src.domain_model.project.Project import Project
 
 
@@ -20,6 +21,8 @@ def test_create_project_with_semantic_constructor():
     project = Project.createFrom(id=id, name='Prj1')
     # Assert
     assert isinstance(project, Project)
+    assert isinstance(project, Resource)
+    assert project.type() == 'project'
     assert project.id() == id
     assert project.name() == 'Prj1'
 

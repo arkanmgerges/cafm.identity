@@ -4,12 +4,14 @@
 from copy import copy
 from uuid import uuid4
 
+from src.domain_model.common.Resource import Resource
 from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 
 
-class UserGroup:
+class UserGroup(Resource):
     def __init__(self, id: str = None, name=''):
-        self._id = str(uuid4()) if id is None else id
+        anId = str(uuid4()) if id is None else id
+        super().__init__(id=anId, type='user_group')
         self._name = name
 
     @classmethod
@@ -20,9 +22,6 @@ class UserGroup:
             from src.domain_model.user_group.UserGroupCreated import UserGroupCreated
             DomainEventPublisher.addEventForPublishing(UserGroupCreated(userGroup))
         return userGroup
-
-    def id(self) -> str:
-        return self._id
 
     def name(self) -> str:
         return self._name

@@ -3,6 +3,7 @@
 """
 from uuid import uuid4
 
+from src.domain_model.common.Resource import Resource
 from src.domain_model.ou.Ou import Ou
 
 
@@ -20,6 +21,8 @@ def test_create_ou_with_semantic_constructor():
     ou = Ou.createFrom(id=id, name='Prj1')
     # Assert
     assert isinstance(ou, Ou)
+    assert isinstance(ou, Resource)
+    assert ou.type() == 'ou'
     assert ou.id() == id
     assert ou.name() == 'Prj1'
 

@@ -3,6 +3,7 @@
 """
 from copy import copy
 
+from src.domain_model.common.Resource import Resource
 from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 from src.resource.logging.logger import logger
 
@@ -12,9 +13,10 @@ from src.resource.logging.logger import logger
 from uuid import uuid4
 
 
-class Role:
+class Role(Resource):
     def __init__(self, id: str = None, name='', creator: str = 'super_admin'):
-        self._id = str(uuid4()) if id is None else id
+        anId = str(uuid4()) if id is None else id
+        super().__init__(id=anId, type='role')
         self._name = name
         self._creator = creator
 
@@ -28,9 +30,6 @@ class Role:
                 f'[{Role.createFrom.__qualname__}] - Create Role with name: {name} and id: {id}, creator: {creator}')
             DomainEventPublisher.addEventForPublishing(RoleCreated(role))
         return role
-
-    def id(self) -> str:
-        return self._id
 
     def name(self) -> str:
         return self._name

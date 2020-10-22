@@ -7,6 +7,7 @@ from typing import List, Any
 from pyArango.connection import Connection
 from pyArango.query import AQLQuery
 
+from src.domain_model.common.Resource import Resource
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
@@ -114,7 +115,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Check if there is any already exist link?
         result = self.assignmentRoleToUser(roleDocId, userDocId)
         if len(result) > 0:
-            logger.debug(f'[{PolicyRepositoryImpl.assignRoleToUser.__qualname__}] Resource already assigned for user: {user.id()}, role: {role.id()}')
+            logger.debug(
+                f'[{PolicyRepositoryImpl.assignRoleToUser.__qualname__}] Resource already assigned for user: {user.id()}, role: {role.id()}')
             raise ResourceAssignmentAlreadyExistException(
                 f'Resource already assigned for user: {user.id()}, role: {role.id()}')
 
@@ -133,7 +135,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         roleDocId = self.roleDocumentId(role)
         result = self.assignmentRoleToUser(roleDocId, userDocId)
         if len(result) == 0:
-            logger.debug(f'[{PolicyRepositoryImpl.revokeRoleFromUser.__qualname__}] Resource assignment for user: {user.id()} and role: {role.id()}')
+            logger.debug(
+                f'[{PolicyRepositoryImpl.revokeRoleFromUser.__qualname__}] Resource assignment for user: {user.id()} and role: {role.id()}')
             raise ResourceAssignmentDoesNotExistException(
                 f'Resource assignment for user: {user.id()} and role: {role.id()}')
         result = result[0]
@@ -175,7 +178,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Check if there is any already exist link?
         result = self.assignmentRoleToUserGroup(roleDocId, userGroupDocId)
         if len(result) > 0:
-            logger.debug(f'[{PolicyRepositoryImpl.assignRoleToUserGroup.__qualname__}] Resource already assigned for user group: {userGroup.id()}, role: {role.id()}')
+            logger.debug(
+                f'[{PolicyRepositoryImpl.assignRoleToUserGroup.__qualname__}] Resource already assigned for user group: {userGroup.id()}, role: {role.id()}')
             raise ResourceAssignmentAlreadyExistException(
                 f'Resource already assigned for user group: {userGroup.id()}, role: {role.id()}')
 
@@ -194,7 +198,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         roleDocId = self.roleDocumentId(role)
         result = self.assignmentRoleToUserGroup(roleDocId, userGroupDocId)
         if len(result) == 0:
-            logger.debug(f'[{PolicyRepositoryImpl.revokeRoleFromUserGroup.__qualname__}] Resource assignment for user group: {userGroup.id()} and role: {role.id()}')
+            logger.debug(
+                f'[{PolicyRepositoryImpl.revokeRoleFromUserGroup.__qualname__}] Resource assignment for user group: {userGroup.id()} and role: {role.id()}')
             raise ResourceAssignmentDoesNotExistException(
                 f'Resource assignment for user group: {userGroup.id()} and role: {role.id()}')
         result = result[0]
@@ -236,7 +241,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Check if there is any already exist link?
         result = self.assignmentUserToUserGroup(userDocId, userGroupDocId)
         if len(result) > 0:
-            logger.debug(f'[{PolicyRepositoryImpl.assignUserToUserGroup.__qualname__}] Resource already assigned for user group: {userGroup.id()}, user: {user.id()}')
+            logger.debug(
+                f'[{PolicyRepositoryImpl.assignUserToUserGroup.__qualname__}] Resource already assigned for user group: {userGroup.id()}, user: {user.id()}')
             raise ResourceAssignmentAlreadyExistException(
                 f'Resource already assigned for user group: {userGroup.id()}, user: {user.id()}')
 
@@ -255,7 +261,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         userDocId = self.userDocumentId(user)
         result = self.assignmentUserToUserGroup(userDocId, userGroupDocId)
         if len(result) == 0:
-            logger.debug(f'[{PolicyRepositoryImpl.revokeUserFromUserGroup.__qualname__}] Resource assignment for user group: {userGroup.id()} and user: {user.id()}')
+            logger.debug(
+                f'[{PolicyRepositoryImpl.revokeUserFromUserGroup.__qualname__}] Resource assignment for user group: {userGroup.id()} and user: {user.id()}')
             raise ResourceAssignmentDoesNotExistException(
                 f'Resource assignment for user group: {userGroup.id()} and user: {user.id()}')
         result = result[0]
@@ -299,7 +306,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Check if there is any already exist link?
         result = self.assignmentRoleToPermissionForResourceType(roleDocId, permissionDocId, resourceTypeDocId)
         if len(result) > 0:
-            logger.debug(f'[{PolicyRepositoryImpl.assignRoleToPermissionForResourceType.__qualname__}] Resource already assigned role id: {role.id()}, permission: {permission.id()}, resource type id: {resourceType.id()}')
+            logger.debug(
+                f'[{PolicyRepositoryImpl.assignRoleToPermissionForResourceType.__qualname__}] Resource already assigned role id: {role.id()}, permission: {permission.id()}, resource type id: {resourceType.id()}')
             raise ResourceAssignmentAlreadyExistException(
                 f'Resource already assigned role id: {role.id()}, permission: {permission.id()}, resource type id: {resourceType.id()}')
 
@@ -352,7 +360,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            logger.debug(f'[{PolicyRepositoryImpl.resourceTypeDocumentId.__qualname__}] resource type id: {resourceType.id()}')
+            logger.debug(
+                f'[{PolicyRepositoryImpl.resourceTypeDocumentId.__qualname__}] resource type id: {resourceType.id()}')
             raise ResourceTypeDoesNotExistException(
                 f'resource type id: {resourceType.id()}')
         result = result[0]
@@ -388,7 +397,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Check if there is any already exist link?
         result = self.assignmentRoleToPermissionForResourceType(roleDocId, permissionDocId, resourceTypeDocId)
         if len(result) == 0:
-            logger.debug(f'[{PolicyRepositoryImpl.revokeRoleFromPermissionForResourceType.__qualname__}] Resource assignment for role id: {role.id()}, permission id: {permission.id()}, resource type id: {resourceType.id()}')
+            logger.debug(
+                f'[{PolicyRepositoryImpl.revokeRoleFromPermissionForResourceType.__qualname__}] Resource assignment for role id: {role.id()}, permission id: {permission.id()}, resource type id: {resourceType.id()}')
             raise ResourceAssignmentDoesNotExistException(
                 f'Resource assignment for role id: {role.id()}, permission id: {permission.id()}, resource type id: {resourceType.id()}')
         result = result[0]
@@ -416,4 +426,85 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         logger.debug(
             f'[{PolicyRepositoryImpl.revokeRoleFromUserGroup.__qualname__}] Revoke role with id: {role.id()} from permission with id: {permission.id()} for resource type with id: {resourceType.id()}')
+
+    # endregion
+
+    # region Access Role - Resource
+    def provideAccessRoleToResource(self, role: Role, resource: Resource) -> None:
+        resourceDocId = self.resourceDocumentId(resource)
+        roleDocId = self.roleDocumentId(role)
+
+        # Check if there is any already exist link?
+        result = self.accessRoleToResource(roleDocId, resourceDocId, resource)
+        if len(result) > 0:
+            logger.debug(
+                f'[{PolicyRepositoryImpl.provideAccessRoleToResource.__qualname__}] Resource already assigned for role: {role.id()}, resource: {resource.id()}')
+            raise ResourceAssignmentAlreadyExistException(
+                f'Resource already assigned for role: {role.id()}, resource: {resource.id()}')
+
+        # Assign a role to the user
+        aql = '''
+                UPSERT {_from: @fromId, _to: @toId}
+                    INSERT {_from: @fromId, _to: @toId, from_type: 'role', to_type: @resourceTypeName}
+                    UPDATE {_from: @fromId, _to: @toId, from_type: 'role', to_type: @resourceTypeName}
+                  IN access                  
+                '''
+        bindVars = {"fromId": roleDocId, "toId": resourceDocId, "resourceTypeName": resource.type()}
+        _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+    def revokeAccessRoleFromResource(self, role: Role, resource: Resource) -> None:
+        resourceDocId = self.resourceDocumentId(resource)
+        roleDocId = self.roleDocumentId(role)
+        result = self.accessRoleToResource(roleDocId, resourceDocId, resource)
+        if len(result) == 0:
+            logger.debug(
+                f'[{PolicyRepositoryImpl.revokeAccessRoleFromResource.__qualname__}] Resource assignment for role: {role.id()} and resource: {resource.id()}')
+            raise ResourceAssignmentDoesNotExistException(
+                f'Resource assignment for role: {role.id()} and resource: {resource.id()}')
+        result = result[0]
+
+        # Delete the document
+        aql = '''
+            FOR d IN `access`
+                FILTER d._id == @_id
+                REMOVE d IN `access`
+        '''
+        bindVars = {"_id": result['_id']}
+        logger.debug(
+            f'[{PolicyRepositoryImpl.revokeRoleFromUser.__qualname__}] Revoke role with id: {role.id()} from resource with id: {resource.id()}, type: {resource.type()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        _ = queryResult.result
+
+    def accessRoleToResource(self, roleDocId, resourceDocId, resource: Resource) -> List:
+        # Check if there is a link
+        aql = '''
+            FOR d IN access
+              FILTER 
+                d._from == @fromId AND d._to == @toId
+                AND d.from_type == 'role' AND d.to_type == @resourceTypeName
+              RETURN d
+        '''
+        bindVars = {"fromId": roleDocId, "toId": resourceDocId, "resourceTypeName": resource.type()}
+        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        return result
+
+    def resourceDocumentId(self, resource):
+        aql = '''
+            FOR d IN @@resourceTypeName
+                FILTER d.id == @id
+                RETURN d
+        '''
+        bindVars = {"id": resource.id(), "resourceTypeName": resource.type()}
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+        if len(result) == 0:
+            logger.debug(f'[{PolicyRepositoryImpl.resourceDocumentId.__qualname__}] resource id: {resource.id()}')
+            raise RoleDoesNotExistException(
+                f'resource id: {resource.id()}')
+        result = result[0]
+        docId = result['_id']
+        return docId
+
     # endregion

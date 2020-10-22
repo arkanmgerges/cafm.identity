@@ -3,6 +3,7 @@
 """
 from uuid import uuid4
 
+from src.domain_model.common.Resource import Resource
 from src.domain_model.resource_type.ResourceType import ResourceType
 
 
@@ -20,6 +21,8 @@ def test_create_resourceType_with_semantic_constructor():
     resourceType = ResourceType.createFrom(id=id, name='Prj1')
     # Assert
     assert isinstance(resourceType, ResourceType)
+    assert isinstance(resourceType, Resource)
+    assert resourceType.type() == 'resource_type'
     assert resourceType.id() == id
     assert resourceType.name() == 'Prj1'
 
