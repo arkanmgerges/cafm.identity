@@ -7,15 +7,18 @@ import time
 import src.port_adapter.AppDi as AppDi
 from src.application.OuApplicationService import OuApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
 class DeleteOuHandler(Handler):
 
+    def __init__(self):
+        self._commandConstant = CommonCommandConstant.DELETE_OU
+
     def canHandle(self, name: str) -> bool:
-        return name == ApiCommandConstant.DELETE_OU.value
+        return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
@@ -28,6 +31,6 @@ class DeleteOuHandler(Handler):
             raise UnAuthorizedException()
 
         # Put the command into the messaging system, in order to be processed later
-        return {'name': IdentityCommandConstant.DELETE_OU.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'id': dataDict['id']},
                 'metadata': metadataDict}

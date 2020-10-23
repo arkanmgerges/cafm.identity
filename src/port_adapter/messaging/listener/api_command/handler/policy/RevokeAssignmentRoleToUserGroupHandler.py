@@ -5,15 +5,19 @@ import json
 import time
 
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant, \
+    CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
 class RevokeAssignmentRoleToUserGroupHandler(Handler):
 
+    def __init__(self):
+        self._commandConstant = CommonCommandConstant.REVOKE_ASSIGNMENT_ROLE_TO_USER_GROUP
+
     def canHandle(self, name: str) -> bool:
-        return name == ApiCommandConstant.REVOKE_ASSIGNMENT_ROLE_TO_USER_GROUP.value
+        return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
@@ -24,6 +28,6 @@ class RevokeAssignmentRoleToUserGroupHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        return {'name': IdentityCommandConstant.REVOKE_ASSIGNMENT_ROLE_TO_USER_GROUP.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'role_id': dataDict['role_id'], 'user_group_id': dataDict['user_group_id']},
                 'metadata': metadataDict}

@@ -5,15 +5,19 @@ import json
 import time
 
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant, \
+    CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
 class RevokeAssignmentRoleToPermissionForResourceTypeHandler(Handler):
 
+    def __init__(self):
+        self._commandConstant = CommonCommandConstant.REVOKE_ASSIGNMENT_ROLE_TO_PERMISSION_FOR_RESOURCE_TYPE
+
     def canHandle(self, name: str) -> bool:
-        return name == ApiCommandConstant.REVOKE_ASSIGNMENT_ROLE_TO_PERMISSION_FOR_RESOURCE_TYPE.value
+        return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
@@ -24,7 +28,7 @@ class RevokeAssignmentRoleToPermissionForResourceTypeHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        return {'name': IdentityCommandConstant.REVOKE_ASSIGNMENT_ROLE_TO_PERMISSION_FOR_RESOURCE_TYPE.value,
+        return {'name': self._commandConstant.value,
                 'createdOn': round(time.time() * 1000),
                 'data': {'role_id': dataDict['role_id'], 'permission_id': dataDict['permission_id'],
                          'resource_type_id': dataDict['resource_type_id']},

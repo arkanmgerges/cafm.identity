@@ -7,15 +7,18 @@ import time
 import src.port_adapter.AppDi as AppDi
 from src.application.RealmApplicationService import RealmApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant, CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
 class UpdateRealmHandler(Handler):
 
+    def __init__(self):
+        self._commandConstant = CommonCommandConstant.UPDATE_REALM
+
     def canHandle(self, name: str) -> bool:
-        return name == IdentityCommandConstant.UPDATE_REALM.value
+        return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
@@ -28,6 +31,6 @@ class UpdateRealmHandler(Handler):
             raise UnAuthorizedException()
 
         appService.updateRealm(id=dataDict['id'], name=dataDict['name'], token=metadataDict['token'])
-        return {'name': IdentityCommandConstant.UPDATE_REALM.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'id': dataDict['id'], 'name': dataDict['name']},
                 'metadata': metadataDict}

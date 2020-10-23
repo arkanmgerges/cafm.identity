@@ -7,15 +7,18 @@ import time
 import src.port_adapter.AppDi as AppDi
 from src.application.UserGroupApplicationService import UserGroupApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant, CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
 class UpdateUserGroupHandler(Handler):
 
+    def __init__(self):
+        self._commandConstant = CommonCommandConstant.UPDATE_USER_GROUP
+
     def canHandle(self, name: str) -> bool:
-        return name == IdentityCommandConstant.UPDATE_USER_GROUP.value
+        return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
@@ -28,6 +31,6 @@ class UpdateUserGroupHandler(Handler):
             raise UnAuthorizedException()
 
         appService.updateUserGroup(id=dataDict['id'], name=dataDict['name'], token=metadataDict['token'])
-        return {'name': IdentityCommandConstant.UPDATE_USER_GROUP.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'id': dataDict['id'], 'name': dataDict['name']},
                 'metadata': metadataDict}

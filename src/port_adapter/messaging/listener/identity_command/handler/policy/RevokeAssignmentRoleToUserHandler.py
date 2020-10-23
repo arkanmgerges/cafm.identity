@@ -7,15 +7,18 @@ import time
 import src.port_adapter.AppDi as AppDi
 from src.application.PolicyApplicationService import PolicyApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant, CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
 class RevokeAssignmentRoleToUserHandler(Handler):
 
+    def __init__(self):
+        self._commandConstant = CommonCommandConstant.REVOKE_ASSIGNMENT_ROLE_TO_USER
+
     def canHandle(self, name: str) -> bool:
-        return name == IdentityCommandConstant.REVOKE_ASSIGNMENT_ROLE_TO_USER.value
+        return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
@@ -28,6 +31,6 @@ class RevokeAssignmentRoleToUserHandler(Handler):
             raise UnAuthorizedException()
 
         appService.revokeAssignmentRoleToUser(roleId=dataDict['role_id'], userId=dataDict['user_id'], token=metadataDict['token'])
-        return {'name': IdentityCommandConstant.REVOKE_ASSIGNMENT_ROLE_TO_USER.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'role_id': dataDict['role_id'], 'user_id': dataDict['user_id']},
                 'metadata': metadataDict}

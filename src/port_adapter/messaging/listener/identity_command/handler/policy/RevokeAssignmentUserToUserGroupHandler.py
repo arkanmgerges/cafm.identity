@@ -7,15 +7,18 @@ import time
 import src.port_adapter.AppDi as AppDi
 from src.application.PolicyApplicationService import PolicyApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant, CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
 class RevokeAssignmentUserToUserGroupHandler(Handler):
 
+    def __init__(self):
+        self._commandConstant = CommonCommandConstant.REVOKE_ASSIGNMENT_USER_TO_USER_GROUP
+
     def canHandle(self, name: str) -> bool:
-        return name == IdentityCommandConstant.REVOKE_ASSIGNMENT_USER_TO_USER_GROUP.value
+        return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
@@ -28,6 +31,6 @@ class RevokeAssignmentUserToUserGroupHandler(Handler):
             raise UnAuthorizedException()
 
         appService.revokeAssignmentUserToUserGroup(userId=dataDict['user_id'], userGroupId=dataDict['user_group_id'], token=metadataDict['token'])
-        return {'name': IdentityCommandConstant.REVOKE_ASSIGNMENT_USER_TO_USER_GROUP.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'user_id': dataDict['user_id'], 'user_group_id': dataDict['user_group_id']},
                 'metadata': metadataDict}

@@ -5,15 +5,19 @@ import json
 import time
 
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant, \
+    CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
 class AssignUserToUserGroupHandler(Handler):
 
+    def __init__(self):
+        self._commandConstant = CommonCommandConstant.ASSIGN_USER_TO_USER_GROUP
+
     def canHandle(self, name: str) -> bool:
-        return name == ApiCommandConstant.ASSIGN_USER_TO_USER_GROUP.value
+        return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
@@ -24,6 +28,6 @@ class AssignUserToUserGroupHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        return {'name': IdentityCommandConstant.ASSIGN_USER_TO_USER_GROUP.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'user_id': dataDict['user_id'], 'user_group_id': dataDict['user_group_id']},
                 'metadata': metadataDict}

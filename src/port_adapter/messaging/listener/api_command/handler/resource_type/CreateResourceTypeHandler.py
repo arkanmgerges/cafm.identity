@@ -7,15 +7,19 @@ import time
 import src.port_adapter.AppDi as AppDi
 from src.application.ResourceTypeApplicationService import ResourceTypeApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant, \
+    CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
 class CreateResourceTypeHandler(Handler):
 
+    def __init__(self):
+        self._commandConstant = CommonCommandConstant.CREATE_RESOURCE_TYPE
+
     def canHandle(self, name: str) -> bool:
-        return name == ApiCommandConstant.CREATE_RESOURCE_TYPE.value
+        return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
@@ -28,6 +32,6 @@ class CreateResourceTypeHandler(Handler):
             raise UnAuthorizedException()
 
         obj = appService.createResourceType(name=dataDict['name'], objectOnly=True, token=metadataDict['token'])
-        return {'name': IdentityCommandConstant.CREATE_RESOURCE_TYPE.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'id': obj.id(), 'name': obj.name()},
                 'metadata': metadataDict}

@@ -7,15 +7,18 @@ import time
 import src.port_adapter.AppDi as AppDi
 from src.application.PermissionApplicationService import PermissionApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant, CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
 class DeletePermissionHandler(Handler):
 
+    def __init__(self):
+        self._commandConstant = CommonCommandConstant.DELETE_PERMISSION
+
     def canHandle(self, name: str) -> bool:
-        return name == IdentityCommandConstant.DELETE_PERMISSION.value
+        return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
@@ -28,6 +31,6 @@ class DeletePermissionHandler(Handler):
             raise UnAuthorizedException()
 
         appService.deletePermission(id=dataDict['id'], token=metadataDict['token'])
-        return {'name': IdentityCommandConstant.DELETE_PERMISSION.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'id': dataDict['id']},
                 'metadata': metadataDict}

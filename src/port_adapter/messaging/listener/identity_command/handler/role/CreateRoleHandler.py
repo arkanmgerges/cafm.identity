@@ -7,15 +7,18 @@ import time
 import src.port_adapter.AppDi as AppDi
 from src.application.RoleApplicationService import RoleApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant, CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
 class CreateRoleHandler(Handler):
 
+    def __init__(self):
+        self._commandConstant = CommonCommandConstant.CREATE_ROLE
+
     def canHandle(self, name: str) -> bool:
-        return name == IdentityCommandConstant.CREATE_ROLE.value
+        return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
@@ -28,6 +31,6 @@ class CreateRoleHandler(Handler):
             raise UnAuthorizedException()
 
         obj = appService.createRole(id=dataDict['id'], name=dataDict['name'], token=metadataDict['token'])
-        return {'name': IdentityCommandConstant.CREATE_ROLE.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'id': obj.id(), 'name': obj.name()},
                 'metadata': metadataDict}
