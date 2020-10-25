@@ -21,6 +21,7 @@ class ResourceTypeConstant(Enum):
     ASSIGNMENT_ROLE_TO_USER = 'assignment:role_to_user'
     ASSIGNMENT_USER_TO_USER_GROUP = 'assignment:user_to_user_group'
     ASSIGNMENT_ROLE_TO_PERMISSION_FOR_RESOURCE_TYPE = 'assignment:role_to_permission_for_resource_type'
+    ASSIGNMENT_ROLE_TO_ACCESS_RESOURCE = 'assignment:role_to_access_resource'
     ROLE = 'role'
     ALL = '*'
 

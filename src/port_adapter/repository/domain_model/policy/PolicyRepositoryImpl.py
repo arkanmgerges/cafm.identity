@@ -55,7 +55,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         # return Project.createFrom(id=result[0]['id'], name=result[0]['name'])
         return []
 
-    def roleDocumentId(self, role):
+    def roleDocumentId(self, role: Role):
         # Get the role doc id
         aql = '''
             FOR d IN resource
@@ -73,7 +73,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         roleDocId = result['_id']
         return roleDocId
 
-    def userDocumentId(self, user):
+    def userDocumentId(self, user: User):
         aql = '''
             FOR d IN resource
                 FILTER d.id == @id AND d.type == 'user'
@@ -90,7 +90,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         userDocId = result['_id']
         return userDocId
 
-    def userGroupDocumentId(self, userGroup):
+    def userGroupDocumentId(self, userGroup: UserGroup):
         aql = '''
             FOR d IN resource
                 FILTER d.id == @id AND d.type == 'user_group'
@@ -506,5 +506,65 @@ class PolicyRepositoryImpl(PolicyRepository):
         result = result[0]
         docId = result['_id']
         return docId
+    # endregion
+
+    # region Assignment Resource - Resource
+    def assignResourceToResource(self, resourceSrc: Resource, resourceDst: Resource) -> None:
+        resourceSrcDocId = self.resourceDocumentId(resourceSrc)
+        resourceDstDocId = self.resourceDocumentId(resourceDst)
+
+        # Check if there is any already exist link?
+        result = self.assignmentResourceToResource(resourceSrcDocId, resourceDstDocId)
+        if len(result) > 0:
+            logger.debug(
+                f'[{PolicyRepositoryImpl.assignResourceToResource.__qualname__}] Resource already assigned, source resource (id, type): ({resourceSrc.id()}, {resourceSrc.type()}), destination resource (id, type): ({resourceDst.id()}, {resourceDst.type()})')
+            raise ResourceAssignmentAlreadyExistException(
+                f'Resource already assigned, source resource (id, type): ({resourceSrc.id()}, {resourceSrc.type()}), destination resource (id, type): ({resourceDst.id()}, {resourceDst.type()})')
+
+        aql = '''
+                UPSERT {_from: @fromId, _to: @toId}
+                    INSERT {_from: @fromId, _to: @toId, from_type: @fromType, to_type: @toType}
+                    UPDATE {_from: @fromId, _to: @toId, from_type: @fromType, to_type: @toType}
+                  IN has                  
+                '''
+        bindVars = {"fromId": resourceSrcDocId, "toId": resourceDstDocId, "fromType": resourceSrc.type(), "toType": resourceDst.type()}
+        _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+    def revokeAssignmentResourceToResource(self, resourceSrc: Resource, resourceDst: Resource) -> None:
+        resourceSrcDocId = self.resourceDocumentId(resourceSrc)
+        resourceDstDocId = self.resourceDocumentId(resourceDst)
+
+        result = self.assignmentResourceToResource(resourceSrcDocId, resourceDstDocId)
+        if len(result) == 0:
+            logger.debug(
+                f'[{PolicyRepositoryImpl.revokeAssignmentResourceToResource.__qualname__}] Resource assignment between resource and another resource does not exist, source resource (id, type): ({resourceSrc.id()}, {resourceSrc.type()}), destination resource (id, type): ({resourceDst.id()}, {resourceDst.type()})')
+            raise ResourceAssignmentDoesNotExistException(
+                f'Resource assignment between resource and another resource does not exist, source resource (id, type): ({resourceSrc.id()}, {resourceSrc.type()}), destination resource (id, type): ({resourceDst.id()}, {resourceDst.type()})')
+        result = result[0]
+
+        # Delete the document
+        aql = '''
+            FOR d IN has
+                FILTER d._id == @_id
+                REMOVE d IN has
+        '''
+        bindVars = {"_id": result['_id']}
+        logger.debug(
+            f'[{PolicyRepositoryImpl.revokeUserFromUserGroup.__qualname__}] Revoke (resource with another resource), source resource (id, type): ({resourceSrc.id()}, {resourceSrc.type()}), destination resource (id, type): ({resourceDst.id()}, {resourceDst.type()})')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        _ = queryResult.result
+
+    def assignmentResourceToResource(self, resourceSrcDocId, resourceDstDocId) -> List:
+        aql = '''
+            FOR d IN has
+              FILTER 
+                d._from == @fromId AND d._to == @toId
+              RETURN d
+        '''
+        bindVars = {"fromId": resourceSrcDocId, "toId": resourceDstDocId}
+        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        return result
 
     # endregion

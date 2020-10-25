@@ -7,7 +7,7 @@ from mock import Mock
 from src.application.ResourceTypeApplicationService import ResourceTypeApplicationService
 from src.domain_model.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.AuthorizationService import AuthorizationService
-from src.domain_model.PolicyControllerService import PolicyControllerService
+from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.TokenService import TokenService
 from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 from src.domain_model.policy.PolicyRepository import PolicyRepository

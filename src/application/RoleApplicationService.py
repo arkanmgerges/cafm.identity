@@ -4,7 +4,7 @@
 from typing import List
 
 from src.domain_model.AuthorizationService import AuthorizationService
-from src.domain_model.PolicyControllerService import PolicyActionConstant
+from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
 from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
 from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException

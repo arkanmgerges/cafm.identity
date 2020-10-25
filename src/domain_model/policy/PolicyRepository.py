@@ -117,7 +117,7 @@ class PolicyRepository(ABC):
             resourceType (ResourceType): The resource type to be unlinked from the permission
 
         :raises:
-            `ResourceAssignmentAlreadyExistException <src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException>` Raise an exception if the resource assignment already exist
+            `ResourceAssignmentDoesNotExistException <src.domain_model.resource.exception.ResourceAssignmentDoesNotExistException>` Raise an exception if the resource assignment does not exist
         """
 
     @abstractmethod
@@ -141,5 +141,29 @@ class PolicyRepository(ABC):
             resource (Resource): The resource that the role will be unlinked from it
 
         :raises:
+            `ResourceAssignmentDoesNotExistException <src.domain_model.resource.exception.ResourceAssignmentDoesNotExistException>` Raise an exception if the resource assignment does not exist
+        """
+
+    @abstractmethod
+    def assignResourceToResource(self, resourceSrc: Resource, resourceDst: Resource) -> None:
+        """Make an assignment from a resource to another resource
+
+        Args:
+            resourceSrc (Resource): The source resource to assign to
+            resourceDst (Resource): The destination resource that will be attached to
+
+        :raises:
             `ResourceAssignmentAlreadyExistException <src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException>` Raise an exception if the resource assignment already exist
+        """
+
+    @abstractmethod
+    def revokeAssignmentResourceToResource(self, resourceSrc: Resource, resourceDst: Resource) -> None:
+        """Revoke assignment from a resource to another resource
+
+        Args:
+            resourceSrc (Resource): The source resource to revoke the assignment from
+            resourceDst (Resource): The destination resource that will be detached to
+
+        :raises:
+            `ResourceAssignmentDoesNotExistException <src.domain_model.resource.exception.ResourceAssignmentDoesNotExistException>` Raise an exception if the resource assignment does not exist
         """

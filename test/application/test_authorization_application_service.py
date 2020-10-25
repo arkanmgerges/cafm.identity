@@ -1,16 +1,14 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-import pytest
 from mock import Mock
 
 from src.application.AuthorizationApplicationService import AuthorizationApplicationService
 from src.domain_model.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.AuthorizationService import AuthorizationService
-from src.domain_model.PolicyControllerService import PolicyControllerService
+from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.TokenService import TokenService
 from src.domain_model.policy.PolicyRepository import PolicyRepository
-from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 
 
 def test_authorization_user_is_allowed_using_token_and_has_super_admin_role():

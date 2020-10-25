@@ -4,7 +4,7 @@
 from typing import List
 
 from src.domain_model.AuthorizationService import AuthorizationService
-from src.domain_model.PolicyControllerService import PolicyActionConstant
+from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
 from src.domain_model.realm.Realm import Realm
 from src.domain_model.realm.RealmRepository import RealmRepository
 from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException

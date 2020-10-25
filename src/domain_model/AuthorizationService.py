@@ -2,10 +2,9 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import authlib
-from authlib.jose import jwt
 
 from src.domain_model.AuthorizationRepository import AuthorizationRepository
-from src.domain_model.PolicyControllerService import PolicyControllerService
+from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.TokenService import TokenService
 from src.resource.logging.logger import logger
 

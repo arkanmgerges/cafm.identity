@@ -4,7 +4,7 @@
 from typing import List
 
 from src.domain_model.AuthorizationService import AuthorizationService
-from src.domain_model.PolicyControllerService import PolicyActionConstant
+from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
 from src.domain_model.ou.Ou import Ou
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException

@@ -1,10 +1,7 @@
-import os
 from uuid import uuid4
 
-import redis
 from injector import ClassAssistedBuilder
 from injector import Module, Injector, singleton, provider
-from pyArango.connection import Connection
 
 from src.application.AuthenticationApplicationService import AuthenticationApplicationService
 from src.application.AuthorizationApplicationService import AuthorizationApplicationService
@@ -21,12 +18,13 @@ from src.domain_model.AuthenticationRepository import AuthenticationRepository
 from src.domain_model.AuthenticationService import AuthenticationService
 from src.domain_model.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.AuthorizationService import AuthorizationService
-from src.domain_model.PolicyControllerService import PolicyControllerService
+from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.permission.PermissionRepository import PermissionRepository
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.project.ProjectRepository import ProjectRepository
 from src.domain_model.realm.RealmRepository import RealmRepository
+from src.domain_model.resource.ResourceRepository import ResourceRepository
 from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
 from src.domain_model.role.RoleRepository import RoleRepository
 from src.domain_model.user.UserRepository import UserRepository
@@ -44,6 +42,7 @@ from src.port_adapter.repository.domain_model.permission.PermissionRepositoryImp
 from src.port_adapter.repository.domain_model.policy.PolicyRepositoryImpl import PolicyRepositoryImpl
 from src.port_adapter.repository.domain_model.project.ProjectRepositoryImpl import ProjectRepositoryImpl
 from src.port_adapter.repository.domain_model.realm.RealmRepositoryImpl import RealmRepositoryImpl
+from src.port_adapter.repository.domain_model.resource.ResourceRepositoryImpl import ResourceRepositoryImpl
 from src.port_adapter.repository.domain_model.resource_type.ResourceTypeRepositoryImpl import ResourceTypeRepositoryImpl
 from src.port_adapter.repository.domain_model.role.RoleRepositoryImpl import RoleRepositoryImpl
 from src.port_adapter.repository.domain_model.user.UserRepositoryImpl import UserRepositoryImpl
@@ -107,7 +106,6 @@ class AppDi(Module):
     def provideAuthorizationApplicationService(self) -> AuthorizationApplicationService:
         return AuthorizationApplicationService(self.__injector__.get(AuthorizationService))
 
-
     @singleton
     @provider
     def providePolicyApplicationService(self) -> PolicyApplicationService:
@@ -117,6 +115,8 @@ class AppDi(Module):
                                         permissionRepository=self.__injector__.get(PermissionRepository),
                                         resourceTypeRepository=self.__injector__.get(ResourceTypeRepository),
                                         policyRepository=self.__injector__.get(PolicyRepository),
+                                        policyControllerService=self.__injector__.get(PolicyControllerService),
+                                        resourceRepository=self.__injector__.get(ResourceRepository),
                                         authzService=self.__injector__.get(AuthorizationService))
     # endregion
 
@@ -175,6 +175,11 @@ class AppDi(Module):
     @provider
     def providePolicyRepository(self) -> PolicyRepository:
         return PolicyRepositoryImpl()
+
+    @singleton
+    @provider
+    def provideResourceRepository(self) -> ResourceRepository:
+        return ResourceRepositoryImpl()
     # endregion Repository
 
     # region domain service
