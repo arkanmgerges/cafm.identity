@@ -46,16 +46,13 @@ class PolicyControllerService:
                 f'role id: {role.id()} resource id: {resource.id()} and resource type: {resource.type()}')
 
     def assignResourceToResource(self, resourceSrc: Resource, resourceDst: Resource):
-        if (resourceSrc.type() in [ResourceTypeConstant.PROJECT.value, ResourceTypeConstant.REALM.value,
+        if (resourceSrc.type() in [ResourceTypeConstant.REALM.value,
                                    ResourceTypeConstant.OU.value]) and (
                 resourceDst.type() in [ResourceTypeConstant.PROJECT.value, ResourceTypeConstant.REALM.value,
                                        ResourceTypeConstant.OU.value]):
-            if resourceSrc.type() == ResourceTypeConstant.PROJECT.value:
-                # Not allowed to assign project to a another project
-                if resourceDst.type() == ResourceTypeConstant.PROJECT.value:
-                    self.raiseNotAllowedException(resourceSrc, resourceDst)
-            else: # If the source is other than project but if we assign it to a project, then this is not allowed
-                if resourceDst.type() == ResourceTypeConstant.PROJECT.value:
+            if resourceSrc.type() == ResourceTypeConstant.OU.value:
+                # Not allowed to assign ou to a realm
+                if resourceDst.type() == ResourceTypeConstant.REALM.value:
                     self.raiseNotAllowedException(resourceSrc, resourceDst)
 
             self._policyRepo.assignResourceToResource(resourceSrc, resourceDst)
