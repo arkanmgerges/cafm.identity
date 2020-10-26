@@ -7,7 +7,7 @@ from typing import List, Any
 from pyArango.connection import Connection
 from pyArango.query import AQLQuery
 
-from src.domain_model.common.Resource import Resource
+from src.domain_model.resource.Resource import Resource
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException

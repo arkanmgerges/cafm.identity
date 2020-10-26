@@ -4,7 +4,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Any
 
-from src.domain_model.common.Resource import Resource
+from src.domain_model.resource.Resource import Resource
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.resource_type.ResourceType import ResourceType
 from src.domain_model.role.Role import Role

@@ -5,7 +5,7 @@ from copy import copy
 from enum import Enum
 from typing import List
 
-from src.domain_model.common.Resource import Resource
+from src.domain_model.resource.Resource import Resource
 from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 from src.resource.logging.logger import logger
 
