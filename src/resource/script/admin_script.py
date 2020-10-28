@@ -189,9 +189,9 @@ def assign_user_super_admin_role(username, password, database_name):
     queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
 @cli.command(help='Initialize kafka topics and schema registries')
-def init_kafka():
+def init_kafka_topics_and_schemas():
     # Create topics
-    topics = ['cafm.api.cmd', 'cafm.api.rsp', 'cafm.identity.cmd', 'cafm.identity.evt']
+    topics = ['cafm.identity.cmd', 'cafm.identity.evt']
     newTopics = [NewTopic(topic, num_partitions=1, replication_factor=1) for topic in topics]
     admin = AdminClient({'bootstrap.servers': os.getenv('MESSAGE_BROKER_SERVERS', '')})
     fs = admin.create_topics(newTopics)
@@ -204,17 +204,15 @@ def init_kafka():
 
     # Create schemas
     c = CachedSchemaRegistryClient({'url': os.getenv('MESSAGE_SCHEMA_REGISTRY_URL', '')})
-    schemas = [{'name': 'cafm.api.Command', 'schema': ApiCommand.get_schema()},
-               {'name': 'cafm.api.Response', 'schema': ApiResponse.get_schema()},
-               {'name': 'cafm.identity.Command', 'schema': IdentityCommand.get_schema()},
+    schemas = [{'name': 'cafm.identity.Command', 'schema': IdentityCommand.get_schema()},
                {'name': 'cafm.identity.Event', 'schema': IdentityEvent.get_schema()}]
     [c.register(schema['name'], schema['schema']) for schema in schemas]
 
 
 @cli.command(help='Drop kafka topics and schema registries')
-def drop_kafka():
+def drop_kafka_topics_and_schemas():
     # Delete topics
-    topics = ['cafm.api.cmd', 'cafm.api.rsp', 'cafm.identity.cmd', 'cafm.identity.evt']
+    topics = ['cafm.identity.cmd', 'cafm.identity.evt']
     admin = AdminClient({'bootstrap.servers': os.getenv('MESSAGE_BROKER_SERVERS', '')})
     fs = admin.delete_topics(topics, operation_timeout=30)
     for topic, f in fs.items():
@@ -225,7 +223,7 @@ def drop_kafka():
             click.echo(click.style(f'Failed to delete topic {topic}: {e}', fg='red'))
 
     # Delete schemas
-    schemas = ['cafm.api.Command', 'cafm.api.Response', 'cafm.identity.Command', 'cafm.identity.Event']
+    schemas = ['cafm.identity.Command', 'cafm.identity.Event']
     c = CachedSchemaRegistryClient({'url': os.getenv('MESSAGE_SCHEMA_REGISTRY_URL', '')})
     [c.delete_subject(schema) for schema in schemas]
 
