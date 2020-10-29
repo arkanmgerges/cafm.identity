@@ -11,17 +11,17 @@ from src.port_adapter.messaging.listener.api_command.handler.Handler import Hand
 from src.resource.logging.logger import logger
 
 
-class AssignRoleToPermissionForResourceTypeHandler(Handler):
+class RevokeAssignmentPermissionToResourceTypeHandler(Handler):
 
     def __init__(self):
-        self._commandConstant = CommonCommandConstant.ASSIGN_ROLE_TO_PERMISSION_FOR_RESOURCE_TYPE
+        self._commandConstant = CommonCommandConstant.REVOKE_ASSIGNMENT_PERMISSION_TO_RESOURCE_TYPE
 
     def canHandle(self, name: str) -> bool:
         return name == self._commandConstant.value
 
     def handleCommand(self, name: str, data: str, metadata: str) -> dict:
         logger.debug(
-            f'[{AssignRoleToPermissionForResourceTypeHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
+            f'[{RevokeAssignmentPermissionToResourceTypeHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
         dataDict = json.loads(data)
         metadataDict = json.loads(metadata)
 
@@ -30,6 +30,5 @@ class AssignRoleToPermissionForResourceTypeHandler(Handler):
 
         return {'name': self._commandConstant.value,
                 'createdOn': round(time.time() * 1000),
-                'data': {'role_id': dataDict['role_id'], 'permission_id': dataDict['permission_id'],
-                         'resource_type_id': dataDict['resource_type_id']},
+                'data': {'permission_id': dataDict['permission_id'], 'resource_type_id': dataDict['resource_type_id']},
                 'metadata': metadataDict}

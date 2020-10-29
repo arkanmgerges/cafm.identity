@@ -89,33 +89,48 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def assignRoleToPermissionForResourceType(self, roleId: str = '',
-                                              permissionId: str = '',
-                                              resourceTypeId: str = '',
-                                              token: str = ''):
+    def assignRoleToPermission(self, roleId: str = '',
+                               permissionId: str = '',
+                               token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.ASSIGN.value,
-                                        resourceType=ResourceTypeConstant.ASSIGNMENT_ROLE_TO_PERMISSION_FOR_RESOURCE_TYPE.value):
+                                        resourceType=ResourceTypeConstant.ASSIGNMENT_ROLE_TO_PERMISSION.value):
             role = self._roleRepository.roleById(id=roleId)
             permission = self._permissionRepository.permissionById(id=permissionId)
-            resourceType = self._resourceTypeRepository.resourceTypeById(id=resourceTypeId)
-            self._policyRepository.assignRoleToPermissionForResourceType(role=role,
-                                                                         permission=permission,
-                                                                         resourceType=resourceType)
+            self._policyRepository.assignRoleToPermission(role=role, permission=permission)
         else:
             raise UnAuthorizedException()
 
-    def revokeRoleFromPermissionForResourceType(self, roleId: str = '',
-                                                permissionId: str = '',
-                                                resourceTypeId: str = '',
-                                                token: str = ''):
+    def revokeAssignmentRoleToPermission(self, roleId: str = '',
+                                         permissionId: str = '',
+                                         token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.REVOKE.value,
-                                        resourceType=ResourceTypeConstant.ASSIGNMENT_ROLE_TO_PERMISSION_FOR_RESOURCE_TYPE.value):
+                                        resourceType=ResourceTypeConstant.ASSIGNMENT_ROLE_TO_PERMISSION.value):
             role = self._roleRepository.roleById(id=roleId)
             permission = self._permissionRepository.permissionById(id=permissionId)
+            self._policyRepository.revokeAssignmentRoleToPermission(role=role, permission=permission)
+        else:
+            raise UnAuthorizedException()
+
+    def assignPermissionToResourceType(self, permissionId: str = '',
+                                       resourceTypeId: str = '',
+                                       token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.ASSIGN.value,
+                                        resourceType=ResourceTypeConstant.ASSIGNMENT_PERMISSION_TO_RESOURCE_TYPE.value):
+            permission = self._permissionRepository.permissionById(id=permissionId)
             resourceType = self._resourceTypeRepository.resourceTypeById(id=resourceTypeId)
-            self._policyRepository.revokeRoleFromPermissionForResourceType(role=role,
-                                                                           permission=permission,
-                                                                           resourceType=resourceType)
+            self._policyRepository.assignPermissionToResourceType(permission=permission, resourceType=resourceType)
+        else:
+            raise UnAuthorizedException()
+
+    def revokeAssignmentPermissionToResourceType(self, permissionId: str = '',
+                                                 resourceTypeId: str = '',
+                                                 token: str = ''):
+        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.REVOKE.value,
+                                        resourceType=ResourceTypeConstant.ASSIGNMENT_PERMISSION_TO_RESOURCE_TYPE.value):
+            permission = self._permissionRepository.permissionById(id=permissionId)
+            resourceType = self._resourceTypeRepository.resourceTypeById(id=resourceTypeId)
+            self._policyRepository.revokeAssignmentPermissionToResourceType(permission=permission,
+                                                                            resourceType=resourceType)
         else:
             raise UnAuthorizedException()
 

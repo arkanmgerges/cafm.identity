@@ -4,8 +4,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Any
 
-from src.domain_model.resource.Resource import Resource
 from src.domain_model.permission.Permission import Permission
+from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource_type.ResourceType import ResourceType
 from src.domain_model.role.Role import Role
 from src.domain_model.user.User import User
@@ -95,12 +95,35 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def assignRoleToPermissionForResourceType(self, role: Role, permission: Permission, resourceType: ResourceType) -> None:
-        """Assign a role to a permission for a resource type
+    def assignRoleToPermission(self, role: Role, permission: Permission) -> None:
+        """Assign a role to a permission
 
         Args:
-            role (Role): The role to be assigned to the permission for a resource type
-            permission (Permission): The permission that will get a role for a resource type
+            role (Role): The role to be assigned to the permission
+            permission (Permission): The permission that will get a role
+
+        :raises:
+            `ResourceAssignmentAlreadyExistException <src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException>` Raise an exception if the resource assignment already exist
+        """
+
+    @abstractmethod
+    def revokeAssignmentRoleToPermission(self, role: Role, permission: Permission) -> None:
+        """Revoke a role from a permission
+
+        Args:
+            role (Role): The role to be revoked from the permission
+            permission (Permission): The permission that will be separated from the role
+
+        :raises:
+            `ResourceAssignmentDoesNotExistException <src.domain_model.resource.exception.ResourceAssignmentDoesNotExistException>` Raise an exception if the resource assignment does not exist
+        """
+
+    @abstractmethod
+    def assignPermissionToResourceType(self, permission: Permission, resourceType: ResourceType) -> None:
+        """Assign permission to a resource type
+
+        Args:
+            permission (Permission): The permission to be assigned to a resource type
             resourceType (ResourceType): The resource type to be linked to the permission
 
         :raises:
@@ -108,12 +131,11 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def revokeRoleFromPermissionForResourceType(self, role: Role, permission: Permission, resourceType: ResourceType) -> None:
-        """Revoke a role from a permission for a resource type
+    def revokeAssignmentPermissionToResourceType(self, permission: Permission, resourceType: ResourceType) -> None:
+        """Revoke assignment of a permission to a resource type
 
         Args:
-            role (Role): The role to be revoked from the permission for a resource type
-            permission (Permission): The permission that will be separated from the role for a resource type
+            permission (Permission): The permission that will be separated from the resource type
             resourceType (ResourceType): The resource type to be unlinked from the permission
 
         :raises:

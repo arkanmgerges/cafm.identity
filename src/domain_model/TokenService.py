@@ -40,5 +40,7 @@ class TokenService:
         """
         header = {'alg': 'HS256'}
         key = os.getenv('CAFM_JWT_SECRET', 'secret')
+        import uuid
+        payload['_token_gen_num'] = str(uuid.uuid1())
         token = jwt.encode(header, payload, key).decode('utf-8')
         return token
