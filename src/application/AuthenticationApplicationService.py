@@ -1,7 +1,7 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domain_model.AuthenticationService import AuthenticationService
+from src.domain_model.authentication.AuthenticationService import AuthenticationService
 from src.resource.logging.logger import logger
 
 

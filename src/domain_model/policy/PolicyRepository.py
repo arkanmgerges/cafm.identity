@@ -4,6 +4,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Any
 
+from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
+from src.domain_model.token.TokenData import TokenData
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource_type.ResourceType import ResourceType
@@ -188,4 +190,25 @@ class PolicyRepository(ABC):
 
         :raises:
             `ResourceAssignmentDoesNotExistException <src.domain_model.resource.exception.ResourceAssignmentDoesNotExistException>` Raise an exception if the resource assignment does not exist
+        """
+
+    @abstractmethod
+    def connectResourceToOwner(self, resource: Resource, tokenData: TokenData) -> None:
+        """Link a resource to the owner
+
+        Args:
+            resource (Resource): A resource that is to be connected to the owner
+            tokenData (TokenData): Token info that is used to connect extract the owner
+        """
+
+    @abstractmethod
+    def roleAccessPermissionsData(self, tokenData: TokenData) -> List[RoleAccessPermissionData]:
+        """Retrieve the permissions and resource types connected to it also related to the roles that belong
+        to the token provided
+
+        Args:
+            tokenData (TokenData): A token info
+
+        Returns:
+            List[RoleAccessPermissionData]: A list of role with access and permissions with resource types
         """

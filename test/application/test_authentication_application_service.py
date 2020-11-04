@@ -4,8 +4,8 @@
 from mock import Mock
 
 from src.application.AuthenticationApplicationService import AuthenticationApplicationService
-from src.domain_model.AuthenticationRepository import AuthenticationRepository
-from src.domain_model.AuthenticationService import AuthenticationService
+from src.domain_model.authentication.AuthenticationRepository import AuthenticationRepository
+from src.domain_model.authentication.AuthenticationService import AuthenticationService
 
 
 def test_authenticate_user_when_exist():

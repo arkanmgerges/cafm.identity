@@ -7,9 +7,11 @@ from typing import List, Any
 from pyArango.connection import Connection
 from pyArango.query import AQLQuery
 
-from src.domain_model.resource.Resource import Resource
 from src.domain_model.permission.Permission import Permission
+from src.domain_model.policy.PermissionWithResourceTypes import PermissionWithResourceTypes
 from src.domain_model.policy.PolicyRepository import PolicyRepository
+from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
+from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
 from src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException import \
     ResourceAssignmentAlreadyExistException
@@ -19,8 +21,9 @@ from src.domain_model.resource.exception.ResourceTypeDoesNotExistException impor
 from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
-from src.domain_model.resource_type.ResourceType import ResourceType
+from src.domain_model.resource_type.ResourceType import ResourceType, ResourceTypeConstant
 from src.domain_model.role.Role import Role
+from src.domain_model.token.TokenData import TokenData
 from src.domain_model.user.User import User
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.resource.logging.logger import logger
@@ -59,7 +62,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Get the role doc id
         aql = '''
             FOR d IN resource
-                FILTER d.id == @id AND d.type == 'role'
+                FILTER d.id == @id AND d._type == 'role'
                 RETURN d
         '''
         bindVars = {"id": role.id()}
@@ -123,8 +126,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Assign a role to the user
         aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, from_type: 'user', to_type: 'role'}
-                    UPDATE {_from: @fromId, _to: @toId, from_type: 'user', to_type: 'role'}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: 'user', _to_type: 'role'}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'user', _to_type: 'role'}
                   IN has                  
                 '''
         bindVars = {"fromId": userDocId, "toId": roleDocId}
@@ -159,7 +162,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             FOR d IN has
               FILTER 
                 d._from == @fromId AND d._to == @toId
-                AND d.from_type == 'user' AND d.to_type == 'role'
+                AND d._from_type == 'user' AND d._to_type == 'role'
               RETURN d
         '''
         bindVars = {"fromId": userDocId, "toId": roleDocId}
@@ -186,8 +189,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Assign a role to the user group
         aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, from_type: 'user_group', to_type: 'role'}
-                    UPDATE {_from: @fromId, _to: @toId, from_type: 'user_group', to_type: 'role'}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: 'user_group', _to_type: 'role'}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'user_group', _to_type: 'role'}
                   IN has                  
                 '''
         bindVars = {"fromId": userGroupDocId, "toId": roleDocId}
@@ -222,7 +225,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             FOR d IN has
               FILTER 
                 d._from == @fromId AND d._to == @toId
-                AND d.from_type == 'user_group' AND d.to_type == 'role'
+                AND d._from_type == 'user_group' AND d._to_type == 'role'
               RETURN d
         '''
         bindVars = {"fromId": userGroupDocId, "toId": roleDocId}
@@ -249,8 +252,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Assign a user to the user group
         aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, from_type: 'user_group', to_type: 'user'}
-                    UPDATE {_from: @fromId, _to: @toId, from_type: 'user_group', to_type: 'user'}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: 'user_group', _to_type: 'user'}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'user_group', _to_type: 'user'}
                   IN has                  
                 '''
         bindVars = {"fromId": userGroupDocId, "toId": userDocId}
@@ -285,7 +288,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             FOR d IN has
               FILTER 
                 d._from == @fromId AND d._to == @toId
-                AND d.from_type == 'user_group' AND d.to_type == 'user'
+                AND d._from_type == 'user_group' AND d._to_type == 'user'
               RETURN d
         '''
         bindVars = {"fromId": userGroupDocId, "toId": userDocId}
@@ -312,8 +315,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Assign the role to the permission
         aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, from_type: 'role', to_type: 'permission'}
-                    UPDATE {_from: @fromId, _to: @toId, from_type: 'role', to_type: 'permission'}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: 'permission'}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: 'permission'}
                   IN `has`                  
                 '''
         bindVars = {"fromId": roleDocId, "toId": permissionDocId}
@@ -363,7 +366,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             FOR d IN `resource`
                 FILTER d._id == @roleDocId AND d.type == 'role'
                 LET r = (
-                    FOR v1,e1 IN OUTBOUND d._id `has` FILTER e1.to_type == "permission" AND v1._id == @permissionDocId
+                    FOR v1,e1 IN OUTBOUND d._id `has` FILTER e1._to_type == "permission" AND v1._id == @permissionDocId
                         RETURN  {"permission": v1, "to_permission_edge": e1}
                 )
                 FILTER LENGTH(r) > 0
@@ -417,8 +420,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Assign the permission to resource type
         aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, from_type: 'permission', to_type: 'resource_type'}
-                    UPDATE {_from: @fromId, _to: @toId, from_type: 'permission', to_type: 'resource_type'}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'resource_type'}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'resource_type'}
                   IN `for`                  
                 '''
         bindVars = {"fromId": permissionDocId, "toId": resourceTypeDocId}
@@ -431,7 +434,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             FOR d IN `resource`
                 FILTER d._id == @permissionDocId AND d.type == 'permission'
                 LET r = (
-                    FOR v1,e1 IN OUTBOUND d._id `for` FILTER e1.to_type == "resource_type" AND v1._id == @resourceTypeDocId
+                    FOR v1,e1 IN OUTBOUND d._id `for` FILTER e1._to_type == "resource_type" AND v1._id == @resourceTypeDocId
                         RETURN  {"resource_type": v1, "to_resource_type_edge": e1}
                 )
                 FILTER LENGTH(r) > 0
@@ -488,8 +491,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Assign a role to the user
         aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, from_type: 'role', to_type: @resourceTypeName}
-                    UPDATE {_from: @fromId, _to: @toId, from_type: 'role', to_type: @resourceTypeName}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: @resourceTypeName}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: @resourceTypeName}
                   IN access                  
                 '''
         bindVars = {"fromId": roleDocId, "toId": resourceDocId, "resourceTypeName": resource.type()}
@@ -524,7 +527,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             FOR d IN access
               FILTER 
                 d._from == @fromId AND d._to == @toId
-                AND d.from_type == 'role' AND d.to_type == @resourceTypeName
+                AND d._from_type == 'role' AND d._to_type == @resourceTypeName
               RETURN d
         '''
         bindVars = {"fromId": roleDocId, "toId": resourceDocId, "resourceTypeName": resource.type()}
@@ -567,8 +570,8 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, from_type: @fromType, to_type: @toType}
-                    UPDATE {_from: @fromId, _to: @toId, from_type: @fromType, to_type: @toType}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
                   IN has                  
                 '''
         bindVars = {"fromId": resourceSrcDocId, "toId": resourceDstDocId, "fromType": resourceSrc.type(),
@@ -613,3 +616,85 @@ class PolicyRepositoryImpl(PolicyRepository):
         return result
 
     # endregion
+
+    def connectResourceToOwner(self, resource: Resource, tokenData: TokenData):
+        userDocId = self.userDocumentId(User.createFrom(id=tokenData.id(), name=tokenData.name()))
+        resourceDocId = self.resourceDocumentId(resource)
+
+        aql = '''
+            UPSERT {_from: @fromId, _to: @toId}
+                INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+              IN owned_by                  
+            '''
+        bindVars = {"fromId": resourceDocId, "toId": userDocId, "fromType": resource.type(),
+                    "toType": ResourceTypeConstant.USER.value}
+        _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+        for role in tokenData.role():
+            roleDocId = self.roleDocumentId(Role.createFrom(id=role['id'], name=role['name']))
+            aql = '''
+                UPSERT {_from: @fromId, _to: @toId}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                  IN owned_by                  
+                '''
+            bindVars = {"fromId": resourceDocId, "toId": roleDocId, "fromType": resource.type(),
+                        "toType": ResourceTypeConstant.ROLE.value}
+            _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+    def roleAccessPermissionsData(self, tokenData: TokenData) -> List[RoleAccessPermissionData]:
+        rolesConditions = ''
+        for role in tokenData.roles():
+            if rolesConditions == '':
+                rolesConditions += f'role.id == "{role["id"]}"'
+            else:
+                rolesConditions += f' OR role.id == "{role["id"]}"'
+        aql = '''
+                FOR role IN resource
+                FILTER (#rolesConditions) AND role.type == 'role'
+                LET owned_by = FIRST(FOR v1, e1 IN OUTBOUND role._id `owned_by`
+                                    RETURN {"id": v1.id, "type": v1.type})
+                LET permissions = (FOR v1, e1 IN OUTBOUND role._id `has`
+                                    FILTER e1._from_type == 'role' AND e1._to_type == 'permission'
+                                    LET resource_types = (FOR v2, e2 IN OUTBOUND v1._id `for`
+                                        RETURN {"id": v2.id, "name": v2.name})
+                                    RETURN {"permission": {"id": v1.id, "name": v1.name, "allowed_actions": v1.allowed_actions}, "resource_types": resource_types})
+                                
+                LET accesses = (FOR v1, e1 IN OUTBOUND role._id `access`
+                                    RETURN {"id": v1.id, "name": v1.name, "type": v1.type})
+                                
+                RETURN {"role": {"id": role.id, "name": role.name}, "owned_by": owned_by, "permissions": permissions, "accesses": accesses}
+                    '''
+        aql = aql.replace('#rolesConditions', rolesConditions)
+
+        queryResult = self._db.AQLQuery(aql, rawResults=True)
+        qResult = queryResult.result
+        if len(qResult) == 0:
+            return []
+        qResult = qResult[0]
+        result = []
+        for item in qResult:
+            ownedByString = '' if item['owned_by'] is None else item['owned_by']['name']
+            role = Role.createFrom(id=item['role']['id'], name=item['role']['name'], ownedBy=ownedByString)
+            permissions = item['permissions']
+            permList = []
+            # For each permission
+            for permItem in permissions:
+                perm = Permission(id=permItem['permission']['id'], name=permItem['permission']['name'],
+                                  allowedActions=permItem['permission']['allowed_actions'])
+                resList = []
+                # Get the resource types for the permission
+                for resItem in permItem['resource_types']:
+                    resList.append(ResourceType(id=resItem['id'], name=resItem['name']))
+
+                p = PermissionWithResourceTypes(permission=perm, resourceTypes=resList)
+                # Add it in the permission list
+                permList.append(p)
+            ownedBy = None
+            if item['owned_by'] is not None:
+                ownedBy = Resource(id=item['owned_by']['id'], type=item['owned_by']['type'])
+            permData = RoleAccessPermissionData(role=role, permissions=permList, ownedBy=ownedBy)
+            result.append(permData)
+
+        return result

@@ -3,9 +3,9 @@
 """
 import authlib
 
-from src.domain_model.AuthorizationRepository import AuthorizationRepository
+from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
+from src.domain_model.token.TokenData import TokenData
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
-from src.domain_model.TokenService import TokenService
 from src.resource.logging.logger import logger
 
 
@@ -13,7 +13,6 @@ class AuthorizationService:
     def __init__(self, authzRepo: AuthorizationRepository, policyService: PolicyControllerService):
         self._authzRepo = authzRepo
         self._policyService = policyService
-        self._tokenService = TokenService()
 
     def isAllowed(self, token: str, action: str = '', resourceType: str = '', resourceId: str = None) -> bool:
         """Authenticate user and return jwt token
@@ -43,17 +42,5 @@ class AuthorizationService:
             logger.exception(f'[{AuthorizationService.isAllowed.__qualname__}] - exception raised with e: {e}')
             raise e
 
-    def claimsFromToken(self, token: str) -> dict:
-        """Get claims by decoding and validating the token
-
-        Args:
-            token (str): Token that can carry the info about a user
-
-        Returns:
-            dict: A dictionary that represents the claims of the token
-            e.g. {"id": "1234", "role": ["super_admin", "accountant"], "name": "john"}
-
-        :raises:
-            `BadSignatureError <authlib.jose.errors.BadSignatureError>` If the token is invalid
-        """
-        return self._tokenService.claimsFromToken(token=token)
+    def permissionData(self, tokenData: TokenData):
+        pass

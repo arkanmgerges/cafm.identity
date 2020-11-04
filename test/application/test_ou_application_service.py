@@ -5,10 +5,10 @@ import pytest
 from mock import Mock
 
 from src.application.OuApplicationService import OuApplicationService
-from src.domain_model.AuthorizationRepository import AuthorizationRepository
-from src.domain_model.AuthorizationService import AuthorizationService
+from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
+from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
-from src.domain_model.TokenService import TokenService
+from src.domain_model.token.TokenService import TokenService
 from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 from src.domain_model.ou.Ou import Ou
 from src.domain_model.ou.OuRepository import OuRepository
@@ -21,8 +21,7 @@ authzService = None
 def setup_function():
     global token
     global authzService
-    tokenService = TokenService()
-    token = tokenService.generateToken({'role': ['super_admin']})
+    token = TokenService.generateToken({'role': ['super_admin']})
 
     authzRepoMock = Mock(spec=AuthorizationRepository)
     policyRepoMock = Mock(spec=PolicyRepository)

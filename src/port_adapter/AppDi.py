@@ -14,10 +14,11 @@ from src.application.ResourceTypeApplicationService import ResourceTypeApplicati
 from src.application.RoleApplicationService import RoleApplicationService
 from src.application.UserApplicationService import UserApplicationService
 from src.application.UserGroupApplicationService import UserGroupApplicationService
-from src.domain_model.AuthenticationRepository import AuthenticationRepository
-from src.domain_model.AuthenticationService import AuthenticationService
-from src.domain_model.AuthorizationRepository import AuthorizationRepository
-from src.domain_model.AuthorizationService import AuthorizationService
+from src.domain_model.authentication.AuthenticationRepository import AuthenticationRepository
+from src.domain_model.authentication.AuthenticationService import AuthenticationService
+from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
+from src.domain_model.authorization.AuthorizationService import AuthorizationService
+from src.domain_model.ou.OuService import OuService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.permission.PermissionRepository import PermissionRepository
@@ -35,8 +36,8 @@ from src.port_adapter.messaging.common.SimpleProducer import SimpleProducer
 from src.port_adapter.messaging.common.TransactionalProducer import TransactionalProducer
 from src.port_adapter.messaging.common.kafka.KafkaConsumer import KafkaConsumer
 from src.port_adapter.messaging.common.kafka.KafkaProducer import KafkaProducer
-from src.port_adapter.repository.domain_model.AuthenticationRepositoryImpl import AuthenticationRepositoryImpl
-from src.port_adapter.repository.domain_model.AuthorizationRepositoryImpl import AuthorizationRepositoryImpl
+from src.port_adapter.repository.domain_model.authentication.AuthenticationRepositoryImpl import AuthenticationRepositoryImpl
+from src.port_adapter.repository.domain_model.authorization.AuthorizationRepositoryImpl import AuthorizationRepositoryImpl
 from src.port_adapter.repository.domain_model.ou.OuRepositoryImpl import OuRepositoryImpl
 from src.port_adapter.repository.domain_model.permission.PermissionRepositoryImpl import PermissionRepositoryImpl
 from src.port_adapter.repository.domain_model.policy.PolicyRepositoryImpl import PolicyRepositoryImpl
@@ -69,7 +70,8 @@ class AppDi(Module):
     @singleton
     @provider
     def provideOuApplicationService(self) -> OuApplicationService:
-        return OuApplicationService(self.__injector__.get(OuRepository), self.__injector__.get(AuthorizationService))
+        return OuApplicationService(ouRepository=self.__injector__.get(OuRepository), authzService=self.__injector__.get(AuthorizationService),
+                                    ouService=self.__injector__.get(OuService))
 
     @singleton
     @provider
@@ -197,6 +199,11 @@ class AppDi(Module):
     @provider
     def providePolicyControllerService(self) -> PolicyControllerService:
         return PolicyControllerService(self.__injector__.get(PolicyRepository))
+
+    @singleton
+    @provider
+    def provideOuService(self) -> OuService:
+        return OuService(ouRepo=self.__injector__.get(OuRepository), policyRepo=self.__injector__.get(PolicyRepository))
     # endregion
 
     # region Messaging

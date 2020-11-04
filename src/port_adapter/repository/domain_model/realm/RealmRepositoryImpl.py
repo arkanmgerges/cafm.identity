@@ -32,7 +32,7 @@ class RealmRepositoryImpl(RealmRepository):
     def createRealm(self, realm: Realm):
         aql = '''
         UPSERT {id: @id}
-            INSERT {id: @id, name: @name, type: 'realm'}
+            INSERT {id: @id, name: @name, _type: 'realm'}
             UPDATE {name: @name}
           IN resource
         '''
@@ -44,7 +44,7 @@ class RealmRepositoryImpl(RealmRepository):
     def realmByName(self, name: str) -> Realm:
         aql = '''
             FOR d IN resource
-                FILTER d.name == @name AND d.type == 'realm'
+                FILTER d.name == @name AND d._type == 'realm'
                 RETURN d
         '''
 
@@ -60,7 +60,7 @@ class RealmRepositoryImpl(RealmRepository):
     def realmById(self, id: str) -> Realm:
         aql = '''
             FOR d IN realm
-                FILTER d.id == @id AND d.type == 'realm'
+                FILTER d.id == @id AND d._type == 'realm'
                 RETURN d
         '''
 
@@ -82,7 +82,7 @@ class RealmRepositoryImpl(RealmRepository):
             sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                LET ds = (FOR d IN resource FILTER d.type == 'realm' #sortData RETURN d)
+                LET ds = (FOR d IN resource FILTER d._type == 'realm' #sortData RETURN d)
                 RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
             if sortData != '':
@@ -101,7 +101,7 @@ class RealmRepositoryImpl(RealmRepository):
     def deleteRealm(self, realm: Realm) -> None:
         aql = '''
             FOR d IN resource
-                FILTER d.id == @id AND d.type == 'realm'
+                FILTER d.id == @id AND d._type == 'realm'
                 REMOVE d IN resource
         '''
 
@@ -126,7 +126,7 @@ class RealmRepositoryImpl(RealmRepository):
 
         aql = '''
             FOR d IN resource
-                FILTER d.id == @id AND d.type == 'realm'
+                FILTER d.id == @id AND d._type == 'realm'
                 UPDATE d WITH {name: @name} IN resource
         '''
 

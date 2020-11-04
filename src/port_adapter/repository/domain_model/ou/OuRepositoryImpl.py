@@ -7,6 +7,8 @@ from typing import List
 from pyArango.connection import *
 from pyArango.query import AQLQuery
 
+from src.domain_model.token.TokenData import TokenData
+from src.domain_model.token.TokenService import TokenService
 from src.domain_model.ou.Ou import Ou
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
@@ -73,14 +75,14 @@ class OuRepositoryImpl(OuRepository):
 
         return Ou.createFrom(id=result[0]['id'], name=result[0]['name'])
 
-    def ousByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
+    def ousByOwnedRoles(self, tokenData: TokenData, resultFrom: int = 0, resultSize: int = 100,
                         order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
-        if 'super_admin' in ownedRoles:
+        if TokenService.isSuperAdmin(tokenData=tokenData):
             aql = '''
                 LET ds = (FOR d IN resource FILTER d.type == 'ou' #sortData RETURN d)
                 RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
@@ -93,6 +95,7 @@ class OuRepositoryImpl(OuRepository):
             bindVars = {"resultFrom": resultFrom, "resultSize": resultSize}
             queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
             result = queryResult.result
+
             if len(result) == 0:
                 return {"items": [], "itemCount": 0}
             return {"items": [Ou.createFrom(id=x['id'], name=x['name']) for x in result[0]['items']],

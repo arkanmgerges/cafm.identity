@@ -6,8 +6,8 @@ import os
 from authlib.jose import jwt
 from mock import Mock
 
-from src.domain_model.AuthorizationRepository import AuthorizationRepository
-from src.domain_model.AuthorizationService import AuthorizationService
+from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
+from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 

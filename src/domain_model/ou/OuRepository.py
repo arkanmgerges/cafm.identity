@@ -4,6 +4,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from src.domain_model.token.TokenData import TokenData
 from src.domain_model.ou.Ou import Ou
 
 
@@ -46,11 +47,11 @@ class OuRepository(ABC):
         """
 
     @abstractmethod
-    def ousByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,order: List[dict] = None) -> dict:
+    def ousByOwnedRoles(self, tokenData: TokenData, resultFrom: int = 0, resultSize: int = 100,order: List[dict] = None) -> dict:
         """Get list of ous based on the owned roles that the user has
 
         Args:
-            ownedRoles (List[str]): A list of the roles that the user or user group own
+            tokenData (TokenData): A token data object
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
             order (List[dict]): A list of order e.g. [{'orderBy': 'name', 'direction': 'asc'}, {'orderBy': 'age', 'direction': 'desc'}]

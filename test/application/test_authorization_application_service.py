@@ -4,10 +4,10 @@
 from mock import Mock
 
 from src.application.AuthorizationApplicationService import AuthorizationApplicationService
-from src.domain_model.AuthorizationRepository import AuthorizationRepository
-from src.domain_model.AuthorizationService import AuthorizationService
+from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
+from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
-from src.domain_model.TokenService import TokenService
+from src.domain_model.token.TokenService import TokenService
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 
 
@@ -21,8 +21,7 @@ def test_authorization_user_is_allowed_using_token_and_has_super_admin_role():
     authzService: AuthorizationService = AuthorizationService(authzRepo=authzRepo, policyService=policyService)
     authAppService = AuthorizationApplicationService(authzService=authzService)
     payload = {'id': '1234', 'name': 'john', 'role': ['super_admin']}
-    tokenService = TokenService()
-    token = tokenService.generateToken(payload=payload)
+    token = TokenService.generateToken(payload=payload)
     # Act
     isAllowed = authAppService.isAllowed(token=token)
     # Assert
@@ -41,8 +40,7 @@ def test_authorization_user_is_not_allowed_using_token_and_empty_role():
     authzService: AuthorizationService = AuthorizationService(authzRepo=authzRepo, policyService=policyService)
     authAppService = AuthorizationApplicationService(authzService=authzService)
     payload = {'id': '1234', 'name': 'john', 'role': []}
-    tokenService = TokenService()
-    token = tokenService.generateToken(payload=payload)
+    token = TokenService.generateToken(payload=payload)
     # Act
     isAllowed = authAppService.isAllowed(token=token)
     # Assert

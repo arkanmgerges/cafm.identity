@@ -3,7 +3,7 @@
 """
 from uuid import uuid4
 
-from src.domain_model.common.Resource import Resource
+from src.domain_model.resource.Resource import Resource
 from src.domain_model.permission.Permission import Permission
 
 

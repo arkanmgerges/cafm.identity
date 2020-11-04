@@ -1,7 +1,7 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domain_model.AuthorizationService import AuthorizationService
+from src.domain_model.authorization.AuthorizationService import AuthorizationService
 
 
 class AuthorizationApplicationService:

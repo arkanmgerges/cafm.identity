@@ -3,7 +3,7 @@
 """
 from typing import List
 
-from src.domain_model.AuthorizationService import AuthorizationService
+from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.permission.PermissionRepository import PermissionRepository
 from src.domain_model.policy.PolicyControllerService import PolicyActionConstant, PolicyControllerService
 from src.domain_model.policy.PolicyRepository import PolicyRepository

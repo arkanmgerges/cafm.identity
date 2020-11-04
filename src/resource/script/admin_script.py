@@ -51,7 +51,8 @@ def init_db():
         click.echo(click.style(f'Create collections:', fg='green'))
         collections = ['resource']
         for colName in collections:
-            dbConnection.createCollection(name=colName, keyOptions={"type": "autoincrement"})
+            if not dbConnection.hasCollection(colName):
+                dbConnection.createCollection(name=colName, keyOptions={"type": "autoincrement"})
 
         # Add resource types
         for resourceType in ['realm', 'ou', 'project', 'user', 'role', 'permission', 'user_group']:
@@ -76,9 +77,10 @@ def init_db():
 
         # Create edges
         click.echo(click.style(f'Create edges:', fg='green'))
-        edges = ['has', 'for', 'access']
+        edges = ['has', 'for', 'access', 'owned_by']
         for edgeName in edges:
-            dbConnection.createCollection(className='Edges', name=edgeName, keyOptions={"type": "autoincrement"})
+            if not dbConnection.hasCollection(edgeName):
+                dbConnection.createCollection(className='Edges', name=edgeName, keyOptions={"type": "autoincrement"})
 
     except Exception as e:
         click.echo(click.style(str(e), fg='red'))

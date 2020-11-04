@@ -3,10 +3,8 @@
 """
 import os
 
-from authlib.jose import jwt
-
-from src.domain_model.AuthenticationRepository import AuthenticationRepository
-from src.domain_model.TokenService import TokenService
+from src.domain_model.authentication.AuthenticationRepository import AuthenticationRepository
+from src.domain_model.token.TokenService import TokenService
 
 
 class AuthenticationService:
@@ -28,8 +26,7 @@ class AuthenticationService:
         """
         result = self._authRepo.authenticateUserByNameAndPassword(name=name, password=password)
         payload = {'id': result['id'], 'role': result['role'], 'name': result['name']}
-        tokenService = TokenService()
-        token = tokenService.generateToken(payload=payload)
+        token = TokenService.generateToken(payload=payload)
         ttl = os.getenv('CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS', 300)
         self._authRepo.persistToken(token=token, ttl=ttl)
         return token
