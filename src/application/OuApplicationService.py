@@ -4,7 +4,9 @@
 from typing import List
 
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
-from src.domain_model.policy.PermissionData import RoleAccessPermissionData
+from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
+
+from src.domain_model.permission.Permission import PermissionAction
 from src.domain_model.token.TokenService import TokenService
 from src.domain_model.ou.OuService import OuService
 from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
@@ -21,7 +23,9 @@ class OuApplicationService:
 
     def createOu(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
-        permissionData:RoleAccessPermissionData = self._authzService.permissionData(tokenData=tokenData)
+        roleAccessList:List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList, action=PermissionAction.WRITE.value,
+                                        resourceType=ResourceTypeConstant.OU.value)
         return self._ouService.createOu(id=id, name=name, objectOnly=objectOnly, tokenData=tokenData)
 
     def ouByName(self, name: str, token: str = ''):

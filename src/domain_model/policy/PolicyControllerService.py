@@ -3,6 +3,7 @@
 """
 from enum import Enum
 
+from src.domain_model.token.TokenData import TokenData
 from src.domain_model.token.TokenService import TokenService
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.resource.Resource import Resource
@@ -61,3 +62,6 @@ class PolicyControllerService:
     def raiseNotAllowedException(self, resourceSrc, resourceDst):
         raise NotAllowedAssignmentException(
             f'resource source id: {resourceSrc.id()}, resource source type: {resourceSrc.type()}\nresource destination id: {resourceDst.id()}, resource type: {resourceDst.type()}')
+
+    def roleAccessPermissionsData(self, tokenData: TokenData):
+        return self._policyRepo.roleAccessPermissionsData(tokenData=tokenData)

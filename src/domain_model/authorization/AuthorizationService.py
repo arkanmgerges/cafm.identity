@@ -1,9 +1,14 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from typing import List
+
 import authlib
 
 from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
+from src.domain_model.permission.Permission import PermissionAction
+from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
+from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
 from src.domain_model.token.TokenData import TokenData
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.resource.logging.logger import logger
@@ -42,5 +47,8 @@ class AuthorizationService:
             logger.exception(f'[{AuthorizationService.isAllowed.__qualname__}] - exception raised with e: {e}')
             raise e
 
-    def permissionData(self, tokenData: TokenData):
+    def roleAccessPermissionsData(self, tokenData: TokenData):
+        return self._policyService.roleAccessPermissionsData(tokenData=tokenData)
+
+    def verifyAccess(self, roleAccessPermissionsData: List[RoleAccessPermissionData], action:PermissionAction, resourceType:ResourceTypeConstant):
         pass

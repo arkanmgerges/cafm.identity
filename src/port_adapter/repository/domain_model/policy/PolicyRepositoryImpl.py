@@ -2,12 +2,14 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import os
-from typing import List, Any
+from collections import defaultdict
+from typing import List, Any, Dict
 
 from pyArango.connection import Connection
 from pyArango.query import AQLQuery
 
 from src.domain_model.permission.Permission import Permission
+from src.domain_model.policy.AccessNode import AccessNode
 from src.domain_model.policy.PermissionWithResourceTypes import PermissionWithResourceTypes
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
@@ -662,7 +664,8 @@ class PolicyRepositoryImpl(PolicyRepository):
                                     RETURN {"permission": {"id": v1.id, "name": v1.name, "allowed_actions": v1.allowed_actions}, "resource_types": resource_types})
                                 
                 LET accesses = (FOR v1, e1 IN OUTBOUND role._id `access`
-                                    RETURN {"id": v1.id, "name": v1.name, "type": v1.type})
+                                    FOR v2, e2, p IN 1..100 OUTBOUND v1._id `has`
+                                        RETURN p)
                                 
                 RETURN {"role": {"id": role.id, "name": role.name}, "owned_by": owned_by, "permissions": permissions, "accesses": accesses}
                     '''
@@ -694,7 +697,35 @@ class PolicyRepositoryImpl(PolicyRepository):
             ownedBy = None
             if item['owned_by'] is not None:
                 ownedBy = Resource(id=item['owned_by']['id'], type=item['owned_by']['type'])
-            permData = RoleAccessPermissionData(role=role, permissions=permList, ownedBy=ownedBy)
+            accessTree = self._fetchAccessTree(accesses=item['accesses'])
+            permData = RoleAccessPermissionData(role=role, permissions=permList, ownedBy=ownedBy, accessTree=accessTree)
             result.append(permData)
 
         return result
+
+    def _fetchAccessTree(self, accesses: List[dict] = None) -> List[AccessNode]:
+        if accesses is None:
+            return []
+
+        objects:Dict[str, AccessNode] = defaultdict()
+        result = []
+
+        for acc in accesses:
+            for edge in acc['edges']:
+                if edge['_from'] not in objects:
+                    self._addAccessKey(result=objects, key=edge['_from'], verts=acc['vertices'])
+                    result.append(objects[edge['_from']])
+                if edge['_to'] not in objects:
+                    self._addAccessKey(result=objects, key=edge['_to'], verts=acc['vertices'])
+                if objects[edge['_to']] not in objects[edge['_from']].children:
+                    objects[edge['_from']].children.append(objects[edge['_to']])
+
+        return result
+
+    def _addAccessKey(self, result: dict, key: str, verts: List[dict]):
+        for vert in verts:
+            if vert['_id'] == key:
+                node = AccessNode()
+                node.resource = Resource(id=vert['id'], type=vert['type'])
+                node.resourceName = vert['name']
+                result[key] = node
