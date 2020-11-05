@@ -6,11 +6,13 @@ from typing import List
 import authlib
 
 from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
-from src.domain_model.permission.Permission import PermissionAction
-from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
-from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
-from src.domain_model.token.TokenData import TokenData
+from src.domain_model.permission.Permission import PermissionAction, Permission
+from src.domain_model.policy.PermissionWithResourceTypes import PermissionWithResourceTypes
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
+from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
+from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
+from src.domain_model.resource_type.ResourceType import ResourceTypeConstant, ResourceType
+from src.domain_model.token.TokenData import TokenData
 from src.resource.logging.logger import logger
 
 
@@ -50,5 +52,36 @@ class AuthorizationService:
     def roleAccessPermissionsData(self, tokenData: TokenData):
         return self._policyService.roleAccessPermissionsData(tokenData=tokenData)
 
-    def verifyAccess(self, roleAccessPermissionsData: List[RoleAccessPermissionData], action:PermissionAction, resourceType:ResourceTypeConstant):
-        pass
+    def verifyAccess(self,
+                     roleAccessPermissionsData: List[RoleAccessPermissionData],
+                     permissionAction: PermissionAction,
+                     resourceTypeConstant: ResourceTypeConstant,
+                     tokenData: TokenData):
+
+        if not self._isSuperAdmin(tokenData=tokenData):
+            if permissionAction in [PermissionAction.WRITE]:
+                if not self._verifyActionByPermissionWithResourceType(permissionAction=permissionAction,
+                                                                      resourceTypeConstant=resourceTypeConstant,
+                                                                      roleAccessPermissionsData=roleAccessPermissionsData):
+                    raise UnAuthorizedException()
+
+    def _isSuperAdmin(self, tokenData) -> bool:
+        for role in tokenData.roles():
+            if role['name'] == 'super_admin':
+                return True
+        return False
+
+    def _verifyActionByPermissionWithResourceType(self, permissionAction, resourceTypeConstant,
+                                                  roleAccessPermissionsData: List[RoleAccessPermissionData]) -> bool:
+        for item in roleAccessPermissionsData:
+            permissionsWithResourceTypes: List[PermissionWithResourceTypes] = item.permissions
+            for permissionWithResourceTypes in permissionsWithResourceTypes:
+                # If we find a permission with the 'action' for 'resource type' then return true
+                permission: Permission = permissionWithResourceTypes.permission
+                resourceTypes: List[ResourceType] = permissionWithResourceTypes.resourceTypes
+                if permissionAction.value in permission.allowedActions():
+                    for resourceType in resourceTypes:
+                        if resourceTypeConstant.value == resourceType.name():
+                            return True
+        # We did not find action with resource type, then return false
+        return False

@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import sys
+
 sys.path.append("../../../")
 
 import hashlib
@@ -15,11 +16,9 @@ from pyArango.query import AQLQuery
 from pyArango.users import Users
 from confluent_kafka.admin import AdminClient, NewTopic
 
-
-from src.port_adapter.messaging.common.model.ApiCommand import ApiCommand
-from src.port_adapter.messaging.common.model.ApiResponse import ApiResponse
 from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
+
 
 @click.group()
 def cli():
@@ -55,25 +54,73 @@ def init_db():
                 dbConnection.createCollection(name=colName, keyOptions={"type": "autoincrement"})
 
         # Add resource types
-        for resourceType in ['realm', 'ou', 'project', 'user', 'role', 'permission', 'user_group']:
-            aql = ''
-            if resourceType == 'permission':
-                aql = '''
+        resourceTypes = ['realm', 'ou', 'project', 'user', 'role', 'user_group']
+        click.echo(click.style(f'Create resource types', fg='green'))
+        for resourceType in resourceTypes:
+            aql = '''
                         UPSERT {name: @name, type: @type}
-                            INSERT {id: @id, name: @name, type: @type, allowed_actions: ["*"]}
+                            INSERT {id: @id, name: @name, type: @type}
                             UPDATE {name: @name}
                           IN resource
                         '''
-            else:
-                aql = '''
-                            UPSERT {name: @name, type: @type}
-                                INSERT {id: @id, name: @name, type: @type}
-                                UPDATE {name: @name}
-                              IN resource
-                            '''
 
             bindVars = {"id": uuid.uuid4(), "name": resourceType, "type": resourceType}
             queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+            # Create also a resource of type 'resource_type'
+            bindVars = {"id": uuid.uuid4(), "name": resourceType, "type": 'resource_type'}
+            queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+        # Add default permissions (this was added later in code. It will read the already created resource types and
+        # create permissions for them)
+        # Fetch all the resources of type resource type
+        aql = '''
+            FOR res IN resource
+                FILTER res.type == 'resource_type'
+                RETURN res
+        '''
+        resourceTypesResult = dbConnection.AQLQuery(aql, rawResults=True)
+
+        # Create permissions with names '<action>_<resource_type>' like read_ou, write_realm ...etc
+        click.echo(click.style(f'Create permissions with names linked to resource types', fg='green'))
+        for action in ['read', 'write', 'update']:
+            for rt in resourceTypesResult:
+                aql = '''
+                        UPSERT {name: @name, type: @type}
+                            INSERT {id: @id, name: @name, type: @type, allowed_actions: ["#allowedAction"]}
+                            UPDATE {name: @name}
+                          IN resource
+                        '''
+                aql = aql.replace('#allowedAction', action)
+                bindVars = {"id": uuid.uuid4(), "name": f'{action}_{rt["name"]}', "type": 'permission'}
+                queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+        # Fetch all the resources of type permission
+        aql = '''
+            FOR res IN resource
+                FILTER res.type == 'permission'
+                RETURN res
+        '''
+        permissionsResult = dbConnection.AQLQuery(aql, rawResults=True)
+
+        # Link the permissions with the resource types
+        click.echo(click.style(f'Link permissions to resource types', fg='green'))
+        for perm in permissionsResult:
+            aql = '''
+                UPSERT {_from: @fromId, _to: @toId}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'resource_type'}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'resource_type'}
+                  IN `for`                
+                '''
+            rtName = perm['name'][perm['name'].find('_') + 1:]
+            rtId = None
+            for rt in resourceTypesResult:
+                if rt['name'] == rtName:
+                    rtId = rt['_id']
+                    break
+            if rtId is not None:
+                bindVars = {"fromId": perm['_id'], "toId": rtId}
+                queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
         # Create edges
         click.echo(click.style(f'Create edges:', fg='green'))
@@ -124,12 +171,15 @@ def delete_user(username, database_name):
     user = users.fetchUser(username)
     user.delete()
 
+
 @cli.command(help='Create user document and assign it a super admin role in database')
 @click.argument('username')
 @click.argument('password')
 @click.argument('database_name')
 def assign_user_super_admin_role(username, password, database_name):
-    click.echo(click.style(f'Creating user: {username} document in the database: {database_name} and assigning a super admin role', fg='green'))
+    click.echo(click.style(
+        f'Creating user: {username} document in the database: {database_name} and assigning a super admin role',
+        fg='green'))
     conn = dbClientConnection()
     db = conn[database_name]
 
@@ -183,12 +233,13 @@ def assign_user_super_admin_role(username, password, database_name):
     # Assign super admin role to the user
     aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, from_type: 'user', to_type: 'role'}
-                    UPDATE {_from: @fromId, _to: @toId, from_type: 'user', to_type: 'role'}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: 'user', _to_type: 'role'}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'user', _to_type: 'role'}
                   IN has                  
                 '''
     bindVars = {"fromId": userDocId, "toId": roleDocId}
     queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
 
 @cli.command(help='Initialize kafka topics and schema registries')
 def init_kafka_topics_and_schemas():
@@ -228,7 +279,6 @@ def drop_kafka_topics_and_schemas():
     schemas = ['cafm.identity.Command', 'cafm.identity.Event']
     c = CachedSchemaRegistryClient({'url': os.getenv('MESSAGE_SCHEMA_REGISTRY_URL', '')})
     [c.delete_subject(schema) for schema in schemas]
-
 
 
 def dbClientConnection():

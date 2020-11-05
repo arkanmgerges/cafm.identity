@@ -4,15 +4,14 @@
 from typing import List
 
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
-from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
-
-from src.domain_model.permission.Permission import PermissionAction
-from src.domain_model.token.TokenService import TokenService
-from src.domain_model.ou.OuService import OuService
-from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
 from src.domain_model.ou.OuRepository import OuRepository
+from src.domain_model.ou.OuService import OuService
+from src.domain_model.permission.Permission import PermissionAction
+from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
+from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
+from src.domain_model.token.TokenService import TokenService
 
 
 class OuApplicationService:
@@ -23,9 +22,11 @@ class OuApplicationService:
 
     def createOu(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
-        roleAccessList:List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
-        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList, action=PermissionAction.WRITE.value,
-                                        resourceType=ResourceTypeConstant.OU.value)
+        roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
+            tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
+                                        permissionAction=PermissionAction.WRITE,
+                                        resourceTypeConstant=ResourceTypeConstant.OU, tokenData=tokenData)
         return self._ouService.createOu(id=id, name=name, objectOnly=objectOnly, tokenData=tokenData)
 
     def ouByName(self, name: str, token: str = ''):

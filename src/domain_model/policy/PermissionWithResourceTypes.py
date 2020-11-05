@@ -9,5 +9,5 @@ from src.domain_model.resource_type.ResourceType import ResourceType
 
 class PermissionWithResourceTypes:
     def __init__(self, permission: Permission = None, resourceTypes: List[ResourceType] = None):
-        self.permission = permission
-        self.resourceTypes = resourceTypes
+        self.permission: Permission = permission
+        self.resourceTypes: List[ResourceType] = resourceTypes

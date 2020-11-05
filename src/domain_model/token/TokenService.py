@@ -67,7 +67,7 @@ class TokenService:
 
     @staticmethod
     def isSuperAdmin(tokenData: TokenData):
-        role = tokenData.role()
+        role = tokenData.roles()
         for i in role:
             if i['name'] == 'super_admin':
                 return True

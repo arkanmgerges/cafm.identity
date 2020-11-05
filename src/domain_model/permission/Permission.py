@@ -18,6 +18,7 @@ from uuid import uuid4
 class PermissionAction(Enum):
     READ = 'read'
     WRITE = 'write'
+    UPDATE = 'update'
     ASSIGN = 'assign'
     REVOKE = 'revoke'
 

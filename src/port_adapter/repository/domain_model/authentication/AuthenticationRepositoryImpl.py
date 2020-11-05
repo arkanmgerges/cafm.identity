@@ -41,7 +41,7 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
         aql = '''
                 WITH resource
                 FOR u IN resource
-                FILTER u.name == @name AND u.password == @password AND u._type == 'user'
+                FILTER u.name == @name AND u.password == @password AND u.type == 'user'
                 LET r1 = (FOR v,e IN 1..1 OUTBOUND u._id has FILTER e._to_type == "role" RETURN v)
                 LET r2 = (
                             FOR ug IN resource

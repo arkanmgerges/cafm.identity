@@ -64,7 +64,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Get the role doc id
         aql = '''
             FOR d IN resource
-                FILTER d.id == @id AND d._type == 'role'
+                FILTER d.id == @id AND d.type == 'role'
                 RETURN d
         '''
         bindVars = {"id": role.id()}
@@ -633,7 +633,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                     "toType": ResourceTypeConstant.USER.value}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
-        for role in tokenData.role():
+        for role in tokenData.roles():
             roleDocId = self.roleDocumentId(Role.createFrom(id=role['id'], name=role['name']))
             aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
@@ -675,7 +675,6 @@ class PolicyRepositoryImpl(PolicyRepository):
         qResult = queryResult.result
         if len(qResult) == 0:
             return []
-        qResult = qResult[0]
         result = []
         for item in qResult:
             ownedByString = '' if item['owned_by'] is None else item['owned_by']['name']
