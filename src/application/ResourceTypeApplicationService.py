@@ -5,71 +5,71 @@ from typing import List
 
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
-from src.domain_model.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException
-from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
+from src.domain_model.resource.exception.PermissionContextAlreadyExistException import PermissionContextAlreadyExistException
+from src.domain_model.resource.exception.PermissionContextDoesNotExistException import PermissionContextDoesNotExistException
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.domain_model.resource_type.ResourceType import ResourceType, ResourceTypeConstant
-from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
+from src.domain_model.permission_context.PermissionContext import PermissionContext, PermissionContextConstant
+from src.domain_model.permission_context.PermissionContextRepository import PermissionContextRepository
 
 
-class ResourceTypeApplicationService:
-    def __init__(self, resourceTypeRepository: ResourceTypeRepository, authzService: AuthorizationService):
-        self._resourceTypeRepository = resourceTypeRepository
+class PermissionContextApplicationService:
+    def __init__(self, permissionContextRepository: PermissionContextRepository, authzService: AuthorizationService):
+        self._permissionContextRepository = permissionContextRepository
         self._authzService: AuthorizationService = authzService
 
-    def createResourceType(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
+    def createPermissionContext(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         try:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
-                                            resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
-                self._resourceTypeRepository.resourceTypeByName(name=name)
-                raise ResourceTypeAlreadyExistException(name)
+                                            permissionContext=PermissionContextConstant.RESOURCE_TYPE.value):
+                self._permissionContextRepository.permissionContextByName(name=name)
+                raise PermissionContextAlreadyExistException(name)
             else:
                 raise UnAuthorizedException()
-        except ResourceTypeDoesNotExistException:
+        except PermissionContextDoesNotExistException:
             if objectOnly:
-                return ResourceType.createFrom(name=name)
+                return PermissionContext.createFrom(name=name)
             else:
-                resourceType = ResourceType.createFrom(id=id, name=name, publishEvent=True)
-                self._resourceTypeRepository.createResourceType(resourceType)
-                return resourceType
+                permissionContext = PermissionContext.createFrom(id=id, name=name, publishEvent=True)
+                self._permissionContextRepository.createPermissionContext(permissionContext)
+                return permissionContext
 
-    def resourceTypeByName(self, name: str, token: str = ''):
+    def permissionContextByName(self, name: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
-            return self._resourceTypeRepository.resourceTypeByName(name=name)
+                                        permissionContext=PermissionContextConstant.RESOURCE_TYPE.value):
+            return self._permissionContextRepository.permissionContextByName(name=name)
         else:
             raise UnAuthorizedException()
 
-    def resourceTypeById(self, id: str, token: str = ''):
+    def permissionContextById(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
-            return self._resourceTypeRepository.resourceTypeById(id=id)
+                                        permissionContext=PermissionContextConstant.RESOURCE_TYPE.value):
+            return self._permissionContextRepository.permissionContextById(id=id)
         else:
             raise UnAuthorizedException()
 
-    def resourceTypes(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
+    def permissionContexts(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
-            return self._resourceTypeRepository.resourceTypesByOwnedRoles(ownedRoles=ownedRoles,
+                                        permissionContext=PermissionContextConstant.RESOURCE_TYPE.value):
+            return self._permissionContextRepository.permissionContextsByOwnedRoles(ownedRoles=ownedRoles,
                                                                           resultFrom=resultFrom,
                                                                           resultSize=resultSize,
                                                                           order=order)
         else:
             raise UnAuthorizedException()
 
-    def deleteResourceType(self, id: str, token: str = ''):
+    def deletePermissionContext(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
-                                        resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
-            resourceType = self._resourceTypeRepository.resourceTypeById(id=id)
-            self._resourceTypeRepository.deleteResourceType(resourceType)
+                                        permissionContext=PermissionContextConstant.RESOURCE_TYPE.value):
+            permissionContext = self._permissionContextRepository.permissionContextById(id=id)
+            self._permissionContextRepository.deletePermissionContext(permissionContext)
         else:
             raise UnAuthorizedException()
 
-    def updateResourceType(self, id: str, name: str, token: str = ''):
+    def updatePermissionContext(self, id: str, name: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
-                                        resourceType=ResourceTypeConstant.RESOURCE_TYPE.value):
-            resourceType = self._resourceTypeRepository.resourceTypeById(id=id)
-            resourceType.update({'name': name})
-            self._resourceTypeRepository.updateResourceType(resourceType)
+                                        permissionContext=PermissionContextConstant.RESOURCE_TYPE.value):
+            permissionContext = self._permissionContextRepository.permissionContextById(id=id)
+            permissionContext.update({'name': name})
+            self._permissionContextRepository.updatePermissionContext(permissionContext)
         else:
             raise UnAuthorizedException()

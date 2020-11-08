@@ -6,19 +6,19 @@ import time
 import grpc
 
 import src.port_adapter.AppDi as AppDi
-from src.application.ResourceTypeApplicationService import ResourceTypeApplicationService
+from src.application.PermissionContextApplicationService import PermissionContextApplicationService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
+from src.domain_model.resource.exception.PermissionContextDoesNotExistException import PermissionContextDoesNotExistException
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.domain_model.resource_type.ResourceType import ResourceType
+from src.domain_model.permission_context.PermissionContext import PermissionContext
 from src.resource.logging.logger import logger
-from src.resource.proto._generated.resource_type_app_service_pb2 import \
-    ResourceTypeAppService_resourceTypeByNameResponse, ResourceTypeAppService_resourceTypesResponse, \
-    ResourceTypeAppService_resourceTypeByIdResponse
-from src.resource.proto._generated.resource_type_app_service_pb2_grpc import ResourceTypeAppServiceServicer
+from src.resource.proto._generated.permission_context_app_service_pb2 import \
+    PermissionContextAppService_permissionContextByNameResponse, PermissionContextAppService_permissionContextsResponse, \
+    PermissionContextAppService_permissionContextByIdResponse
+from src.resource.proto._generated.permission_context_app_service_pb2_grpc import PermissionContextAppServiceServicer
 
 
-class ResourceTypeAppServiceListener(ResourceTypeAppServiceServicer):
+class PermissionContextAppServiceListener(PermissionContextAppServiceServicer):
     """The listener function implements the rpc call as described in the .proto file"""
 
     def __init__(self):
@@ -29,29 +29,29 @@ class ResourceTypeAppServiceListener(ResourceTypeAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
-    def resourceTypeByName(self, request, context):
+    def permissionContextByName(self, request, context):
         try:
             token = self._token(context)
-            resourceTypeAppService: ResourceTypeApplicationService = AppDi.instance.get(ResourceTypeApplicationService)
-            resourceType: ResourceType = resourceTypeAppService.resourceTypeByName(name=request.name, token=token)
-            response = ResourceTypeAppService_resourceTypeByNameResponse()
-            response.resourceType.id = resourceType.id()
-            response.resourceType.name = resourceType.name()
+            permissionContextAppService: PermissionContextApplicationService = AppDi.instance.get(PermissionContextApplicationService)
+            permissionContext: PermissionContext = permissionContextAppService.permissionContextByName(name=request.name, token=token)
+            response = PermissionContextAppService_permissionContextByNameResponse()
+            response.permissionContext.id = permissionContext.id()
+            response.permissionContext.name = permissionContext.name()
             return response
-        except ResourceTypeDoesNotExistException:
+        except PermissionContextDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details('ResourceType does not exist')
-            return ResourceTypeAppService_resourceTypeByNameResponse()
+            context.set_details('PermissionContext does not exist')
+            return PermissionContextAppService_permissionContextByNameResponse()
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
-            return ResourceTypeAppService_resourceTypeByNameResponse()
+            return PermissionContextAppService_permissionContextByNameResponse()
         # except Exception as e:
         #     context.set_code(grpc.StatusCode.UNKNOWN)
         #     context.set_details(f'{e}')
-        #     return identity_pb2.ResourceTypeResponse()
+        #     return identity_pb2.PermissionContextResponse()
 
-    def resourceTypes(self, request, context):
+    def permissionContexts(self, request, context):
         try:
             token = self._token(context)
             metadata = context.invocation_metadata()
@@ -59,50 +59,50 @@ class ResourceTypeAppServiceListener(ResourceTypeAppServiceServicer):
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
             ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
-                f'[{ResourceTypeAppServiceListener.resourceTypes.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
+                f'[{PermissionContextAppServiceListener.permissionContexts.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
-            resourceTypeAppService: ResourceTypeApplicationService = AppDi.instance.get(ResourceTypeApplicationService)
+            permissionContextAppService: PermissionContextApplicationService = AppDi.instance.get(PermissionContextApplicationService)
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
-            result: dict = resourceTypeAppService.resourceTypes(ownedRoles=ownedRoles,
+            result: dict = permissionContextAppService.permissionContexts(ownedRoles=ownedRoles,
                                                                 resultFrom=request.resultFrom,
                                                                 resultSize=resultSize,
                                                                 token=token,
                                                                 order=orderData)
-            response = ResourceTypeAppService_resourceTypesResponse()
-            for resourceType in result['items']:
-                response.resourceTypes.add(id=resourceType.id(), name=resourceType.name())
+            response = PermissionContextAppService_permissionContextsResponse()
+            for permissionContext in result['items']:
+                response.permissionContexts.add(id=permissionContext.id(), name=permissionContext.name())
             response.itemCount = result['itemCount']
-            logger.debug(f'[{ResourceTypeAppServiceListener.resourceTypes.__qualname__}] - response: {response}')
-            return ResourceTypeAppService_resourceTypesResponse(resourceTypes=response.resourceTypes,
+            logger.debug(f'[{PermissionContextAppServiceListener.permissionContexts.__qualname__}] - response: {response}')
+            return PermissionContextAppService_permissionContextsResponse(permissionContexts=response.permissionContexts,
                                                                 itemCount=response.itemCount)
-        except ResourceTypeDoesNotExistException:
+        except PermissionContextDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details('No resourceTypes found')
-            return ResourceTypeAppService_resourceTypeByNameResponse()
+            context.set_details('No permissionContexts found')
+            return PermissionContextAppService_permissionContextByNameResponse()
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
-            return ResourceTypeAppService_resourceTypeByNameResponse()
+            return PermissionContextAppService_permissionContextByNameResponse()
 
-    def resourceTypeById(self, request, context):
+    def permissionContextById(self, request, context):
         try:
             token = self._token(context)
-            resourceTypeAppService: ResourceTypeApplicationService = AppDi.instance.get(ResourceTypeApplicationService)
-            resourceType: ResourceType = resourceTypeAppService.resourceTypeById(id=request.id, token=token)
-            logger.debug(f'[{ResourceTypeAppServiceListener.resourceTypeById.__qualname__}] - response: {resourceType}')
-            response = ResourceTypeAppService_resourceTypeByIdResponse()
-            response.resourceType.id = resourceType.id()
-            response.resourceType.name = resourceType.name()
+            permissionContextAppService: PermissionContextApplicationService = AppDi.instance.get(PermissionContextApplicationService)
+            permissionContext: PermissionContext = permissionContextAppService.permissionContextById(id=request.id, token=token)
+            logger.debug(f'[{PermissionContextAppServiceListener.permissionContextById.__qualname__}] - response: {permissionContext}')
+            response = PermissionContextAppService_permissionContextByIdResponse()
+            response.permissionContext.id = permissionContext.id()
+            response.permissionContext.name = permissionContext.name()
             return response
-        except ResourceTypeDoesNotExistException:
+        except PermissionContextDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details('ResourceType does not exist')
-            return ResourceTypeAppService_resourceTypeByIdResponse()
+            context.set_details('PermissionContext does not exist')
+            return PermissionContextAppService_permissionContextByIdResponse()
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
-            return ResourceTypeAppService_resourceTypeByIdResponse()
+            return PermissionContextAppService_permissionContextByIdResponse()
 
     def _token(self, context) -> str:
         metadata = context.invocation_metadata()

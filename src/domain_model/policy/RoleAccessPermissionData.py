@@ -4,13 +4,13 @@
 from typing import List
 
 from src.domain_model.policy.AccessNode import AccessNode
-from src.domain_model.policy.PermissionWithResourceTypes import PermissionWithResourceTypes
+from src.domain_model.policy.PermissionWithResourceTypes import PermissionWithPermissionContexts
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.role.Role import Role
 
 
 class RoleAccessPermissionData:
-    def __init__(self, role: Role = None, permissions: List[PermissionWithResourceTypes] = None,
+    def __init__(self, role: Role = None, permissions: List[PermissionWithPermissionContexts] = None,
                  ownedBy: Resource = None, accessTree: List[AccessNode] = None):
         self.role: Role = role
         self.permissions = permissions if permissions is not None else []

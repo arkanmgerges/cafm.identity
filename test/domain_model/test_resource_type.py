@@ -4,7 +4,7 @@
 from uuid import uuid4
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.resource_type.ResourceType import ResourceType
+from src.domain_model.permission_context.PermissionContext import ResourceType
 
 
 def test_create_resourceType():
@@ -22,7 +22,7 @@ def test_create_resourceType_with_semantic_constructor():
     # Assert
     assert isinstance(resourceType, ResourceType)
     assert isinstance(resourceType, Resource)
-    assert resourceType.type() == 'resource_type'
+    assert resourceType.type() == 'permission_context'
     assert resourceType.id() == id
     assert resourceType.name() == 'Prj1'
 

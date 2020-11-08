@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package cafm.identity.resource_type;
+package cafm.identity.permission_context;
 
-message ResourceType {
+message PermissionContext {
   string id = 1;
   string name = 2;
 }

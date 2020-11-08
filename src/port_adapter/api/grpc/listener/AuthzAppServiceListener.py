@@ -29,7 +29,7 @@ class AuthzAppServiceListener(AuthzAppServiceServicer):
             logger.debug(
                 f'[{AuthzAppServiceListener.isAllowed.__qualname__}] - receive request with token: {request.token}, data: {request.data}')
             authzAppService: AuthorizationApplicationService = AppDi.instance.get(AuthorizationApplicationService)
-            isAllowed: bool = authzAppService.isAllowed(token=request.token, action=request.action, resourceType=request.resource_type, resourceId=request.resource_id)
+            isAllowed: bool = authzAppService.isAllowed(token=request.token, action=request.action, permissionContext=request.permission_context, resourceId=request.resource_id)
             logger.debug(
                 f'[{AuthzAppServiceListener.isAllowed.__qualname__}] - returned isAllowed: {isAllowed}')
             return AuthzAppService_isAllowedResponse(isAllowed=isAllowed)

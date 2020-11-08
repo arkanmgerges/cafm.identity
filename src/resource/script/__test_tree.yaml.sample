@@ -1,0 +1,28 @@
+---
+database_name: "cafm-identity"
+tree: &tree
+  - name: "realm_1"
+    type: "realm"
+    children:
+      - name: "ou_1"
+        type: "ou"
+        children:
+          - name: "project_1"
+            type: "project"
+            children: []
+      - name: "ou_2"
+        type: "ou"
+        children:
+          - name: "project_2"
+            type: "project"
+            children: []
+users:
+  - name: "user_1"
+    password: "1234"
+    roles:
+      - name: "role_1"
+        permissions:
+            - name: "create_ou"
+            - name: "read_realm"
+            - name: "read_ou"
+        access: *tree

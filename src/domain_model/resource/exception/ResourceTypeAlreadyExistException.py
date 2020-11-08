@@ -5,7 +5,7 @@ from src.domain_model.resource.exception.DomainModelException import DomainModel
 from src.domain_model.resource.exception.CodeExceptionConstant import CodeExceptionConstant
 
 
-class ResourceTypeAlreadyExistException(DomainModelException):
+class PermissionContextAlreadyExistException(DomainModelException):
     def __init__(self, message: str = ''):
         self.message = f'{message} already exist'
         self.code = CodeExceptionConstant.OBJECT_ALREADY_EXIST.value

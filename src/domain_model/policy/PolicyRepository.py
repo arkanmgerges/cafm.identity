@@ -8,7 +8,7 @@ from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissio
 from src.domain_model.token.TokenData import TokenData
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.resource_type.ResourceType import ResourceType
+from src.domain_model.permission_context.PermissionContext import PermissionContext
 from src.domain_model.role.Role import Role
 from src.domain_model.user.User import User
 from src.domain_model.user_group.UserGroup import UserGroup
@@ -121,24 +121,24 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def assignPermissionToResourceType(self, permission: Permission, resourceType: ResourceType) -> None:
-        """Assign permission to a resource type
+    def assignPermissionToPermissionContext(self, permission: Permission, permissionContext: PermissionContext) -> None:
+        """Assign permission to a permission context
 
         Args:
-            permission (Permission): The permission to be assigned to a resource type
-            resourceType (ResourceType): The resource type to be linked to the permission
+            permission (Permission): The permission to be assigned to a permission context
+            permissionContext (PermissionContext): The permission context to be linked to the permission
 
         :raises:
             `ResourceAssignmentAlreadyExistException <src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException>` Raise an exception if the resource assignment already exist
         """
 
     @abstractmethod
-    def revokeAssignmentPermissionToResourceType(self, permission: Permission, resourceType: ResourceType) -> None:
-        """Revoke assignment of a permission to a resource type
+    def revokeAssignmentPermissionToPermissionContext(self, permission: Permission, permissionContext: PermissionContext) -> None:
+        """Revoke assignment of a permission to a permission context
 
         Args:
-            permission (Permission): The permission that will be separated from the resource type
-            resourceType (ResourceType): The resource type to be unlinked from the permission
+            permission (Permission): The permission that will be separated from the permission context
+            permissionContext (PermissionContext): The permission context to be unlinked from the permission
 
         :raises:
             `ResourceAssignmentDoesNotExistException <src.domain_model.resource.exception.ResourceAssignmentDoesNotExistException>` Raise an exception if the resource assignment does not exist
@@ -203,12 +203,12 @@ class PolicyRepository(ABC):
 
     @abstractmethod
     def roleAccessPermissionsData(self, tokenData: TokenData) -> List[RoleAccessPermissionData]:
-        """Retrieve the permissions and resource types connected to it also related to the roles that belong
+        """Retrieve the permissions and permission contexts connected to it also related to the roles that belong
         to the token provided
 
         Args:
             tokenData (TokenData): A token info
 
         Returns:
-            List[RoleAccessPermissionData]: A list of role with access and permissions with resource types
+            List[RoleAccessPermissionData]: A list of role with access and permissions with permission contexts
         """

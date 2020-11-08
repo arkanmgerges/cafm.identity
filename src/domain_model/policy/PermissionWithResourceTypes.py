@@ -4,10 +4,10 @@
 from typing import List
 
 from src.domain_model.permission.Permission import Permission
-from src.domain_model.resource_type.ResourceType import ResourceType
+from src.domain_model.permission_context.PermissionContext import PermissionContext
 
 
-class PermissionWithResourceTypes:
-    def __init__(self, permission: Permission = None, resourceTypes: List[ResourceType] = None):
+class PermissionWithPermissionContexts:
+    def __init__(self, permission: Permission = None, permissionContexts: List[PermissionContext] = None):
         self.permission: Permission = permission
-        self.resourceTypes: List[ResourceType] = resourceTypes
+        self.permissionContexts: List[PermissionContext] = permissionContexts

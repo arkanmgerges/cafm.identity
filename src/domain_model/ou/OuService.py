@@ -8,7 +8,7 @@ from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
-from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
+from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 
 
 class OuService:
@@ -29,6 +29,6 @@ class OuService:
                 self._policyRepo.connectResourceToOwner(
                     resource=Resource(
                         id=ou.id(),
-                        type=ResourceTypeConstant.OU.value),
+                        type=PermissionContextConstant.OU.value),
                     tokenData=tokenData)
                 return ou

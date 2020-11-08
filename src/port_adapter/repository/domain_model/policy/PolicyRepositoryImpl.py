@@ -10,7 +10,7 @@ from pyArango.query import AQLQuery
 
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.policy.AccessNode import AccessNode
-from src.domain_model.policy.PermissionWithResourceTypes import PermissionWithResourceTypes
+from src.domain_model.policy.PermissionWithPermissionContexts import PermissionWithPermissionContexts
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.resource.Resource import Resource
@@ -19,11 +19,11 @@ from src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException
     ResourceAssignmentAlreadyExistException
 from src.domain_model.resource.exception.ResourceAssignmentDoesNotExistException import \
     ResourceAssignmentDoesNotExistException
-from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
+from src.domain_model.resource.exception.PermissionContextDoesNotExistException import PermissionContextDoesNotExistException
 from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
-from src.domain_model.resource_type.ResourceType import ResourceType, ResourceTypeConstant
+from src.domain_model.permission_context.PermissionContext import PermissionContext, PermissionContextConstant
 from src.domain_model.role.Role import Role
 from src.domain_model.token.TokenData import TokenData
 from src.domain_model.user.User import User
@@ -301,7 +301,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
     # endregion
 
-    # region Assignment Role - Permission - Resource type
+    # region Assignment Role - Permission - Permission Context
     def assignRoleToPermission(self, role: Role, permission: Permission) -> None:
         roleDocId = self.roleDocumentId(role)
         permissionDocId = self.permissionDocumentId(permission)
@@ -342,21 +342,21 @@ class PolicyRepositoryImpl(PolicyRepository):
         docId = result['_id']
         return docId
 
-    def resourceTypeDocumentId(self, resourceType: ResourceType):
+    def permissionContextDocumentId(self, permissionContext: PermissionContext):
         # Get the doc id
         aql = '''
             FOR d IN resource
-                FILTER d.id == @id AND d.type == 'resource_type'
+                FILTER d.id == @id AND d.type == 'permission_context'
                 RETURN d
         '''
-        bindVars = {"id": resourceType.id()}
+        bindVars = {"id": permissionContext.id()}
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
             logger.debug(
-                f'[{PolicyRepositoryImpl.resourceTypeDocumentId.__qualname__}] resource type id: {resourceType.id()}')
-            raise ResourceTypeDoesNotExistException(
-                f'resource type id: {resourceType.id()}')
+                f'[{PolicyRepositoryImpl.permissionContextDocumentId.__qualname__}] permission context id: {permissionContext.id()}')
+            raise PermissionContextDoesNotExistException(
+                f'permission context id: {permissionContext.id()}')
         result = result[0]
         docId = result['_id']
         return docId
@@ -407,58 +407,58 @@ class PolicyRepositoryImpl(PolicyRepository):
         logger.debug(
             f'[{PolicyRepositoryImpl.revokeRoleFromUserGroup.__qualname__}] Revoke assignment of role with id: {role.id()} to permission with id: {permission.id()}')
 
-    def assignPermissionToResourceType(self, permission: Permission, resourceType: ResourceType) -> None:
+    def assignPermissionToPermissionContext(self, permission: Permission, permissionContext: PermissionContext) -> None:
         permissionDocId = self.permissionDocumentId(permission)
-        resourceTypeDocId = self.resourceTypeDocumentId(resourceType)
+        permissionContextDocId = self.permissionContextDocumentId(permissionContext)
 
         # Check if there is any already exist link?
-        result = self.assignmentPermissionToResourceType(permissionDocId, resourceTypeDocId)
+        result = self.assignmentPermissionToPermissionContext(permissionDocId, permissionContextDocId)
         if len(result) > 0:
             logger.debug(
-                f'[{PolicyRepositoryImpl.assignPermissionToResourceType.__qualname__}] Resource already assigned permission: {permission.id()}, resource type id: {resourceType.id()}')
+                f'[{PolicyRepositoryImpl.assignPermissionToPermissionContext.__qualname__}] Resource already assigned permission: {permission.id()}, permission context id: {permissionContext.id()}')
             raise ResourceAssignmentAlreadyExistException(
-                f'Resource already assigned permission: {permission.id()}, resource type id: {resourceType.id()}')
+                f'Resource already assigned permission: {permission.id()}, permission context id: {permissionContext.id()}')
 
-        # Assign the permission to resource type
+        # Assign the permission to permission context
         aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'resource_type'}
-                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'resource_type'}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
                   IN `for`                  
                 '''
-        bindVars = {"fromId": permissionDocId, "toId": resourceTypeDocId}
+        bindVars = {"fromId": permissionDocId, "toId": permissionContextDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
-    def assignmentPermissionToResourceType(self, permissionDocId, resourceTypeDocId) -> List:
+    def assignmentPermissionToPermissionContext(self, permissionDocId, permissionContextDocId) -> List:
         # Check if there is a link
         aql = '''
             WITH `for`, `resource`
             FOR d IN `resource`
                 FILTER d._id == @permissionDocId AND d.type == 'permission'
                 LET r = (
-                    FOR v1,e1 IN OUTBOUND d._id `for` FILTER e1._to_type == "resource_type" AND v1._id == @resourceTypeDocId
-                        RETURN  {"resource_type": v1, "to_resource_type_edge": e1}
+                    FOR v1,e1 IN OUTBOUND d._id `for` FILTER e1._to_type == "permission_context" AND v1._id == @permissionContextDocId
+                        RETURN  {"permission_context": v1, "to_permission_context_edge": e1}
                 )
                 FILTER LENGTH(r) > 0
-                RETURN {"permission": d, "resource_type": r}
+                RETURN {"permission": d, "permission_context": r}
         '''
-        bindVars = {"permissionDocId": permissionDocId, "resourceTypeDocId": resourceTypeDocId}
+        bindVars = {"permissionDocId": permissionDocId, "permissionContextDocId": permissionContextDocId}
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
 
         return result
 
-    def revokeAssignmentPermissionToResourceType(self, permission: Permission, resourceType: ResourceType) -> None:
+    def revokeAssignmentPermissionToPermissionContext(self, permission: Permission, permissionContext: PermissionContext) -> None:
         permissionDocId = self.permissionDocumentId(permission)
-        resourceTypeDocId = self.resourceTypeDocumentId(resourceType)
+        permissionContextDocId = self.permissionContextDocumentId(permissionContext)
 
         # Check if there is any already exist link?
-        result = self.assignmentPermissionToResourceType(permissionDocId, resourceTypeDocId)
+        result = self.assignmentPermissionToPermissionContext(permissionDocId, permissionContextDocId)
         if len(result) == 0:
             logger.debug(
-                f'[{PolicyRepositoryImpl.revokeAssignmentPermissionToResourceType.__qualname__}] Resource assignment for permission id: {permission.id()}, resource type id: {resourceType.id()}')
+                f'[{PolicyRepositoryImpl.revokeAssignmentPermissionToPermissionContext.__qualname__}] Resource assignment for permission id: {permission.id()}, permission context id: {permissionContext.id()}')
             raise ResourceAssignmentDoesNotExistException(
-                f'Resource assignment for permission id: {permission.id()}, resource type id: {resourceType.id()}')
+                f'Resource assignment for permission id: {permission.id()}, permission context id: {permissionContext.id()}')
         result = result[0]
 
         # Delete the document
@@ -467,13 +467,13 @@ class PolicyRepositoryImpl(PolicyRepository):
                 FILTER d._id == @_id
                 REMOVE d IN `for`
         '''
-        for d in result['resource_type']:
-            bindVars = {"_id": d['to_resource_type_edge']['_id']}
+        for d in result['permission_context']:
+            bindVars = {"_id": d['to_permission_context_edge']['_id']}
             queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
             _ = queryResult.result
 
         logger.debug(
-            f'[{PolicyRepositoryImpl.revokeRoleFromUserGroup.__qualname__}] Revoke assignment permission with id: {permission.id()} to resource type with id: {resourceType.id()}')
+            f'[{PolicyRepositoryImpl.revokeRoleFromUserGroup.__qualname__}] Revoke assignment permission with id: {permission.id()} to permission context with id: {permissionContext.id()}')
 
     # endregion
 
@@ -493,11 +493,11 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Assign a role to the user
         aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: @resourceTypeName}
-                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: @resourceTypeName}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: @permissionContextName}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: @permissionContextName}
                   IN access                  
                 '''
-        bindVars = {"fromId": roleDocId, "toId": resourceDocId, "resourceTypeName": resource.type()}
+        bindVars = {"fromId": roleDocId, "toId": resourceDocId, "permissionContextName": resource.type()}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
     def revokeAccessRoleFromResource(self, role: Role, resource: Resource) -> None:
@@ -529,10 +529,10 @@ class PolicyRepositoryImpl(PolicyRepository):
             FOR d IN access
               FILTER 
                 d._from == @fromId AND d._to == @toId
-                AND d._from_type == 'role' AND d._to_type == @resourceTypeName
+                AND d._from_type == 'role' AND d._to_type == @permissionContextName
               RETURN d
         '''
-        bindVars = {"fromId": roleDocId, "toId": resourceDocId, "resourceTypeName": resource.type()}
+        bindVars = {"fromId": roleDocId, "toId": resourceDocId, "permissionContextName": resource.type()}
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
 
@@ -630,7 +630,7 @@ class PolicyRepositoryImpl(PolicyRepository):
               IN owned_by                  
             '''
         bindVars = {"fromId": resourceDocId, "toId": userDocId, "fromType": resource.type(),
-                    "toType": ResourceTypeConstant.USER.value}
+                    "toType": PermissionContextConstant.USER.value}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
         for role in tokenData.roles():
@@ -642,7 +642,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                   IN owned_by                  
                 '''
             bindVars = {"fromId": resourceDocId, "toId": roleDocId, "fromType": resource.type(),
-                        "toType": ResourceTypeConstant.ROLE.value}
+                        "toType": PermissionContextConstant.ROLE.value}
             _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
     def roleAccessPermissionsData(self, tokenData: TokenData) -> List[RoleAccessPermissionData]:
@@ -656,19 +656,21 @@ class PolicyRepositoryImpl(PolicyRepository):
                 FOR role IN resource
                 FILTER (#rolesConditions) AND role.type == 'role'
                 LET owned_by = FIRST(FOR v1, e1 IN OUTBOUND role._id `owned_by`
-                                    RETURN {"id": v1.id, "type": v1.type})
+                                    RETURN {"id": v1.id, "name": v1.name, "type": v1.type})
                 LET permissions = (FOR v1, e1 IN OUTBOUND role._id `has`
                                     FILTER e1._from_type == 'role' AND e1._to_type == 'permission'
-                                    LET resource_types = (FOR v2, e2 IN OUTBOUND v1._id `for`
-                                        RETURN {"id": v2.id, "name": v2.name})
-                                    RETURN {"permission": {"id": v1.id, "name": v1.name, "allowed_actions": v1.allowed_actions}, "resource_types": resource_types})
-                                
-                LET accesses = (FOR v1, e1 IN OUTBOUND role._id `access`
-                                    FOR v2, e2, p IN 1..100 OUTBOUND v1._id `has`
-                                        RETURN p)
-                                
+                                    LET permission_contexts = (FOR v2, e2 IN OUTBOUND v1._id `for`
+                                        RETURN {
+                                        "id": v2.id,
+                                        "type": (v2.type == 'resource_type' ? 'resource_type' : 'resource_instance'),
+                                        "data": v2.data})
+                                    RETURN {"permission": {"id": v1.id, "name": v1.name, "allowed_actions": v1.allowed_actions}, "permission_contexts": permission_contexts})
+                                LET accesses = (FOR v1, e1 IN OUTBOUND role._id `access`
+                                                    FOR v2, e2, p IN 1..100 OUTBOUND v1._id `has`
+                                                        RETURN p
+                                               )
                 RETURN {"role": {"id": role.id, "name": role.name}, "owned_by": owned_by, "permissions": permissions, "accesses": accesses}
-                    '''
+            '''
         aql = aql.replace('#rolesConditions', rolesConditions)
 
         queryResult = self._db.AQLQuery(aql, rawResults=True)
@@ -686,11 +688,11 @@ class PolicyRepositoryImpl(PolicyRepository):
                 perm = Permission(id=permItem['permission']['id'], name=permItem['permission']['name'],
                                   allowedActions=permItem['permission']['allowed_actions'])
                 resList = []
-                # Get the resource types for the permission
-                for resItem in permItem['resource_types']:
-                    resList.append(ResourceType(id=resItem['id'], name=resItem['name']))
+                # Get the permission contexts for the permission
+                for resItem in permItem['permission_contexts']:
+                    resList.append(PermissionContext(id=resItem['id'], name=resItem['name']))
 
-                p = PermissionWithResourceTypes(permission=perm, resourceTypes=resList)
+                p = PermissionWithPermissionContexts(permission=perm, permissionContexts=resList)
                 # Add it in the permission list
                 permList.append(p)
             ownedBy = None

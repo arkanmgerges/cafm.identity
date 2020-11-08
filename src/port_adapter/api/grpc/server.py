@@ -10,7 +10,7 @@ from src.port_adapter.api.grpc.listener.OuAppServiceListener import OuAppService
 from src.port_adapter.api.grpc.listener.PermissionAppServiceListener import PermissionAppServiceListener
 from src.port_adapter.api.grpc.listener.ProjectAppServiceListener import ProjectAppServiceListener
 from src.port_adapter.api.grpc.listener.RealmAppServiceListener import RealmAppServiceListener
-from src.port_adapter.api.grpc.listener.ResourceTypeAppServiceListener import ResourceTypeAppServiceListener
+from src.port_adapter.api.grpc.listener.PermissionContextAppServiceListener import PermissionContextAppServiceListener
 from src.port_adapter.api.grpc.listener.RoleAppServiceListener import RoleAppServiceListener
 from src.port_adapter.api.grpc.listener.UserAppServiceListener import UserAppServiceListener
 from src.port_adapter.api.grpc.listener.UserGroupAppServiceListener import UserGroupAppServiceListener
@@ -20,8 +20,8 @@ from src.resource.proto._generated.ou_app_service_pb2_grpc import add_OuAppServi
 from src.resource.proto._generated.permission_app_service_pb2_grpc import add_PermissionAppServiceServicer_to_server
 from src.resource.proto._generated.project_app_service_pb2_grpc import add_ProjectAppServiceServicer_to_server
 from src.resource.proto._generated.realm_app_service_pb2_grpc import add_RealmAppServiceServicer_to_server
-from src.resource.proto._generated.resource_type_app_service_pb2_grpc import \
-    add_ResourceTypeAppServiceServicer_to_server
+from src.resource.proto._generated.permission_context_app_service_pb2_grpc import \
+    add_PermissionContextAppServiceServicer_to_server
 from src.resource.proto._generated.role_app_service_pb2_grpc import add_RoleAppServiceServicer_to_server
 from src.resource.proto._generated.user_app_service_pb2_grpc import add_UserAppServiceServicer_to_server
 from src.resource.proto._generated.user_group_app_service_pb2_grpc import add_UserGroupAppServiceServicer_to_server
@@ -35,7 +35,7 @@ def serve():
     add_UserAppServiceServicer_to_server(UserAppServiceListener(), server)
     add_RoleAppServiceServicer_to_server(RoleAppServiceListener(), server)
     add_UserGroupAppServiceServicer_to_server(UserGroupAppServiceListener(), server)
-    add_ResourceTypeAppServiceServicer_to_server(ResourceTypeAppServiceListener(), server)
+    add_PermissionContextAppServiceServicer_to_server(PermissionContextAppServiceListener(), server)
     add_ProjectAppServiceServicer_to_server(ProjectAppServiceListener(), server)
     add_RealmAppServiceServicer_to_server(RealmAppServiceListener(), server)
     add_PermissionAppServiceServicer_to_server(PermissionAppServiceListener(), server)

@@ -11,8 +11,8 @@ from src.domain_model.policy.PolicyControllerService import PolicyControllerServ
 from src.domain_model.token.TokenService import TokenService
 from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 from src.domain_model.policy.PolicyRepository import PolicyRepository
-from src.domain_model.resource_type.ResourceType import ResourceType
-from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
+from src.domain_model.permission_context.PermissionContext import ResourceType
+from src.domain_model.permission_context.PermissionContextRepository import ResourceTypeRepository
 
 token = ''
 authzService = None

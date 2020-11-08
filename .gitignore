@@ -127,3 +127,6 @@ dmypy.json
 
 # os
 .DS_Store
+
+# user files
+__test_*

@@ -8,7 +8,7 @@ from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
 from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
 from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
+from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.role.Role import Role
 from src.domain_model.role.RoleRepository import RoleRepository
 
@@ -21,7 +21,7 @@ class RoleApplicationService:
     def createRole(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         try:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
-                                            resourceType=ResourceTypeConstant.ROLE.value):
+                                            permissionContext=PermissionContextConstant.ROLE.value):
                 self._roleRepository.roleByName(name=name)
                 raise RoleAlreadyExistException(name)
             else:
@@ -36,21 +36,21 @@ class RoleApplicationService:
 
     def roleByName(self, name: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.ROLE.value):
+                                        permissionContext=PermissionContextConstant.ROLE.value):
             return self._roleRepository.roleByName(name=name)
         else:
             raise UnAuthorizedException()
 
     def roleById(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.ROLE.value):
+                                        permissionContext=PermissionContextConstant.ROLE.value):
             return self._roleRepository.roleById(id=id)
         else:
             raise UnAuthorizedException()
 
     def deleteRole(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
-                                        resourceType=ResourceTypeConstant.ROLE.value):
+                                        permissionContext=PermissionContextConstant.ROLE.value):
             role = self._roleRepository.roleById(id=id)
             self._roleRepository.deleteRole(role)
         else:
@@ -58,7 +58,7 @@ class RoleApplicationService:
 
     def updateRole(self, id: str, name: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
-                                        resourceType=ResourceTypeConstant.ROLE.value):
+                                        permissionContext=PermissionContextConstant.ROLE.value):
             role = self._roleRepository.roleById(id=id)
             role.update({'name': name})
             self._roleRepository.updateRole(role)
@@ -67,7 +67,7 @@ class RoleApplicationService:
 
     def roles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.ROLE.value):
+                                        permissionContext=PermissionContextConstant.ROLE.value):
             return self._roleRepository.rolesByOwnedRoles(ownedRoles=ownedRoles,
                                                           resultFrom=resultFrom,
                                                           resultSize=resultSize,

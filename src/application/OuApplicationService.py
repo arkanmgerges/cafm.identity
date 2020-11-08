@@ -10,7 +10,7 @@ from src.domain_model.permission.Permission import PermissionAction
 from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
+from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.token.TokenService import TokenService
 
 
@@ -25,18 +25,18 @@ class OuApplicationService:
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData)
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
-                                        permissionAction=PermissionAction.WRITE,
-                                        resourceTypeConstant=ResourceTypeConstant.OU, tokenData=tokenData)
+                                        permissionAction=PermissionAction.CREATE,
+                                        permissionContextConstant=PermissionContextConstant.OU, tokenData=tokenData)
         return self._ouService.createOu(id=id, name=name, objectOnly=objectOnly, tokenData=tokenData)
 
     def ouByName(self, name: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.OU.value):
+                                        permissionContext=PermissionContextConstant.OU.value):
             return self._ouRepository.ouByName(name=name)
 
     def ouById(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.OU.value):
+                                        permissionContext=PermissionContextConstant.OU.value):
             return self._ouRepository.ouById(id=id)
         else:
             raise UnAuthorizedException()
@@ -48,14 +48,14 @@ class OuApplicationService:
                                                   resultSize=resultSize,
                                                   order=order)
         # if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-        #                                 resourceType=ResourceTypeConstant.OU.value):
+        #                                 permissionContext=PermissionContextConstant.OU.value):
         #
         # else:
         #     raise UnAuthorizedException()
 
     def deleteOu(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
-                                        resourceType=ResourceTypeConstant.OU.value):
+                                        permissionContext=PermissionContextConstant.OU.value):
             ou = self._ouRepository.ouById(id=id)
             self._ouRepository.deleteOu(ou)
         else:
@@ -63,7 +63,7 @@ class OuApplicationService:
 
     def updateOu(self, id: str, name: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
-                                        resourceType=ResourceTypeConstant.OU.value):
+                                        permissionContext=PermissionContextConstant.OU.value):
             ou = self._ouRepository.ouById(id=id)
             ou.update({'name': name})
             self._ouRepository.updateOu(ou)

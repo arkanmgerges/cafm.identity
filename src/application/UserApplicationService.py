@@ -8,7 +8,7 @@ from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
-from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
+from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.user.User import User
 from src.domain_model.user.UserRepository import UserRepository
 from src.resource.logging.logger import logger
@@ -22,7 +22,7 @@ class UserApplicationService:
     def createUser(self, id: str = '', name: str = '', password: str = '', objectOnly: bool = False, token: str = ''):
         try:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
-                                            resourceType=ResourceTypeConstant.USER.value):
+                                            permissionContext=PermissionContextConstant.USER.value):
                 self._userRepository.userByName(name=name)
                 raise UserAlreadyExistException(name)
             else:
@@ -42,14 +42,14 @@ class UserApplicationService:
 
     def userById(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.USER.value):
+                                        permissionContext=PermissionContextConstant.USER.value):
             return self._userRepository.userById(id=id)
         else:
             raise UnAuthorizedException()
 
     def users(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.USER.value):
+                                        permissionContext=PermissionContextConstant.USER.value):
             return self._userRepository.usersByOwnedRoles(ownedRoles=ownedRoles,
                                                           resultFrom=resultFrom,
                                                           resultSize=resultSize,
@@ -59,7 +59,7 @@ class UserApplicationService:
 
     def deleteUser(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
-                                        resourceType=ResourceTypeConstant.USER.value):
+                                        permissionContext=PermissionContextConstant.USER.value):
             user = self._userRepository.userById(id=id)
             self._userRepository.deleteUser(user)
         else:
@@ -67,7 +67,7 @@ class UserApplicationService:
 
     def updateUser(self, id: str, name: str = None, password: str = None, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
-                                        resourceType=ResourceTypeConstant.USER.value):
+                                        permissionContext=PermissionContextConstant.USER.value):
             user = self._userRepository.userById(id=id)
             user.update({'name': name, 'password': password})
             self._userRepository.updateUser(user)

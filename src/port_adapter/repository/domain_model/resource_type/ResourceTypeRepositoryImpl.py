@@ -10,13 +10,13 @@ from pyArango.query import AQLQuery
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
 from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
 from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
-from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
-from src.domain_model.resource_type.ResourceType import ResourceType
-from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
+from src.domain_model.resource.exception.PermissionContextDoesNotExistException import PermissionContextDoesNotExistException
+from src.domain_model.permission_context.PermissionContext import PermissionContext
+from src.domain_model.permission_context.PermissionContextRepository import PermissionContextRepository
 from src.resource.logging.logger import logger
 
 
-class ResourceTypeRepositoryImpl(ResourceTypeRepository):
+class PermissionContextRepositoryImpl(PermissionContextRepository):
     def __init__(self):
         try:
             self._connection = Connection(
@@ -26,26 +26,26 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
         except Exception as e:
-            logger.warn(f'[{ResourceTypeRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+            logger.warn(f'[{PermissionContextRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(
                 f'Could not connect to the db, message: {e}')
 
-    def createResourceType(self, resourceType: ResourceType):
+    def createPermissionContext(self, permissionContext: PermissionContext):
         aql = '''
-        UPSERT {id: @id, type: 'resource_type'}
-            INSERT {id: @id, name: @name, type: 'resource_type'}
+        UPSERT {id: @id, type: 'permission_context'}
+            INSERT {id: @id, name: @name, type: 'permission_context'}
             UPDATE {name: @name}
           IN resource
         '''
 
-        bindVars = {"id": resourceType.id(), "name": resourceType.name()}
+        bindVars = {"id": permissionContext.id(), "name": permissionContext.name()}
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         print(queryResult)
 
-    def resourceTypeByName(self, name: str) -> ResourceType:
+    def permissionContextByName(self, name: str) -> PermissionContext:
         aql = '''
             FOR d IN resource
-            FILTER d.name == @name AND d.type == 'resource_type'
+            FILTER d.name == @name AND d.type == 'permission_context'
             RETURN d
         '''
 
@@ -53,15 +53,15 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            logger.debug(f'[{ResourceTypeRepositoryImpl.resourceTypeByName.__qualname__}] {name}')
-            raise ResourceTypeDoesNotExistException(name)
+            logger.debug(f'[{PermissionContextRepositoryImpl.permissionContextByName.__qualname__}] {name}')
+            raise PermissionContextDoesNotExistException(name)
 
-        return ResourceType.createFrom(id=result[0]['id'], name=result[0]['name'])
+        return PermissionContext.createFrom(id=result[0]['id'], name=result[0]['name'])
 
-    def resourceTypeById(self, id: str) -> ResourceType:
+    def permissionContextById(self, id: str) -> PermissionContext:
         aql = '''
             FOR d IN resource
-                FILTER d.id == @id AND d.type == 'resource_type'
+                FILTER d.id == @id AND d.type == 'permission_context'
                 RETURN d
         '''
 
@@ -69,12 +69,12 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            logger.debug(f'[{ResourceTypeRepositoryImpl.resourceTypeById.__qualname__}] resourceType id: {id}')
-            raise ResourceTypeDoesNotExistException(f'resource type id: {id}')
+            logger.debug(f'[{PermissionContextRepositoryImpl.permissionContextById.__qualname__}] permissionContext id: {id}')
+            raise PermissionContextDoesNotExistException(f'permission context id: {id}')
 
-        return ResourceType.createFrom(id=result[0]['id'], name=result[0]['name'])
+        return PermissionContext.createFrom(id=result[0]['id'], name=result[0]['name'])
 
-    def resourceTypesByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
+    def permissionContextsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
                                   order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
@@ -83,7 +83,7 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
             sortData = sortData[2:]
         if 'super_admin' in ownedRoles:
             aql = '''
-                LET ds = (FOR d IN resource FILTER d.type == 'resource_type' #sortData RETURN d)
+                LET ds = (FOR d IN resource FILTER d.type == 'permission_context' #sortData RETURN d)
                 RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
             '''
             if sortData != '':
@@ -96,52 +96,52 @@ class ResourceTypeRepositoryImpl(ResourceTypeRepository):
             result = queryResult.result
             if len(result) == 0:
                 return {"items": [], "itemCount": 0}
-            return {"items": [ResourceType.createFrom(id=x['id'], name=x['name']) for x in result[0]['items']],
+            return {"items": [PermissionContext.createFrom(id=x['id'], name=x['name']) for x in result[0]['items']],
                     "itemCount": result[0]["itemCount"]}
 
-    def deleteResourceType(self, resourceType: ResourceType) -> None:
+    def deletePermissionContext(self, permissionContext: PermissionContext) -> None:
         aql = '''
             FOR d IN resource
-                FILTER d.id == @id AND d.type == 'resource_type'
+                FILTER d.id == @id AND d.type == 'permission_context'
                 REMOVE d IN resource
         '''
 
-        bindVars = {"id": resourceType.id()}
+        bindVars = {"id": permissionContext.id()}
         logger.debug(
-            f'[{ResourceTypeRepositoryImpl.deleteResourceType.__qualname__}] - Delete resourceType with id: {resourceType.id()}')
+            f'[{PermissionContextRepositoryImpl.deletePermissionContext.__qualname__}] - Delete permissionContext with id: {permissionContext.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is deleted
         try:
-            self.resourceTypeById(resourceType.id())
-            logger.debug(f'[{ResourceTypeRepositoryImpl.deleteResourceType.__qualname__}] Object could not be found exception for resource type id: {resourceType.id()}')
-            raise ObjectCouldNotBeDeletedException(f'resource type id: {resourceType.id()}')
-        except ResourceTypeDoesNotExistException:
-            resourceType.publishDelete()
+            self.permissionContextById(permissionContext.id())
+            logger.debug(f'[{PermissionContextRepositoryImpl.deletePermissionContext.__qualname__}] Object could not be found exception for permission context id: {permissionContext.id()}')
+            raise ObjectCouldNotBeDeletedException(f'permission context id: {permissionContext.id()}')
+        except PermissionContextDoesNotExistException:
+            permissionContext.publishDelete()
 
-    def updateResourceType(self, resourceType: ResourceType) -> None:
-        oldResourceType = self.resourceTypeById(resourceType.id())
-        if oldResourceType == resourceType:
+    def updatePermissionContext(self, permissionContext: PermissionContext) -> None:
+        oldPermissionContext = self.permissionContextById(permissionContext.id())
+        if oldPermissionContext == permissionContext:
             logger.debug(
-                f'[{ResourceTypeRepositoryImpl.updateResourceType.__qualname__}] Object identical exception for old resource type: {oldResourceType}\nresource type: {resourceType}')
+                f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] Object identical exception for old permission context: {oldPermissionContext}\npermission context: {permissionContext}')
             raise ObjectIdenticalException()
 
         aql = '''
             FOR d IN resource
-                FILTER d.id == @id AND d.type == 'resource_type'
+                FILTER d.id == @id AND d.type == 'permission_context'
                 UPDATE d WITH {name: @name} IN resource
         '''
 
-        bindVars = {"id": resourceType.id(), "name": resourceType.name()}
+        bindVars = {"id": permissionContext.id(), "name": permissionContext.name()}
         logger.debug(
-            f'[{ResourceTypeRepositoryImpl.updateResourceType.__qualname__}] - Update resourceType with id: {resourceType.id()}')
+            f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] - Update permissionContext with id: {permissionContext.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is updated
-        aResourceType = self.resourceTypeById(resourceType.id())
-        if aResourceType != resourceType:
+        aPermissionContext = self.permissionContextById(permissionContext.id())
+        if aPermissionContext != permissionContext:
             logger.warn(
-                f'[{ResourceTypeRepositoryImpl.updateResourceType.__qualname__}] The object resource type: {resourceType} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'resource type: {resourceType}')
+                f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] The object permission context: {permissionContext} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'permission context: {permissionContext}')

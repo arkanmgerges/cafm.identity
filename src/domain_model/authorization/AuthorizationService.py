@@ -7,11 +7,11 @@ import authlib
 
 from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.permission.Permission import PermissionAction, Permission
-from src.domain_model.policy.PermissionWithResourceTypes import PermissionWithResourceTypes
+from src.domain_model.policy.PermissionWithPermissionContexts import PermissionWithPermissionContexts
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.domain_model.resource_type.ResourceType import ResourceTypeConstant, ResourceType
+from src.domain_model.permission_context.PermissionContext import PermissionContextConstant, PermissionContext
 from src.domain_model.token.TokenData import TokenData
 from src.resource.logging.logger import logger
 
@@ -21,13 +21,13 @@ class AuthorizationService:
         self._authzRepo = authzRepo
         self._policyService = policyService
 
-    def isAllowed(self, token: str, action: str = '', resourceType: str = '', resourceId: str = None) -> bool:
+    def isAllowed(self, token: str, action: str = '', permissionContext: str = '', resourceId: str = None) -> bool:
         """Authenticate user and return jwt token
 
         Args:
             token (str): Token that is used for authorization check
-            action (str): An action that can be applied over the resource or/and resource type
-            resourceType (str): The type of the resource that the action will be applied to
+            action (str): An action that can be applied over the resource or/and permission context
+            permissionContext (str): The type of the resource that the action will be applied to
             resourceId (str): The id of the resource that the action will be applied to
 
         Return:
@@ -55,13 +55,13 @@ class AuthorizationService:
     def verifyAccess(self,
                      roleAccessPermissionsData: List[RoleAccessPermissionData],
                      permissionAction: PermissionAction,
-                     resourceTypeConstant: ResourceTypeConstant,
+                     permissionContextConstant: PermissionContextConstant,
                      tokenData: TokenData):
 
         if not self._isSuperAdmin(tokenData=tokenData):
-            if permissionAction in [PermissionAction.WRITE]:
-                if not self._verifyActionByPermissionWithResourceType(permissionAction=permissionAction,
-                                                                      resourceTypeConstant=resourceTypeConstant,
+            if permissionAction in [PermissionAction.CREATE]:
+                if not self._verifyActionByPermissionWithPermissionContext(permissionAction=permissionAction,
+                                                                      permissionContextConstant=permissionContextConstant,
                                                                       roleAccessPermissionsData=roleAccessPermissionsData):
                     raise UnAuthorizedException()
 
@@ -71,17 +71,17 @@ class AuthorizationService:
                 return True
         return False
 
-    def _verifyActionByPermissionWithResourceType(self, permissionAction, resourceTypeConstant,
+    def _verifyActionByPermissionWithPermissionContext(self, permissionAction: PermissionAction, permissionContextConstant: PermissionContextConstant,
                                                   roleAccessPermissionsData: List[RoleAccessPermissionData]) -> bool:
         for item in roleAccessPermissionsData:
-            permissionsWithResourceTypes: List[PermissionWithResourceTypes] = item.permissions
-            for permissionWithResourceTypes in permissionsWithResourceTypes:
-                # If we find a permission with the 'action' for 'resource type' then return true
-                permission: Permission = permissionWithResourceTypes.permission
-                resourceTypes: List[ResourceType] = permissionWithResourceTypes.resourceTypes
+            permissionsWithPermissionContexts: List[PermissionWithPermissionContexts] = item.permissions
+            for permissionWithPermissionContexts in permissionsWithPermissionContexts:
+                # If we find a permission with the 'action' for 'permission context' then return true
+                permission: Permission = permissionWithPermissionContexts.permission
+                permissionContexts: List[PermissionContext] = permissionWithPermissionContexts.permissionContexts
                 if permissionAction.value in permission.allowedActions():
-                    for resourceType in resourceTypes:
-                        if resourceTypeConstant.value == resourceType.name():
+                    for permissionContext in permissionContexts:
+                        if permissionContextConstant.value == permissionContext.name():
                             return True
-        # We did not find action with resource type, then return false
+        # We did not find action with permission context, then return false
         return False

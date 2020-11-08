@@ -10,7 +10,7 @@ from src.application.PermissionApplicationService import PermissionApplicationSe
 from src.application.PolicyApplicationService import PolicyApplicationService
 from src.application.ProjectApplicationService import ProjectApplicationService
 from src.application.RealmApplicationService import RealmApplicationService
-from src.application.ResourceTypeApplicationService import ResourceTypeApplicationService
+from src.application.PermissionContextApplicationService import PermissionContextApplicationService
 from src.application.RoleApplicationService import RoleApplicationService
 from src.application.UserApplicationService import UserApplicationService
 from src.application.UserGroupApplicationService import UserGroupApplicationService
@@ -26,7 +26,7 @@ from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.project.ProjectRepository import ProjectRepository
 from src.domain_model.realm.RealmRepository import RealmRepository
 from src.domain_model.resource.ResourceRepository import ResourceRepository
-from src.domain_model.resource_type.ResourceTypeRepository import ResourceTypeRepository
+from src.domain_model.permission_context.PermissionContextRepository import PermissionContextRepository
 from src.domain_model.role.RoleRepository import RoleRepository
 from src.domain_model.user.UserRepository import UserRepository
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
@@ -44,7 +44,7 @@ from src.port_adapter.repository.domain_model.policy.PolicyRepositoryImpl import
 from src.port_adapter.repository.domain_model.project.ProjectRepositoryImpl import ProjectRepositoryImpl
 from src.port_adapter.repository.domain_model.realm.RealmRepositoryImpl import RealmRepositoryImpl
 from src.port_adapter.repository.domain_model.resource.ResourceRepositoryImpl import ResourceRepositoryImpl
-from src.port_adapter.repository.domain_model.resource_type.ResourceTypeRepositoryImpl import ResourceTypeRepositoryImpl
+from src.port_adapter.repository.domain_model.permission_context.PermissionContextRepositoryImpl import PermissionContextRepositoryImpl
 from src.port_adapter.repository.domain_model.role.RoleRepositoryImpl import RoleRepositoryImpl
 from src.port_adapter.repository.domain_model.user.UserRepositoryImpl import UserRepositoryImpl
 from src.port_adapter.repository.domain_model.user_group.UserGroupRepositoryImpl import UserGroupRepositoryImpl
@@ -90,8 +90,8 @@ class AppDi(Module):
 
     @singleton
     @provider
-    def provideResourceTypeApplicationService(self) -> ResourceTypeApplicationService:
-        return ResourceTypeApplicationService(self.__injector__.get(ResourceTypeRepository), self.__injector__.get(AuthorizationService))
+    def providePermissionContextApplicationService(self) -> PermissionContextApplicationService:
+        return PermissionContextApplicationService(self.__injector__.get(PermissionContextRepository), self.__injector__.get(AuthorizationService))
 
     @singleton
     @provider
@@ -115,7 +115,7 @@ class AppDi(Module):
                                         userRepository=self.__injector__.get(UserRepository),
                                         userGroupRepository=self.__injector__.get(UserGroupRepository),
                                         permissionRepository=self.__injector__.get(PermissionRepository),
-                                        resourceTypeRepository=self.__injector__.get(ResourceTypeRepository),
+                                        permissionContextRepository=self.__injector__.get(PermissionContextRepository),
                                         policyRepository=self.__injector__.get(PolicyRepository),
                                         policyControllerService=self.__injector__.get(PolicyControllerService),
                                         resourceRepository=self.__injector__.get(ResourceRepository),
@@ -155,8 +155,8 @@ class AppDi(Module):
 
     @singleton
     @provider
-    def provideResourceTypeRepository(self) -> ResourceTypeRepository:
-        return ResourceTypeRepositoryImpl()
+    def providePermissionContextRepository(self) -> PermissionContextRepository:
+        return PermissionContextRepositoryImpl()
 
     @singleton
     @provider

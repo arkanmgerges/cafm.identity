@@ -5,7 +5,7 @@ package cafm.identity.authz;
 message AuthzAppService_isAllowedRequest {
   string token = 1;
   string action = 2;
-  string resource_type = 3;
+  string permission_context = 3;
   string resource_id = 4;
 }
 

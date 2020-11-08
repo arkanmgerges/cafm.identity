@@ -10,7 +10,7 @@ from src.domain_model.permission.PermissionRepository import PermissionRepositor
 from src.domain_model.resource.exception.PermissionAlreadyExistException import PermissionAlreadyExistException
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.domain_model.resource_type.ResourceType import ResourceTypeConstant
+from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 
 
 class PermissionApplicationService:
@@ -22,7 +22,7 @@ class PermissionApplicationService:
         allowedActions = [] if allowedActions is None else allowedActions
         try:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
-                                            resourceType=ResourceTypeConstant.PERMISSION.value):
+                                            permissionContext=PermissionContextConstant.PERMISSION.value):
                 self._permissionRepository.permissionByName(name=name)
                 raise PermissionAlreadyExistException(name)
             else:
@@ -37,21 +37,21 @@ class PermissionApplicationService:
 
     def permissionByName(self, name: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.PERMISSION.value):
+                                        permissionContext=PermissionContextConstant.PERMISSION.value):
             return self._permissionRepository.permissionByName(name=name)
         else:
             raise UnAuthorizedException()
 
     def permissionById(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.PERMISSION.value):
+                                        permissionContext=PermissionContextConstant.PERMISSION.value):
             return self._permissionRepository.permissionById(id=id)
         else:
             raise UnAuthorizedException()
 
     def permissions(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '', order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        resourceType=ResourceTypeConstant.PERMISSION.value):
+                                        permissionContext=PermissionContextConstant.PERMISSION.value):
             return self._permissionRepository.permissionsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
                                                                       resultSize=resultSize,
                                                                       order=order)
@@ -60,7 +60,7 @@ class PermissionApplicationService:
         
     def deletePermission(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
-                                        resourceType=ResourceTypeConstant.PERMISSION.value):
+                                        permissionContext=PermissionContextConstant.PERMISSION.value):
             permission = self._permissionRepository.permissionById(id=id)
             self._permissionRepository.deletePermission(permission)
         else:
@@ -68,7 +68,7 @@ class PermissionApplicationService:
 
     def updatePermission(self, id: str, name: str, allowedActions: List[str] = None, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
-                                        resourceType=ResourceTypeConstant.PERMISSION.value):
+                                        permissionContext=PermissionContextConstant.PERMISSION.value):
             permission = self._permissionRepository.permissionById(id=id)
             permission.update({'name': name, 'allowedActions': allowedActions})
             self._permissionRepository.updatePermission(permission)

@@ -2,10 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import resource_type_app_service_pb2 as resource__type__app__service__pb2
+import permission_context_app_service_pb2 as resource__type__app__service__pb2
 
 
-class ResourceTypeAppServiceStub(object):
+class PermissionContextAppServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -14,74 +14,74 @@ class ResourceTypeAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.resourceTypeByName = channel.unary_unary(
-                '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypeByName',
-                request_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameRequest.SerializeToString,
-                response_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameResponse.FromString,
+        self.permissionContextByName = channel.unary_unary(
+                '/cafm.identity.permission_context.PermissionContextAppService/permissionContextByName',
+                request_serializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextByNameRequest.SerializeToString,
+                response_deserializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextByNameResponse.FromString,
                 )
-        self.resourceTypeById = channel.unary_unary(
-                '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypeById',
-                request_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdRequest.SerializeToString,
-                response_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdResponse.FromString,
+        self.permissionContextById = channel.unary_unary(
+                '/cafm.identity.permission_context.PermissionContextAppService/permissionContextById',
+                request_serializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextByIdRequest.SerializeToString,
+                response_deserializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextByIdResponse.FromString,
                 )
-        self.resourceTypes = channel.unary_unary(
-                '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypes',
-                request_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypesRequest.SerializeToString,
-                response_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypesResponse.FromString,
+        self.permissionContexts = channel.unary_unary(
+                '/cafm.identity.permission_context.PermissionContextAppService/permissionContexts',
+                request_serializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextsRequest.SerializeToString,
+                response_deserializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextsResponse.FromString,
                 )
 
 
-class ResourceTypeAppServiceServicer(object):
+class PermissionContextAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def resourceTypeByName(self, request, context):
+    def permissionContextByName(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def resourceTypeById(self, request, context):
+    def permissionContextById(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def resourceTypes(self, request, context):
+    def permissionContexts(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_ResourceTypeAppServiceServicer_to_server(servicer, server):
+def add_PermissionContextAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'resourceTypeByName': grpc.unary_unary_rpc_method_handler(
-                    servicer.resourceTypeByName,
-                    request_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameRequest.FromString,
-                    response_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameResponse.SerializeToString,
+            'permissionContextByName': grpc.unary_unary_rpc_method_handler(
+                    servicer.permissionContextByName,
+                    request_deserializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextByNameRequest.FromString,
+                    response_serializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextByNameResponse.SerializeToString,
             ),
-            'resourceTypeById': grpc.unary_unary_rpc_method_handler(
-                    servicer.resourceTypeById,
-                    request_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdRequest.FromString,
-                    response_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdResponse.SerializeToString,
+            'permissionContextById': grpc.unary_unary_rpc_method_handler(
+                    servicer.permissionContextById,
+                    request_deserializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextByIdRequest.FromString,
+                    response_serializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextByIdResponse.SerializeToString,
             ),
-            'resourceTypes': grpc.unary_unary_rpc_method_handler(
-                    servicer.resourceTypes,
-                    request_deserializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypesRequest.FromString,
-                    response_serializer=resource__type__app__service__pb2.ResourceTypeAppService_resourceTypesResponse.SerializeToString,
+            'permissionContexts': grpc.unary_unary_rpc_method_handler(
+                    servicer.permissionContexts,
+                    request_deserializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextsRequest.FromString,
+                    response_serializer=resource__type__app__service__pb2.PermissionContextAppService_permissionContextsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'cafm.identity.resource_type.ResourceTypeAppService', rpc_method_handlers)
+            'cafm.identity.permission_context.PermissionContextAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class ResourceTypeAppService(object):
+class PermissionContextAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def resourceTypeByName(request,
+    def permissionContextByName(request,
             target,
             options=(),
             channel_credentials=None,
@@ -91,14 +91,14 @@ class ResourceTypeAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypeByName',
-            resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameRequest.SerializeToString,
-            resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByNameResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission_context.PermissionContextAppService/permissionContextByName',
+            resource__type__app__service__pb2.PermissionContextAppService_permissionContextByNameRequest.SerializeToString,
+            resource__type__app__service__pb2.PermissionContextAppService_permissionContextByNameResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def resourceTypeById(request,
+    def permissionContextById(request,
             target,
             options=(),
             channel_credentials=None,
@@ -108,14 +108,14 @@ class ResourceTypeAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypeById',
-            resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdRequest.SerializeToString,
-            resource__type__app__service__pb2.ResourceTypeAppService_resourceTypeByIdResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission_context.PermissionContextAppService/permissionContextById',
+            resource__type__app__service__pb2.PermissionContextAppService_permissionContextByIdRequest.SerializeToString,
+            resource__type__app__service__pb2.PermissionContextAppService_permissionContextByIdResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def resourceTypes(request,
+    def permissionContexts(request,
             target,
             options=(),
             channel_credentials=None,
@@ -125,8 +125,8 @@ class ResourceTypeAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.resource_type.ResourceTypeAppService/resourceTypes',
-            resource__type__app__service__pb2.ResourceTypeAppService_resourceTypesRequest.SerializeToString,
-            resource__type__app__service__pb2.ResourceTypeAppService_resourceTypesResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission_context.PermissionContextAppService/permissionContexts',
+            resource__type__app__service__pb2.PermissionContextAppService_permissionContextsRequest.SerializeToString,
+            resource__type__app__service__pb2.PermissionContextAppService_permissionContextsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
