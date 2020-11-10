@@ -4,5 +4,6 @@ package cafm.identity.permission_context;
 
 message PermissionContext {
   string id = 1;
-  string name = 2;
+  string type = 2;
+  string data = 3;
 }

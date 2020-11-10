@@ -5,7 +5,6 @@ from copy import copy
 from enum import Enum
 from uuid import uuid4
 
-from src.domain_model.resource.Resource import Resource
 from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
 from src.resource.logging.logger import logger
 
@@ -14,7 +13,8 @@ class PermissionContextConstant(Enum):
     REALM = 'realm'
     OU = 'ou'
     PROJECT = 'project'
-    RESOURCE_TYPE = 'permission_context'
+    RESOURCE_TYPE = 'resource_type'
+    RESOURCE_INSTANCE = 'resource_instance'
     PERMISSION = 'permission'
     USER = 'user'
     USER_GROUP = 'user_group'
@@ -28,34 +28,41 @@ class PermissionContextConstant(Enum):
     ALL = '*'
 
 
-class PermissionContext(Resource):
-    def __init__(self, id: str = None, name=''):
-        anId = str(uuid4()) if id is None else id
-        super().__init__(id=anId, type='permission_context')
-        self._name = name
+
+class PermissionContext:
+    def __init__(self, id: str = None, type: str = 'permission_context', data: dict = None):
+        self._id = str(uuid4()) if id is None else id
+        self._type = type
+        self._data = data if data is not None else {}
+
+    def id(self) -> str:
+        return self._id
+
+    def type(self) -> str:
+        return self._type
 
     @classmethod
-    def createFrom(cls, id: str = None, name='', publishEvent: bool = False):
-        permissionContext = PermissionContext(id, name)
+    def createFrom(cls, id: str = None, data: dict = None, publishEvent: bool = False):
+        permissionContext = PermissionContext(id=id, data=data)
         if publishEvent:
             from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
             from src.domain_model.permission_context.PermissionContextCreated import PermissionContextCreated
             logger.debug(
-                f'[{PermissionContext.createFrom.__qualname__}] - Create PermissionContext with name = {name} and id = {id}')
+                f'[{PermissionContext.createFrom.__qualname__}] - Create permission context with id = {id} and data = {data}')
             DomainEventPublisher.addEventForPublishing(PermissionContextCreated(permissionContext))
         return permissionContext
-
-    def name(self) -> str:
-        return self._name
 
     def update(self, data: dict):
         updated = False
         old = copy(self)
-        if 'name' in data and data['name'] != self._name:
+        if 'data' in data:
             updated = True
-            self._name = data['name']
+            self._data = data['data']
         if updated:
             self.publishUpdate(old)
+
+    def data(self):
+        return self._data
 
     def publishDelete(self):
         from src.domain_model.permission_context.PermissionContextDeleted import PermissionContextDeleted
@@ -66,9 +73,9 @@ class PermissionContext(Resource):
         DomainEventPublisher.addEventForPublishing(PermissionContextUpdated(old, self))
 
     def toMap(self) -> dict:
-        return {"id": self.id(), "name": self.name()}
+        return {"id": self.id(), "data": self.data()}
 
     def __eq__(self, other):
         if not isinstance(other, PermissionContext):
             raise NotImplementedError(f'other: {other} can not be compared with PermissionContext class')
-        return self.id() == other.id() and self.name() == other.name()
+        return self.id() == other.id() and self.data() == other.data()

@@ -17,19 +17,19 @@ class PermissionContextApplicationService:
         self._permissionContextRepository = permissionContextRepository
         self._authzService: AuthorizationService = authzService
 
-    def createPermissionContext(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
+    def createPermissionContext(self, id: str = '', type: str = '', objectOnly: bool = False, token: str = ''):
         try:
             if self._authzService.isAllowed(token=token, action=PolicyActionConstant.WRITE.value,
                                             permissionContext=PermissionContextConstant.RESOURCE_TYPE.value):
-                self._permissionContextRepository.permissionContextByName(name=name)
-                raise PermissionContextAlreadyExistException(name)
+                self._permissionContextRepository.permissionContextByName(type=type)
+                raise PermissionContextAlreadyExistException(type)
             else:
                 raise UnAuthorizedException()
         except PermissionContextDoesNotExistException:
             if objectOnly:
-                return PermissionContext.createFrom(name=name)
+                return PermissionContext.createFrom(type=type)
             else:
-                permissionContext = PermissionContext.createFrom(id=id, name=name, publishEvent=True)
+                permissionContext = PermissionContext.createFrom(id=id, type=type, publishEvent=True)
                 self._permissionContextRepository.createPermissionContext(permissionContext)
                 return permissionContext
 

@@ -202,12 +202,13 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def roleAccessPermissionsData(self, tokenData: TokenData) -> List[RoleAccessPermissionData]:
+    def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool) -> List[RoleAccessPermissionData]:
         """Retrieve the permissions and permission contexts connected to it also related to the roles that belong
         to the token provided
 
         Args:
             tokenData (TokenData): A token info
+            includeAccessTree (bool): Include the access tree if this is set to True, otherwise don't include it
 
         Returns:
             List[RoleAccessPermissionData]: A list of role with access and permissions with permission contexts

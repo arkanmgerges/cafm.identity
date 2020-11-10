@@ -645,7 +645,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                         "toType": PermissionContextConstant.ROLE.value}
             _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
-    def roleAccessPermissionsData(self, tokenData: TokenData) -> List[RoleAccessPermissionData]:
+    def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True) -> List[RoleAccessPermissionData]:
         rolesConditions = ''
         for role in tokenData.roles():
             if rolesConditions == '':
@@ -665,12 +665,22 @@ class PolicyRepositoryImpl(PolicyRepository):
                                         "type": (v2.type == 'resource_type' ? 'resource_type' : 'resource_instance'),
                                         "data": v2.data})
                                     RETURN {"permission": {"id": v1.id, "name": v1.name, "allowed_actions": v1.allowed_actions}, "permission_contexts": permission_contexts})
-                                LET accesses = (FOR v1, e1 IN OUTBOUND role._id `access`
-                                                    FOR v2, e2, p IN 1..100 OUTBOUND v1._id `has`
-                                                        RETURN p
-                                               )
+            '''
+
+        if includeAccessTree:
+            accessTree = '''
+                LET accesses = (FOR v1, e1 IN OUTBOUND role._id `access`
+                                    FOR v2, e2, p IN 1..100 OUTBOUND v1._id `has`
+                                        RETURN p
+                               )
                 RETURN {"role": {"id": role.id, "name": role.name}, "owned_by": owned_by, "permissions": permissions, "accesses": accesses}
             '''
+            aql += accessTree
+        else:
+            noAccessTree = '''
+                RETURN {"role": {"id": role.id, "name": role.name}, "owned_by": owned_by, "permissions": permissions, "accesses": []}
+            '''
+            aql += noAccessTree
         aql = aql.replace('#rolesConditions', rolesConditions)
 
         queryResult = self._db.AQLQuery(aql, rawResults=True)
@@ -690,7 +700,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                 resList = []
                 # Get the permission contexts for the permission
                 for resItem in permItem['permission_contexts']:
-                    resList.append(PermissionContext(id=resItem['id'], name=resItem['name']))
+                    resList.append(PermissionContext(id=resItem['id'], type=resItem['type'], data=resItem['data']))
 
                 p = PermissionWithPermissionContexts(permission=perm, permissionContexts=resList)
                 # Add it in the permission list

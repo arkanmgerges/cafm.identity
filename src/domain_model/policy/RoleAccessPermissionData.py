@@ -4,7 +4,7 @@
 from typing import List
 
 from src.domain_model.policy.AccessNode import AccessNode
-from src.domain_model.policy.PermissionWithResourceTypes import PermissionWithPermissionContexts
+from src.domain_model.policy.PermissionWithPermissionContexts import PermissionWithPermissionContexts
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.role.Role import Role
 

@@ -63,5 +63,5 @@ class PolicyControllerService:
         raise NotAllowedAssignmentException(
             f'resource source id: {resourceSrc.id()}, resource source type: {resourceSrc.type()}\nresource destination id: {resourceDst.id()}, permission context: {resourceDst.type()}')
 
-    def roleAccessPermissionsData(self, tokenData: TokenData):
-        return self._policyRepo.roleAccessPermissionsData(tokenData=tokenData)
+    def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True):
+        return self._policyRepo.roleAccessPermissionsData(tokenData=tokenData, includeAccessTree=includeAccessTree)

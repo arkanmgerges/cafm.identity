@@ -1,17 +1,17 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from typing import List
+from typing import List, Any
 
 import authlib
 
 from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.permission.Permission import PermissionAction, Permission
+from src.domain_model.permission_context.PermissionContext import PermissionContextConstant, PermissionContext
 from src.domain_model.policy.PermissionWithPermissionContexts import PermissionWithPermissionContexts
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.domain_model.permission_context.PermissionContext import PermissionContextConstant, PermissionContext
 from src.domain_model.token.TokenData import TokenData
 from src.resource.logging.logger import logger
 
@@ -49,20 +49,21 @@ class AuthorizationService:
             logger.exception(f'[{AuthorizationService.isAllowed.__qualname__}] - exception raised with e: {e}')
             raise e
 
-    def roleAccessPermissionsData(self, tokenData: TokenData):
-        return self._policyService.roleAccessPermissionsData(tokenData=tokenData)
+    def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True):
+        return self._policyService.roleAccessPermissionsData(tokenData=tokenData, includeAccessTree=includeAccessTree)
 
     def verifyAccess(self,
                      roleAccessPermissionsData: List[RoleAccessPermissionData],
-                     permissionAction: PermissionAction,
-                     permissionContextConstant: PermissionContextConstant,
+                     requestedPermissionAction: PermissionAction,
+                     requestedContextData: Any,
                      tokenData: TokenData):
 
         if not self._isSuperAdmin(tokenData=tokenData):
-            if permissionAction in [PermissionAction.CREATE]:
-                if not self._verifyActionByPermissionWithPermissionContext(permissionAction=permissionAction,
-                                                                      permissionContextConstant=permissionContextConstant,
-                                                                      roleAccessPermissionsData=roleAccessPermissionsData):
+            if requestedPermissionAction in [PermissionAction.CREATE]:
+                if not self._verifyActionByPermissionWithPermissionContext(
+                        requestedPermissionAction=requestedPermissionAction,
+                        requestedContextData=requestedContextData,
+                        roleAccessPermissionsData=roleAccessPermissionsData):
                     raise UnAuthorizedException()
 
     def _isSuperAdmin(self, tokenData) -> bool:
@@ -71,17 +72,33 @@ class AuthorizationService:
                 return True
         return False
 
-    def _verifyActionByPermissionWithPermissionContext(self, permissionAction: PermissionAction, permissionContextConstant: PermissionContextConstant,
-                                                  roleAccessPermissionsData: List[RoleAccessPermissionData]) -> bool:
+    def _verifyActionByPermissionWithPermissionContext(self, requestedPermissionAction: PermissionAction,
+                                                       requestedContextData: Any,
+                                                       roleAccessPermissionsData: List[
+                                                           RoleAccessPermissionData]) -> bool:
         for item in roleAccessPermissionsData:
             permissionsWithPermissionContexts: List[PermissionWithPermissionContexts] = item.permissions
             for permissionWithPermissionContexts in permissionsWithPermissionContexts:
                 # If we find a permission with the 'action' for 'permission context' then return true
                 permission: Permission = permissionWithPermissionContexts.permission
                 permissionContexts: List[PermissionContext] = permissionWithPermissionContexts.permissionContexts
-                if permissionAction.value in permission.allowedActions():
+                # Does it have a permission action in the allowed actions?
+                if requestedPermissionAction.value in permission.allowedActions():
+                    # If yes, then check if we can find a permission context type that is similar to the
+                    # permission context constant
                     for permissionContext in permissionContexts:
-                        if permissionContextConstant.value == permissionContext.name():
-                            return True
+                        # If it is requested to deal with resource instance?
+                        if requestedContextData.type == PermissionContextConstant.RESOURCE_INSTANCE:
+                            # Then check if the current type of the permission context is of type resource_type, and
+                            # if it is of resource type, then:
+                            if permissionContext.type() == PermissionContextConstant.RESOURCE_TYPE.value:
+                                # Get the data from the permission context
+                                data = permissionContext.data()
+                                # Check if it has the key 'name', and if it has, then:
+                                if 'name' in data:
+                                    # Return true if the data context has a resource type of type data['name']
+                                    if requestedContextData.resourceType == data['name']:
+                                        return True
+
         # We did not find action with permission context, then return false
         return False

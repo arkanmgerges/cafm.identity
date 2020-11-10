@@ -15,7 +15,7 @@ import ou_app_service_pb2 as ou__app__service__pb2
 import permission_app_service_pb2 as permission__app__service__pb2
 import project_app_service_pb2 as project__app__service__pb2
 import realm_app_service_pb2 as realm__app__service__pb2
-import permission_context_app_service_pb2 as resource__type__app__service__pb2
+import permission_context_app_service_pb2 as permission__context__app__service__pb2
 import role_app_service_pb2 as role__app__service__pb2
 import user_app_service_pb2 as user__app__service__pb2
 import user_group_app_service_pb2 as user__group__app__service__pb2
@@ -29,9 +29,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13\x63\x61\x66m_identity.proto\x1a\x14ou_app_service.proto\x1a\x1cpermission_app_service.proto\x1a\x19project_app_service.proto\x1a\x17realm_app_service.proto\x1a\x1fpermission_context_app_service.proto\x1a\x16role_app_service.proto\x1a\x16user_app_service.proto\x1a\x1cuser_group_app_service.proto\x1a\x16\x61uth_app_service.proto\x1a\x17\x61uthz_app_service.protob\x06proto3'
+  serialized_pb=b'\n\x13\x63\x61\x66m_identity.proto\x1a\x14ou_app_service.proto\x1a\x1cpermission_app_service.proto\x1a\x19project_app_service.proto\x1a\x17realm_app_service.proto\x1a$permission_context_app_service.proto\x1a\x16role_app_service.proto\x1a\x16user_app_service.proto\x1a\x1cuser_group_app_service.proto\x1a\x16\x61uth_app_service.proto\x1a\x17\x61uthz_app_service.protob\x06proto3'
   ,
-  dependencies=[ou__app__service__pb2.DESCRIPTOR,permission__app__service__pb2.DESCRIPTOR,project__app__service__pb2.DESCRIPTOR,realm__app__service__pb2.DESCRIPTOR,resource__type__app__service__pb2.DESCRIPTOR,role__app__service__pb2.DESCRIPTOR,user__app__service__pb2.DESCRIPTOR,user__group__app__service__pb2.DESCRIPTOR,auth__app__service__pb2.DESCRIPTOR,authz__app__service__pb2.DESCRIPTOR,])
+  dependencies=[ou__app__service__pb2.DESCRIPTOR,permission__app__service__pb2.DESCRIPTOR,project__app__service__pb2.DESCRIPTOR,realm__app__service__pb2.DESCRIPTOR,permission__context__app__service__pb2.DESCRIPTOR,role__app__service__pb2.DESCRIPTOR,user__app__service__pb2.DESCRIPTOR,user__group__app__service__pb2.DESCRIPTOR,auth__app__service__pb2.DESCRIPTOR,authz__app__service__pb2.DESCRIPTOR,])
 
 
 

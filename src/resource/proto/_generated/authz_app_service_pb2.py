@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x17\x61uthz_app_service.proto\x12\x13\x63\x61\x66m.identity.authz\"m\n AuthzAppService_isAllowedRequest\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0e\n\x06\x61\x63tion\x18\x02 \x01(\t\x12\x15\n\rpermission_context\x18\x03 \x01(\t\x12\x13\n\x0bresource_id\x18\x04 \x01(\t\"6\n!AuthzAppService_isAllowedResponse\x12\x11\n\tisAllowed\x18\x01 \x01(\x08\x32\x8f\x01\n\x0f\x41uthzAppService\x12|\n\tisAllowed\x12\x35.cafm.identity.authz.AuthzAppService_isAllowedRequest\x1a\x36.cafm.identity.authz.AuthzAppService_isAllowedResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x17\x61uthz_app_service.proto\x12\x13\x63\x61\x66m.identity.authz\"r\n AuthzAppService_isAllowedRequest\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0e\n\x06\x61\x63tion\x18\x02 \x01(\t\x12\x1a\n\x12permission_context\x18\x03 \x01(\t\x12\x13\n\x0bresource_id\x18\x04 \x01(\t\"6\n!AuthzAppService_isAllowedResponse\x12\x11\n\tisAllowed\x18\x01 \x01(\x08\x32\x8f\x01\n\x0f\x41uthzAppService\x12|\n\tisAllowed\x12\x35.cafm.identity.authz.AuthzAppService_isAllowedRequest\x1a\x36.cafm.identity.authz.AuthzAppService_isAllowedResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -74,7 +74,7 @@ _AUTHZAPPSERVICE_ISALLOWEDREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=48,
-  serialized_end=157,
+  serialized_end=162,
 )
 
 
@@ -105,8 +105,8 @@ _AUTHZAPPSERVICE_ISALLOWEDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=159,
-  serialized_end=213,
+  serialized_start=164,
+  serialized_end=218,
 )
 
 DESCRIPTOR.message_types_by_name['AuthzAppService_isAllowedRequest'] = _AUTHZAPPSERVICE_ISALLOWEDREQUEST
@@ -136,8 +136,8 @@ _AUTHZAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=216,
-  serialized_end=359,
+  serialized_start=221,
+  serialized_end=364,
   methods=[
   _descriptor.MethodDescriptor(
     name='isAllowed',
