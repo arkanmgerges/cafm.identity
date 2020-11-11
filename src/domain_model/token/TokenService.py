@@ -63,7 +63,7 @@ class TokenService:
         """
         logger.debug(f'[{TokenService.tokenDataFromToken.__qualname__}] Received token: {token}')
         dictData = TokenService.claimsFromToken(token=token)
-        return TokenData(id=dictData['id'], name=dictData['name'], role=dictData['role'])
+        return TokenData(id=dictData['id'], name=dictData['name'], roles=dictData['roles'])
 
     @staticmethod
     def isSuperAdmin(tokenData: TokenData):

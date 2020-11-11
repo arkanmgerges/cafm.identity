@@ -673,12 +673,12 @@ class PolicyRepositoryImpl(PolicyRepository):
                                     FOR v2, e2, p IN 1..100 OUTBOUND v1._id `has`
                                         RETURN p
                                )
-                RETURN {"role": {"id": role.id, "name": role.name}, "owned_by": owned_by, "permissions": permissions, "accesses": accesses}
-            '''
+                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "accesses": accesses}
+                '''
             aql += accessTree
         else:
             noAccessTree = '''
-                RETURN {"role": {"id": role.id, "name": role.name}, "owned_by": owned_by, "permissions": permissions, "accesses": []}
+                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "accesses": []}
             '''
             aql += noAccessTree
         aql = aql.replace('#rolesConditions', rolesConditions)
@@ -691,7 +691,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         for item in qResult:
             ownedByString = '' if item['owned_by'] is None else item['owned_by']['name']
             role = Role.createFrom(id=item['role']['id'], name=item['role']['name'], ownedBy=ownedByString)
-            permissions = item['permissions']
+            permissions = item['role']['_permissions']
             permList = []
             # For each permission
             for permItem in permissions:
@@ -713,6 +713,30 @@ class PolicyRepositoryImpl(PolicyRepository):
             result.append(permData)
 
         return result
+
+    def isOwnerOfResource(self, resource: Resource, tokenData: TokenData) -> bool:
+        # (v1.id == @ownerId OR v1.id == @ownerId)
+        ownerIdConditions = ''
+        for role in tokenData.roles():
+            if ownerIdConditions == '':
+                ownerIdConditions += f'v1.id == "{role["id"]}"'
+            else:
+                ownerIdConditions += f' OR v1.id == "{role["id"]}"'
+        aql = '''
+            FOR d IN resource
+                FILTER d.id == @id
+                FOR v1 IN OUTBOUND d._id `owned_by`
+                    FILTER (#ownerIdConditions)
+                    RETURN 1
+            '''
+        aql = aql.replace('#ownerIdConditions', ownerIdConditions)
+
+        bindVars = {'id': resource.id()}
+        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        qResult = queryResult.result
+        if len(qResult) == 0:
+            return False
+        return True
 
     def _fetchAccessTree(self, accesses: List[dict] = None) -> List[AccessNode]:
         if accesses is None:

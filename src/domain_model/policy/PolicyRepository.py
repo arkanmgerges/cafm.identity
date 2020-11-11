@@ -213,3 +213,15 @@ class PolicyRepository(ABC):
         Returns:
             List[RoleAccessPermissionData]: A list of role with access and permissions with permission contexts
         """
+
+    @abstractmethod
+    def isOwnerOfResource(self, resource: Resource, tokenData: TokenData) -> bool:
+        """Check of the resource is owned by the user/role in the token data
+
+        Args:
+            resource (Resource): The resource to be checked for ownership
+            tokenData (TokenData): Token info that is used to check for the ownership of the resource
+
+        Returns:
+            bool: Returns True if the user/role in the token data is the owner of the resource, False otherwise
+        """

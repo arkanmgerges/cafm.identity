@@ -38,6 +38,8 @@ from src.port_adapter.messaging.common.kafka.KafkaConsumer import KafkaConsumer
 from src.port_adapter.messaging.common.kafka.KafkaProducer import KafkaProducer
 from src.port_adapter.repository.domain_model.authentication.AuthenticationRepositoryImpl import AuthenticationRepositoryImpl
 from src.port_adapter.repository.domain_model.authorization.AuthorizationRepositoryImpl import AuthorizationRepositoryImpl
+from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
+from src.port_adapter.repository.domain_model.helper.HelperRepositoryImpl import HelperRepositoryImpl
 from src.port_adapter.repository.domain_model.ou.OuRepositoryImpl import OuRepositoryImpl
 from src.port_adapter.repository.domain_model.permission.PermissionRepositoryImpl import PermissionRepositoryImpl
 from src.port_adapter.repository.domain_model.policy.PolicyRepositoryImpl import PolicyRepositoryImpl
@@ -182,6 +184,11 @@ class AppDi(Module):
     @provider
     def provideResourceRepository(self) -> ResourceRepository:
         return ResourceRepositoryImpl()
+
+    @singleton
+    @provider
+    def provideHelperRepository(self) -> HelperRepository:
+        return HelperRepositoryImpl()
     # endregion Repository
 
     # region domain service

@@ -1,6 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from typing import List
+
 from src.domain_model.token.TokenData import TokenData
 from src.domain_model.ou.Ou import Ou
 from src.domain_model.ou.OuRepository import OuRepository
@@ -25,10 +27,19 @@ class OuService:
                 return Ou.createFrom(name=name)
             else:
                 ou = Ou.createFrom(id=id, name=name, publishEvent=True)
-                self._repo.createOu(ou)
-                self._policyRepo.connectResourceToOwner(
-                    resource=Resource(
-                        id=ou.id(),
-                        type=PermissionContextConstant.OU.value),
-                    tokenData=tokenData)
+                self._repo.createOu(ou=ou, tokenData=tokenData)
+                # self._policyRepo.connectResourceToOwner(
+                #     resource=Resource(
+                #         id=ou.id(),
+                #         type=PermissionContextConstant.OU.value),
+                #     tokenData=tokenData)
                 return ou
+
+    def deleteOu(self, ou:Ou, tokenData: TokenData = None):
+        self._repo.deleteOu(ou)
+        if self._policyRepo.isOwnerOfResource(
+            resource=Resource(
+                id=ou.id(),
+                type=PermissionContextConstant.OU.value),
+            tokenData=tokenData):
+            self._repo.deleteOu(ou)

@@ -1,10 +1,11 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
+from src.domain_model.policy.request_context_data.ContextDataRequest import ContextDataRequestConstant, \
+    ContextDataRequest
 
 
-class ResourceInstanceContextDataRequest:
+class ResourceInstanceContextDataRequest(ContextDataRequest):
     def __init__(self, resourceType: str):
-        self.type = PermissionContextConstant.RESOURCE_INSTANCE
         self.resourceType = resourceType
+        super().__init__(dataType=ContextDataRequestConstant.RESOURCE_INSTANCE)

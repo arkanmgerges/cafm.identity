@@ -51,7 +51,7 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
                          )
                          LET r4 = union_distinct(r1, r2)
                          LET r5 = (FOR d5 IN r4 RETURN {"id": d5.id, "name": d5.name})
-                        RETURN {'id': u.id, 'name': u.name, 'role': r5}
+                        RETURN {'id': u.id, 'name': u.name, 'roles': r5}
               '''
 
         bindVars = {"name": name, "password": password}
@@ -63,7 +63,7 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
             raise InvalidCredentialsException(name)
 
         result = result[0]
-        return {'id': result['id'], 'name': result['name'], 'role': result['role']}
+        return {'id': result['id'], 'name': result['name'], 'roles': result['roles']}
 
     def persistToken(self, token: str, ttl: int = 300) -> None:
         self._cache.setex(f'{self._cacheSessionKeyPrefix}{token}', ttl, token)

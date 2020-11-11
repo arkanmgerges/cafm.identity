@@ -1,7 +1,7 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from typing import List, Any
+from typing import List
 
 import authlib
 
@@ -11,6 +11,8 @@ from src.domain_model.permission_context.PermissionContext import PermissionCont
 from src.domain_model.policy.PermissionWithPermissionContexts import PermissionWithPermissionContexts
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
+from src.domain_model.policy.request_context_data.ContextDataRequest import ContextDataRequestConstant, \
+    ContextDataRequest
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenData import TokenData
 from src.resource.logging.logger import logger
@@ -55,7 +57,7 @@ class AuthorizationService:
     def verifyAccess(self,
                      roleAccessPermissionsData: List[RoleAccessPermissionData],
                      requestedPermissionAction: PermissionAction,
-                     requestedContextData: Any,
+                     requestedContextData: ContextDataRequest,
                      tokenData: TokenData):
 
         if not self._isSuperAdmin(tokenData=tokenData):
@@ -73,7 +75,7 @@ class AuthorizationService:
         return False
 
     def _verifyActionByPermissionWithPermissionContext(self, requestedPermissionAction: PermissionAction,
-                                                       requestedContextData: Any,
+                                                       requestedContextData: ContextDataRequest,
                                                        roleAccessPermissionsData: List[
                                                            RoleAccessPermissionData]) -> bool:
         for item in roleAccessPermissionsData:
@@ -88,7 +90,7 @@ class AuthorizationService:
                     # permission context constant
                     for permissionContext in permissionContexts:
                         # If it is requested to deal with resource instance?
-                        if requestedContextData.type == PermissionContextConstant.RESOURCE_INSTANCE:
+                        if requestedContextData.dataType == ContextDataRequestConstant.RESOURCE_INSTANCE:
                             # Then check if the current type of the permission context is of type resource_type, and
                             # if it is of resource type, then:
                             if permissionContext.type() == PermissionContextConstant.RESOURCE_TYPE.value:
@@ -96,7 +98,8 @@ class AuthorizationService:
                                 data = permissionContext.data()
                                 # Check if it has the key 'name', and if it has, then:
                                 if 'name' in data:
-                                    # Return true if the data context has a resource type of type data['name']
+                                    # Return true if the data context has a resource type requested that is the same
+                                    # for data['name']
                                     if requestedContextData.resourceType == data['name']:
                                         return True
 

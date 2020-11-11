@@ -7,6 +7,7 @@ from typing import List
 from pyArango.connection import *
 from pyArango.query import AQLQuery
 
+from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.token.TokenData import TokenData
 from src.domain_model.token.TokenService import TokenService
 from src.domain_model.ou.Ou import Ou
@@ -15,6 +16,8 @@ from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import
 from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
 from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
+import src.port_adapter.AppDi as AppDi
+from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
 from src.resource.logging.logger import logger
 
 
@@ -27,21 +30,60 @@ class OuRepositoryImpl(OuRepository):
                 password=os.getenv('CAFM_IDENTITY_ARANGODB_PASSWORD', '')
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
+            self._helperRepo: HelperRepository = AppDi.instance.get(HelperRepository)
         except Exception as e:
             logger.warn(f'[{OuRepository.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(f'Could not connect to the db, message: {e}')
 
-    def createOu(self, ou: Ou):
-        aql = '''
-        UPSERT {id: @id, type: 'ou'}
-            INSERT {id: @id, name: @name, type: 'ou'}
-            UPDATE {name: @name}
-          IN resource
-        '''
+    def createOu(self, ou: Ou, tokenData: TokenData):
+        userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
+        rolesDocIds = []
+        roles = tokenData.roles()
+        for role in roles:
+            rolesDocIds.append(self._helperRepo.roleDocumentId(id=role['id']))
+        # aql = '''
+        # UPSERT {id: @id, type: 'ou'}
+        #     INSERT {id: @id, name: @name, type: 'ou'}
+        #     UPDATE {name: @name}
+        #   IN resource
+        # '''
 
-        bindVars = {"id": ou.id(), "name": ou.name()}
-        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        print(queryResult)
+        # bindVars = {"id": ou.id(), "name": ou.name()}
+        # queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+        actionFunction = '''
+            function (params) {                                            
+                queryLink = `UPSERT {_from: @fromId, _to: @toId}
+                      INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                      UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                     IN owned_by`;
+                
+                let db = require('@arangodb').db;
+                let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
+                if (res.length == 0) {
+                    p = params['resource']
+                    res = db.resource.insert({id: p['id'], name: p['name'], type: p['type']});
+                    fromDocId = res['_id'];
+                    p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
+                    db._query(queryLink, p).execute();
+                    for (i = 0; i < params['rolesDocIds'].length; i++) {
+                        let currentDocId = params['rolesDocIds'][i];
+                        let p = {'fromId': fromDocId, 'toId': currentDocId, 
+                            'fromType': params['resource']['type'], 'toType': params['toTypeRole']};
+                        db._query(queryLink, p).execute();    
+                    }
+                } else {
+                    //db.resource.updateByExample({id: res[0]['_id']}, {name: params['resource']['name'], type: params['resource']['type']});
+                }
+            }
+        '''
+        params = {
+            'resource': {"id": ou.id(), "name": ou.name(), "type": ou.type()},
+            'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
+            'rolesDocIds': rolesDocIds,
+            'toTypeRole': PermissionContextConstant.ROLE.value
+                  }
+        self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
     def ouByName(self, name: str) -> Ou:
         aql = '''

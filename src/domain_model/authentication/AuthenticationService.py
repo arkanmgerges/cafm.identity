@@ -25,7 +25,7 @@ class AuthenticationService:
             `UserDoesNotExistException <UserDoesNotExistException>`: When user does not exist
         """
         result = self._authRepo.authenticateUserByNameAndPassword(name=name, password=password)
-        payload = {'id': result['id'], 'role': result['role'], 'name': result['name']}
+        payload = {'id': result['id'], 'roles': result['roles'], 'name': result['name']}
         token = TokenService.generateToken(payload=payload)
         ttl = os.getenv('CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS', 300)
         self._authRepo.persistToken(token=token, ttl=ttl)

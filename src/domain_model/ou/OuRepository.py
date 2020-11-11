@@ -10,11 +10,12 @@ from src.domain_model.ou.Ou import Ou
 
 class OuRepository(ABC):
     @abstractmethod
-    def createOu(self, ou: Ou):
+    def createOu(self, ou: Ou, tokenData: TokenData):
         """Create ou
 
         Args:
             ou (Ou): The ou that needs to be created
+            tokenData (TokenData): Token data that has info about the token
 
         """
 
