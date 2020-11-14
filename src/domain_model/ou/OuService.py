@@ -36,10 +36,4 @@ class OuService:
                 return ou
 
     def deleteOu(self, ou:Ou, tokenData: TokenData = None):
-        self._repo.deleteOu(ou)
-        if self._policyRepo.isOwnerOfResource(
-            resource=Resource(
-                id=ou.id(),
-                type=PermissionContextConstant.OU.value),
-            tokenData=tokenData):
-            self._repo.deleteOu(ou)
+        self._repo.deleteOu(ou, tokenData=tokenData)

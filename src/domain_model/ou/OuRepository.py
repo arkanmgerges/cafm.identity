@@ -62,11 +62,12 @@ class OuRepository(ABC):
         """
         
     @abstractmethod
-    def deleteOu(self, ou: Ou) -> None:
+    def deleteOu(self, ou: Ou, tokenData: TokenData) -> None:
         """Delete a ou
 
         Args:
             ou (Ou): The ou that needs to be deleted
+            tokenData (TokenData): Token data used for deleting the resource
             
         :raises:
             `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the ou could not be deleted            
