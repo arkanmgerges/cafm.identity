@@ -4,6 +4,7 @@
 from typing import List
 
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
+from src.domain_model.ou.Ou import Ou
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.ou.OuService import OuService
 from src.domain_model.permission.Permission import PermissionAction
@@ -55,10 +56,11 @@ class OuApplicationService:
         ou = self._ouRepository.ouById(id=id)
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.UPDATE,
-                                        requestedContextData=ResourceInstanceContextDataRequest(resource=ou),
+                                        requestedContextData=ResourceTypeContextDataRequest(resourceType='ou'),
+                                        resource=ou,
                                         tokenData=tokenData)
 
-        self._ouService.updateOu(ou=ou, tokenData=tokenData)
+        self._ouService.updateOu(oldObject=ou, newObject=Ou.createFrom(id=id, name=name), tokenData=tokenData)
 
 
     def ouByName(self, name: str, token: str = ''):
