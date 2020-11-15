@@ -654,17 +654,17 @@ class PolicyRepositoryImpl(PolicyRepository):
                 rolesConditions += f' OR role.id == "{role["id"]}"'
         aql = '''
                 FOR role IN resource
-                FILTER (#rolesConditions) AND role.type == 'role'
-                LET owned_by = FIRST(FOR v1, e1 IN OUTBOUND role._id `owned_by`
-                                    RETURN {"id": v1.id, "name": v1.name, "type": v1.type})
-                LET permissions = (FOR v1, e1 IN OUTBOUND role._id `has`
-                                    FILTER e1._from_type == 'role' AND e1._to_type == 'permission'
-                                    LET permission_contexts = (FOR v2, e2 IN OUTBOUND v1._id `for`
-                                        RETURN {
-                                        "id": v2.id,
-                                        "type": (v2.type == 'resource_type' ? 'resource_type' : 'resource_instance'),
-                                        "data": v2.data})
-                                    RETURN {"permission": {"id": v1.id, "name": v1.name, "allowed_actions": v1.allowed_actions}, "permission_contexts": permission_contexts})
+                    FILTER (#rolesConditions) AND role.type == 'role'
+                    LET owned_by = FIRST(FOR v1, e1 IN OUTBOUND role._id `owned_by`
+                                        RETURN {"id": v1.id, "name": v1.name, "type": v1.type})
+                    LET permissions = (FOR v1, e1 IN OUTBOUND role._id `has`
+                                        FILTER e1._from_type == 'role' AND e1._to_type == 'permission'
+                                        LET permission_contexts = (FOR v2, e2 IN OUTBOUND v1._id `for`
+                                            RETURN {
+                                            "id": v2.id,
+                                            "type": (v2.type == 'resource_type' ? 'resource_type' : 'resource_instance'),
+                                            "data": v2.data})
+                                        RETURN {"permission": {"id": v1.id, "name": v1.name, "allowed_actions": v1.allowed_actions}, "permission_contexts": permission_contexts})
             '''
 
         if includeAccessTree:

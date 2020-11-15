@@ -173,7 +173,6 @@ class OuRepositoryImpl(OuRepository):
                 'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
             }
             self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
-            ou.publishDelete()
         except Exception as e:
             print(e)
             self.ouById(ou.id())
@@ -181,7 +180,7 @@ class OuRepositoryImpl(OuRepository):
                 f'[{OuRepositoryImpl.deleteOu.__qualname__}] Object could not be found exception for ou id: {ou.id()}')
             raise ObjectCouldNotBeDeletedException(f'ou id: {ou.id()}')
 
-    def updateOu(self, ou: Ou) -> None:
+    def updateOu(self, ou: Ou, tokenData: TokenData) -> None:
         oldOu = self.ouById(ou.id())
         if oldOu == ou:
             logger.debug(

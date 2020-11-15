@@ -4,7 +4,7 @@
 from copy import copy
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
 """
@@ -24,10 +24,10 @@ class Realm(Resource):
         logger.debug(f'[{Realm.createFrom.__qualname__}] - Create Realm with name: {name} and id: {id}')
         realm = Realm(id, name)
         if publishEvent:
-            from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+            from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
             from src.domain_model.realm.RealmCreated import RealmCreated
             logger.debug(f'[{Realm.createFrom.__qualname__}] - Publish event for realm with name: {name} and id: {id}')
-            DomainEventPublisher.addEventForPublishing(RealmCreated(realm))
+            DomainPublishedEvents.addEventForPublishing(RealmCreated(realm))
         return realm
 
     def name(self) -> str:
@@ -44,11 +44,11 @@ class Realm(Resource):
 
     def publishDelete(self):
         from src.domain_model.realm.RealmDeleted import RealmDeleted
-        DomainEventPublisher.addEventForPublishing(RealmDeleted(self))
+        DomainPublishedEvents.addEventForPublishing(RealmDeleted(self))
 
     def publishUpdate(self, old):
         from src.domain_model.realm.RealmUpdated import RealmUpdated
-        DomainEventPublisher.addEventForPublishing(RealmUpdated(old, self))
+        DomainPublishedEvents.addEventForPublishing(RealmUpdated(old, self))
 
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name()}

@@ -9,8 +9,9 @@ from src.domain_model.ou.OuService import OuService
 from src.domain_model.permission.Permission import PermissionAction
 from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
-from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest import \
+from src.domain_model.policy.request_context_data.ResourceInstanceContextDataRequest import \
     ResourceInstanceContextDataRequest
+from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest import ResourceTypeContextDataRequest
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.token.TokenService import TokenService
@@ -28,7 +29,7 @@ class OuApplicationService:
             tokenData=tokenData, includeAccessTree=False)
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.CREATE,
-                                        requestedContextData=ResourceInstanceContextDataRequest(resourceType='ou'),
+                                        requestedContextData=ResourceTypeContextDataRequest(resourceType='ou'),
                                         tokenData=tokenData)
         return self._ouService.createOu(id=id, name=name, objectOnly=objectOnly, tokenData=tokenData)
 
@@ -40,10 +41,25 @@ class OuApplicationService:
         ou = self._ouRepository.ouById(id=id)
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.DELETE,
-                                        requestedContextData=ResourceInstanceContextDataRequest(resourceType='ou'),
+                                        requestedContextData=ResourceTypeContextDataRequest(resourceType='ou'),
+                                        resource=ou,
                                         tokenData=tokenData)
 
         self._ouService.deleteOu(ou=ou, tokenData=tokenData)
+
+    def updateOu(self, id: str, name: str, token: str = ''):
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
+            tokenData=tokenData, includeAccessTree=False)
+
+        ou = self._ouRepository.ouById(id=id)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
+                                        requestedPermissionAction=PermissionAction.UPDATE,
+                                        requestedContextData=ResourceInstanceContextDataRequest(resource=ou),
+                                        tokenData=tokenData)
+
+        self._ouService.updateOu(ou=ou, tokenData=tokenData)
+
 
     def ouByName(self, name: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
@@ -71,11 +87,4 @@ class OuApplicationService:
 
 
 
-    def updateOu(self, id: str, name: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
-                                        permissionContext=PermissionContextConstant.OU.value):
-            ou = self._ouRepository.ouById(id=id)
-            ou.update({'name': name})
-            self._ouRepository.updateOu(ou)
-        else:
-            raise UnAuthorizedException()
+

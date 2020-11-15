@@ -9,7 +9,7 @@ from src.domain_model.authorization.AuthorizationRepository import Authorization
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.user.User import User
 from src.domain_model.user.UserRepository import UserRepository
@@ -33,7 +33,7 @@ def setup_function():
 def test_create_user_object_when_user_already_exist():
     # Arrange
     from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=UserRepository)
     name = 'me'
     repo.userByName = Mock(side_effect=UserAlreadyExistException)
@@ -46,7 +46,7 @@ def test_create_user_object_when_user_already_exist():
 def test_create_user_object_when_user_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=UserRepository)
     name = 'me'
     repo.userByName = Mock(side_effect=UserDoesNotExistException)
@@ -61,7 +61,7 @@ def test_create_user_object_when_user_does_not_exist():
 def test_create_user_with_event_publishing_when_user_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=UserRepository)
     id = '1234567'
     name = 'me'
@@ -74,7 +74,7 @@ def test_create_user_with_event_publishing_when_user_does_not_exist():
     # Assert
     repo.userByName.assert_called_once()
     repo.createUser.assert_called_once()
-    assert len(DomainEventPublisher.postponedEvents()) > 0
+    assert len(DomainPublishedEvents.postponedEvents()) > 0
 
 
 def test_get_user_by_name_and_password_when_user_exists():

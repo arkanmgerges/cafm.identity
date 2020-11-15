@@ -6,7 +6,7 @@ from typing import List
 from src.domain_model.event.DomainEvent import DomainEvent
 
 
-class DomainEventPublisher:
+class DomainPublishedEvents:
     _postponedEvents = []
 
     @classmethod

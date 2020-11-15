@@ -9,7 +9,7 @@ from src.domain_model.authorization.AuthorizationRepository import Authorization
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.role.Role import Role
 from src.domain_model.role.RoleRepository import RoleRepository
@@ -32,7 +32,7 @@ def setup_function():
 def test_create_role_object_when_role_already_exist():
     # Arrange
     from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=RoleRepository)
     name = 'me'
     repo.roleByName = Mock(side_effect=RoleAlreadyExistException)
@@ -45,7 +45,7 @@ def test_create_role_object_when_role_already_exist():
 def test_create_role_object_when_role_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=RoleRepository)
     name = 'me'
     repo.roleByName = Mock(side_effect=RoleDoesNotExistException)
@@ -60,7 +60,7 @@ def test_create_role_object_when_role_does_not_exist():
 def test_create_role_with_event_publishing_when_role_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=RoleRepository)
     id = '1234567'
     name = 'me'
@@ -72,7 +72,7 @@ def test_create_role_with_event_publishing_when_role_does_not_exist():
     # Assert
     repo.roleByName.assert_called_once()
     repo.createRole.assert_called_once()
-    assert len(DomainEventPublisher.postponedEvents()) > 0
+    assert len(DomainPublishedEvents.postponedEvents()) > 0
 
 
 def test_get_role_by_name_when_role_exists():

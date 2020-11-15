@@ -9,7 +9,7 @@ from src.domain_model.authorization.AuthorizationRepository import Authorization
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.permission.PermissionRepository import PermissionRepository
 from src.domain_model.policy.PolicyRepository import PolicyRepository
@@ -33,7 +33,7 @@ def setup_function():
 def test_create_permission_object_when_permission_already_exist():
     # Arrange
     from src.domain_model.resource.exception.PermissionAlreadyExistException import PermissionAlreadyExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=PermissionRepository)
     name = 'me'
     repo.permissionByName = Mock(side_effect=PermissionAlreadyExistException)
@@ -46,7 +46,7 @@ def test_create_permission_object_when_permission_already_exist():
 def test_create_permission_object_when_permission_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=PermissionRepository)
     name = 'me'
     repo.permissionByName = Mock(side_effect=PermissionDoesNotExistException)
@@ -61,7 +61,7 @@ def test_create_permission_object_when_permission_does_not_exist():
 def test_create_permission_with_event_publishing_when_permission_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=PermissionRepository)
     id = '1234567'
     name = 'me'
@@ -73,7 +73,7 @@ def test_create_permission_with_event_publishing_when_permission_does_not_exist(
     # Assert
     repo.permissionByName.assert_called_once()
     repo.createPermission.assert_called_once()
-    assert len(DomainEventPublisher.postponedEvents()) > 0
+    assert len(DomainPublishedEvents.postponedEvents()) > 0
 
 
 def test_get_permission_by_name_when_permission_exists():

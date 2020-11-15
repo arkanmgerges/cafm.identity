@@ -10,7 +10,7 @@ import signal
 from confluent_kafka.cimpl import KafkaError
 
 import src.port_adapter.AppDi as AppDi
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.resource.exception.DomainModelException import DomainModelException
 from src.port_adapter.messaging.common.Consumer import Consumer
 from src.port_adapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
@@ -91,7 +91,7 @@ class IdentityCommandListener:
                         # Produce the domain events
                         logger.debug(
                             f'[{IdentityCommandListener.run.__qualname__}] - get postponed events from the event publisher')
-                        domainEvents = DomainEventPublisher.postponedEvents()
+                        domainEvents = DomainPublishedEvents.postponedEvents()
                         for domainEvent in domainEvents:
                             logger.debug(
                                 f'[{IdentityCommandListener.run.__qualname__}] - produce domain event with name = {domainEvent.name()}')
@@ -105,7 +105,7 @@ class IdentityCommandListener:
                                 schema=IdentityEvent.get_schema())
 
                         logger.debug(f'[{IdentityCommandListener.run.__qualname__}] - cleanup event publisher')
-                        DomainEventPublisher.cleanup()
+                        DomainPublishedEvents.cleanup()
                         # Send the consumer's position to transaction to commit
                         # them along with the transaction, committing both
                         # input and outputs in the same transaction is what provides EOS.
@@ -125,7 +125,7 @@ class IdentityCommandListener:
                         producer.sendOffsetsToTransaction(consumer)
                         producer.commitTransaction()
                         producer.beginTransaction()
-                        DomainEventPublisher.cleanup()
+                        DomainPublishedEvents.cleanup()
                     except Exception as e:
                         logger.error(e)
 

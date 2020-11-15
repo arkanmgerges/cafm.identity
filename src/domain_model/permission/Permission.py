@@ -6,7 +6,7 @@ from enum import Enum
 from typing import List
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
 """
@@ -35,11 +35,11 @@ class Permission(Resource):
     def createFrom(cls, id: str = None, name='', publishEvent: bool = False, allowedActions: List[str] = None):
         permission = Permission(id, name, allowedActions)
         if publishEvent:
-            from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+            from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
             from src.domain_model.permission.PermissionCreated import PermissionCreated
             logger.debug(
                 f'[{Permission.createFrom.__qualname__}] - Create Permission with name: {name}, id: {id}, allowedActions: {allowedActions}')
-            DomainEventPublisher.addEventForPublishing(PermissionCreated(permission))
+            DomainPublishedEvents.addEventForPublishing(PermissionCreated(permission))
         return permission
 
     def name(self) -> str:
@@ -62,11 +62,11 @@ class Permission(Resource):
 
     def publishDelete(self):
         from src.domain_model.permission.PermissionDeleted import PermissionDeleted
-        DomainEventPublisher.addEventForPublishing(PermissionDeleted(self))
+        DomainPublishedEvents.addEventForPublishing(PermissionDeleted(self))
 
     def publishUpdate(self, old):
         from src.domain_model.permission.PermissionUpdated import PermissionUpdated
-        DomainEventPublisher.addEventForPublishing(PermissionUpdated(old, self))
+        DomainPublishedEvents.addEventForPublishing(PermissionUpdated(old, self))
 
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name()}

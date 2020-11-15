@@ -5,7 +5,7 @@ from copy import copy
 from enum import Enum
 from uuid import uuid4
 
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
 
@@ -45,11 +45,11 @@ class PermissionContext:
     def createFrom(cls, id: str = None, data: dict = None, publishEvent: bool = False):
         permissionContext = PermissionContext(id=id, data=data)
         if publishEvent:
-            from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+            from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
             from src.domain_model.permission_context.PermissionContextCreated import PermissionContextCreated
             logger.debug(
                 f'[{PermissionContext.createFrom.__qualname__}] - Create permission context with id = {id} and data = {data}')
-            DomainEventPublisher.addEventForPublishing(PermissionContextCreated(permissionContext))
+            DomainPublishedEvents.addEventForPublishing(PermissionContextCreated(permissionContext))
         return permissionContext
 
     def update(self, data: dict):
@@ -66,11 +66,11 @@ class PermissionContext:
 
     def publishDelete(self):
         from src.domain_model.permission_context.PermissionContextDeleted import PermissionContextDeleted
-        DomainEventPublisher.addEventForPublishing(PermissionContextDeleted(self))
+        DomainPublishedEvents.addEventForPublishing(PermissionContextDeleted(self))
 
     def publishUpdate(self, old):
         from src.domain_model.permission_context.PermissionContextUpdated import PermissionContextUpdated
-        DomainEventPublisher.addEventForPublishing(PermissionContextUpdated(old, self))
+        DomainPublishedEvents.addEventForPublishing(PermissionContextUpdated(old, self))
 
     def toMap(self) -> dict:
         return {"id": self.id(), "data": self.data()}

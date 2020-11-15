@@ -4,7 +4,7 @@
 from copy import copy
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
 """
@@ -23,10 +23,10 @@ class Project(Resource):
     def createFrom(cls, id: str = None, name='', publishEvent: bool = False):
         project = Project(id, name)
         if publishEvent:
-            from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+            from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
             from src.domain_model.project.ProjectCreated import ProjectCreated
             logger.debug(f'[{Project.createFrom.__qualname__}] - Create Project with name = {name} and id = {id}')
-            DomainEventPublisher.addEventForPublishing(ProjectCreated(project))
+            DomainPublishedEvents.addEventForPublishing(ProjectCreated(project))
         return project
 
     def name(self) -> str:
@@ -43,11 +43,11 @@ class Project(Resource):
 
     def publishDelete(self):
         from src.domain_model.project.ProjectDeleted import ProjectDeleted
-        DomainEventPublisher.addEventForPublishing(ProjectDeleted(self))
+        DomainPublishedEvents.addEventForPublishing(ProjectDeleted(self))
 
     def publishUpdate(self, old):
         from src.domain_model.project.ProjectUpdated import ProjectUpdated
-        DomainEventPublisher.addEventForPublishing(ProjectUpdated(old, self))
+        DomainPublishedEvents.addEventForPublishing(ProjectUpdated(old, self))
 
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name()}

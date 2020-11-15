@@ -4,7 +4,7 @@
 from copy import copy
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
 """
@@ -23,10 +23,10 @@ class Ou(Resource):
     def createFrom(cls, id: str = None, name='', publishEvent: bool = False):
         ou = Ou(id, name)
         if publishEvent:
-            from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+            from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
             from src.domain_model.ou.OuCreated import OuCreated
             logger.debug(f'[{Ou.createFrom.__qualname__}] - Create Ou with name = {name} and id = {id}')
-            DomainEventPublisher.addEventForPublishing(OuCreated(ou))
+            DomainPublishedEvents.addEventForPublishing(OuCreated(ou))
         return ou
 
     def name(self) -> str:
@@ -43,11 +43,11 @@ class Ou(Resource):
 
     def publishDelete(self):
         from src.domain_model.ou.OuDeleted import OuDeleted
-        DomainEventPublisher.addEventForPublishing(OuDeleted(self))
+        DomainPublishedEvents.addEventForPublishing(OuDeleted(self))
 
     def publishUpdate(self, old):
         from src.domain_model.ou.OuUpdated import OuUpdated
-        DomainEventPublisher.addEventForPublishing(OuUpdated(old, self))
+        DomainPublishedEvents.addEventForPublishing(OuUpdated(old, self))
 
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name()}

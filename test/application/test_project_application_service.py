@@ -9,7 +9,7 @@ from src.domain_model.authorization.AuthorizationRepository import Authorization
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.project.Project import Project
 from src.domain_model.project.ProjectRepository import ProjectRepository
@@ -33,7 +33,7 @@ def setup_function():
 def test_create_project_object_when_project_already_exist():
     # Arrange
     from src.domain_model.resource.exception.ProjectAlreadyExistException import ProjectAlreadyExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=ProjectRepository)
     name = 'me'
     repo.projectByProjectName = Mock(side_effect=ProjectAlreadyExistException)
@@ -46,7 +46,7 @@ def test_create_project_object_when_project_already_exist():
 def test_create_project_object_when_project_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=ProjectRepository)
     name = 'me'
     repo.projectByName = Mock(side_effect=ProjectDoesNotExistException)
@@ -61,7 +61,7 @@ def test_create_project_object_when_project_does_not_exist():
 def test_create_project_with_event_publishing_when_project_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=ProjectRepository)
     id = '1234567'
     name = 'me'
@@ -73,7 +73,7 @@ def test_create_project_with_event_publishing_when_project_does_not_exist():
     # Assert
     repo.projectByName.assert_called_once()
     repo.createProject.assert_called_once()
-    assert len(DomainEventPublisher.postponedEvents()) > 0
+    assert len(DomainPublishedEvents.postponedEvents()) > 0
 
 
 def test_get_project_by_name_when_project_exists():

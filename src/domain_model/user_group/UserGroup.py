@@ -5,7 +5,7 @@ from copy import copy
 from uuid import uuid4
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 
 
 class UserGroup(Resource):
@@ -18,9 +18,9 @@ class UserGroup(Resource):
     def createFrom(cls, id: str = None, name='', publishEvent: bool = False):
         userGroup = UserGroup(id, name)
         if publishEvent:
-            from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+            from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
             from src.domain_model.user_group.UserGroupCreated import UserGroupCreated
-            DomainEventPublisher.addEventForPublishing(UserGroupCreated(userGroup))
+            DomainPublishedEvents.addEventForPublishing(UserGroupCreated(userGroup))
         return userGroup
 
     def name(self) -> str:
@@ -37,11 +37,11 @@ class UserGroup(Resource):
 
     def publishDelete(self):
         from src.domain_model.user_group.UserGroupDeleted import UserGroupDeleted
-        DomainEventPublisher.addEventForPublishing(UserGroupDeleted(self))
+        DomainPublishedEvents.addEventForPublishing(UserGroupDeleted(self))
 
     def publishUpdate(self, old):
         from src.domain_model.user_group.UserGroupUpdated import UserGroupUpdated
-        DomainEventPublisher.addEventForPublishing(UserGroupUpdated(old, self))
+        DomainPublishedEvents.addEventForPublishing(UserGroupUpdated(old, self))
 
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name()}

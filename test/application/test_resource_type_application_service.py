@@ -9,7 +9,7 @@ from src.domain_model.authorization.AuthorizationRepository import Authorization
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.permission_context.PermissionContext import ResourceType
 from src.domain_model.permission_context.PermissionContextRepository import ResourceTypeRepository
@@ -33,7 +33,7 @@ def setup_function():
 def test_create_resourceType_object_when_resourceType_already_exist():
     # Arrange
     from src.domain_model.resource.exception.ResourceTypeAlreadyExistException import ResourceTypeAlreadyExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=ResourceTypeRepository)
     name = 'me'
     repo.resourceTypeByName = Mock(side_effect=ResourceTypeAlreadyExistException)
@@ -46,7 +46,7 @@ def test_create_resourceType_object_when_resourceType_already_exist():
 def test_create_resourceType_object_when_resourceType_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=ResourceTypeRepository)
     name = 'me'
     repo.resourceTypeByName = Mock(side_effect=ResourceTypeDoesNotExistException)
@@ -61,7 +61,7 @@ def test_create_resourceType_object_when_resourceType_does_not_exist():
 def test_create_resourceType_with_event_publishing_when_resourceType_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.ResourceTypeDoesNotExistException import ResourceTypeDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=ResourceTypeRepository)
     id = '1234567'
     name = 'me'
@@ -73,7 +73,7 @@ def test_create_resourceType_with_event_publishing_when_resourceType_does_not_ex
     # Assert
     repo.resourceTypeByName.assert_called_once()
     repo.createResourceType.assert_called_once()
-    assert len(DomainEventPublisher.postponedEvents()) > 0
+    assert len(DomainPublishedEvents.postponedEvents()) > 0
 
 
 def test_get_resourceType_by_name_when_resourceType_exists():

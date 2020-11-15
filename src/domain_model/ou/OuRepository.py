@@ -74,11 +74,12 @@ class OuRepository(ABC):
         """
 
     @abstractmethod
-    def updateOu(self, ou: Ou) -> None:
+    def updateOu(self, ou: Ou, tokenData: TokenData) -> None:
         """Update a ou
 
         Args:
             ou (Ou): The ou that needs to be updated
+            tokenData (TokenData): Token data used for updating the resource
         
         :raises:
             `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the ou could not be updated

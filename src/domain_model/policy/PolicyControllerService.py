@@ -65,3 +65,6 @@ class PolicyControllerService:
 
     def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True):
         return self._policyRepo.roleAccessPermissionsData(tokenData=tokenData, includeAccessTree=includeAccessTree)
+
+    def isOwnerOfResource(self, resource: Resource, tokenData: TokenData) -> bool:
+        return self._policyRepo.isOwnerOfResource(resource=resource, tokenData=tokenData)

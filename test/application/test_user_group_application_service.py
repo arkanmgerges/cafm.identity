@@ -9,7 +9,7 @@ from src.domain_model.authorization.AuthorizationRepository import Authorization
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
@@ -33,7 +33,7 @@ def setup_function():
 def test_create_userGroup_object_when_userGroup_already_exist():
     # Arrange
     from src.domain_model.resource.exception.UserGroupAlreadyExistException import UserGroupAlreadyExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=UserGroupRepository)
     name = 'me'
     repo.userGroupByName = Mock(side_effect=UserGroupAlreadyExistException)
@@ -46,7 +46,7 @@ def test_create_userGroup_object_when_userGroup_already_exist():
 def test_create_userGroup_object_when_userGroup_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=UserGroupRepository)
     name = 'me'
     repo.userGroupByName = Mock(side_effect=UserGroupDoesNotExistException)
@@ -61,7 +61,7 @@ def test_create_userGroup_object_when_userGroup_does_not_exist():
 def test_create_userGroup_with_event_publishing_when_userGroup_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=UserGroupRepository)
     id = '1234567'
     name = 'me'
@@ -73,7 +73,7 @@ def test_create_userGroup_with_event_publishing_when_userGroup_does_not_exist():
     # Assert
     repo.userGroupByName.assert_called_once()
     repo.createUserGroup.assert_called_once()
-    assert len(DomainEventPublisher.postponedEvents()) > 0
+    assert len(DomainPublishedEvents.postponedEvents()) > 0
 
 
 def test_get_userGroup_by_name_when_userGroup_exists():

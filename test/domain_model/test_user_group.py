@@ -4,12 +4,12 @@
 from uuid import uuid4
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.user_group.UserGroup import UserGroup
 
 
 def setup_function():
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
 
 
 def test_create_user_group():
@@ -29,7 +29,7 @@ def test_create_by_semantic_constructor():
     # Assert
     assert isinstance(userGroup, UserGroup)
     assert userGroup.id() == id
-    assert DomainEventPublisher.postponedEvents()[0].data()['id'] == id
+    assert DomainPublishedEvents.postponedEvents()[0].data()['id'] == id
 
 
 def test_that_two_objects_with_same_attributes_are_equal():

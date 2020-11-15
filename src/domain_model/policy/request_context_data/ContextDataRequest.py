@@ -6,6 +6,7 @@ from enum import Enum
 
 class ContextDataRequestConstant(Enum):
     RESOURCE_INSTANCE = 'resource_instance'
+    RESOURCE_TYPE = 'resource_type'
 
 
 class ContextDataRequest:

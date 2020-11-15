@@ -9,7 +9,7 @@ from src.domain_model.authorization.AuthorizationRepository import Authorization
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.realm.Realm import Realm
 from src.domain_model.realm.RealmRepository import RealmRepository
@@ -33,7 +33,7 @@ def setup_function():
 def test_create_realm_object_when_realm_already_exist():
     # Arrange
     from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=RealmRepository)
     name = 'me'
     repo.realmByName = Mock(side_effect=RealmAlreadyExistException)
@@ -46,7 +46,7 @@ def test_create_realm_object_when_realm_already_exist():
 def test_create_realm_object_when_realm_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=RealmRepository)
     name = 'me'
     repo.realmByName = Mock(side_effect=RealmDoesNotExistException)
@@ -61,7 +61,7 @@ def test_create_realm_object_when_realm_does_not_exist():
 def test_create_realm_with_event_publishing_when_realm_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
-    DomainEventPublisher.cleanup()
+    DomainPublishedEvents.cleanup()
     repo = Mock(spec=RealmRepository)
     id = '1234567'
     name = 'me'
@@ -73,7 +73,7 @@ def test_create_realm_with_event_publishing_when_realm_does_not_exist():
     # Assert
     repo.realmByName.assert_called_once()
     repo.createRealm.assert_called_once()
-    assert len(DomainEventPublisher.postponedEvents()) > 0
+    assert len(DomainPublishedEvents.postponedEvents()) > 0
 
 
 def test_get_realm_by_name_when_realm_exists():

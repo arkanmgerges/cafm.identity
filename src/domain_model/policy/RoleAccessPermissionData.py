@@ -15,4 +15,4 @@ class RoleAccessPermissionData:
         self.role: Role = role
         self.permissions = permissions if permissions is not None else []
         self.ownedBy = ownedBy
-        self.accessTree = accessTree
+        self.accessTree: List[AccessNode] = accessTree

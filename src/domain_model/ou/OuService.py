@@ -37,3 +37,8 @@ class OuService:
 
     def deleteOu(self, ou:Ou, tokenData: TokenData = None):
         self._repo.deleteOu(ou, tokenData=tokenData)
+        ou.publishDelete()
+
+    def updateOu(self, ou:Ou, tokenData: TokenData = None):
+        self._repo.updateOu(ou, tokenData=tokenData)
+        ou.publishDelete()

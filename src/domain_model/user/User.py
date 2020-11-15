@@ -5,7 +5,7 @@ from copy import copy
 from uuid import uuid4
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
 
@@ -22,9 +22,9 @@ class User(Resource):
         user = User(id, name, password)
         if publishEvent:
             logger.debug(f'[{User.createFrom.__qualname__}] - publish UserCreated event')
-            from src.domain_model.event.DomainEventPublisher import DomainEventPublisher
+            from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
             from src.domain_model.user.UserCreated import UserCreated
-            DomainEventPublisher.addEventForPublishing(UserCreated(user))
+            DomainPublishedEvents.addEventForPublishing(UserCreated(user))
         return user
 
     def name(self) -> str:
@@ -47,11 +47,11 @@ class User(Resource):
 
     def publishDelete(self):
         from src.domain_model.user.UserDeleted import UserDeleted
-        DomainEventPublisher.addEventForPublishing(UserDeleted(self))
+        DomainPublishedEvents.addEventForPublishing(UserDeleted(self))
 
     def publishUpdate(self, old):
         from src.domain_model.user.UserUpdated import UserUpdated
-        DomainEventPublisher.addEventForPublishing(UserUpdated(old, self))
+        DomainPublishedEvents.addEventForPublishing(UserUpdated(old, self))
 
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name()}
