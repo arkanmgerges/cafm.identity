@@ -4,7 +4,7 @@
 from copy import copy
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
 """
@@ -24,7 +24,7 @@ class Role(Resource):
     def createFrom(cls, id: str = None, name='', publishEvent: bool = False, ownedBy: str = 'super_admin'):
         role = Role(id, name, ownedBy)
         if publishEvent:
-            from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+            from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
             from src.domain_model.role.RoleCreated import RoleCreated
             logger.debug(
                 f'[{Role.createFrom.__qualname__}] - Create Role with name: {name} and id: {id}, creator: {ownedBy}')

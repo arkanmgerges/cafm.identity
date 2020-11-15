@@ -9,21 +9,22 @@ from pyArango.connection import Connection
 from pyArango.query import AQLQuery
 
 from src.domain_model.permission.Permission import Permission
+from src.domain_model.permission_context.PermissionContext import PermissionContext, PermissionContextConstant
 from src.domain_model.policy.AccessNode import AccessNode
 from src.domain_model.policy.PermissionWithPermissionContexts import PermissionWithPermissionContexts
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.resource.Resource import Resource
+from src.domain_model.resource.exception.PermissionContextDoesNotExistException import \
+    PermissionContextDoesNotExistException
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
 from src.domain_model.resource.exception.ResourceAssignmentAlreadyExistException import \
     ResourceAssignmentAlreadyExistException
 from src.domain_model.resource.exception.ResourceAssignmentDoesNotExistException import \
     ResourceAssignmentDoesNotExistException
-from src.domain_model.resource.exception.PermissionContextDoesNotExistException import PermissionContextDoesNotExistException
 from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
-from src.domain_model.permission_context.PermissionContext import PermissionContext, PermissionContextConstant
 from src.domain_model.role.Role import Role
 from src.domain_model.token.TokenData import TokenData
 from src.domain_model.user.User import User
@@ -448,7 +449,8 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return result
 
-    def revokeAssignmentPermissionToPermissionContext(self, permission: Permission, permissionContext: PermissionContext) -> None:
+    def revokeAssignmentPermissionToPermissionContext(self, permission: Permission,
+                                                      permissionContext: PermissionContext) -> None:
         permissionDocId = self.permissionDocumentId(permission)
         permissionContextDocId = self.permissionContextDocumentId(permissionContext)
 
@@ -645,7 +647,8 @@ class PolicyRepositoryImpl(PolicyRepository):
                         "toType": PermissionContextConstant.ROLE.value}
             _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
-    def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True) -> List[RoleAccessPermissionData]:
+    def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True) -> List[
+        RoleAccessPermissionData]:
         rolesConditions = ''
         for role in tokenData.roles():
             if rolesConditions == '':
@@ -742,7 +745,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         if accesses is None:
             return []
 
-        objects:Dict[str, AccessNode] = defaultdict()
+        objects: Dict[str, AccessNode] = defaultdict()
         result = []
 
         for acc in accesses:

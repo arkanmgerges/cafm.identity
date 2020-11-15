@@ -10,4 +10,4 @@ class AccessNode:
     def __init__(self):
         self.resource: Resource
         self.resourceName: str
-        self.children: List[Resource] = []
+        self.children: List[AccessNode] = []

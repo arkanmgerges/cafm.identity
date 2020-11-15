@@ -163,8 +163,6 @@ class AuthorizationService:
 
 
 
-                        # Otherwise return False
-                        return False
         return False
 
     def _checkForResourceInstanceRequest(self, requestedPermissionAction: PermissionAction,
@@ -196,13 +194,16 @@ class AuthorizationService:
     def _isDeniedInstance(self) -> bool:
         return False
 
-    def _treeCheck(self, accessTree: List[AccessNode], resource: Resource):
+    def _treeCheck(self, accessTree: List[AccessNode], resource: Resource) -> bool:
         for treeItem in accessTree:
             if self._isDeniedInstance():
                 return False
             if treeItem.resource.type() == resource.type():
                 return True
             if len(treeItem.children) > 0:
+                result = self._treeCheck(treeItem.children, resource)
+                if result is True:
+                    return True
 
 
 

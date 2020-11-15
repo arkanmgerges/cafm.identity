@@ -5,7 +5,7 @@ from copy import copy
 from enum import Enum
 from uuid import uuid4
 
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
 

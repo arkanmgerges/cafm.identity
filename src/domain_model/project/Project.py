@@ -4,7 +4,7 @@
 from copy import copy
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
 """
@@ -23,7 +23,7 @@ class Project(Resource):
     def createFrom(cls, id: str = None, name='', publishEvent: bool = False):
         project = Project(id, name)
         if publishEvent:
-            from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+            from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
             from src.domain_model.project.ProjectCreated import ProjectCreated
             logger.debug(f'[{Project.createFrom.__qualname__}] - Create Project with name = {name} and id = {id}')
             DomainPublishedEvents.addEventForPublishing(ProjectCreated(project))

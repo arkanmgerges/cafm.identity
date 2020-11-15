@@ -5,7 +5,7 @@ from copy import copy
 from uuid import uuid4
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
 
@@ -22,7 +22,7 @@ class User(Resource):
         user = User(id, name, password)
         if publishEvent:
             logger.debug(f'[{User.createFrom.__qualname__}] - publish UserCreated event')
-            from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+            from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
             from src.domain_model.user.UserCreated import UserCreated
             DomainPublishedEvents.addEventForPublishing(UserCreated(user))
         return user

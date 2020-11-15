@@ -6,7 +6,7 @@ from enum import Enum
 from typing import List
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
 """
@@ -25,20 +25,21 @@ class PermissionAction(Enum):
 
 
 class Permission(Resource):
-    def __init__(self, id: str = None, name: str = '', allowedActions: List[str] = None):
+    def __init__(self, id: str = None, name: str = '', allowedActions: List[str] = None, deniedActions: List[str] = None):
         anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type='permission')
         self._name = name
         self._allowedActions = [] if allowedActions is None else allowedActions
+        self._deniedActions = [] if deniedActions is None else deniedActions
 
     @classmethod
-    def createFrom(cls, id: str = None, name='', publishEvent: bool = False, allowedActions: List[str] = None):
-        permission = Permission(id, name, allowedActions)
+    def createFrom(cls, id: str = None, name='', publishEvent: bool = False, allowedActions: List[str] = None, deniedActions: List[str] = None):
+        permission = Permission(id, name, allowedActions, deniedActions)
         if publishEvent:
-            from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+            from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
             from src.domain_model.permission.PermissionCreated import PermissionCreated
             logger.debug(
-                f'[{Permission.createFrom.__qualname__}] - Create Permission with name: {name}, id: {id}, allowedActions: {allowedActions}')
+                f'[{Permission.createFrom.__qualname__}] - Create Permission with name: {name}, id: {id}, allowedActions: {allowedActions}, deniedActions: {deniedActions}')
             DomainPublishedEvents.addEventForPublishing(PermissionCreated(permission))
         return permission
 
@@ -47,6 +48,9 @@ class Permission(Resource):
 
     def allowedActions(self) -> List[str]:
         return self._allowedActions
+
+    def deniedActions(self) -> List[str]:
+        return self._deniedActions
 
     def update(self, data: dict):
         updated = False
@@ -57,6 +61,9 @@ class Permission(Resource):
         if 'allowedActions' in data and data['allowedActions'] != self._allowedActions:
             updated = True
             self._allowedActions = data['allowedActions']
+        if 'deniedActions' in data and data['deniedActions'] != self._deniedActions:
+            updated = True
+            self._deniedActions = data['deniedActions']
         if updated:
             self.publishUpdate(old)
 

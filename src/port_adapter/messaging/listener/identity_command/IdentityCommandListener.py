@@ -10,7 +10,7 @@ import signal
 from confluent_kafka.cimpl import KafkaError
 
 import src.port_adapter.AppDi as AppDi
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.resource.exception.DomainModelException import DomainModelException
 from src.port_adapter.messaging.common.Consumer import Consumer
 from src.port_adapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset

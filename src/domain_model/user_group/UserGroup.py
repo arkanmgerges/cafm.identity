@@ -5,7 +5,7 @@ from copy import copy
 from uuid import uuid4
 
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 
 
 class UserGroup(Resource):
@@ -18,7 +18,7 @@ class UserGroup(Resource):
     def createFrom(cls, id: str = None, name='', publishEvent: bool = False):
         userGroup = UserGroup(id, name)
         if publishEvent:
-            from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+            from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
             from src.domain_model.user_group.UserGroupCreated import UserGroupCreated
             DomainPublishedEvents.addEventForPublishing(UserGroupCreated(userGroup))
         return userGroup
