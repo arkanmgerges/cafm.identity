@@ -5,15 +5,42 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from src.domain_model.project.Project import Project
+from src.domain_model.token.TokenData import TokenData
 
 
 class ProjectRepository(ABC):
     @abstractmethod
-    def createProject(self, project: Project):
+    def createProject(self, project: Project, tokenData: TokenData):
         """Create project
 
         Args:
             project (Project): The project that needs to be created
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
+    def deleteProject(self, project: Project, tokenData: TokenData) -> None:
+        """Delete a project
+
+        Args:
+            project (Project): The project that needs to be deleted
+            tokenData (TokenData): Token data used for deleting the resource
+
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the project could not be deleted            
+        """
+
+    @abstractmethod
+    def updateProject(self, project: Project, tokenData: TokenData) -> None:
+        """Update a project
+
+        Args:
+            project (Project): The project that needs to be updated
+            tokenData (TokenData): Token data used for updating the resource
+
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the project could not be updated
         """
 
     @abstractmethod
@@ -57,26 +84,4 @@ class ProjectRepository(ABC):
 
         Returns:
             dict: A dict that has {"items": [], "itemCount": 0}
-        """
-
-    @abstractmethod
-    def deleteProject(self, project: Project) -> None:
-        """Delete a project
-
-        Args:
-            project (Project): The project that needs to be deleted
-            
-        :raises:
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the project could not be deleted            
-        """
-
-    @abstractmethod
-    def updateProject(self, project: Project) -> None:
-        """Update a project
-
-        Args:
-            project (Project): The project that needs to be updated
-            
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the project could not be updated
         """

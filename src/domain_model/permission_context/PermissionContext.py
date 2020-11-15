@@ -16,6 +16,7 @@ class PermissionContextConstant(Enum):
     RESOURCE_TYPE = 'resource_type'
     RESOURCE_INSTANCE = 'resource_instance'
     PERMISSION = 'permission'
+    PERMISSION_CONTEXT = 'permission_context'
     USER = 'user'
     USER_GROUP = 'user_group'
     ASSIGNMENT_ROLE_TO_USER = 'assignment:role_to_user'

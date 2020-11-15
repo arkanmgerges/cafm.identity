@@ -5,29 +5,42 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from src.domain_model.permission_context.PermissionContext import PermissionContext
+from src.domain_model.token.TokenData import TokenData
 
 
 class PermissionContextRepository(ABC):
     @abstractmethod
-    def createPermissionContext(self, permissionContext: PermissionContext):
-        """Create permissionContext
+    def createPermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData):
+        """Create permission context
 
         Args:
-            permissionContext (PermissionContext): The permissionContext that needs to be created
+            permissionContext (PermissionContext): The permission context that needs to be created
+            tokenData (TokenData): Token data that has info about the token
+
         """
 
     @abstractmethod
-    def permissionContextByName(self, name: str) -> PermissionContext:
-        """Get permissionContext by name
+    def deletePermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData) -> None:
+        """Delete a permission context
 
         Args:
-            name (str): The name of the permissionContext
+            permissionContext (PermissionContext): The permission context that needs to be deleted
+            tokenData (TokenData): Token data used for deleting the resource
 
-        Returns:
-            PermissionContext: permissionContext object
-            
         :raises:
-            `PermissionContextDoesNotExistException <src.domain_model.resource.exception.PermissionContextDoesNotExistException>` Raise an exception if the permission context does not exist
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the permission context could not be deleted
+        """
+
+    @abstractmethod
+    def updatePermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData) -> None:
+        """Update a permission context
+
+        Args:
+            permissionContext (PermissionContext): The permission context that needs to be updated
+            tokenData (TokenData): Token data used for updating the resource
+
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the permission context could not be updated
         """
 
     @abstractmethod
@@ -46,7 +59,7 @@ class PermissionContextRepository(ABC):
 
     @abstractmethod
     def permissionContextsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
-                                  order: List[dict] = None) -> dict:
+                                       order: List[dict] = None) -> dict:
         """Get list of permissionContexts based on the owned roles that the user has
 
         Args:
@@ -57,26 +70,4 @@ class PermissionContextRepository(ABC):
 
         Returns:
             dict: A dict that has {"items": [], "itemCount": 0}
-        """
-
-    @abstractmethod
-    def deletePermissionContext(self, permissionContext: PermissionContext) -> None:
-        """Delete a permissionContext
-
-        Args:
-            permissionContext (PermissionContext): The permissionContext that needs to be deleted
-            
-        :raises:        
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the permission context could not be deleted
-        """
-
-    @abstractmethod
-    def updatePermissionContext(self, permissionContext: PermissionContext) -> None:
-        """Update a permissionContext
-
-        Args:
-            permissionContext (PermissionContext): The permissionContext that needs to be updated
-            
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the permission context could not be updated
         """

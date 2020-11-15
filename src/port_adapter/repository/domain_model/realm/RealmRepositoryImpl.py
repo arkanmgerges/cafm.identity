@@ -7,12 +7,17 @@ from typing import List
 from pyArango.connection import *
 from pyArango.query import AQLQuery
 
+import src.port_adapter.AppDi as AppDi
+from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.realm.Realm import Realm
 from src.domain_model.realm.RealmRepository import RealmRepository
+from src.domain_model.resource.exception.CodeExceptionConstant import CodeExceptionConstant
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
 from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
 from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+from src.domain_model.token.TokenData import TokenData
+from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
 from src.resource.logging.logger import logger
 
 
@@ -25,21 +30,121 @@ class RealmRepositoryImpl(RealmRepository):
                 password=os.getenv('CAFM_IDENTITY_ARANGODB_PASSWORD', '')
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
+            self._helperRepo: HelperRepository = AppDi.instance.get(HelperRepository)
         except Exception as e:
             logger.warn(f'[{RealmRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(f'Could not connect to the db, message: {e}')
 
-    def createRealm(self, realm: Realm):
+    def createRealm(self, realm: Realm, tokenData: TokenData):
+        userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
+        rolesDocIds = []
+        roles = tokenData.roles()
+        for role in roles:
+            rolesDocIds.append(self._helperRepo.roleDocumentId(id=role['id']))
+        # aql = '''
+        # UPSERT {id: @id, type: 'realm'}
+        #     INSERT {id: @id, name: @name, type: 'realm'}
+        #     UPDATE {name: @name}
+        #   IN resource
+        # '''
+
+        # bindVars = {"id": realm.id(), "name": realm.name()}
+        # queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+        actionFunction = '''
+            function (params) {                                            
+                queryLink = `UPSERT {_from: @fromId, _to: @toId}
+                      INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                      UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                     IN owned_by`;
+
+                let db = require('@arangodb').db;
+                let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
+                if (res.length == 0) {
+                    p = params['resource']
+                    res = db.resource.insert({id: p['id'], name: p['name'], type: p['type']});
+                    fromDocId = res['_id'];
+                    p = params['realm']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
+                    db._query(queryLink, p).execute();
+                    for (let i = 0; i < params['realmsDocIds'].length; i++) {
+                        let currentDocId = params['realmsDocIds'][i];
+                        let p = {'fromId': fromDocId, 'toId': currentDocId, 
+                            'fromType': params['resource']['type'], 'toType': params['toTypeRealm']};
+                        db._query(queryLink, p).execute();    
+                    }
+                } else {
+                    let err = new Error(`Could not create resource, ${params['resource']['id']} is already exist`);
+                    err.errorNum = params['OBJECT_ALREADY_EXIST_CODE'];
+                    throw err;
+                }
+            }
+        '''
+        params = {
+            'resource': {"id": realm.id(), "name": realm.name(), "type": realm.type()},
+            'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
+            'rolesDocIds': rolesDocIds,
+            'toTypeRole': PermissionContextConstant.ROLE.value,
+            'OBJECT_ALREADY_EXIST_CODE': CodeExceptionConstant.OBJECT_ALREADY_EXIST.value
+        }
+        self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
+
+    def updateRealm(self, realm: Realm, tokenData: TokenData) -> None:
+        oldObject = self.realmById(realm.id())
+        if oldObject == realm:
+            logger.debug(
+                f'[{RealmRepositoryImpl.updateRealm.__qualname__}] Object identical exception for old realm: {oldObject}\nrealm: {realm}')
+            raise ObjectIdenticalException()
+
         aql = '''
-        UPSERT {id: @id}
-            INSERT {id: @id, name: @name, _type: 'realm'}
-            UPDATE {name: @name}
-          IN resource
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'realm'
+                UPDATE d WITH {name: @name} IN resource
         '''
 
         bindVars = {"id": realm.id(), "name": realm.name()}
-        logger.debug(f'[{RealmRepositoryImpl.createRealm.__qualname__}] Upsert for id: {realm.id()}, name: {realm.name()}')
-        _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] - Update realm with id: {realm.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        _ = queryResult.result
+
+        # Check if it is updated
+        anObject = self.realmById(realm.id())
+        if anObject != realm:
+            logger.warn(
+                f'[{RealmRepositoryImpl.updateRealm.__qualname__}] The object realm: {realm} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'realm: {realm}')
+
+    def deleteRealm(self, realm: Realm, tokenData: TokenData):
+        try:
+            actionFunction = '''
+                function (params) {                                            
+
+                    let db = require('@arangodb').db;
+                    let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
+                    if (res.length != 0) {
+                        let doc = res[0];
+                        let edges = db.owned_by.outEdges(doc._id);   
+                        for (let i = 0; i < edges.length; i++) {
+                            db.owned_by.remove(edges[i]);
+                        }
+                        db.resource.remove(doc);
+                    } else {
+                        let err = new Error(`Could not delete resource, ${params['resource']['id']}, it does not exist`);
+                        err.errorNum = params['OBJECT_DOES_NOT_EXIST_CODE'];
+                        throw err;
+                    }
+                }
+            '''
+            params = {
+                'resource': {"id": realm.id(), "name": realm.name(), "type": realm.type()},
+                'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
+            }
+            self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
+        except Exception as e:
+            print(e)
+            self.realmById(realm.id())
+            logger.debug(
+                f'[{RealmRepositoryImpl.deleteRealm.__qualname__}] Object could not be found exception for realm id: {realm.id()}')
+            raise ObjectCouldNotBeDeletedException(f'realm id: {realm.id()}')
 
     def realmByName(self, name: str) -> Realm:
         aql = '''
@@ -97,46 +202,3 @@ class RealmRepositoryImpl(RealmRepository):
                 return {"items": [], "itemCount": 0}
             return {"items": [Realm.createFrom(id=x['id'], name=x['name']) for x in result[0]['items']],
                     "itemCount": result[0]["itemCount"]}
-
-    def deleteRealm(self, realm: Realm) -> None:
-        aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'realm'
-                REMOVE d IN resource
-        '''
-
-        bindVars = {"id": realm.id()}
-        logger.debug(f'[{RealmRepositoryImpl.deleteRealm.__qualname__}] - Delete realm with id: {realm.id()}')
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        _ = queryResult.result
-
-        # Check if it is deleted
-        try:
-            self.realmById(realm.id())
-            logger.debug(f'[{RealmRepositoryImpl.deleteRealm.__qualname__}] Object could not be found exception for realm id: {realm.id()}')
-            raise ObjectCouldNotBeDeletedException(f'realm id: {realm.id()}')
-        except RealmDoesNotExistException:
-            realm.publishDelete()
-
-    def updateRealm(self, realm: Realm) -> None:
-        oldRealm = self.realmById(realm.id())
-        if oldRealm == realm:
-            logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] Object identical exception for old realm: {oldRealm}\nrealm: {realm}')
-            raise ObjectIdenticalException()
-
-        aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'realm'
-                UPDATE d WITH {name: @name} IN resource
-        '''
-
-        bindVars = {"id": realm.id(), "name": realm.name()}
-        logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] - Update realm with id: {realm.id()}')
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        _ = queryResult.result
-
-        # Check if it is updated
-        aRealm = self.realmById(realm.id())
-        if aRealm != realm:
-            logger.warn(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] The object realm: {realm} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'realm: {realm}')

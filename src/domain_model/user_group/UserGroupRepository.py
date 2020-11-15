@@ -4,17 +4,43 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from src.domain_model.token.TokenData import TokenData
 from src.domain_model.user_group.UserGroup import UserGroup
 
 
 class UserGroupRepository(ABC):
     @abstractmethod
-    def createUserGroup(self, userGroup: UserGroup):
-        """Create userGroup
+    def createUserGroup(self, userGroup: UserGroup, tokenData: TokenData):
+        """Create user group
 
         Args:
-            userGroup (UserGroup): The userGroup that needs to be created
+            userGroup (UserGroup): The user group that needs to be created
+            tokenData (TokenData): Token data that has info about the token
 
+        """
+
+    @abstractmethod
+    def deleteUserGroup(self, userGroup: UserGroup, tokenData: TokenData) -> None:
+        """Delete a user group
+
+        Args:
+            userGroup (UserGroup): The user group that needs to be deleted
+            tokenData (TokenData): Token data used for deleting the resource
+
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the user group could not be deleted
+        """
+
+    @abstractmethod
+    def updateUserGroup(self, userGroup: UserGroup, tokenData: TokenData) -> None:
+        """Update a user group
+
+        Args:
+            userGroup (UserGroup): The user group that needs to be updated
+            tokenData (TokenData): Token data used for updating the resource
+
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the user group could not be updated
         """
 
     @abstractmethod
@@ -58,26 +84,4 @@ class UserGroupRepository(ABC):
 
         Returns:
             dict: A dict that has {"items": [], "itemCount": 0}
-        """
-
-    @abstractmethod
-    def deleteUserGroup(self, userGroup: UserGroup) -> None:
-        """Delete a userGroup
-
-        Args:
-            userGroup (UserGroup): The userGroup that needs to be deleted
-            
-        :raises:
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the user group could not be deleted            
-        """
-
-    @abstractmethod
-    def updateUserGroup(self, userGroup: UserGroup) -> None:
-        """Update a userGroup
-
-        Args:
-            userGroup (UserGroup): The userGroup that needs to be updated
-            
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the user group could not be updated            
         """

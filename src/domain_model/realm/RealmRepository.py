@@ -5,15 +5,42 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from src.domain_model.realm.Realm import Realm
+from src.domain_model.token.TokenData import TokenData
 
 
 class RealmRepository(ABC):
     @abstractmethod
-    def createRealm(self, realm: Realm):
+    def createRealm(self, realm: Realm, tokenData: TokenData):
         """Create realm
 
         Args:
-            realm (Realm): The realm that needs to be created            
+            realm (Realm): The realm that needs to be created
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
+    def deleteRealm(self, realm: Realm, tokenData: TokenData) -> None:
+        """Delete a realm
+
+        Args:
+            realm (Realm): The realm that needs to be deleted
+            tokenData (TokenData): Token data used for deleting the resource
+
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the realm could not be deleted            
+        """
+
+    @abstractmethod
+    def updateRealm(self, realm: Realm, tokenData: TokenData) -> None:
+        """Update a realm
+
+        Args:
+            realm (Realm): The realm that needs to be updated
+            tokenData (TokenData): Token data used for updating the resource
+
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the realm could not be updated
         """
 
     @abstractmethod
@@ -57,26 +84,4 @@ class RealmRepository(ABC):
 
         Returns:
             dict: A dict that has {"items": [], "itemCount": 0}
-        """
-
-    @abstractmethod
-    def deleteRealm(self, realm: Realm) -> None:
-        """Delete a realm
-
-        Args:
-            realm (Realm): The realm that needs to be deleted
-
-        :raises:
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the realm could not be deleted            
-        """
-
-    @abstractmethod
-    def updateRealm(self, realm: Realm) -> None:
-        """Update a realm
-
-        Args:
-            realm (Realm): The realm that needs to be updated
-            
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the realm could not be updated            
         """

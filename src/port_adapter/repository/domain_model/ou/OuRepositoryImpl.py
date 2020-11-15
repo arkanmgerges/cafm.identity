@@ -89,6 +89,64 @@ class OuRepositoryImpl(OuRepository):
         }
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
+    def deleteOu(self, ou: Ou, tokenData: TokenData):
+        try:
+            actionFunction = '''
+                function (params) {                                            
+
+                    let db = require('@arangodb').db;
+                    let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
+                    if (res.length != 0) {
+                        let doc = res[0];
+                        let edges = db.owned_by.outEdges(doc._id);   
+                        for (let i = 0; i < edges.length; i++) {
+                            db.owned_by.remove(edges[i]);
+                        }
+                        db.resource.remove(doc);
+                    } else {
+                        let err = new Error(`Could not delete resource, ${params['resource']['id']}, it does not exist`);
+                        err.errorNum = params['OBJECT_DOES_NOT_EXIST_CODE'];
+                        throw err;
+                    }
+                }
+            '''
+            params = {
+                'resource': {"id": ou.id(), "name": ou.name(), "type": ou.type()},
+                'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
+            }
+            self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
+        except Exception as e:
+            print(e)
+            self.ouById(ou.id())
+            logger.debug(
+                f'[{OuRepositoryImpl.deleteOu.__qualname__}] Object could not be found exception for ou id: {ou.id()}')
+            raise ObjectCouldNotBeDeletedException(f'ou id: {ou.id()}')
+
+    def updateOu(self, ou: Ou, tokenData: TokenData) -> None:
+        oldOu = self.ouById(ou.id())
+        if oldOu == ou:
+            logger.debug(
+                f'[{OuRepositoryImpl.updateOu.__qualname__}] Object identical exception for old ou: {oldOu}\nou: {ou}')
+            raise ObjectIdenticalException()
+
+        aql = '''
+            FOR d IN resource
+                FILTER d.id == @id AND d.type == 'ou'
+                UPDATE d WITH {name: @name} IN resource
+        '''
+
+        bindVars = {"id": ou.id(), "name": ou.name()}
+        logger.debug(f'[{OuRepositoryImpl.updateOu.__qualname__}] - Update ou with id: {ou.id()}')
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        _ = queryResult.result
+
+        # Check if it is updated
+        aOu = self.ouById(ou.id())
+        if aOu != ou:
+            logger.warn(
+                f'[{OuRepositoryImpl.updateOu.__qualname__}] The object ou: {ou} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'ou: {ou}')
+
     def ouByName(self, name: str) -> Ou:
         aql = '''
             FOR d IN resource
@@ -147,60 +205,3 @@ class OuRepositoryImpl(OuRepository):
             return {"items": [Ou.createFrom(id=x['id'], name=x['name']) for x in result[0]['items']],
                     "itemCount": result[0]["itemCount"]}
 
-    def deleteOu(self, ou: Ou, tokenData: TokenData):
-        try:
-            actionFunction = '''
-                function (params) {                                            
-    
-                    let db = require('@arangodb').db;
-                    let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
-                    if (res.length != 0) {
-                        let doc = res[0];
-                        let edges = db.owned_by.outEdges(doc._id);   
-                        for (let i = 0; i < edges.length; i++) {
-                            db.owned_by.remove(edges[i]);
-                        }
-                        db.resource.remove(doc);
-                    } else {
-                        let err = new Error(`Could not delete resource, ${params['resource']['id']}, it does not exist`);
-                        err.errorNum = params['OBJECT_DOES_NOT_EXIST_CODE'];
-                        throw err;
-                    }
-                }
-            '''
-            params = {
-                'resource': {"id": ou.id(), "name": ou.name(), "type": ou.type()},
-                'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
-            }
-            self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
-        except Exception as e:
-            print(e)
-            self.ouById(ou.id())
-            logger.debug(
-                f'[{OuRepositoryImpl.deleteOu.__qualname__}] Object could not be found exception for ou id: {ou.id()}')
-            raise ObjectCouldNotBeDeletedException(f'ou id: {ou.id()}')
-
-    def updateOu(self, ou: Ou, tokenData: TokenData) -> None:
-        oldOu = self.ouById(ou.id())
-        if oldOu == ou:
-            logger.debug(
-                f'[{OuRepositoryImpl.updateOu.__qualname__}] Object identical exception for old ou: {oldOu}\nou: {ou}')
-            raise ObjectIdenticalException()
-
-        aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'ou'
-                UPDATE d WITH {name: @name} IN resource
-        '''
-
-        bindVars = {"id": ou.id(), "name": ou.name()}
-        logger.debug(f'[{OuRepositoryImpl.updateOu.__qualname__}] - Update ou with id: {ou.id()}')
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        _ = queryResult.result
-
-        # Check if it is updated
-        aOu = self.ouById(ou.id())
-        if aOu != ou:
-            logger.warn(
-                f'[{OuRepositoryImpl.updateOu.__qualname__}] The object ou: {ou} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'ou: {ou}')

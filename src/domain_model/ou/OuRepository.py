@@ -4,8 +4,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from src.domain_model.token.TokenData import TokenData
 from src.domain_model.ou.Ou import Ou
+from src.domain_model.token.TokenData import TokenData
 
 
 class OuRepository(ABC):
@@ -17,6 +17,30 @@ class OuRepository(ABC):
             ou (Ou): The ou that needs to be created
             tokenData (TokenData): Token data that has info about the token
 
+        """
+
+    @abstractmethod
+    def deleteOu(self, ou: Ou, tokenData: TokenData) -> None:
+        """Delete a ou
+
+        Args:
+            ou (Ou): The ou that needs to be deleted
+            tokenData (TokenData): Token data used for deleting the resource
+
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the ou could not be deleted
+        """
+
+    @abstractmethod
+    def updateOu(self, ou: Ou, tokenData: TokenData) -> None:
+        """Update a ou
+
+        Args:
+            ou (Ou): The ou that needs to be updated
+            tokenData (TokenData): Token data used for updating the resource
+
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the ou could not be updated
         """
 
     @abstractmethod
@@ -32,7 +56,7 @@ class OuRepository(ABC):
         :raises:
             `OuDoesNotExistException <src.domain_model.resource.exception.OuDoesNotExistException>` Raise an exception if the ou does not exist
         """
-        
+
     @abstractmethod
     def ouById(self, id: str) -> Ou:
         """Get ou by id
@@ -48,7 +72,8 @@ class OuRepository(ABC):
         """
 
     @abstractmethod
-    def ousByOwnedRoles(self, tokenData: TokenData, resultFrom: int = 0, resultSize: int = 100,order: List[dict] = None) -> dict:
+    def ousByOwnedRoles(self, tokenData: TokenData, resultFrom: int = 0, resultSize: int = 100,
+                        order: List[dict] = None) -> dict:
         """Get list of ous based on the owned roles that the user has
 
         Args:
@@ -59,28 +84,4 @@ class OuRepository(ABC):
 
         Returns:
             dict: A dict that has {"items": [], "itemCount": 0}
-        """
-        
-    @abstractmethod
-    def deleteOu(self, ou: Ou, tokenData: TokenData) -> None:
-        """Delete a ou
-
-        Args:
-            ou (Ou): The ou that needs to be deleted
-            tokenData (TokenData): Token data used for deleting the resource
-            
-        :raises:
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the ou could not be deleted            
-        """
-
-    @abstractmethod
-    def updateOu(self, ou: Ou, tokenData: TokenData) -> None:
-        """Update a ou
-
-        Args:
-            ou (Ou): The ou that needs to be updated
-            tokenData (TokenData): Token data used for updating the resource
-        
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the ou could not be updated
         """

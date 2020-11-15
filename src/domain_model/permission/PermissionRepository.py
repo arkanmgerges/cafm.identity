@@ -5,15 +5,42 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from src.domain_model.permission.Permission import Permission
+from src.domain_model.token.TokenData import TokenData
 
 
 class PermissionRepository(ABC):
     @abstractmethod
-    def createPermission(self, permission: Permission):
+    def createPermission(self, permission: Permission, tokenData: TokenData):
         """Create permission
 
         Args:
             permission (Permission): The permission that needs to be created
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
+    def deletePermission(self, permission: Permission, tokenData: TokenData) -> None:
+        """Delete a permission
+
+        Args:
+            permission (Permission): The permission that needs to be deleted
+            tokenData (TokenData): Token data used for deleting the resource
+
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the permission could not be deleted            
+        """
+
+    @abstractmethod
+    def updatePermission(self, permission: Permission, tokenData: TokenData) -> None:
+        """Update a permission
+
+        Args:
+            permission (Permission): The permission that needs to be updated
+            tokenData (TokenData): Token data used for updating the resource
+
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the permission could not be updated
         """
 
     @abstractmethod
@@ -59,24 +86,3 @@ class PermissionRepository(ABC):
             dict: A dict that has {"items": [], "itemCount": 0}
         """
 
-    @abstractmethod
-    def deletePermission(self, permission: Permission) -> None:
-        """Delete a permission
-
-        Args:
-            permission (Permission): The permission that needs to be deleted
-
-        :raises:
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the permission could not be deleted
-        """
-
-    @abstractmethod
-    def updatePermission(self, permission: Permission) -> None:
-        """Update a permission
-
-        Args:
-            permission (Permission): The permission that needs to be updated
-            
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the permission could not be updated
-        """

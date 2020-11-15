@@ -28,6 +28,7 @@ from src.domain_model.realm.RealmRepository import RealmRepository
 from src.domain_model.resource.ResourceRepository import ResourceRepository
 from src.domain_model.permission_context.PermissionContextRepository import PermissionContextRepository
 from src.domain_model.role.RoleRepository import RoleRepository
+from src.domain_model.role.RoleService import RoleService
 from src.domain_model.user.UserRepository import UserRepository
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
 from src.port_adapter.messaging.common.Consumer import Consumer
@@ -67,7 +68,8 @@ class AppDi(Module):
     @singleton
     @provider
     def provideRoleApplicationService(self) -> RoleApplicationService:
-        return RoleApplicationService(self.__injector__.get(RoleRepository), self.__injector__.get(AuthorizationService))
+        return RoleApplicationService(roleRepository=self.__injector__.get(RoleRepository), authzService=self.__injector__.get(AuthorizationService),
+                                      roleService=self.__injector__.get(RoleService))
 
     @singleton
     @provider
@@ -211,6 +213,41 @@ class AppDi(Module):
     @provider
     def provideOuService(self) -> OuService:
         return OuService(ouRepo=self.__injector__.get(OuRepository), policyRepo=self.__injector__.get(PolicyRepository))
+               
+    @singleton
+    @provider
+    def provideRoleService(self) -> RoleService:
+        return RoleService(roleRepo=self.__injector__.get(RoleRepository), policyRepo=self.__injector__.get(PolicyRepository))
+    
+    @singleton
+    @provider
+    def providePermissionService(self) -> PermissionService:
+        return PermissionService(permissionRepo=self.__injector__.get(PermissionRepository), policyRepo=self.__injector__.get(PolicyRepository))
+    
+    @singleton
+    @provider
+    def providePermissionContextService(self) -> PermissionContextService:
+        return PermissionContextService(permissionContextRepo=self.__injector__.get(PermissionContextRepository), policyRepo=self.__injector__.get(PolicyRepository))
+    
+    @singleton
+    @provider
+    def provideProjectService(self) -> ProjectService:
+        return ProjectService(projectRepo=self.__injector__.get(ProjectRepository), policyRepo=self.__injector__.get(PolicyRepository))
+    
+    @singleton
+    @provider
+    def provideRealmService(self) -> RealmService:
+        return RealmService(realmRepo=self.__injector__.get(RealmRepository), policyRepo=self.__injector__.get(PolicyRepository))
+    
+    @singleton
+    @provider
+    def provideUserService(self) -> UserService:
+        return UserService(userRepo=self.__injector__.get(UserRepository), policyRepo=self.__injector__.get(PolicyRepository))
+    
+    @singleton
+    @provider
+    def provideUserGroupService(self) -> UserGroupService:
+        return UserGroupService(userGroupRepo=self.__injector__.get(UserGroupRepository), policyRepo=self.__injector__.get(PolicyRepository))
     # endregion
 
     # region Messaging

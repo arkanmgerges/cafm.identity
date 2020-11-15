@@ -4,17 +4,43 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from src.domain_model.token.TokenData import TokenData
 from src.domain_model.user.User import User
 
 
 class UserRepository(ABC):
     @abstractmethod
-    def createUser(self, user: User):
+    def createUser(self, user: User, tokenData: TokenData):
         """Create user
 
         Args:
             user (User): The user that needs to be created
+            tokenData (TokenData): Token data that has info about the token
 
+        """
+
+    @abstractmethod
+    def deleteUser(self, user: User, tokenData: TokenData) -> None:
+        """Delete a user
+
+        Args:
+            user (User): The user that needs to be deleted
+            tokenData (TokenData): Token data used for deleting the resource
+
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the user could not be deleted            
+        """
+
+    @abstractmethod
+    def updateUser(self, user: User, tokenData: TokenData) -> None:
+        """Update a user
+
+        Args:
+            user (User): The user that needs to be updated
+            tokenData (TokenData): Token data used for updating the resource
+
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the user could not be updated
         """
 
     @abstractmethod
@@ -73,26 +99,4 @@ class UserRepository(ABC):
 
         Returns:
             dict: A dict that has {"items": [], "itemCount": 0}
-        """
-
-    @abstractmethod
-    def deleteUser(self, user: User) -> None:
-        """Delete a user
-
-        Args:
-            user (User): The user that needs to be deleted
-            
-        :raises:
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the user could not be deleted
-        """
-
-    @abstractmethod
-    def updateUser(self, user: User) -> None:
-        """Update a user
-
-        Args:
-            user (User): The user that needs to be updated
-            
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the user could not be updated            
         """

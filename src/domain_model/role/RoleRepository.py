@@ -5,16 +5,42 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from src.domain_model.role.Role import Role
+from src.domain_model.token.TokenData import TokenData
 
 
 class RoleRepository(ABC):
     @abstractmethod
-    def createRole(self, role: Role):
+    def createRole(self, role: Role, tokenData: TokenData):
         """Create role
 
         Args:
             role (Role): The role that needs to be created
+            tokenData (TokenData): Token data that has info about the token
 
+        """
+
+    @abstractmethod
+    def deleteRole(self, role: Role, tokenData: TokenData) -> None:
+        """Delete a role
+
+        Args:
+            role (Role): The role that needs to be deleted
+            tokenData (TokenData): Token data used for deleting the resource
+
+        :raises:
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the role could not be deleted            
+        """
+
+    @abstractmethod
+    def updateRole(self, role: Role, tokenData: TokenData) -> None:
+        """Update a role
+
+        Args:
+            role (Role): The role that needs to be updated
+            tokenData (TokenData): Token data used for updating the resource
+
+        :raises:
+            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the role could not be updated
         """
 
     @abstractmethod
@@ -43,28 +69,6 @@ class RoleRepository(ABC):
 
         :raises:
             `RoleDoesNotExistException <src.domain_model.resource.exception.RoleDoesNotExistException>` Raise an exception if the role does not exist
-        """
-
-    @abstractmethod
-    def deleteRole(self, role: Role) -> None:
-        """Delete a role
-
-        Args:
-            role (Role): The role that needs to be deleted
-
-        :raises:
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the role could not be deleted
-        """
-
-    @abstractmethod
-    def updateRole(self, role: Role) -> None:
-        """Update a role
-
-        Args:
-            role (Role): The role that needs to be updated
-
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the role could not be updated
         """
 
     @abstractmethod
