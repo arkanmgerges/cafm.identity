@@ -43,8 +43,8 @@ class PermissionContext:
         return self._type
 
     @classmethod
-    def createFrom(cls, id: str = None, data: dict = None, publishEvent: bool = False):
-        permissionContext = PermissionContext(id=id, data=data)
+    def createFrom(cls, id: str = None, type: str = '', data: dict = None, publishEvent: bool = False):
+        permissionContext = PermissionContext(id=id, type = type, data=data)
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
             from src.domain_model.permission_context.PermissionContextCreated import PermissionContextCreated
@@ -59,10 +59,13 @@ class PermissionContext:
         if 'data' in data:
             updated = True
             self._data = data['data']
+        if 'type' in data:
+            updated = True
+            self._type = data['type']
         if updated:
             self.publishUpdate(old)
 
-    def data(self):
+    def data(self) -> dict:
         return self._data
 
     def publishDelete(self):
@@ -74,7 +77,7 @@ class PermissionContext:
         DomainPublishedEvents.addEventForPublishing(PermissionContextUpdated(old, self))
 
     def toMap(self) -> dict:
-        return {"id": self.id(), "data": self.data()}
+        return {"id": self.id(), "type": self.type(), "data": self.data()}
 
     def __eq__(self, other):
         if not isinstance(other, PermissionContext):

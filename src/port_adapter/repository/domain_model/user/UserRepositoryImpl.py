@@ -66,10 +66,10 @@ class UserRepositoryImpl(UserRepository):
                     fromDocId = res['_id'];
                     p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
                     db._query(queryLink, p).execute();
-                    for (let i = 0; i < params['usersDocIds'].length; i++) {
-                        let currentDocId = params['usersDocIds'][i];
+                    for (let i = 0; i < params['rolesDocIds'].length; i++) {
+                        let currentDocId = params['rolesDocIds'][i];
                         let p = {'fromId': fromDocId, 'toId': currentDocId, 
-                            'fromType': params['resource']['type'], 'toType': params['toTypeUser']};
+                            'fromType': params['resource']['type'], 'toType': params['toTypeRole']};
                         db._query(queryLink, p).execute();    
                     }
                 } else {

@@ -24,10 +24,9 @@ class PermissionAction(Enum):
     REVOKE = 'revoke'
 
 
-class Permission(Resource):
+class Permission:
     def __init__(self, id: str = None, name: str = '', allowedActions: List[str] = None, deniedActions: List[str] = None):
-        anId = str(uuid4()) if id is None else id
-        super().__init__(id=anId, type='permission')
+        self._id = str(uuid4()) if id is None else id
         self._name = name
         self._allowedActions = [] if allowedActions is None else allowedActions
         self._deniedActions = [] if deniedActions is None else deniedActions
@@ -42,6 +41,9 @@ class Permission(Resource):
                 f'[{Permission.createFrom.__qualname__}] - Create Permission with name: {name}, id: {id}, allowedActions: {allowedActions}, deniedActions: {deniedActions}')
             DomainPublishedEvents.addEventForPublishing(PermissionCreated(permission))
         return permission
+
+    def id(self) -> str:
+        return self._id
 
     def name(self) -> str:
         return self._name
@@ -76,7 +78,7 @@ class Permission(Resource):
         DomainPublishedEvents.addEventForPublishing(PermissionUpdated(old, self))
 
     def toMap(self) -> dict:
-        return {"id": self.id(), "name": self.name()}
+        return {"id": self.id(), "name": self.name(), "allowedActions": self.allowedActions(), "deniedActions": self.deniedActions()}
 
     def __eq__(self, other):
         if not isinstance(other, Permission):

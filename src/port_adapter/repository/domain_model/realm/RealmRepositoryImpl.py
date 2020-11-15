@@ -64,12 +64,12 @@ class RealmRepositoryImpl(RealmRepository):
                     p = params['resource']
                     res = db.resource.insert({id: p['id'], name: p['name'], type: p['type']});
                     fromDocId = res['_id'];
-                    p = params['realm']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
+                    p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
                     db._query(queryLink, p).execute();
-                    for (let i = 0; i < params['realmsDocIds'].length; i++) {
-                        let currentDocId = params['realmsDocIds'][i];
+                    for (let i = 0; i < params['rolesDocIds'].length; i++) {
+                        let currentDocId = params['rolesDocIds'][i];
                         let p = {'fromId': fromDocId, 'toId': currentDocId, 
-                            'fromType': params['resource']['type'], 'toType': params['toTypeRealm']};
+                            'fromType': params['resource']['type'], 'toType': params['toTypeRole']};
                         db._query(queryLink, p).execute();    
                     }
                 } else {

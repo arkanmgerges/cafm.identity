@@ -38,49 +38,28 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
                 f'Could not connect to the db, message: {e}')
 
     def createPermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData):
-        userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
-        rolesDocIds = []
-        roles = tokenData.roles()
-        for role in roles:
-            rolesDocIds.append(self._helperRepo.roleDocumentId(id=role['id']))
-
         actionFunction = '''
             function (params) {                                            
-                queryLink = `UPSERT {_from: @fromId, _to: @toId}
-                      INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
-                      UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
-                     IN owned_by`;
-
                 let db = require('@arangodb').db;
-                let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
+                let res = db.permission_context.byExample({id: params['permission_context']['id'], type: params['permission_context']['type']}).toArray();
                 if (res.length == 0) {
-                    p = params['resource']
-                    res = db.resource.insert({id: p['id'], name: p['name'], type: p['type']});
+                    p = params['permission_context']
+                    res = db.permission_context.insert({id: p['id'], name: p['name'], type: p['type']});
                     fromDocId = res['_id'];
-                    p = params['permissionContext']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
-                    db._query(queryLink, p).execute();
-                    for (let i = 0; i < params['permissionContextsDocIds'].length; i++) {
-                        let currentDocId = params['permissionContextsDocIds'][i];
-                        let p = {'fromId': fromDocId, 'toId': currentDocId, 
-                            'fromType': params['resource']['type'], 'toType': params['toTypePermissionContext']};
-                        db._query(queryLink, p).execute();    
-                    }
+                    p = params['permission_context']; p['fromId'] = fromDocId; p['fromType'] = params['permission_context']['type'];
                 } else {
-                    let err = new Error(`Could not create resource, ${params['resource']['id']} is already exist`);
+                    let err = new Error(`Could not create permission context, ${params['permission_context']['id']} is already exist`);
                     err.errorNum = params['OBJECT_ALREADY_EXIST_CODE'];
                     throw err;
                 }
             }
         '''
         params = {
-            'resource': {"id": permissionContext.id(), "data": permissionContext.data(),
+            'permission_context': {"id": permissionContext.id(), "data": permissionContext.data(),
                          "type": permissionContext.type()},
-            'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
-            'rolesDocIds': rolesDocIds,
-            'toTypeRole': PermissionContextConstant.ROLE.value,
             'OBJECT_ALREADY_EXIST_CODE': CodeExceptionConstant.OBJECT_ALREADY_EXIST.value
         }
-        self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
+        self._db.transaction(collections={'write': ['permission_context', 'owned_by']}, action=actionFunction, params=params)
 
     def updatePermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData) -> None:
         oldObject = self.permissionContextById(permissionContext.id())
@@ -90,12 +69,12 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
             raise ObjectIdenticalException()
 
         aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'permissionContext'
-                UPDATE d WITH {name: @name} IN resource
+            FOR d IN permission_context
+                FILTER d.id == @id
+                UPDATE d WITH {data: @data, type: @type} IN permission_context
         '''
 
-        bindVars = {"id": permissionContext.id(), "data": permissionContext.data()}
+        bindVars = {"id": permissionContext.id(), "data": permissionContext.data(), "type": permissionContext.type()}
         logger.debug(
             f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] - Update permission context with id: {permissionContext.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
@@ -112,29 +91,24 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
         try:
             actionFunction = '''
                 function (params) {                                            
-
                     let db = require('@arangodb').db;
-                    let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
+                    let res = db.permission_context.byExample({id: params['permission_context']['id'], type: params['permission_context']['type'], data: params['permission_context']['data']}).toArray();
                     if (res.length != 0) {
                         let doc = res[0];
-                        let edges = db.owned_by.outEdges(doc._id);   
-                        for (let i = 0; i < edges.length; i++) {
-                            db.owned_by.remove(edges[i]);
-                        }
-                        db.resource.remove(doc);
+                        db.permission_context.remove(doc);
                     } else {
-                        let err = new Error(`Could not delete resource, ${params['resource']['id']}, it does not exist`);
+                        let err = new Error(`Could not delete permission context, ${params['permission_context']['id']}, it does not exist`);
                         err.errorNum = params['OBJECT_DOES_NOT_EXIST_CODE'];
                         throw err;
                     }
                 }
             '''
             params = {
-                'resource': {"id": permissionContext.id(), "data": permissionContext.data(),
+                'permission_context': {"id": permissionContext.id(), "data": permissionContext.data(),
                              "type": permissionContext.type()},
                 'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
             }
-            self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
+            self._db.transaction(collections={'write': ['permission_context', 'owned_by']}, action=actionFunction, params=params)
         except Exception as e:
             print(e)
             self.permissionContextById(permissionContext.id())
@@ -144,8 +118,8 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
 
     def permissionContextById(self, id: str) -> PermissionContext:
         aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'permission_context'
+            FOR d IN permission_context
+                FILTER d.id == @id
                 RETURN d
         '''
 
@@ -154,10 +128,10 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
         result = queryResult.result
         if len(result) == 0:
             logger.debug(
-                f'[{PermissionContextRepositoryImpl.permissionContextById.__qualname__}] permissionContext id: {id}')
+                f'[{PermissionContextRepositoryImpl.permissionContextById.__qualname__}] permission context id: {id}')
             raise PermissionContextDoesNotExistException(f'permission context id: {id}')
 
-        return PermissionContext.createFrom(id=result[0]['id'], data=result[0]['data'])
+        return PermissionContext.createFrom(id=result[0]['id'], type=result[0]['type'], data=result[0]['data'])
 
     def permissionContextsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
                                        order: List[dict] = None) -> dict:
