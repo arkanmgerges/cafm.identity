@@ -14,8 +14,6 @@ from src.domain_model.policy.PolicyControllerService import PolicyControllerServ
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.policy.request_context_data.ContextDataRequest import ContextDataRequestConstant, \
     ContextDataRequest
-from src.domain_model.policy.request_context_data.ResourceInstanceContextDataRequest import \
-    ResourceInstanceContextDataRequest
 from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest import ResourceTypeContextDataRequest
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
@@ -25,6 +23,7 @@ from src.resource.logging.logger import logger
 
 class AuthorizationService:
     def __init__(self, authzRepo: AuthorizationRepository, policyService: PolicyControllerService):
+        self._deniedResourcesWithActions = {}
         self._authzRepo = authzRepo
         self._policyService = policyService
 
@@ -107,6 +106,7 @@ class AuthorizationService:
                                                            RoleAccessPermissionData],
                                                        tokenData: TokenData,
                                                        resource: Resource) -> bool:
+        self._populateDeniedResources(roleAccessPermissionsData)
         for item in roleAccessPermissionsData:
             permissionsWithPermissionContexts: List[PermissionWithPermissionContexts] = item.permissions
             for permissionWithPermissionContexts in permissionsWithPermissionContexts:
@@ -120,17 +120,11 @@ class AuthorizationService:
                     for permissionContext in permissionContexts:
                         # If it is requested to deal with resource type?
                         if requestedContextData.dataType == ContextDataRequestConstant.RESOURCE_TYPE:
-                            return self._checkForResourceTypeRequest(requestedPermissionAction, permissionContext,
-                                                                     tokenData,
-                                                                     item.accessTree,
-                                                                     requestedContextData, resource)
-                        # If it is requested to deal with resource instance?
-                        if requestedContextData.dataType == ContextDataRequestConstant.RESOURCE_INSTANCE:
-                            return self._checkForResourceInstanceRequest(requestedPermissionAction, permissionContext,
-                                                                         tokenData,
-                                                                         item.accessTree,
-                                                                         requestedContextData, resource)
-                    return False
+                            if self._checkForResourceTypeRequest(requestedPermissionAction, permissionContext,
+                                                                 tokenData,
+                                                                 item.accessTree,
+                                                                 requestedContextData, resource):
+                                return True
 
         # We did not find action with permission context, then return false
         return False
@@ -153,57 +147,59 @@ class AuthorizationService:
                 # Return true if the data context has a resource type requested that is the same
                 # for data['name']
                 if resourceTypeContextDataRequest.resourceType == data['name']:
+                    # If permission action is other than CREATE, then:
                     if requestedPermissionAction in [PermissionAction.READ, PermissionAction.UPDATE,
                                                      PermissionAction.DELETE]:
-                        # Check if it is the owner
+                        # Check if it is the owner of the resource, and if it is then return True
                         if self._policyService.isOwnerOfResource(resource=resource, tokenData=tokenData):
                             return True
-                        # Check if the resource is in its access list
-                        return self._treeCheck(accessTree, resource)
 
-
+                        # Check if the resource is accessible in the tree
+                        if self._isDeniedInstance(resource, requestedPermissionAction):
+                            return False
+                        return self._treeCheck(accessTree, resource, requestedPermissionAction)
+                    elif requestedPermissionAction == PermissionAction.CREATE:
+                        # If it is create
+                        return True
 
         return False
 
-    def _checkForResourceInstanceRequest(self, requestedPermissionAction: PermissionAction,
-                                         permissionContext: PermissionContext,
-                                         tokenData: TokenData,
-                                         accessTree: List[AccessNode],
-                                         requestedContextData: ContextDataRequest, resource: Resource):
-        resourceInstanceContextDataRequest: ResourceInstanceContextDataRequest = ResourceInstanceContextDataRequest.castFrom(
-            requestedContextData)
-
-        if requestedPermissionAction in [PermissionAction.READ, PermissionAction.UPDATE, PermissionAction.DELETE]:
-            # Check if it is the owner
-            if self._policyService.isOwnerOfResource(resource=resource, tokenData=tokenData):
-                return True
-
-        # Then check if the current type of the permission context is of type resource_type, and
-        # if it is of resource type, then:
-        if permissionContext.type() == PermissionContextConstant.RESOURCE_INSTANCE.value:
-            # Get the data from the permission context
-            data = permissionContext.data()
-            # Check if it has the key 'name', and if it has, then:
-            if 'name' in data:
-                # Return true if the data context has a resource type requested that is the same
-                # for data['name']
-                if resourceInstanceContextDataRequest.resource.type() == data['name']:
-                    return True
-        return False
-
-    def _isDeniedInstance(self) -> bool:
-        return False
-
-    def _treeCheck(self, accessTree: List[AccessNode], resource: Resource) -> bool:
+    def _treeCheck(self, accessTree: List[AccessNode], requestedResource: Resource,
+                   requestedPermissionAction: PermissionAction) -> bool:
         for treeItem in accessTree:
-            if self._isDeniedInstance():
+            # Get the current resource from the tree
+            currentResource = treeItem.resource
+            # Check if the user/role has read access to it
+            if self._isDeniedInstance(currentResource, PermissionAction.READ):
                 return False
-            if treeItem.resource.type() == resource.type():
+            # Check if the current resource is the same as the requested resource
+            if currentResource.id() == requestedResource.id():
                 return True
+            # Parse the children
             if len(treeItem.children) > 0:
-                result = self._treeCheck(treeItem.children, resource)
+                result = self._treeCheck(treeItem.children, requestedResource, requestedPermissionAction)
                 if result is True:
                     return True
 
+    def _isDeniedInstance(self, resource: Resource, requestedPermissionAction: PermissionAction) -> bool:
+        id = resource.id()
+        if id in self._deniedResourcesWithActions:
+            actions = self._deniedResourcesWithActions[id]
+            if requestedPermissionAction.value in actions:
+                return True
+        return False
 
-
+    def _populateDeniedResources(self, roleAccessPermissionsData: List[
+        RoleAccessPermissionData]):
+        for item in roleAccessPermissionsData:
+            for permissionWithPermissionContexts in item.permissions:
+                permission = permissionWithPermissionContexts.permission
+                for action in permission.deniedActions():
+                    for permContext in permissionWithPermissionContexts.permissionContexts:
+                        if permContext.type() == PermissionContextConstant.RESOURCE_INSTANCE:
+                            id = permContext.id()
+                            if id in self._deniedResourcesWithActions:
+                                self._deniedResourcesWithActions[id].append(action)
+                            else:
+                                self._deniedResourcesWithActions[id] = []
+                                self._deniedResourcesWithActions[id].append(action)

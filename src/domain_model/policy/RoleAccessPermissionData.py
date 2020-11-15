@@ -13,6 +13,6 @@ class RoleAccessPermissionData:
     def __init__(self, role: Role = None, permissions: List[PermissionWithPermissionContexts] = None,
                  ownedBy: Resource = None, accessTree: List[AccessNode] = None):
         self.role: Role = role
-        self.permissions = permissions if permissions is not None else []
+        self.permissions: List[PermissionWithPermissionContexts] = permissions if permissions is not None else []
         self.ownedBy = ownedBy
         self.accessTree: List[AccessNode] = accessTree
