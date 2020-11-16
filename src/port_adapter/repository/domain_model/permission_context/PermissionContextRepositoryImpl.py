@@ -10,6 +10,8 @@ from pyArango.query import AQLQuery
 import src.port_adapter.AppDi as AppDi
 from src.domain_model.permission_context.PermissionContext import PermissionContext, PermissionContextConstant
 from src.domain_model.permission_context.PermissionContextRepository import PermissionContextRepository
+from src.domain_model.policy.PolicyControllerService import PolicyControllerService
+from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.resource.exception.CodeExceptionConstant import CodeExceptionConstant
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
 from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
@@ -31,6 +33,7 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
             self._helperRepo: HelperRepository = AppDi.instance.get(HelperRepository)
+            self._policyService: PolicyControllerService = AppDi.instance.get(PolicyControllerService)
         except Exception as e:
             logger.warn(
                 f'[{PermissionContextRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
@@ -133,27 +136,21 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
 
         return PermissionContext.createFrom(id=result[0]['id'], type=result[0]['type'], data=result[0]['data'])
 
-    def permissionContextsByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
-                                       order: List[dict] = None) -> dict:
+    def permissionContexts(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
+                        order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
-        if 'super_admin' in ownedRoles:
-            aql = '''
-                LET ds = (FOR d IN resource FILTER d.type == 'permission_context' #sortData RETURN d)
-                RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
-            '''
-            if sortData != '':
-                aql = aql.replace('#sortData', f'SORT {sortData}')
-            else:
-                aql = aql.replace('#sortData', '')
 
-            bindVars = {"resultFrom": resultFrom, "resultSize": resultSize}
-            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-            result = queryResult.result
-            if len(result) == 0:
-                return {"items": [], "itemCount": 0}
-            return {"items": [PermissionContext.createFrom(id=x['id'], data=x['data']) for x in result[0]['items']],
-                    "itemCount": result[0]["itemCount"]}
+        #todo use another method for permission context
+        result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.PERMISSION_CONTEXT.value, tokenData, roleAccessPermissionData, sortData)
+
+        if len(result['items']) == 0:
+            return {"items": [], "itemCount": 0}
+        items = result['items']
+        itemCount = len(items)
+        items = items[resultFrom:resultSize]
+        return {"items": [PermissionContext.createFrom(id=x['id'], type=x['type'], data=x['data']) for x in items],
+                "itemCount": itemCount}

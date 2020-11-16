@@ -52,15 +52,13 @@ class OuAppServiceListener(OuAppServiceServicer):
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
             token = self._token(context)
-            ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
-                f'[{OuAppServiceListener.ous.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
+                f'[{OuAppServiceListener.ous.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
-            result: dict = ouAppService.ous(ownedRoles=ownedRoles,
-                                            resultFrom=request.resultFrom,
+            result: dict = ouAppService.ous(resultFrom=request.resultFrom,
                                             resultSize=resultSize,
                                             token=token,
                                             order=orderData)

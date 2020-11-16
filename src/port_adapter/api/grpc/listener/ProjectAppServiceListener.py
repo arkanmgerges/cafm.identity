@@ -56,14 +56,13 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
-            ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
-                f'[{ProjectAppServiceListener.projects.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
+                f'[{ProjectAppServiceListener.projects.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
-            result: dict = projectAppService.projects(ownedRoles=ownedRoles,
+            result: dict = projectAppService.projects(
                                                       resultFrom=request.resultFrom,
                                                       resultSize=resultSize,
                                                       token=token,

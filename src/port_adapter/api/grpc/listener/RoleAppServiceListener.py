@@ -52,15 +52,14 @@ class RoleAppServiceListener(RoleAppServiceServicer):
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
-            ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
-                f'[{RoleAppServiceListener.roles.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
+                f'[{RoleAppServiceListener.roles.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             logger.debug(f'request: {request}')
             roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
-            result: dict = roleAppService.roles(ownedRoles=ownedRoles,
+            result: dict = roleAppService.roles(
                                                 resultFrom=request.resultFrom,
                                                 resultSize=resultSize,
                                                 token=token,

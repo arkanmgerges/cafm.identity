@@ -6,6 +6,7 @@ from typing import List
 import authlib
 
 from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
+from src.domain_model.authorization.RequestedAuthzObject import RequestedAuthzObject, RequestedAuthzObjectEnum
 from src.domain_model.permission.Permission import PermissionAction, Permission
 from src.domain_model.permission_context.PermissionContext import PermissionContextConstant, PermissionContext
 from src.domain_model.policy.AccessNode import AccessNode
@@ -63,7 +64,7 @@ class AuthorizationService:
                      requestedPermissionAction: PermissionAction,
                      requestedContextData: ContextDataRequest,
                      tokenData: TokenData,
-                     resource: Resource = None):
+                     requestedObject: RequestedAuthzObject = None):
 
         if not self._isSuperAdmin(tokenData=tokenData):
             if requestedPermissionAction in [PermissionAction.CREATE]:
@@ -72,7 +73,7 @@ class AuthorizationService:
                         requestedContextData=requestedContextData,
                         roleAccessPermissionsData=roleAccessPermissionsData,
                         tokenData=tokenData,
-                        resource=resource):
+                        requestedObject=requestedObject):
                     return
             if requestedPermissionAction in [PermissionAction.DELETE]:
                 if self._verifyActionByPermissionWithPermissionContext(
@@ -80,7 +81,7 @@ class AuthorizationService:
                         requestedContextData=requestedContextData,
                         roleAccessPermissionsData=roleAccessPermissionsData,
                         tokenData=tokenData,
-                        resource=resource):
+                        requestedObject=requestedObject):
                     return
             if requestedPermissionAction in [PermissionAction.UPDATE]:
                 if self._verifyActionByPermissionWithPermissionContext(
@@ -88,7 +89,7 @@ class AuthorizationService:
                         requestedContextData=requestedContextData,
                         roleAccessPermissionsData=roleAccessPermissionsData,
                         tokenData=tokenData,
-                        resource=resource):
+                        requestedObject=requestedObject):
                     return
 
             # By default the access is forbidden
@@ -105,7 +106,7 @@ class AuthorizationService:
                                                        roleAccessPermissionsData: List[
                                                            RoleAccessPermissionData],
                                                        tokenData: TokenData,
-                                                       resource: Resource) -> bool:
+                                                       requestedObject: RequestedAuthzObject) -> bool:
         self._populateDeniedResources(roleAccessPermissionsData)
         for item in roleAccessPermissionsData:
             permissionsWithPermissionContexts: List[PermissionWithPermissionContexts] = item.permissions
@@ -123,7 +124,7 @@ class AuthorizationService:
                             if self._checkForResourceTypeRequest(requestedPermissionAction, permissionContext,
                                                                  tokenData,
                                                                  item.accessTree,
-                                                                 requestedContextData, resource):
+                                                                 requestedContextData, requestedObject):
                                 return True
 
         # We did not find action with permission context, then return false
@@ -133,7 +134,7 @@ class AuthorizationService:
                                      permissionContext: PermissionContext,
                                      tokenData: TokenData,
                                      accessTree: List[AccessNode],
-                                     requestedContextData: ContextDataRequest, resource: Resource):
+                                     requestedContextData: ContextDataRequest, requestedObject: RequestedAuthzObject):
         resourceTypeContextDataRequest: ResourceTypeContextDataRequest = ResourceTypeContextDataRequest.castFrom(
             requestedContextData)
 
@@ -150,14 +151,15 @@ class AuthorizationService:
                     # If permission action is other than CREATE, then:
                     if requestedPermissionAction in [PermissionAction.READ, PermissionAction.UPDATE,
                                                      PermissionAction.DELETE]:
-                        # Check if it is the owner of the resource, and if it is then return True
-                        if self._policyService.isOwnerOfResource(resource=resource, tokenData=tokenData):
-                            return True
+                        if requestedObject.type == RequestedAuthzObjectEnum.RESOURCE:
+                            # Check if it is the owner of the resource, and if it is then return True
+                            if self._policyService.isOwnerOfResource(resource=requestedObject.obj, tokenData=tokenData):
+                                return True
 
-                        # Check if the resource is accessible in the tree
-                        if self._isDeniedInstance(resource, requestedPermissionAction):
-                            return False
-                        return self._treeCheck(accessTree, resource, requestedPermissionAction)
+                            # Check if the resource is accessible in the tree
+                            if self._isDeniedInstance(requestedObject.obj, requestedPermissionAction):
+                                return False
+                            return self._treeCheck(accessTree, requestedObject.obj, requestedPermissionAction)
                     elif requestedPermissionAction == PermissionAction.CREATE:
                         # If it is create
                         return True

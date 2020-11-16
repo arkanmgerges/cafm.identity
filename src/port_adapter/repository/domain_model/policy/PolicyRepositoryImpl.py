@@ -8,7 +8,7 @@ from typing import List, Any, Dict
 from pyArango.connection import Connection
 from pyArango.query import AQLQuery
 
-from src.domain_model.permission.Permission import Permission
+from src.domain_model.permission.Permission import Permission, PermissionAction
 from src.domain_model.permission_context.PermissionContext import PermissionContext, PermissionContextConstant
 from src.domain_model.policy.AccessNode import AccessNode
 from src.domain_model.policy.PermissionWithPermissionContexts import PermissionWithPermissionContexts
@@ -27,6 +27,7 @@ from src.domain_model.resource.exception.UserDoesNotExistException import UserDo
 from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
 from src.domain_model.role.Role import Role
 from src.domain_model.token.TokenData import TokenData
+from src.domain_model.token.TokenService import TokenService
 from src.domain_model.user.User import User
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.resource.logging.logger import logger
@@ -620,6 +621,117 @@ class PolicyRepositoryImpl(PolicyRepository):
         return result
 
     # endregion
+
+    def resourcesOfTypeByTokenData(self, resourceType: str = '', tokenData: TokenData = None,
+                                   roleAccessPermissionData: List[RoleAccessPermissionData] = None, sortData: str = '') -> dict:
+        if TokenService.isSuperAdmin(tokenData=tokenData):
+            aql = '''
+                LET ds = (FOR d IN resource FILTER d.type == 'ou' #sortData RETURN d)
+                RETURN {items: ds}
+            '''
+            if sortData != '':
+                aql = aql.replace('#sortData', f'SORT {sortData}')
+            else:
+                aql = aql.replace('#sortData', '')
+
+            queryResult: AQLQuery = self._db.AQLQuery(aql, rawResults=True)
+            return queryResult.result
+        rolesConditions = ''
+        for role in tokenData.roles():
+            if rolesConditions == '':
+                rolesConditions += f'role.id == "{role["id"]}"'
+            else:
+                rolesConditions += f' OR role.id == "{role["id"]}"'
+        aql = '''
+                FOR role IN resource
+                    FILTER (#rolesConditions) AND role.type == 'role'
+                    LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == @type RETURN v1)
+                    LET accesses = (FOR v1 IN OUTBOUND role._id `access`
+                                                    FOR v2, e2, p IN 1..100 OUTBOUND v1._id `has`
+                                                    FILTER v2.type == @type
+                                                        RETURN v2
+                                               )
+                    LET owned_resources = (FOR v1 IN INBOUND role._id `owned_by` FILTER v1.type == @type RETURN v1)
+                    LET result = UNION_DISTINCT(owned_resources, accesses, direct_access)
+                    LET sorted_result = (FOR d IN result #sortData RETURN d)
+                    RETURN {items: sorted_result}
+                '''
+        if sortData != '':
+            aql = aql.replace('#sortData', f'SORT {sortData}')
+        else:
+            aql = aql.replace('#sortData', '')
+        aql = aql.replace('#rolesConditions', rolesConditions)
+        bindVars = {"type": resourceType}
+        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result[0]
+        filteredItems = self._filterItems(result['items'], roleAccessPermissionData, resourceType)
+        return {'items': filteredItems, 'itemCount': len(filteredItems)}
+
+    def _filterItems(self, items, roleAccessPermissionDataList: List[RoleAccessPermissionData], resourceType: str = ''):
+        deniedItems = {'deniedResources': {}, 'denyAll': False}
+        filteredItems = items
+        for roleAccessPermissionData in roleAccessPermissionDataList:
+            for permissionWithContexts in roleAccessPermissionData.permissions:
+                deniedResult = self._populateDeniedResourcesForRead(permissionWithContexts, resourceType)
+                if deniedResult['denyAll']:
+                    return []
+                # Merge the result
+                deniedItems = {**deniedItems, **deniedResult}
+                if PermissionAction.READ in permissionWithContexts.permission.allowedActions():
+                    # Check if it has any resource type that matches the one in the parameter
+                    for context in permissionWithContexts.permissionContexts:
+                        if context.type() == PermissionContextConstant.RESOURCE_TYPE:
+                            contextData = context.data()
+                            if 'name' in contextData:
+                                if contextData['name'] == resourceType:
+                                    # We found READ allowed action for the resource type
+                                    newItems = self._filterOutItemsForResourceTypeByAccessTree(filteredItems,
+                                                                                               roleAccessPermissionData.accessTree,
+                                                                                               resourceType,
+                                                                                               deniedItems)
+                                    filteredItems.extend(x for x in newItems if x not in filteredItems)
+        return filteredItems
+
+    def _filterOutItemsForResourceTypeByAccessTree(self, filteredItems: List[dict], accessTree: List[AccessNode],
+                                                   resourceType: str, deniedItems: dict):
+        result = []
+        for node in accessTree:
+            if node.resource.type() == resourceType:
+                if node.resource.id() not in deniedItems['deniedResources']:
+                    item = self._itemFromFilteredItemsById(filteredItems, node.resource.id())
+                    if item is not None:
+                        result.append(item)
+                # Stop parsing new resources
+                return result
+            if len(node.children) > 0:
+                newResult = self._filterOutItemsForResourceTypeByAccessTree(filteredItems, node.children, resourceType,
+                                                                            deniedItems)
+                result.extend(x for x in newResult if x not in result)
+
+        return result
+
+    def _itemFromFilteredItemsById(self, filteredItems, id):
+        for item in filteredItems:
+            if item['id'] == id:
+                return item
+        return None
+
+    def _populateDeniedResourcesForRead(self, permissionWithContexts, resourceType):
+        result = {'deniedResources': {}, 'denyAll': False}
+        deniedActions = permissionWithContexts.permission.deniedActions()
+        if deniedActions is not [] and PermissionAction.READ in deniedActions:
+            for context in permissionWithContexts.permissionContexts:
+                contextData = context.data()
+                # If the context of type resource_type and the name in the data is the same as of resourceType (ex. ou, realm), then deny all
+                if context.type() == PermissionContextConstant.RESOURCE_TYPE and \
+                        'name' in contextData and \
+                        resourceType == contextData['name']:
+                    result['denyAll'] = True
+                    break
+                elif context.type() == PermissionContextConstant.RESOURCE_INSTANCE and 'id' in contextData:
+                    result['deniedResources'][contextData['id']] = True
+
+        return result
 
     def connectResourceToOwner(self, resource: Resource, tokenData: TokenData):
         userDocId = self.userDocumentId(User.createFrom(id=tokenData.id(), name=tokenData.name()))

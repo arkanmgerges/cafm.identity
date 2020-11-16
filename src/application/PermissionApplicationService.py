@@ -4,6 +4,7 @@
 from typing import List
 
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
+from src.domain_model.authorization.RequestedAuthzObject import RequestedAuthzObject, RequestedAuthzObjectEnum
 from src.domain_model.permission.Permission import Permission, PermissionAction
 from src.domain_model.permission.PermissionRepository import PermissionRepository
 from src.domain_model.permission.PermissionService import PermissionService
@@ -45,7 +46,7 @@ class PermissionApplicationService:
         self._authzService.verifyAccess(roleAccessPermissionsData=permissionAccessList,
                                         requestedPermissionAction=PermissionAction.UPDATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='permission'),
-                                        resource=permission,
+                                        requestedObject=RequestedAuthzObject(objType=RequestedAuthzObjectEnum.PERMISSION, obj=permission),
                                         tokenData=tokenData)
 
         self._permissionService.updatePermission(oldObject=permission,
@@ -63,7 +64,7 @@ class PermissionApplicationService:
         self._authzService.verifyAccess(roleAccessPermissionsData=permissionAccessList,
                                         requestedPermissionAction=PermissionAction.DELETE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='permission'),
-                                        resource=permission,
+                                        requestedObject=RequestedAuthzObject(objType=RequestedAuthzObjectEnum.PERMISSION, obj=permission),
                                         tokenData=tokenData)
         self._permissionService.deletePermission(permission=permission, tokenData=tokenData)
 
@@ -81,12 +82,11 @@ class PermissionApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def permissions(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '',
+    def permissions(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                     order: List[dict] = None) -> dict:
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.PERMISSION.value):
-            return self._permissionRepository.permissionsByOwnedRoles(ownedRoles=ownedRoles, resultFrom=resultFrom,
-                                                                      resultSize=resultSize,
-                                                                      order=order)
-        else:
-            raise UnAuthorizedException()
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        return self._permissionRepository.permissions(tokenData=tokenData, roleAccessPermissionData=roleAccessPermissionData,
+                                      resultFrom=resultFrom,
+                                      resultSize=resultSize,
+                                      order=order)

@@ -56,14 +56,13 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
-            ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
-                f'[{UserGroupAppServiceListener.userGroups.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
+                f'[{UserGroupAppServiceListener.userGroups.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             userGroupAppService: UserGroupApplicationService = AppDi.instance.get(UserGroupApplicationService)
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
-            result: dict = userGroupAppService.userGroups(ownedRoles=ownedRoles,
+            result: dict = userGroupAppService.userGroups(
                                                           resultFrom=request.resultFrom,
                                                           resultSize=resultSize,
                                                           token=token,

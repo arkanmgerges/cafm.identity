@@ -58,14 +58,13 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
             token = self._token(context)
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
-            ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
-                f'[{PermissionAppServiceListener.permissions.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
+                f'[{PermissionAppServiceListener.permissions.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             permissionAppService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
-            result: dict = permissionAppService.permissions(ownedRoles=ownedRoles,
+            result: dict = permissionAppService.permissions(
                                                             resultFrom=request.resultFrom,
                                                             resultSize=resultSize,
                                                             token=token,

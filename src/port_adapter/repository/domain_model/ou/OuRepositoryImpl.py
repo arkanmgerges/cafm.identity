@@ -11,13 +11,14 @@ import src.port_adapter.AppDi as AppDi
 from src.domain_model.ou.Ou import Ou
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
+from src.domain_model.policy.PolicyControllerService import PolicyControllerService
+from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.resource.exception.CodeExceptionConstant import CodeExceptionConstant
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
 from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
 from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
 from src.domain_model.token.TokenData import TokenData
-from src.domain_model.token.TokenService import TokenService
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
 from src.resource.logging.logger import logger
 
@@ -32,6 +33,7 @@ class OuRepositoryImpl(OuRepository):
             )
             self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
             self._helperRepo: HelperRepository = AppDi.instance.get(HelperRepository)
+            self._policyService: PolicyControllerService = AppDi.instance.get(PolicyControllerService)
         except Exception as e:
             logger.warn(f'[{OuRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(f'Could not connect to the db, message: {e}')
@@ -179,29 +181,22 @@ class OuRepositoryImpl(OuRepository):
 
         return Ou.createFrom(id=result[0]['id'], name=result[0]['name'])
 
-    def ousByOwnedRoles(self, tokenData: TokenData, resultFrom: int = 0, resultSize: int = 100,
-                        order: List[dict] = None) -> dict:
+    def ous(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
+            resultSize: int = 100,
+            order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
-        if TokenService.isSuperAdmin(tokenData=tokenData):
-            aql = '''
-                LET ds = (FOR d IN resource FILTER d.type == 'ou' #sortData RETURN d)
-                RETURN {items: SLICE(ds, @resultFrom, @resultSize), itemCount: LENGTH(ds)}
-            '''
-            if sortData != '':
-                aql = aql.replace('#sortData', f'SORT {sortData}')
-            else:
-                aql = aql.replace('#sortData', '')
 
-            bindVars = {"resultFrom": resultFrom, "resultSize": resultSize}
-            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-            result = queryResult.result
+        result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.OU.value, tokenData,
+                                                                roleAccessPermissionData, sortData)
 
-            if len(result) == 0:
-                return {"items": [], "itemCount": 0}
-            return {"items": [Ou.createFrom(id=x['id'], name=x['name']) for x in result[0]['items']],
-                    "itemCount": result[0]["itemCount"]}
-
+        if len(result['items']) == 0:
+            return {"items": [], "itemCount": 0}
+        items = result['items']
+        itemCount = len(items)
+        items = items[resultFrom:resultSize]
+        return {"items": [Ou.createFrom(id=x['id'], name=x['name']) for x in items],
+                "itemCount": itemCount}

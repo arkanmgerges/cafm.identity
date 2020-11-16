@@ -4,6 +4,7 @@
 from typing import List
 
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
+from src.domain_model.authorization.RequestedAuthzObject import RequestedAuthzObject
 from src.domain_model.ou.Ou import Ou
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.ou.OuService import OuService
@@ -41,7 +42,7 @@ class OuApplicationService:
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.UPDATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='ou'),
-                                        resource=ou,
+                                        requestedObject=RequestedAuthzObject(obj=ou),
                                         tokenData=tokenData)
         self._ouService.updateOu(oldObject=ou, newObject=Ou.createFrom(id=id, name=name), tokenData=tokenData)
 
@@ -54,7 +55,7 @@ class OuApplicationService:
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.DELETE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='ou'),
-                                        resource=ou,
+                                        requestedObject=RequestedAuthzObject(obj=ou),
                                         tokenData=tokenData)
 
         self._ouService.deleteOu(ou=ou, tokenData=tokenData)
@@ -74,11 +75,8 @@ class OuApplicationService:
     def ous(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
             order: List[dict] = None) -> dict:
         tokenData = TokenService.tokenDataFromToken(token=token)
-        return self._ouRepository.ousByOwnedRoles(tokenData=tokenData, resultFrom=resultFrom,
-                                                  resultSize=resultSize,
-                                                  order=order)
-        # if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-        #                                 permissionContext=PermissionContextConstant.OU.value):
-        #
-        # else:
-        #     raise UnAuthorizedException()
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        return self._ouRepository.ous(tokenData=tokenData, roleAccessPermissionData=roleAccessPermissionData,
+                                      resultFrom=resultFrom,
+                                      resultSize=resultSize,
+                                      order=order)

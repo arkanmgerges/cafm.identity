@@ -49,10 +49,10 @@ class Permission:
         return self._name
 
     def allowedActions(self) -> List[str]:
-        return self._allowedActions
+        return self._allowedActions if self._allowedActions is not [] else []
 
     def deniedActions(self) -> List[str]:
-        return self._deniedActions
+        return self._deniedActions if self._deniedActions is not [] else []
 
     def update(self, data: dict):
         updated = False

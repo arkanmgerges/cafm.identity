@@ -56,14 +56,13 @@ class RealmAppServiceListener(RealmAppServiceServicer):
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize > 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
-            ownedRoles = claims['role'] if 'role' in claims else []
             logger.debug(
-                f'[{RealmAppServiceListener.realms.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t ownedRoles {ownedRoles}\n\t \
+                f'[{RealmAppServiceListener.realms.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             realmAppService: RealmApplicationService = AppDi.instance.get(RealmApplicationService)
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
-            result: dict = realmAppService.realms(ownedRoles=ownedRoles,
+            result: dict = realmAppService.realms(
                                                   resultFrom=request.resultFrom,
                                                   resultSize=resultSize,
                                                   token=token,

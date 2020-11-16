@@ -4,6 +4,7 @@
 from typing import List
 
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
+from src.domain_model.authorization.RequestedAuthzObject import RequestedAuthzObject
 from src.domain_model.permission.Permission import PermissionAction
 from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
@@ -41,7 +42,7 @@ class RoleApplicationService:
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.UPDATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='role'),
-                                        resource=role,
+                                        requestedObject=RequestedAuthzObject(obj=role),
                                         tokenData=tokenData)
 
         self._roleService.updateRole(oldObject=role, newObject=Role.createFrom(id=id, name=name), tokenData=tokenData)
@@ -55,7 +56,7 @@ class RoleApplicationService:
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.DELETE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='role'),
-                                        resource=role,
+                                        requestedObject=RequestedAuthzObject(obj=role),
                                         tokenData=tokenData)
 
         self._roleService.deleteRole(role=role, tokenData=tokenData)

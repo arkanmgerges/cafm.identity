@@ -202,13 +202,10 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def roles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '',
+    def roles(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
               order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         permissionContext=PermissionContextConstant.ROLE.value):
-            return self._roleRepository.rolesByOwnedRoles(ownedRoles=ownedRoles,
-                                                          resultFrom=resultFrom,
-                                                          resultSize=resultSize,
-                                                          order=order)
+            return {}
         else:
             raise UnAuthorizedException()

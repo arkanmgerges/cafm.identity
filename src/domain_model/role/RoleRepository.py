@@ -72,7 +72,7 @@ class RoleRepository(ABC):
         """
 
     @abstractmethod
-    def rolesByOwnedRoles(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100,
+    def rolesByOwnedRoles(self, resultFrom: int = 0, resultSize: int = 100,
                           order: List[dict] = None) -> dict:
         """Get list of roles based on the owned roles that the user has
 

@@ -4,6 +4,7 @@
 from typing import List
 
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
+from src.domain_model.authorization.RequestedAuthzObject import RequestedAuthzObject
 from src.domain_model.permission.Permission import PermissionAction
 from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
@@ -42,7 +43,7 @@ class UserGroupApplicationService:
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.UPDATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='userGroup'),
-                                        resource=resource,
+                                        requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
         self._userGroupService.updateUserGroup(oldObject=resource,
                                                newObject=UserGroup.createFrom(id=id, name=name), tokenData=tokenData)
@@ -56,7 +57,7 @@ class UserGroupApplicationService:
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.DELETE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='userGroup'),
-                                        resource=resource,
+                                        requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
         self._userGroupService.deleteUserGroup(userGroup=resource, tokenData=tokenData)
 
@@ -74,13 +75,11 @@ class UserGroupApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def userGroups(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '',
+    def userGroups(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                    order: List[dict] = None) -> dict:
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.USER_GROUP.value):
-            return self._userGroupRepository.userGroupsByOwnedRoles(ownedRoles=ownedRoles,
-                                                                    resultFrom=resultFrom,
-                                                                    resultSize=resultSize,
-                                                                    order=order)
-        else:
-            raise UnAuthorizedException()
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        return self._userGroupRepository.userGroups(tokenData=tokenData, roleAccessPermissionData=roleAccessPermissionData,
+                                      resultFrom=resultFrom,
+                                      resultSize=resultSize,
+                                      order=order)

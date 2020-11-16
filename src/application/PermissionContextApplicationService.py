@@ -4,6 +4,7 @@
 from typing import List
 
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
+from src.domain_model.authorization.RequestedAuthzObject import RequestedAuthzObject, RequestedAuthzObjectEnum
 from src.domain_model.permission.Permission import PermissionAction
 from src.domain_model.permission_context.PermissionContext import PermissionContext, PermissionContextConstant
 from src.domain_model.permission_context.PermissionContextRepository import PermissionContextRepository
@@ -46,7 +47,7 @@ class PermissionContextApplicationService:
                                         requestedPermissionAction=PermissionAction.UPDATE,
                                         requestedContextData=ResourceTypeContextDataRequest(
                                             resourceType=PermissionContextConstant.PERMISSION_CONTEXT.value),
-                                        resource=None,
+                                        requestedObject=RequestedAuthzObject(objType=RequestedAuthzObjectEnum.PERMISSION_CONTEXT, obj=resource),
                                         tokenData=tokenData)
         self._permissionContextService.updatePermissionContext(oldObject=resource,
                                                                newObject=PermissionContext.createFrom(id=id, data=data),
@@ -62,16 +63,10 @@ class PermissionContextApplicationService:
                                         requestedPermissionAction=PermissionAction.DELETE,
                                         requestedContextData=ResourceTypeContextDataRequest(
                                             resourceType=PermissionContextConstant.PERMISSION_CONTEXT.value),
-                                        resource=resource,
+                                        requestedObject=RequestedAuthzObject(objType=RequestedAuthzObjectEnum.PERMISSION_CONTEXT, obj=resource),
                                         tokenData=tokenData)
         self._permissionContextService.deletePermissionContext(permissionContext=resource, tokenData=tokenData)
 
-    def permissionContextByName(self, name: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.RESOURCE_TYPE.value):
-            return self._permissionContextRepository.permissionContextByName(name=name)
-        else:
-            raise UnAuthorizedException()
 
     def permissionContextById(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
@@ -80,13 +75,11 @@ class PermissionContextApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def permissionContexts(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '',
+    def permissionContexts(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                            order: List[dict] = None) -> dict:
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.RESOURCE_TYPE.value):
-            return self._permissionContextRepository.permissionContextsByOwnedRoles(ownedRoles=ownedRoles,
-                                                                                    resultFrom=resultFrom,
-                                                                                    resultSize=resultSize,
-                                                                                    order=order)
-        else:
-            raise UnAuthorizedException()
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        return self._permissionContextRepository.permissionContexts(tokenData=tokenData, roleAccessPermissionData=roleAccessPermissionData,
+                                      resultFrom=resultFrom,
+                                      resultSize=resultSize,
+                                      order=order)

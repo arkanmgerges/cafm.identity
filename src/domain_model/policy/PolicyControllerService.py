@@ -2,15 +2,17 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 from enum import Enum
+from typing import List
 
-from src.domain_model.token.TokenData import TokenData
-from src.domain_model.token.TokenService import TokenService
+from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.policy.PolicyRepository import PolicyRepository
+from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.exception.NotAllowedAccessAssignmentException import NotAllowedAccessAssignmentException
 from src.domain_model.resource.exception.NotAllowedAssignmentException import NotAllowedAssignmentException
-from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.role.Role import Role
+from src.domain_model.token.TokenData import TokenData
+from src.domain_model.token.TokenService import TokenService
 
 
 class PolicyActionConstant(Enum):
@@ -68,3 +70,7 @@ class PolicyControllerService:
 
     def isOwnerOfResource(self, resource: Resource, tokenData: TokenData) -> bool:
         return self._policyRepo.isOwnerOfResource(resource=resource, tokenData=tokenData)
+
+    def resourcesOfTypeByTokenData(self, resourceType: str = '', tokenData: TokenData = None,
+                                   roleAccessPermissionData: List[RoleAccessPermissionData] = None, sortData: str = ''):
+        return self._policyRepo.resourcesOfTypeByTokenData(resourceType, tokenData, roleAccessPermissionData, sortData)

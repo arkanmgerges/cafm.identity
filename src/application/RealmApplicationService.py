@@ -4,6 +4,7 @@
 from typing import List
 
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
+from src.domain_model.authorization.RequestedAuthzObject import RequestedAuthzObject
 from src.domain_model.permission.Permission import PermissionAction
 from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
@@ -42,7 +43,7 @@ class RealmApplicationService:
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.UPDATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='realm'),
-                                        resource=resource,
+                                        requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
         self._realmService.updateRealm(oldObject=resource,
                                        newObject=Realm.createFrom(id=id, name=name), tokenData=tokenData)
@@ -56,7 +57,7 @@ class RealmApplicationService:
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.DELETE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='realm'),
-                                        resource=resource,
+                                        requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
         self._realmService.deleteRealm(realm=resource, tokenData=tokenData)
 
@@ -74,13 +75,11 @@ class RealmApplicationService:
         else:
             raise UnAuthorizedException()
 
-    def realms(self, ownedRoles: List[str], resultFrom: int = 0, resultSize: int = 100, token: str = '',
+    def realms(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                order: List[dict] = None) -> dict:
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.REALM.value):
-            return self._realmRepository.realmsByOwnedRoles(ownedRoles=ownedRoles,
-                                                            resultFrom=resultFrom,
-                                                            resultSize=resultSize,
-                                                            order=order)
-        else:
-            raise UnAuthorizedException()
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        return self._realmRepository.realms(tokenData=tokenData, roleAccessPermissionData=roleAccessPermissionData,
+                                      resultFrom=resultFrom,
+                                      resultSize=resultSize,
+                                      order=order)

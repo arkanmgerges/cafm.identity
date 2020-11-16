@@ -225,3 +225,18 @@ class PolicyRepository(ABC):
         Returns:
             bool: Returns True if the user/role in the token data is the owner of the resource, False otherwise
         """
+
+    @abstractmethod
+    def resourcesOfTypeByTokenData(self, resourceType: str = '', tokenData: TokenData = None,
+                                   roleAccessPermissionData: List[RoleAccessPermissionData] = None, sortData: str = '') -> dict:
+        """Get resources that is filtered by the allowed permissions
+
+        Args:
+            resourceType (str): A resource type string (ex. realm, ou, project ...etc)
+            tokenData (TokenData): Token data that has information about the user/role
+            roleAccessPermissionData (RoleAccessPermissionData): Role with permission data and access tree
+            sortData (str): A string for sorting the data
+
+        Returns:
+            dict: A dictionary that has 'items' as an array
+        """
