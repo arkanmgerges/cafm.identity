@@ -74,3 +74,12 @@ class PolicyControllerService:
     def resourcesOfTypeByTokenData(self, resourceType: str = '', tokenData: TokenData = None,
                                    roleAccessPermissionData: List[RoleAccessPermissionData] = None, sortData: str = ''):
         return self._policyRepo.resourcesOfTypeByTokenData(resourceType, tokenData, roleAccessPermissionData, sortData)
+
+    def permissionsByTokenData(self, tokenData: TokenData = None,
+                               roleAccessPermissionData: List[RoleAccessPermissionData] = None, sortData: str = ''):
+        return self._policyRepo.permissionsByTokenData(tokenData, roleAccessPermissionData, sortData)
+
+    def permissionContextsByTokenData(self, tokenData: TokenData = None,
+                                      roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+                                      sortData: str = ''):
+        return self._policyRepo.permissionContextsByTokenData(tokenData, roleAccessPermissionData, sortData)

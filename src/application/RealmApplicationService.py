@@ -62,18 +62,26 @@ class RealmApplicationService:
         self._realmService.deleteRealm(realm=resource, tokenData=tokenData)
 
     def realmByName(self, name: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.REALM.value):
-            return self._realmRepository.realmByName(name=name)
-        else:
-            raise UnAuthorizedException()
+        resource =  self._realmRepository.realmByName(name=name)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=ResourceTypeContextDataRequest(
+                                            resourceType=PermissionContextConstant.REALM.value),
+                                        requestedObject=RequestedAuthzObject(obj=resource),
+                                        tokenData=tokenData)
 
     def realmById(self, id: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.REALM.value):
-            return self._realmRepository.realmById(id=id)
-        else:
-            raise UnAuthorizedException()
+        resource = self._realmRepository.realmById(id=id)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=ResourceTypeContextDataRequest(
+                                            resourceType=PermissionContextConstant.REALM.value),
+                                        requestedObject=RequestedAuthzObject(obj=resource),
+                                        tokenData=tokenData)
 
     def realms(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                order: List[dict] = None) -> dict:

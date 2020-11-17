@@ -4,12 +4,12 @@
 from abc import ABC, abstractmethod
 from typing import List, Any
 
-from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
-from src.domain_model.token.TokenData import TokenData
 from src.domain_model.permission.Permission import Permission
-from src.domain_model.resource.Resource import Resource
 from src.domain_model.permission_context.PermissionContext import PermissionContext
+from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
+from src.domain_model.resource.Resource import Resource
 from src.domain_model.role.Role import Role
+from src.domain_model.token.TokenData import TokenData
 from src.domain_model.user.User import User
 from src.domain_model.user_group.UserGroup import UserGroup
 
@@ -133,7 +133,8 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def revokeAssignmentPermissionToPermissionContext(self, permission: Permission, permissionContext: PermissionContext) -> None:
+    def revokeAssignmentPermissionToPermissionContext(self, permission: Permission,
+                                                      permissionContext: PermissionContext) -> None:
         """Revoke assignment of a permission to a permission context
 
         Args:
@@ -202,7 +203,8 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool) -> List[RoleAccessPermissionData]:
+    def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool) -> List[
+        RoleAccessPermissionData]:
         """Retrieve the permissions and permission contexts connected to it also related to the roles that belong
         to the token provided
 
@@ -228,11 +230,42 @@ class PolicyRepository(ABC):
 
     @abstractmethod
     def resourcesOfTypeByTokenData(self, resourceType: str = '', tokenData: TokenData = None,
-                                   roleAccessPermissionData: List[RoleAccessPermissionData] = None, sortData: str = '') -> dict:
+                                   roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+                                   sortData: str = '') -> dict:
         """Get resources that is filtered by the allowed permissions
 
         Args:
             resourceType (str): A resource type string (ex. realm, ou, project ...etc)
+            tokenData (TokenData): Token data that has information about the user/role
+            roleAccessPermissionData (RoleAccessPermissionData): Role with permission data and access tree
+            sortData (str): A string for sorting the data
+
+        Returns:
+            dict: A dictionary that has 'items' as an array
+        """
+
+    @abstractmethod
+    def permissionsByTokenData(self, tokenData: TokenData = None,
+                               roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+                               sortData: str = '') -> dict:
+        """Get permissions that is filtered by the allowed permissions
+
+        Args:
+            tokenData (TokenData): Token data that has information about the user/role
+            roleAccessPermissionData (RoleAccessPermissionData): Role with permission data and access tree
+            sortData (str): A string for sorting the data
+
+        Returns:
+            dict: A dictionary that has 'items' as an array
+        """
+
+    @abstractmethod
+    def permissionContextsByTokenData(self, tokenData: TokenData = None,
+                                      roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+                                      sortData: str = '') -> dict:
+        """Get permission contexts that is filtered by the allowed permissions
+
+        Args:
             tokenData (TokenData): Token data that has information about the user/role
             roleAccessPermissionData (RoleAccessPermissionData): Role with permission data and access tree
             sortData (str): A string for sorting the data

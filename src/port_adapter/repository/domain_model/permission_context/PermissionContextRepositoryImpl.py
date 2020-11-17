@@ -143,14 +143,13 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
+        result = self._policyService.permissionContextsByTokenData(tokenData, roleAccessPermissionData, sortData)
 
-        #todo use another method for permission context
-        result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.PERMISSION_CONTEXT.value, tokenData, roleAccessPermissionData, sortData)
-
-        if len(result['items']) == 0:
+        if result is None or len(result['items']) == 0:
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
         items = items[resultFrom:resultSize]
+
         return {"items": [PermissionContext.createFrom(id=x['id'], type=x['type'], data=x['data']) for x in items],
                 "itemCount": itemCount}

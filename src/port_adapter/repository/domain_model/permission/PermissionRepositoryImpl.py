@@ -152,21 +152,25 @@ class PermissionRepositoryImpl(PermissionRepository):
         return Permission.createFrom(id=result[0]['id'], name=result[0]['name'],
                                      allowedActions=result[0]['allowed_actions'])
 
-    def ous(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
+    def permissions(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
                         order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
-        #todo use another method for permission
-        result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.PERMISSION.value, tokenData, roleAccessPermissionData, sortData)
 
-        if len(result['items']) == 0:
+        result = self._policyService.permissionsByTokenData(tokenData, roleAccessPermissionData, sortData)
+
+        if result is None or len(result['items']) == 0:
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
         items = items[resultFrom:resultSize]
-        return {"items": [Permission.createFrom(id=x['id'], name=x['name']) for x in items],
-                "itemCount": itemCount}
+        objectItems = []
+        for x in items:
+            allowedActions = x['allowed_actions'] if 'allowed_actions' in x else []
+            deniedActions = x['denied_actions'] if 'denied_actions' in x else []
+            objectItems.append(Permission.createFrom(id=x['id'], name=x['name'], allowedActions=allowedActions, deniedActions=deniedActions))
+        return {"items": objectItems, "itemCount": itemCount}
 

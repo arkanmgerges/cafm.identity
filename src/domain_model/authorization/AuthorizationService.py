@@ -15,6 +15,7 @@ from src.domain_model.policy.PolicyControllerService import PolicyControllerServ
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.policy.request_context_data.ContextDataRequest import ContextDataRequestConstant, \
     ContextDataRequest
+from src.domain_model.policy.request_context_data.PermissionContextDataRequest import PermissionContextDataRequest
 from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest import ResourceTypeContextDataRequest
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
@@ -67,6 +68,14 @@ class AuthorizationService:
                      requestedObject: RequestedAuthzObject = None):
 
         if not self._isSuperAdmin(tokenData=tokenData):
+            if requestedPermissionAction in [PermissionAction.READ]:
+                if self._verifyActionByPermissionWithPermissionContext(
+                        requestedPermissionAction=requestedPermissionAction,
+                        requestedContextData=requestedContextData,
+                        roleAccessPermissionsData=roleAccessPermissionsData,
+                        tokenData=tokenData,
+                        requestedObject=requestedObject):
+                    return
             if requestedPermissionAction in [PermissionAction.CREATE]:
                 if self._verifyActionByPermissionWithPermissionContext(
                         requestedPermissionAction=requestedPermissionAction,
@@ -124,7 +133,16 @@ class AuthorizationService:
                             if self._checkForResourceTypeRequest(requestedPermissionAction, permissionContext,
                                                                  tokenData,
                                                                  item.accessTree,
+                                                                 item.ownerOf,
                                                                  requestedContextData, requestedObject):
+                                return True
+                        if requestedContextData.dataType == ContextDataRequestConstant.PERMISSION:
+                            reqObject: PermissionContextDataRequest = PermissionContextDataRequest.castFrom(requestedContextData)
+                            if reqObject.type == PermissionContextConstant.PERMISSION and \
+                                    permissionContext.type() == PermissionContextConstant.PERMISSION:
+                                return True
+                            if reqObject.type == PermissionContextConstant.PERMISSION_CONTEXT and \
+                                    permissionContext.type() == PermissionContextConstant.PERMISSION_CONTEXT:
                                 return True
 
         # We did not find action with permission context, then return false
@@ -134,6 +152,7 @@ class AuthorizationService:
                                      permissionContext: PermissionContext,
                                      tokenData: TokenData,
                                      accessTree: List[AccessNode],
+                                     ownerOf: List[Resource],
                                      requestedContextData: ContextDataRequest, requestedObject: RequestedAuthzObject):
         resourceTypeContextDataRequest: ResourceTypeContextDataRequest = ResourceTypeContextDataRequest.castFrom(
             requestedContextData)
@@ -152,9 +171,12 @@ class AuthorizationService:
                     if requestedPermissionAction in [PermissionAction.READ, PermissionAction.UPDATE,
                                                      PermissionAction.DELETE]:
                         if requestedObject.type == RequestedAuthzObjectEnum.RESOURCE:
-                            # Check if it is the owner of the resource, and if it is then return True
-                            if self._policyService.isOwnerOfResource(resource=requestedObject.obj, tokenData=tokenData):
-                                return True
+                            for ownerItem in ownerOf:
+                                if requestedObject.obj.id() == ownerItem.id():
+                                    return True
+                            # # Check if it is the owner of the resource, and if it is then return True
+                            # if self._policyService.isOwnerOfResource(resource=requestedObject.obj, tokenData=tokenData):
+                            #     return True
 
                             # Check if the resource is accessible in the tree
                             if self._isDeniedInstance(requestedObject.obj, requestedPermissionAction):
@@ -182,6 +204,7 @@ class AuthorizationService:
                 result = self._treeCheck(treeItem.children, requestedResource, requestedPermissionAction)
                 if result is True:
                     return True
+            return False
 
     def _isDeniedInstance(self, resource: Resource, requestedPermissionAction: PermissionAction) -> bool:
         id = resource.id()

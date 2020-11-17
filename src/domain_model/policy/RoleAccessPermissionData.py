@@ -11,8 +11,9 @@ from src.domain_model.role.Role import Role
 
 class RoleAccessPermissionData:
     def __init__(self, role: Role = None, permissions: List[PermissionWithPermissionContexts] = None,
-                 ownedBy: Resource = None, accessTree: List[AccessNode] = None):
+                 ownedBy: Resource = None, ownerOf: List[Resource] = None, accessTree: List[AccessNode] = None):
         self.role: Role = role
         self.permissions: List[PermissionWithPermissionContexts] = permissions if permissions is not None else []
-        self.ownedBy = ownedBy
+        self.ownedBy: Resource = ownedBy
+        self.ownerOf: List[Resource] = ownerOf
         self.accessTree: List[AccessNode] = accessTree

@@ -9,10 +9,8 @@ from src.domain_model.permission.Permission import Permission, PermissionAction
 from src.domain_model.permission.PermissionRepository import PermissionRepository
 from src.domain_model.permission.PermissionService import PermissionService
 from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
-from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
-from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest import ResourceTypeContextDataRequest
-from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
+from src.domain_model.policy.request_context_data.PermissionContextDataRequest import PermissionContextDataRequest
 from src.domain_model.token.TokenService import TokenService
 
 
@@ -30,7 +28,8 @@ class PermissionApplicationService:
             tokenData=tokenData, includeAccessTree=False)
         self._authzService.verifyAccess(roleAccessPermissionsData=permissionAccessList,
                                         requestedPermissionAction=PermissionAction.CREATE,
-                                        requestedContextData=ResourceTypeContextDataRequest(resourceType='permission'),
+                                        requestedContextData=PermissionContextDataRequest(
+                                            type=PermissionContextConstant.PERMISSION.value),
                                         tokenData=tokenData)
         return self._permissionService.createPermission(id=id, name=name, allowedActions=allowedActions,
                                                         deniedActions=deniedActions, objectOnly=objectOnly,
@@ -45,10 +44,11 @@ class PermissionApplicationService:
         permission = self._permissionRepository.permissionById(id=id)
         self._authzService.verifyAccess(roleAccessPermissionsData=permissionAccessList,
                                         requestedPermissionAction=PermissionAction.UPDATE,
-                                        requestedContextData=ResourceTypeContextDataRequest(resourceType='permission'),
-                                        requestedObject=RequestedAuthzObject(objType=RequestedAuthzObjectEnum.PERMISSION, obj=permission),
+                                        requestedContextData=PermissionContextDataRequest(
+                                            type=PermissionContextConstant.PERMISSION.value),
+                                        requestedObject=RequestedAuthzObject(
+                                            objType=RequestedAuthzObjectEnum.PERMISSION, obj=permission),
                                         tokenData=tokenData)
-
         self._permissionService.updatePermission(oldObject=permission,
                                                  newObject=Permission.createFrom(id=id, name=name,
                                                                                  allowedActions=allowedActions,
@@ -63,30 +63,43 @@ class PermissionApplicationService:
         permission = self._permissionRepository.permissionById(id=id)
         self._authzService.verifyAccess(roleAccessPermissionsData=permissionAccessList,
                                         requestedPermissionAction=PermissionAction.DELETE,
-                                        requestedContextData=ResourceTypeContextDataRequest(resourceType='permission'),
-                                        requestedObject=RequestedAuthzObject(objType=RequestedAuthzObjectEnum.PERMISSION, obj=permission),
+                                        requestedContextData=PermissionContextDataRequest(
+                                            type=PermissionContextConstant.PERMISSION.value),
+                                        requestedObject=RequestedAuthzObject(
+                                            objType=RequestedAuthzObjectEnum.PERMISSION, obj=permission),
                                         tokenData=tokenData)
         self._permissionService.deletePermission(permission=permission, tokenData=tokenData)
 
     def permissionByName(self, name: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.PERMISSION.value):
-            return self._permissionRepository.permissionByName(name=name)
-        else:
-            raise UnAuthorizedException()
+        permission = self._permissionRepository.permissionByName(name=name)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=PermissionContextDataRequest(
+                                            type=PermissionContextConstant.PERMISSION.value),
+                                        requestedObject=RequestedAuthzObject(obj=permission),
+                                        tokenData=tokenData)
+        return permission
 
     def permissionById(self, id: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.PERMISSION.value):
-            return self._permissionRepository.permissionById(id=id)
-        else:
-            raise UnAuthorizedException()
+        permission = self._permissionRepository.permissionById(id=id)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=PermissionContextDataRequest(
+                                            type=PermissionContextConstant.PERMISSION.value),
+                                        requestedObject=RequestedAuthzObject(obj=permission),
+                                        tokenData=tokenData)
+        return permission
 
     def permissions(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                     order: List[dict] = None) -> dict:
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
-        return self._permissionRepository.permissions(tokenData=tokenData, roleAccessPermissionData=roleAccessPermissionData,
-                                      resultFrom=resultFrom,
-                                      resultSize=resultSize,
-                                      order=order)
+        return self._permissionRepository.permissions(tokenData=tokenData,
+                                                      roleAccessPermissionData=roleAccessPermissionData,
+                                                      resultFrom=resultFrom,
+                                                      resultSize=resultSize,
+                                                      order=order)

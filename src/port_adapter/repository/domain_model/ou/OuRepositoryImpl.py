@@ -193,7 +193,7 @@ class OuRepositoryImpl(OuRepository):
         result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.OU.value, tokenData,
                                                                 roleAccessPermissionData, sortData)
 
-        if len(result['items']) == 0:
+        if result is None or len(result['items']) == 0:
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)

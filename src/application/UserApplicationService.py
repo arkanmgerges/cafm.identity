@@ -7,10 +7,8 @@ from src.domain_model.authorization.AuthorizationService import AuthorizationSer
 from src.domain_model.authorization.RequestedAuthzObject import RequestedAuthzObject
 from src.domain_model.permission.Permission import PermissionAction
 from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
-from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest import ResourceTypeContextDataRequest
-from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenService import TokenService
 from src.domain_model.user.User import User
 from src.domain_model.user.UserRepository import UserRepository
@@ -64,17 +62,21 @@ class UserApplicationService:
         return self._userRepository.userByNameAndPassword(name=name, password=password)
 
     def userById(self, id: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.USER.value):
-            return self._userRepository.userById(id=id)
-        else:
-            raise UnAuthorizedException()
+        resource = self._userRepository.userById(id=id)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=ResourceTypeContextDataRequest(
+                                            resourceType=PermissionContextConstant.USER.value),
+                                        requestedObject=RequestedAuthzObject(obj=resource),
+                                        tokenData=tokenData)
 
     def users(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
               order: List[dict] = None) -> dict:
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
         return self._userRepository.users(tokenData=tokenData, roleAccessPermissionData=roleAccessPermissionData,
-                                      resultFrom=resultFrom,
-                                      resultSize=resultSize,
-                                      order=order)
+                                          resultFrom=resultFrom,
+                                          resultSize=resultSize,
+                                          order=order)

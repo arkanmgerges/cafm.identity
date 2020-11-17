@@ -62,18 +62,26 @@ class ProjectApplicationService:
         self._projectService.deleteProject(project=resource, tokenData=tokenData)
 
     def projectByName(self, name: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.PROJECT.value):
-            return self._projectRepository.projectByName(name=name)
-        else:
-            raise UnAuthorizedException()
+        resource = self._projectRepository.projectByName(name=name)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=ResourceTypeContextDataRequest(
+                                            resourceType=PermissionContextConstant.PROJECT.value),
+                                        requestedObject=RequestedAuthzObject(obj=resource),
+                                        tokenData=tokenData)
 
     def projectById(self, id: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.PROJECT.value):
-            return self._projectRepository.projectById(id=id)
-        else:
-            raise UnAuthorizedException()
+        resource = self._projectRepository.projectById(id=id)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=ResourceTypeContextDataRequest(
+                                            resourceType=PermissionContextConstant.PROJECT.value),
+                                        requestedObject=RequestedAuthzObject(obj=resource),
+                                        tokenData=tokenData)
 
     def projects(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                  order: List[dict] = None) -> dict:

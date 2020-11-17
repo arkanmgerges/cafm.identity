@@ -59,10 +59,11 @@ class PermissionContextRepository(ABC):
         """
 
     @abstractmethod
-    def permissionContexts(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
-            resultSize: int = 100,
-            order: List[dict] = None) -> dict:
-        """Get list of permissionContexts based on the owned roles that the user has
+    def permissionContexts(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
+                           resultFrom: int = 0,
+                           resultSize: int = 100,
+                           order: List[dict] = None) -> dict:
+        """Get list of permission contexts based on the owned roles that the user has
 
         Args:
             tokenData (TokenData): A token data object

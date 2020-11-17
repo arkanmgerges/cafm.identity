@@ -199,20 +199,22 @@ class UserRepositoryImpl(UserRepository):
 
         return User.createFrom(id=result[0]['id'], name=result[0]['name'])
 
-    def users(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
-                        order: List[dict] = None) -> dict:
+    def users(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
+              resultSize: int = 100,
+              order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
 
-        result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.OU.value, tokenData, roleAccessPermissionData, sortData)
+        result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.USER.value, tokenData,
+                                                                roleAccessPermissionData, sortData)
 
-        if len(result['items']) == 0:
+        if result is None or len(result['items']) == 0:
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
         items = items[resultFrom:resultSize]
-        return {"items": [Ou.createFrom(id=x['id'], name=x['name']) for x in items],
+        return {"items": [User.createFrom(id=x['id'], name=x['name']) for x in items],
                 "itemCount": itemCount}

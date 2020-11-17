@@ -37,7 +37,9 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
             response.permission.id = permission.id()
             response.permission.name = permission.name()
             for allowedAction in permission.allowedActions():
-                response.permission.allowedActions.add(allowedAction)
+                response.allowedActions.append(allowedAction)
+            for deniedAction in permission.deniedActions():
+                response.deniedActions.append(deniedAction)
             return response
         except PermissionDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -76,6 +78,8 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
                 p.name = permission.name()
                 for allowedAction in permission.allowedActions():
                     p.allowedActions.append(allowedAction)
+                for deniedAction in permission.deniedActions():
+                    p.deniedActions.append(deniedAction)
             response.itemCount = result['itemCount']
             logger.debug(f'[{PermissionAppServiceListener.permissions.__qualname__}] - response: {response}')
             return PermissionAppService_permissionsResponse(permissions=response.permissions,
@@ -99,7 +103,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             response.permission.id = permission.id()
             response.permission.name = permission.name()
             for allowedAction in permission.allowedActions():
-                response.permission.allowedActions.add(allowedAction)
+                response.allowedActions.append(allowedAction)
+            for deniedAction in permission.deniedActions():
+                response.deniedActions.append(deniedAction)
             return response
         except PermissionDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

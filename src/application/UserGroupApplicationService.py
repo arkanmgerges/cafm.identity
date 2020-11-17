@@ -62,18 +62,26 @@ class UserGroupApplicationService:
         self._userGroupService.deleteUserGroup(userGroup=resource, tokenData=tokenData)
 
     def userGroupByName(self, name: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.USER_GROUP.value):
-            return self._userGroupRepository.userGroupByName(name=name)
-        else:
-            raise UnAuthorizedException()
+        resource = self._userGroupRepository.userGroupByName(name=name)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=ResourceTypeContextDataRequest(
+                                            resourceType=PermissionContextConstant.USER_GROUP.value),
+                                        requestedObject=RequestedAuthzObject(obj=resource),
+                                        tokenData=tokenData)
 
     def userGroupById(self, id: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.USER_GROUP.value):
-            return self._userGroupRepository.userGroupById(id=id)
-        else:
-            raise UnAuthorizedException()
+        resource = self._userGroupRepository.userGroupById(id=id)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=ResourceTypeContextDataRequest(
+                                            resourceType=PermissionContextConstant.USER_GROUP.value),
+                                        requestedObject=RequestedAuthzObject(obj=resource),
+                                        tokenData=tokenData)
 
     def userGroups(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                    order: List[dict] = None) -> dict:

@@ -191,7 +191,7 @@ class RealmRepositoryImpl(RealmRepository):
 
         result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.REALM.value, tokenData, roleAccessPermissionData, sortData)
 
-        if len(result['items']) == 0:
+        if result is None or len(result['items']) == 0:
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)

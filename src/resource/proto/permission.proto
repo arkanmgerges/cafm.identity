@@ -6,4 +6,5 @@ message Permission {
   string id = 1;
   string name = 2;
   repeated string allowedActions = 3;
+  repeated string deniedActions = 4;
 }

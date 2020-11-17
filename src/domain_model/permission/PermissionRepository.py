@@ -73,8 +73,9 @@ class PermissionRepository(ABC):
         """
 
     @abstractmethod
-    def permissions(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
-                        order: List[dict] = None) -> dict:
+    def permissions(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
+                    resultFrom: int = 0, resultSize: int = 100,
+                    order: List[dict] = None) -> dict:
         """Get list of permissions based on the owned roles that the user has
 
         Args:
@@ -87,4 +88,3 @@ class PermissionRepository(ABC):
         Returns:
             dict: A dict that has {"items": [], "itemCount": 0}
         """
-

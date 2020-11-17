@@ -35,3 +35,5 @@ class RoleService:
     def updateRole(self, oldObject: Role, newObject: Role, tokenData: TokenData = None):
         self._repo.updateRole(newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)
+
+

@@ -1,6 +1,7 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+import json
 import time
 
 import grpc
@@ -45,13 +46,14 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
             result: dict = permissionContextAppService.permissionContexts(
-                                                                          resultFrom=request.resultFrom,
-                                                                          resultSize=resultSize,
-                                                                          token=token,
-                                                                          order=orderData)
+                resultFrom=request.resultFrom,
+                resultSize=resultSize,
+                token=token,
+                order=orderData)
             response = PermissionContextAppService_permissionContextsResponse()
             for permissionContext in result['items']:
-                response.permissionContexts.add(id=permissionContext.id(), name=permissionContext.name())
+                response.permissionContexts.add(id=permissionContext.id(), type=permissionContext.type(),
+                                                data=json.dumps(permissionContext.data()))
             response.itemCount = result['itemCount']
             logger.debug(
                 f'[{PermissionContextAppServiceListener.permissionContexts.__qualname__}] - response: {response}')
@@ -78,7 +80,8 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
                 f'[{PermissionContextAppServiceListener.permissionContextById.__qualname__}] - response: {permissionContext}')
             response = PermissionContextAppService_permissionContextByIdResponse()
             response.permissionContext.id = permissionContext.id()
-            response.permissionContext.data = permissionContext.data()
+            response.permissionContext.type = permissionContext.type()
+            response.permissionContext.data = json.dumps(permissionContext.data())
             return response
         except PermissionContextDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

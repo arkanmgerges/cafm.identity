@@ -62,15 +62,34 @@ class RoleApplicationService:
         self._roleService.deleteRole(role=role, tokenData=tokenData)
 
     def roleByName(self, name: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.ROLE.value):
-            return self._roleRepository.roleByName(name=name)
-        else:
-            raise UnAuthorizedException()
+        resource = self._roleRepository.roleByName(name=name)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=ResourceTypeContextDataRequest(
+                                            resourceType=PermissionContextConstant.ROLE.value),
+                                        requestedObject=RequestedAuthzObject(obj=resource),
+                                        tokenData=tokenData)
+        return resource
 
     def roleById(self, id: str, token: str = ''):
-        if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
-                                        permissionContext=PermissionContextConstant.ROLE.value):
-            return self._roleRepository.roleById(id=id)
-        else:
-            raise UnAuthorizedException()
+        resource = self._roleRepository.roleById(id=id)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=ResourceTypeContextDataRequest(
+                                            resourceType=PermissionContextConstant.ROLE.value),
+                                        requestedObject=RequestedAuthzObject(obj=resource),
+                                        tokenData=tokenData)
+        return resource
+
+    def roles(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
+              order: List[dict] = None) -> dict:
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        return self._roleRepository.roles(tokenData=tokenData, roleAccessPermissionData=roleAccessPermissionData,
+                                          resultFrom=resultFrom,
+                                          resultSize=resultSize,
+                                          order=order)

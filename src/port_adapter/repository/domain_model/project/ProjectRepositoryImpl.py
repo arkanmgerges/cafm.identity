@@ -193,7 +193,7 @@ class ProjectRepositoryImpl(ProjectRepository):
 
         result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.PROJECT.value, tokenData, roleAccessPermissionData, sortData)
 
-        if len(result['items']) == 0:
+        if result is None or len(result['items']) == 0:
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)

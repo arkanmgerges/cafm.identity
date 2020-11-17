@@ -622,11 +622,13 @@ class PolicyRepositoryImpl(PolicyRepository):
 
     # endregion
 
-    def resourcesOfTypeByTokenData(self, resourceType: str = '', tokenData: TokenData = None,
-                                   roleAccessPermissionData: List[RoleAccessPermissionData] = None, sortData: str = '') -> dict:
-        if TokenService.isSuperAdmin(tokenData=tokenData):
+    def permissionsByTokenData(self, tokenData: TokenData = None,
+                               roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+                               sortData: str = '') -> dict:
+        if TokenService.isSuperAdmin(tokenData=tokenData) or self._canRead(roleAccessPermissionData,
+                                                                           PermissionContextConstant.PERMISSION):
             aql = '''
-                LET ds = (FOR d IN resource FILTER d.type == 'ou' #sortData RETURN d)
+                LET ds = (FOR d IN permission #sortData RETURN d)
                 RETURN {items: ds}
             '''
             if sortData != '':
@@ -634,8 +636,53 @@ class PolicyRepositoryImpl(PolicyRepository):
             else:
                 aql = aql.replace('#sortData', '')
 
-            queryResult: AQLQuery = self._db.AQLQuery(aql, rawResults=True)
-            return queryResult.result
+            queryResult = self._db.AQLQuery(aql, rawResults=True)
+            return queryResult.result[0]
+
+    def permissionContextsByTokenData(self, tokenData: TokenData = None,
+                                      roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+                                      sortData: str = '') -> dict:
+        if TokenService.isSuperAdmin(tokenData=tokenData) or self._canRead(roleAccessPermissionData,
+                                                                           PermissionContextConstant.PERMISSION_CONTEXT):
+            aql = '''
+                LET ds = (FOR d IN permission_context #sortData RETURN d)
+                RETURN {items: ds}
+            '''
+            if sortData != '':
+                aql = aql.replace('#sortData', f'SORT {sortData}')
+            else:
+                aql = aql.replace('#sortData', '')
+
+            queryResult = self._db.AQLQuery(aql, rawResults=True)
+            return queryResult.result[0]
+
+    def _canRead(self, roleAccessPermissionData: List[RoleAccessPermissionData],
+                 permissionContext: PermissionContextConstant):
+        for roleAccessPermission in roleAccessPermissionData:
+            for permissionWithContexts in roleAccessPermission.permissions:
+                if PermissionAction.READ.value in permissionWithContexts.permission.allowedActions() and \
+                        PermissionAction.READ.value not in permissionWithContexts.permission.deniedActions():
+                    for context in permissionWithContexts.permissionContexts:
+                        if context.type() == permissionContext.value:
+                            return True
+
+    def resourcesOfTypeByTokenData(self, resourceType: str = '', tokenData: TokenData = None,
+                                   roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+                                   sortData: str = '') -> dict:
+        if TokenService.isSuperAdmin(tokenData=tokenData):
+            aql = '''
+                LET ds = (FOR d IN resource FILTER d.type == @type #sortData RETURN d)
+                RETURN {items: ds}
+            '''
+            if sortData != '':
+                aql = aql.replace('#sortData', f'SORT {sortData}')
+            else:
+                aql = aql.replace('#sortData', '')
+
+            bindVars = {"type": resourceType}
+            queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            return queryResult.result[0]
+
         rolesConditions = ''
         for role in tokenData.roles():
             if rolesConditions == '':
@@ -772,28 +819,31 @@ class PolicyRepositoryImpl(PolicyRepository):
                     FILTER (#rolesConditions) AND role.type == 'role'
                     LET owned_by = FIRST(FOR v1, e1 IN OUTBOUND role._id `owned_by`
                                         RETURN {"id": v1.id, "name": v1.name, "type": v1.type})
+                    LET owner_of = (FOR v1 IN 1..100 INBOUND role._id `owned_by` RETURN v1)
                     LET permissions = (FOR v1, e1 IN OUTBOUND role._id `has`
                                         FILTER e1._from_type == 'role' AND e1._to_type == 'permission'
                                         LET permission_contexts = (FOR v2, e2 IN OUTBOUND v1._id `for`
                                             RETURN {
                                             "id": v2.id,
-                                            "type": (v2.type == 'resource_type' ? 'resource_type' : 'resource_instance'),
+                                            "type": v2.type,
                                             "data": v2.data})
                                         RETURN {"permission": {"id": v1.id, "name": v1.name, "allowed_actions": v1.allowed_actions}, "permission_contexts": permission_contexts})
             '''
 
         if includeAccessTree:
             accessTree = '''
+                LET direct_access = (FOR v1, e1, p IN OUTBOUND role._id `access` RETURN p)
                 LET accesses = (FOR v1, e1 IN OUTBOUND role._id `access`
                                     FOR v2, e2, p IN 1..100 OUTBOUND v1._id `has`
                                         RETURN p
                                )
-                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "accesses": accesses}
+                LET result = UNION_DISTINCT(direct_access, accesses)
+                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "owner_of": owner_of, "accesses": result}
                 '''
             aql += accessTree
         else:
             noAccessTree = '''
-                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "accesses": []}
+                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "owner_of": owner_of, "accesses": []}
             '''
             aql += noAccessTree
         aql = aql.replace('#rolesConditions', rolesConditions)
@@ -821,10 +871,16 @@ class PolicyRepositoryImpl(PolicyRepository):
                 # Add it in the permission list
                 permList.append(p)
             ownedBy = None
+            ownerOf = None
             if item['owned_by'] is not None:
                 ownedBy = Resource(id=item['owned_by']['id'], type=item['owned_by']['type'])
+            if item['owner_of'] is not None:
+                ownerOf = []
+                for ownerOfItem in item['owner_of']:
+                    ownerOf.append(Resource(id=ownerOfItem['id'], type=ownerOfItem['type']))
             accessTree = self._fetchAccessTree(accesses=item['accesses'])
-            permData = RoleAccessPermissionData(role=role, permissions=permList, ownedBy=ownedBy, accessTree=accessTree)
+            permData = RoleAccessPermissionData(role=role, permissions=permList, ownedBy=ownedBy, ownerOf=ownerOf,
+                                                accessTree=accessTree)
             result.append(permData)
 
         return result

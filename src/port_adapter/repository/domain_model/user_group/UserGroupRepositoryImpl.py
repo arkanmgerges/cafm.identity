@@ -185,7 +185,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.USER_GROUP.value, tokenData,
                                                                 roleAccessPermissionData, sortData)
 
-        if len(result['items']) == 0:
+        if result is None or len(result['items']) == 0:
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
