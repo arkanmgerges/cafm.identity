@@ -25,6 +25,7 @@ class PermissionContextConstant(Enum):
     ASSIGNMENT_PERMISSION_TO_RESOURCE_TYPE = 'assignment:permission_to_permission_context'
     ASSIGNMENT_ROLE_TO_ACCESS_RESOURCE = 'assignment:role_to_access_resource'
     RESOURCE_OWNERSHIP_OTHER = 'resource_ownership:other'
+    ALL_ROLES_TREES = 'all_roles_trees'
     ROLE = 'role'
     ALL = '*'
 

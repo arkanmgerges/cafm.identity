@@ -666,6 +666,45 @@ class PolicyRepositoryImpl(PolicyRepository):
                         if context.type() == permissionContext.value:
                             return True
 
+    def rolesTrees(self, tokenData: TokenData = None,
+                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> dict:
+        roles = tokenData.roles()
+        doFilter = True
+        if TokenService.isSuperAdmin(tokenData=tokenData) or \
+                self._hasReadAllRolesTreesInPermissionContext(roleAccessPermissionData):
+            aql = '''
+                LET ds = (FOR d IN resource FILTER d.type == 'role' RETURN d)
+                RETURN {items: ds}
+            '''
+
+            queryResult = self._db.AQLQuery(aql, rawResults=True)
+            roles = queryResult.result[0]['items']
+            doFilter = False
+
+        return self._roleTreeListOf(roles, roleAccessPermissionData, doFilter)
+
+    def _hasReadAllRolesTreesInPermissionContext(self,
+                                                 roleAccessPermissionData: List[RoleAccessPermissionData]) -> bool:
+        for roleAccessPermission in roleAccessPermissionData:
+            for permissionWithContext in roleAccessPermission.permissions:
+                if PermissionAction.READ.value in permissionWithContext.permission.allowedActions() and \
+                        PermissionAction.READ.value not in permissionWithContext.permission.deniedActions():
+                    for permissionContext in permissionWithContext.permissionContexts:
+                        if permissionContext.type() == PermissionContextConstant.ALL_ROLES_TREES.value:
+                            return True
+        return False
+
+    def _roleTreeListOf(self, roles: List[dict], roleAccessPermissionData: List[RoleAccessPermissionData],
+                        doFilter):
+        rawDataItems = self._rawRoleTreeItems(roles, True)
+        result = self._constructRoleAccessPermissionDataFromRawRoleTreeItems(rawDataItems)
+        if doFilter:
+            resultItems = self._filterRoleAccessPermissionDataItems(result, roleAccessPermissionData)
+        else:
+            resultItems = result
+
+        return {'items': resultItems, 'itemCount': len(resultItems)}
+
     def resourcesOfTypeByTokenData(self, resourceType: str = '', tokenData: TokenData = None,
                                    roleAccessPermissionData: List[RoleAccessPermissionData] = None,
                                    sortData: str = '') -> dict:
@@ -713,6 +752,11 @@ class PolicyRepositoryImpl(PolicyRepository):
         result = queryResult.result[0]
         filteredItems = self._filterItems(result['items'], roleAccessPermissionData, resourceType)
         return {'items': filteredItems, 'itemCount': len(filteredItems)}
+
+    # todo filtering
+    def _filterRoleAccessPermissionDataItems(self, items: List[RoleAccessPermissionData],
+                                             roleAccessPermissionDataList: List[RoleAccessPermissionData]):
+        pass
 
     def _filterItems(self, items, roleAccessPermissionDataList: List[RoleAccessPermissionData], resourceType: str = ''):
         deniedItems = {'deniedResources': {}, 'denyAll': False}
@@ -769,7 +813,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         if deniedActions is not [] and PermissionAction.READ in deniedActions:
             for context in permissionWithContexts.permissionContexts:
                 contextData = context.data()
-                # If the context of type resource_type and the name in the data is the same as of resourceType (ex. ou, realm), then deny all
+                # If the context of type resource_type and the name in the data is the same as of resourceType
+                # (ex. ou, realm), then deny all
                 if context.type() == PermissionContextConstant.RESOURCE_TYPE and \
                         'name' in contextData and \
                         resourceType == contextData['name']:
@@ -808,52 +853,12 @@ class PolicyRepositoryImpl(PolicyRepository):
 
     def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True) -> List[
         RoleAccessPermissionData]:
-        rolesConditions = ''
-        for role in tokenData.roles():
-            if rolesConditions == '':
-                rolesConditions += f'role.id == "{role["id"]}"'
-            else:
-                rolesConditions += f' OR role.id == "{role["id"]}"'
-        aql = '''
-                FOR role IN resource
-                    FILTER (#rolesConditions) AND role.type == 'role'
-                    LET owned_by = FIRST(FOR v1, e1 IN OUTBOUND role._id `owned_by`
-                                        RETURN {"id": v1.id, "name": v1.name, "type": v1.type})
-                    LET owner_of = (FOR v1 IN 1..100 INBOUND role._id `owned_by` RETURN v1)
-                    LET permissions = (FOR v1, e1 IN OUTBOUND role._id `has`
-                                        FILTER e1._from_type == 'role' AND e1._to_type == 'permission'
-                                        LET permission_contexts = (FOR v2, e2 IN OUTBOUND v1._id `for`
-                                            RETURN {
-                                            "id": v2.id,
-                                            "type": v2.type,
-                                            "data": v2.data})
-                                        RETURN {"permission": {"id": v1.id, "name": v1.name, "allowed_actions": v1.allowed_actions}, "permission_contexts": permission_contexts})
-            '''
+        items = self._rawRoleTreeItems(tokenData.roles(), includeAccessTree)
+        return self._constructRoleAccessPermissionDataFromRawRoleTreeItems(items)
 
-        if includeAccessTree:
-            accessTree = '''
-                LET direct_access = (FOR v1, e1, p IN OUTBOUND role._id `access` RETURN p)
-                LET accesses = (FOR v1, e1 IN OUTBOUND role._id `access`
-                                    FOR v2, e2, p IN 1..100 OUTBOUND v1._id `has`
-                                        RETURN p
-                               )
-                LET result = UNION_DISTINCT(direct_access, accesses)
-                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "owner_of": owner_of, "accesses": result}
-                '''
-            aql += accessTree
-        else:
-            noAccessTree = '''
-                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "owner_of": owner_of, "accesses": []}
-            '''
-            aql += noAccessTree
-        aql = aql.replace('#rolesConditions', rolesConditions)
-
-        queryResult = self._db.AQLQuery(aql, rawResults=True)
-        qResult = queryResult.result
-        if len(qResult) == 0:
-            return []
+    def _constructRoleAccessPermissionDataFromRawRoleTreeItems(self, items):
         result = []
-        for item in qResult:
+        for item in items:
             ownedByString = '' if item['owned_by'] is None else item['owned_by']['name']
             role = Role.createFrom(id=item['role']['id'], name=item['role']['name'], ownedBy=ownedByString)
             permissions = item['role']['_permissions']
@@ -884,6 +889,52 @@ class PolicyRepositoryImpl(PolicyRepository):
             result.append(permData)
 
         return result
+
+    def _rawRoleTreeItems(self, roles: List[dict], includeAccessTree):
+        rolesConditions = ''
+        for role in roles:
+            if rolesConditions == '':
+                rolesConditions += f'role.id == "{role["id"]}"'
+            else:
+                rolesConditions += f' OR role.id == "{role["id"]}"'
+        aql = '''
+                        FOR role IN resource
+                            FILTER (#rolesConditions) AND role.type == 'role'
+                            LET owned_by = FIRST(FOR v1, e1 IN OUTBOUND role._id `owned_by`
+                                                RETURN {"id": v1.id, "name": v1.name, "type": v1.type})
+                            LET owner_of = (FOR v1 IN 1..100 INBOUND role._id `owned_by` RETURN v1)
+                            LET permissions = (FOR v1, e1 IN OUTBOUND role._id `has`
+                                                FILTER e1._from_type == 'role' AND e1._to_type == 'permission'
+                                                LET permission_contexts = (FOR v2, e2 IN OUTBOUND v1._id `for`
+                                                    RETURN {
+                                                    "id": v2.id,
+                                                    "type": v2.type,
+                                                    "data": v2.data})
+                                                RETURN {"permission": {"id": v1.id, "name": v1.name, "allowed_actions": v1.allowed_actions}, "permission_contexts": permission_contexts})
+                    '''
+        if includeAccessTree:
+            accessTree = '''
+                LET direct_access = (FOR v1, e1, p IN OUTBOUND role._id `access` RETURN p)
+                LET accesses = (FOR v1, e1 IN OUTBOUND role._id `access`
+                                    FOR v2, e2, p IN 1..100 OUTBOUND v1._id `has`
+                                        RETURN p
+                               )
+                LET result = UNION_DISTINCT(direct_access, accesses)
+                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "owner_of": owner_of, "accesses": result}
+                '''
+            aql += accessTree
+        else:
+            noAccessTree = '''
+                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "owner_of": owner_of, "accesses": []}
+            '''
+            aql += noAccessTree
+        aql = aql.replace('#rolesConditions', rolesConditions)
+
+        queryResult = self._db.AQLQuery(aql, rawResults=True)
+        qResult = queryResult.result
+        if len(qResult) == 0:
+            return []
+        return qResult
 
     def isOwnerOfResource(self, resource: Resource, tokenData: TokenData) -> bool:
         # (v1.id == @ownerId OR v1.id == @ownerId)

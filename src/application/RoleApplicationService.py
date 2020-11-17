@@ -7,10 +7,8 @@ from src.domain_model.authorization.AuthorizationService import AuthorizationSer
 from src.domain_model.authorization.RequestedAuthzObject import RequestedAuthzObject
 from src.domain_model.permission.Permission import PermissionAction
 from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
-from src.domain_model.policy.PolicyControllerService import PolicyActionConstant
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest import ResourceTypeContextDataRequest
-from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.role.Role import Role
 from src.domain_model.role.RoleRepository import RoleRepository
 from src.domain_model.role.RoleService import RoleService
@@ -93,3 +91,12 @@ class RoleApplicationService:
                                           resultFrom=resultFrom,
                                           resultSize=resultSize,
                                           order=order)
+
+    def rolesTrees(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
+                   order: List[dict] = None) -> dict:
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        return self._roleRepository.rolesTrees(tokenData=tokenData, roleAccessPermissionData=roleAccessPermissionData,
+                                               resultFrom=resultFrom,
+                                               resultSize=resultSize,
+                                               order=order)

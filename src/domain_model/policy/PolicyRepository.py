@@ -273,3 +273,16 @@ class PolicyRepository(ABC):
         Returns:
             dict: A dictionary that has 'items' as an array
         """
+
+    @abstractmethod
+    def rolesTrees(self, tokenData: TokenData = None,
+                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> dict:
+        """Get trees of the roles that is filtered by the allowed permissions
+
+        Args:
+            tokenData (TokenData): Token data that has information about the user/role
+            roleAccessPermissionData (RoleAccessPermissionData): Role with permission data and access tree
+
+        Returns:
+            dict: A dictionary that has 'items' as an array
+        """
