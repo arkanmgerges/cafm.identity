@@ -15,11 +15,11 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='permission_context.proto',
-  package='cafm.identity.permission_context',
+  package='cafm.identity.permission',
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x18permission_context.proto\x12 cafm.identity.permission_context\";\n\x11PermissionContext\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\tb\x06proto3'
+  serialized_pb=b'\n\x18permission_context.proto\x12\x18\x63\x61\x66m.identity.permission\";\n\x11PermissionContext\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\tb\x06proto3'
 )
 
 
@@ -27,28 +27,28 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _PERMISSIONCONTEXT = _descriptor.Descriptor(
   name='PermissionContext',
-  full_name='cafm.identity.permission_context.PermissionContext',
+  full_name='cafm.identity.permission.PermissionContext',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='cafm.identity.permission_context.PermissionContext.id', index=0,
+      name='id', full_name='cafm.identity.permission.PermissionContext.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='type', full_name='cafm.identity.permission_context.PermissionContext.type', index=1,
+      name='type', full_name='cafm.identity.permission.PermissionContext.type', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='data', full_name='cafm.identity.permission_context.PermissionContext.data', index=2,
+      name='data', full_name='cafm.identity.permission.PermissionContext.data', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -66,8 +66,8 @@ _PERMISSIONCONTEXT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=62,
-  serialized_end=121,
+  serialized_start=54,
+  serialized_end=113,
 )
 
 DESCRIPTOR.message_types_by_name['PermissionContext'] = _PERMISSIONCONTEXT
@@ -76,7 +76,7 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 PermissionContext = _reflection.GeneratedProtocolMessageType('PermissionContext', (_message.Message,), {
   'DESCRIPTOR' : _PERMISSIONCONTEXT,
   '__module__' : 'permission_context_pb2'
-  # @@protoc_insertion_point(class_scope:cafm.identity.permission_context.PermissionContext)
+  # @@protoc_insertion_point(class_scope:cafm.identity.permission.PermissionContext)
   })
 _sym_db.RegisterMessage(PermissionContext)
 

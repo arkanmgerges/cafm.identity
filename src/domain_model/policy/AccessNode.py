@@ -11,3 +11,14 @@ class AccessNode:
         self.resource: Resource
         self.resourceName: str
         self.children: List[AccessNode] = []
+
+    def toMap(self):
+        result = self.resource.toMap()
+        result['name'] = self.resourceName
+        mapsOfChildren = []
+        for child in self.children:
+            mapsOfChildren.append(child.toMap())
+        result['children'] = mapsOfChildren
+        return result
+
+

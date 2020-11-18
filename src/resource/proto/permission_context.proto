@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package cafm.identity.permission_context;
+package cafm.identity.permission;
 
 message PermissionContext {
   string id = 1;

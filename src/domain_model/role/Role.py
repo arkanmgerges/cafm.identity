@@ -14,20 +14,19 @@ from uuid import uuid4
 
 
 class Role(Resource):
-    def __init__(self, id: str = None, name='', ownedBy: str = 'super_admin'):
+    def __init__(self, id: str = None, name=''):
         anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type='role')
         self._name = name
-        self._creator = ownedBy
 
     @classmethod
-    def createFrom(cls, id: str = None, name='', publishEvent: bool = False, ownedBy: str = 'super_admin'):
-        role = Role(id, name, ownedBy)
+    def createFrom(cls, id: str = None, name='', publishEvent: bool = False):
+        role = Role(id, name)
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
             from src.domain_model.role.RoleCreated import RoleCreated
             logger.debug(
-                f'[{Role.createFrom.__qualname__}] - Create Role with name: {name} and id: {id}, creator: {ownedBy}')
+                f'[{Role.createFrom.__qualname__}] - Create Role with name: {name} and id: {id}')
             DomainPublishedEvents.addEventForPublishing(RoleCreated(role))
         return role
 
@@ -43,7 +42,7 @@ class Role(Resource):
         DomainPublishedEvents.addEventForPublishing(RoleUpdated(old, self))
 
     def toMap(self) -> dict:
-        return {"id": self.id(), "name": self.name()}
+        return {"id": self.id(), "type": self.type(), "name": self.name()}
 
     def update(self, data: dict):
         updated = False

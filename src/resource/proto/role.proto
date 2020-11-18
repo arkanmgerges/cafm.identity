@@ -4,5 +4,6 @@ package cafm.identity.role;
 
 message Role {
   string id = 1;
-  string name = 2;
+  string type = 2;
+  string name = 3;
 }

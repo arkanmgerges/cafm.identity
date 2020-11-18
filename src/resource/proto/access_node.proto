@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package cafm.identity.access_node;
+
+import "resource.proto";
+
+message AccessNode {
+  resource.Resource resource = 1;
+  string name = 2;
+  repeated AccessNode children = 3;
+}

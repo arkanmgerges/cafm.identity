@@ -276,7 +276,7 @@ class PolicyRepository(ABC):
 
     @abstractmethod
     def rolesTrees(self, tokenData: TokenData = None,
-                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> dict:
+                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> List[RoleAccessPermissionData]:
         """Get trees of the roles that is filtered by the allowed permissions
 
         Args:
@@ -284,5 +284,5 @@ class PolicyRepository(ABC):
             roleAccessPermissionData (RoleAccessPermissionData): Role with permission data and access tree
 
         Returns:
-            dict: A dictionary that has 'items' as an array
+            List[RoleAccessPermissionData]: A list of role access permission data that has possibly filtered access tree
         """

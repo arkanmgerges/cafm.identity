@@ -11,3 +11,6 @@ class PermissionWithPermissionContexts:
     def __init__(self, permission: Permission = None, permissionContexts: List[PermissionContext] = None):
         self.permission: Permission = permission
         self.permissionContexts: List[PermissionContext] = permissionContexts
+
+    def toMap(self):
+        return {"permission": self.permission.toMap(), "permission_contexts": [x.toMap() for x in self.permissionContexts]}

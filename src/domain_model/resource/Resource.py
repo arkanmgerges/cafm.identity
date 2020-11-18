@@ -14,3 +14,6 @@ class Resource:
 
     def type(self) -> str:
         return self._type
+
+    def toMap(self) -> dict:
+        return {"id": self.id(), "type": self.type()}

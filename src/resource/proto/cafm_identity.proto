@@ -1,5 +1,9 @@
 syntax = "proto3";
 
+import "resource.proto";
+import "access_node.proto";
+import "permission_with_permission_contexts.proto";
+import "role_access_permission.proto";
 import "ou_app_service.proto";
 import "permission_app_service.proto";
 import "project_app_service.proto";

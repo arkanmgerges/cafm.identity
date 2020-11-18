@@ -4,6 +4,12 @@ package cafm.identity.role;
 
 import "role.proto";
 import "order.proto";
+import "role_access_permission.proto";
+
+message RoleAppService_rolesTreesRequest {}
+message RoleAppService_rolesTreesResponse {
+  repeated RoleAccessPermission roleAccessPermission = 1;
+}
 
 message RoleAppService_roleByNameRequest {
   string name = 1;
@@ -37,4 +43,5 @@ service RoleAppService {
   rpc roleByName (RoleAppService_roleByNameRequest) returns (RoleAppService_roleByNameResponse) {}
   rpc roleById (RoleAppService_roleByIdRequest) returns (RoleAppService_roleByIdResponse) {}
   rpc roles (RoleAppService_rolesRequest) returns (RoleAppService_rolesResponse) {}
+  rpc rolesTrees (RoleAppService_rolesTreesRequest) returns (RoleAppService_rolesTreesResponse) {}
 }

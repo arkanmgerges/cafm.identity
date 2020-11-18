@@ -88,19 +88,14 @@ class RoleRepository(ABC):
             dict: A dict that has {"items": [], "itemCount": 0}
         """
 
-    def rolesTrees(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
-                   resultFrom: int = 0,
-                   resultSize: int = 100,
-                   order: List[dict] = None) -> dict:
+    def rolesTrees(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData]) -> List[
+        RoleAccessPermissionData]:
         """Get list of the trees of the roles based on the owned roles that the user has
 
         Args:
             tokenData (TokenData): A token data object
             roleAccessPermissionData (List[RoleAccessPermissionData]): List of role access permissions
-            resultFrom (int): The start offset of the result item
-            resultSize (int): The size of the items in the result
-            order (List[dict]): A list of order e.g. [{'orderBy': 'name', 'direction': 'asc'}, {'orderBy': 'age', 'direction': 'desc'}]
 
         Returns:
-            dict: A dict that has {"items": [], "itemCount": 0}
+            List[RoleAccessPermissionData]: A list of role access details
         """

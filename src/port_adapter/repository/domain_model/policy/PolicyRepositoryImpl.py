@@ -667,7 +667,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                             return True
 
     def rolesTrees(self, tokenData: TokenData = None,
-                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> dict:
+                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> List[RoleAccessPermissionData]:
         roles = tokenData.roles()
         doFilter = True
         if TokenService.isSuperAdmin(tokenData=tokenData) or \
@@ -695,15 +695,14 @@ class PolicyRepositoryImpl(PolicyRepository):
         return False
 
     def _roleTreeListOf(self, roles: List[dict], roleAccessPermissionData: List[RoleAccessPermissionData],
-                        doFilter):
+                        doFilter) -> List[RoleAccessPermissionData]:
         rawDataItems = self._rawRoleTreeItems(roles, True)
-        result = self._constructRoleAccessPermissionDataFromRawRoleTreeItems(rawDataItems)
         if doFilter:
-            resultItems = self._filterRoleAccessPermissionDataItems(result, roleAccessPermissionData)
+            resultItems = self._filterRoleAccessPermissionDataItems(roleAccessPermissionData)
         else:
-            resultItems = result
+            resultItems = self._constructRoleAccessPermissionDataFromRawRoleTreeItems(rawDataItems)
 
-        return {'items': resultItems, 'itemCount': len(resultItems)}
+        return resultItems
 
     def resourcesOfTypeByTokenData(self, resourceType: str = '', tokenData: TokenData = None,
                                    roleAccessPermissionData: List[RoleAccessPermissionData] = None,
@@ -753,10 +752,48 @@ class PolicyRepositoryImpl(PolicyRepository):
         filteredItems = self._filterItems(result['items'], roleAccessPermissionData, resourceType)
         return {'items': filteredItems, 'itemCount': len(filteredItems)}
 
-    # todo filtering
-    def _filterRoleAccessPermissionDataItems(self, items: List[RoleAccessPermissionData],
-                                             roleAccessPermissionDataList: List[RoleAccessPermissionData]):
-        pass
+    def _filterRoleAccessPermissionDataItems(self, roleAccessPermissionDataList: List[RoleAccessPermissionData],
+                                             result: List[RoleAccessPermissionData] = None):
+        deniedItems = {'deniedResources': {}, 'deniedResourceTypes': {}}
+        filteredItems = [] if result is None else result
+        # Collect denied items
+        for roleAccessPermissionData in roleAccessPermissionDataList:
+            populatedDeniedItems = self._populateDeniedItems(roleAccessPermissionData.permissions)
+            deniedItems = {**deniedItems, **populatedDeniedItems}
+        # Filter items
+        for roleAccessPermissionData in roleAccessPermissionDataList:
+            filteredAccessTree = self._filterAccessTree(roleAccessPermissionData.accessTree, deniedItems)
+            filteredItems.append(filteredAccessTree)
+        return filteredItems
+
+
+    def _filterAccessTree(self, accessTree: List[AccessNode], deniedItems: dict):
+        result = []
+        for node in accessTree:
+            resource = node.resource
+            if resource.type() == PermissionContextConstant.RESOURCE_TYPE:
+                if resource.id() not in deniedItems['deniedResources']:
+                    filteredChildren = self._filterAccessTree(node.children, deniedItems)
+                    node.children = filteredChildren
+                    result.append(node)
+        return result
+
+
+    def _populateDeniedItems(self, permissionsWithContexts: List[PermissionWithPermissionContexts]):
+        deniedItems = {'deniedResources': {}, 'deniedResourceTypes': {}}
+        for permissionWithContexts in permissionsWithContexts:
+            permission = permissionWithContexts.permission
+            permissionContexts = permissionWithContexts.permissionContexts
+            if PermissionAction.READ in permission.deniedActions():
+                for permissionContext in permissionContexts:
+                    if permissionContext.type() == PermissionContextConstant.RESOURCE_TYPE:
+                        data = permissionContext.data()
+                        if 'name' in data:
+                            deniedItems['deniedResourceTypes'][data['name']] = True
+                    if permissionContext.type() == PermissionContextConstant.RESOURCE_INSTANCE:
+                        data = permissionContext.data()
+                        if 'id' in data:
+                            deniedItems['deniedResources'][data['id']] = True
 
     def _filterItems(self, items, roleAccessPermissionDataList: List[RoleAccessPermissionData], resourceType: str = ''):
         deniedItems = {'deniedResources': {}, 'denyAll': False}
@@ -860,7 +897,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         result = []
         for item in items:
             ownedByString = '' if item['owned_by'] is None else item['owned_by']['name']
-            role = Role.createFrom(id=item['role']['id'], name=item['role']['name'], ownedBy=ownedByString)
+            role = Role.createFrom(id=item['role']['id'], name=item['role']['name'])
             permissions = item['role']['_permissions']
             permList = []
             # For each permission

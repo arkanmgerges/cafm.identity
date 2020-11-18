@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package cafm.identity.permission;
+
+import "permission.proto";
+import "permission_context.proto";
+
+message PermissionWithPermissionContexts {
+  Permission permission = 1;
+  repeated PermissionContext permissionContext = 2;
+}

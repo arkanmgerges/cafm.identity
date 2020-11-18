@@ -15,12 +15,12 @@ class PermissionContextAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.permissionContextById = channel.unary_unary(
-                '/cafm.identity.permission_context.PermissionContextAppService/permissionContextById',
+                '/cafm.identity.permission.PermissionContextAppService/permissionContextById',
                 request_serializer=permission__context__app__service__pb2.PermissionContextAppService_permissionContextByIdRequest.SerializeToString,
                 response_deserializer=permission__context__app__service__pb2.PermissionContextAppService_permissionContextByIdResponse.FromString,
                 )
         self.permissionContexts = channel.unary_unary(
-                '/cafm.identity.permission_context.PermissionContextAppService/permissionContexts',
+                '/cafm.identity.permission.PermissionContextAppService/permissionContexts',
                 request_serializer=permission__context__app__service__pb2.PermissionContextAppService_permissionContextsRequest.SerializeToString,
                 response_deserializer=permission__context__app__service__pb2.PermissionContextAppService_permissionContextsResponse.FromString,
                 )
@@ -56,7 +56,7 @@ def add_PermissionContextAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'cafm.identity.permission_context.PermissionContextAppService', rpc_method_handlers)
+            'cafm.identity.permission.PermissionContextAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -75,7 +75,7 @@ class PermissionContextAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission_context.PermissionContextAppService/permissionContextById',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission.PermissionContextAppService/permissionContextById',
             permission__context__app__service__pb2.PermissionContextAppService_permissionContextByIdRequest.SerializeToString,
             permission__context__app__service__pb2.PermissionContextAppService_permissionContextByIdResponse.FromString,
             options, channel_credentials,
@@ -92,7 +92,7 @@ class PermissionContextAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission_context.PermissionContextAppService/permissionContexts',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission.PermissionContextAppService/permissionContexts',
             permission__context__app__service__pb2.PermissionContextAppService_permissionContextsRequest.SerializeToString,
             permission__context__app__service__pb2.PermissionContextAppService_permissionContextsResponse.FromString,
             options, channel_credentials,

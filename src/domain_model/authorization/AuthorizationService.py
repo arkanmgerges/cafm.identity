@@ -57,7 +57,7 @@ class AuthorizationService:
             logger.exception(f'[{AuthorizationService.isAllowed.__qualname__}] - exception raised with e: {e}')
             raise e
 
-    def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True):
+    def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True) -> List[RoleAccessPermissionData]:
         return self._policyService.roleAccessPermissionsData(tokenData=tokenData, includeAccessTree=includeAccessTree)
 
     def verifyAccess(self,

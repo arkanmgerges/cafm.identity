@@ -17,3 +17,8 @@ class RoleAccessPermissionData:
         self.ownedBy: Resource = ownedBy
         self.ownerOf: List[Resource] = ownerOf
         self.accessTree: List[AccessNode] = accessTree
+
+    def toMap(self):
+        return {"role": self.role.toMap(), "_permissions": [x.permission.toMap() for x in self.permissions],
+                "_owned_by": self.ownedBy.toMap(), "_owner_of": [x.toMap() for x in self.ownerOf],
+                "_access_tree": [x.toMap() for x in self.accessTree]}

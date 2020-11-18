@@ -201,23 +201,10 @@ class RoleRepositoryImpl(RoleRepository):
         return {"items": [Role.createFrom(id=x['id'], name=x['name']) for x in items],
                 "itemCount": itemCount}
 
-    def rolesTrees(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
-                   resultFrom: int = 0,
-                   resultSize: int = 100,
-                   order: List[dict] = None) -> dict:
-        sortData = ''
-        if order is not None:
-            for item in order:
-                sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
-            sortData = sortData[2:]
+    def rolesTrees(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData]) -> List[
+        RoleAccessPermissionData]:
+        result = self._policyService.rolesTrees(tokenData, roleAccessPermissionData)
 
-        result = self._policyService.rolesTrees(tokenData,
-                                                roleAccessPermissionData, sortData)
-
-        if result is None or len(result['items']) == 0:
-            return {"items": [], "itemCount": 0}
-        items = result['items']
-        itemCount = len(items)
-        items = items[resultFrom:resultSize]
-        return {"items": [Role.createFrom(id=x['id'], name=x['name']) for x in items],
-                "itemCount": itemCount}
+        if result is None or len(result) == 0:
+            return []
+        return result
