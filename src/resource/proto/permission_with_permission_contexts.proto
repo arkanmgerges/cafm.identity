@@ -7,5 +7,5 @@ import "permission_context.proto";
 
 message PermissionWithPermissionContexts {
   Permission permission = 1;
-  repeated PermissionContext permissionContext = 2;
+  repeated PermissionContext permissionContexts = 2;
 }

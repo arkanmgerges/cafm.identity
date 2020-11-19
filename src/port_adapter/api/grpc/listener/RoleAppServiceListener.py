@@ -165,7 +165,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             tmp = protoBuf.add()
             self._populatePermission(tmp.permission, permissionWithPermissionContext.permission)
             for permissionContext in permissionWithPermissionContext.permissionContexts:
-                self._populatePermissionContext(tmp.permissionContext.add(), permissionContext)
+                self._populatePermissionContext(tmp.permissionContexts.add(), permissionContext)
 
     def _populateResource(self, protoBuf, resource):
         protoBuf.resource.id = resource.id()
