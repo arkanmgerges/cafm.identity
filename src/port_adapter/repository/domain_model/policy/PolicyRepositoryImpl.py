@@ -998,8 +998,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         if accesses is None:
             return []
 
-        fromObjects: Dict[str, AccessNode] = defaultdict()
-        toObjects: Dict[str, AccessNode] = defaultdict()
+        childrenKeys: Dict[str, bool] = defaultdict()
         objects: Dict[str, AccessNode] = defaultdict()
         result = []
 
@@ -1015,22 +1014,14 @@ class PolicyRepositoryImpl(PolicyRepository):
                     if child.resource.id() == objects[edge['_to']].resource.id():
                         found = True
                 if not found:
+                    childrenKeys[edge['_to']] = True
                     objects[edge['_from']].children.append(objects[edge['_to']])
 
         for key in objects:
-            if not self._isChild(objects[key], objects):
+            if key not in childrenKeys:
                 result.append(objects[key])
 
         return result
-
-    def _isChild(self, object, objects):
-        for key in objects:
-            if objects[key].resource.id() != object.resource.id():
-                for child in objects[key].children:
-                    if child.resource.id() == object.resource.id():
-                        return True
-        return False
-
 
     def _addAccessKey(self, result: dict, key: str, verts: List[dict]):
         for vert in verts:
