@@ -286,3 +286,17 @@ class PolicyRepository(ABC):
         Returns:
             List[RoleAccessPermissionData]: A list of role access permission data that has possibly filtered access tree
         """
+
+    @abstractmethod
+    def roleTree(self, tokenData: TokenData = None, roleId: str = '',
+                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> RoleAccessPermissionData:
+        """Get trees of the a role that is filtered by the allowed permissions
+
+        Args:
+            tokenData (TokenData): Token data that has information about the user/role
+            roleId (str): A role id to fetch its tree and permission details
+            roleAccessPermissionData (RoleAccessPermissionData): Role with permission data and access tree
+
+        Returns:
+            RoleAccessPermissionData: A role access permission data that has possibly filtered access tree
+        """

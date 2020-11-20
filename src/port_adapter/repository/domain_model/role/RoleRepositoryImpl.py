@@ -208,3 +208,11 @@ class RoleRepositoryImpl(RoleRepository):
         if result is None or len(result) == 0:
             return []
         return result
+
+    def roleTree(self, tokenData: TokenData, roleId: str,
+                 roleAccessPermissionData: List[RoleAccessPermissionData]) -> RoleAccessPermissionData:
+        result = self._policyService.roleTree(tokenData, roleId, roleAccessPermissionData)
+
+        if result is None or len(result) == 0:
+            return None
+        return result

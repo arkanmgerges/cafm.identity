@@ -683,6 +683,23 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return self._roleTreeListOf(roles, roleAccessPermissionData, doFilter)
 
+    def roleTree(self, tokenData: TokenData = None, roleId: str = '',
+                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> RoleAccessPermissionData:
+        roles = tokenData.roles()
+        doFilter = True
+        if TokenService.isSuperAdmin(tokenData=tokenData) or \
+                self._hasReadAllRolesTreesInPermissionContext(roleAccessPermissionData):
+            aql = '''
+                LET ds = (FOR d IN resource FILTER d.type == 'role' AND d.id == @id RETURN d)
+                RETURN {items: ds}
+            '''
+            bindVars = {'id': roleId}
+            queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            roles = queryResult.result[0]['items']
+            doFilter = False
+
+        return self._roleTreeListOf(roles, roleAccessPermissionData, doFilter)
+
     def _hasReadAllRolesTreesInPermissionContext(self,
                                                  roleAccessPermissionData: List[RoleAccessPermissionData]) -> bool:
         for roleAccessPermission in roleAccessPermissionData:

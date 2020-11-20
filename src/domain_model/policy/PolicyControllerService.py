@@ -87,3 +87,7 @@ class PolicyControllerService:
     def rolesTrees(self, tokenData: TokenData = None,
                    roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> List[RoleAccessPermissionData]:
         return self._policyRepo.rolesTrees(tokenData, roleAccessPermissionData)
+
+    def roleTree(self, tokenData: TokenData = None, roleId: str = '',
+                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> RoleAccessPermissionData:
+        return self._policyRepo.roleTree(tokenData, roleId, roleAccessPermissionData)

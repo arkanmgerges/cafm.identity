@@ -11,6 +11,13 @@ message RoleAppService_rolesTreesResponse {
   repeated RoleAccessPermission roleAccessPermission = 1;
 }
 
+message RoleAppService_roleTreeRequest {
+  string id = 1;
+}
+message RoleAppService_roleTreeResponse {
+  RoleAccessPermission roleAccessPermission = 1;
+}
+
 message RoleAppService_roleByNameRequest {
   string name = 1;
 }
@@ -44,4 +51,5 @@ service RoleAppService {
   rpc roleById (RoleAppService_roleByIdRequest) returns (RoleAppService_roleByIdResponse) {}
   rpc roles (RoleAppService_rolesRequest) returns (RoleAppService_rolesResponse) {}
   rpc rolesTrees (RoleAppService_rolesTreesRequest) returns (RoleAppService_rolesTreesResponse) {}
+  rpc roleTree (RoleAppService_roleTreeRequest) returns (RoleAppService_roleTreeResponse) {}
 }
