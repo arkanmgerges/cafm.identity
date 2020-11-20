@@ -680,7 +680,6 @@ class PolicyRepositoryImpl(PolicyRepository):
             queryResult = self._db.AQLQuery(aql, rawResults=True)
             roles = queryResult.result[0]['items']
             doFilter = False
-
         return self._roleTreeListOf(roles, roleAccessPermissionData, doFilter)
 
     def _hasReadAllRolesTreesInPermissionContext(self,
@@ -752,10 +751,9 @@ class PolicyRepositoryImpl(PolicyRepository):
         filteredItems = self._filterItems(result['items'], roleAccessPermissionData, resourceType)
         return {'items': filteredItems, 'itemCount': len(filteredItems)}
 
-    def _filterRoleAccessPermissionDataItems(self, roleAccessPermissionDataList: List[RoleAccessPermissionData],
-                                             result: List[RoleAccessPermissionData] = None):
+    def _filterRoleAccessPermissionDataItems(self, roleAccessPermissionDataList: List[RoleAccessPermissionData]) -> \
+    List[RoleAccessPermissionData]:
         deniedItems = {'deniedResources': {}, 'deniedResourceTypes': {}}
-        filteredItems = [] if result is None else result
         # Collect denied items
         for roleAccessPermissionData in roleAccessPermissionDataList:
             populatedDeniedItems = self._populateDeniedItems(roleAccessPermissionData.permissions)
@@ -763,21 +761,19 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Filter items
         for roleAccessPermissionData in roleAccessPermissionDataList:
             filteredAccessTree = self._filterAccessTree(roleAccessPermissionData.accessTree, deniedItems)
-            filteredItems.append(filteredAccessTree)
-        return filteredItems
+            roleAccessPermissionData.accessTree = filteredAccessTree
 
+        return roleAccessPermissionDataList
 
     def _filterAccessTree(self, accessTree: List[AccessNode], deniedItems: dict):
         result = []
         for node in accessTree:
             resource = node.resource
-            if resource.type() == PermissionContextConstant.RESOURCE_TYPE:
-                if resource.id() not in deniedItems['deniedResources']:
-                    filteredChildren = self._filterAccessTree(node.children, deniedItems)
-                    node.children = filteredChildren
-                    result.append(node)
+            if resource.id() not in deniedItems['deniedResources'] and resource.type() != PermissionContextConstant.RESOURCE_TYPE:
+                filteredChildren = self._filterAccessTree(node.children, deniedItems)
+                node.children = filteredChildren
+                result.append(node)
         return result
-
 
     def _populateDeniedItems(self, permissionsWithContexts: List[PermissionWithPermissionContexts]):
         deniedItems = {'deniedResources': {}, 'deniedResourceTypes': {}}
@@ -794,6 +790,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                         data = permissionContext.data()
                         if 'id' in data:
                             deniedItems['deniedResources'][data['id']] = True
+        return deniedItems
 
     def _filterItems(self, items, roleAccessPermissionDataList: List[RoleAccessPermissionData], resourceType: str = ''):
         deniedItems = {'deniedResources': {}, 'denyAll': False}
@@ -893,7 +890,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         items = self._rawRoleTreeItems(tokenData.roles(), includeAccessTree)
         return self._constructRoleAccessPermissionDataFromRawRoleTreeItems(items)
 
-    def _constructRoleAccessPermissionDataFromRawRoleTreeItems(self, items):
+    def _constructRoleAccessPermissionDataFromRawRoleTreeItems(self, items) -> List[RoleAccessPermissionData]:
         result = []
         for item in items:
             ownedByString = '' if item['owned_by'] is None else item['owned_by']['name']
@@ -1001,6 +998,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         if accesses is None:
             return []
 
+        fromObjects: Dict[str, AccessNode] = defaultdict()
+        toObjects: Dict[str, AccessNode] = defaultdict()
         objects: Dict[str, AccessNode] = defaultdict()
         result = []
 
@@ -1008,13 +1007,30 @@ class PolicyRepositoryImpl(PolicyRepository):
             for edge in acc['edges']:
                 if edge['_from'] not in objects:
                     self._addAccessKey(result=objects, key=edge['_from'], verts=acc['vertices'])
-                    result.append(objects[edge['_from']])
                 if edge['_to'] not in objects:
                     self._addAccessKey(result=objects, key=edge['_to'], verts=acc['vertices'])
-                if objects[edge['_to']] not in objects[edge['_from']].children:
+
+                found = False
+                for child in objects[edge['_from']].children:
+                    if child.resource.id() == objects[edge['_to']].resource.id():
+                        found = True
+                if not found:
                     objects[edge['_from']].children.append(objects[edge['_to']])
 
+        for key in objects:
+            if not self._isChild(objects[key], objects):
+                result.append(objects[key])
+
         return result
+
+    def _isChild(self, object, objects):
+        for key in objects:
+            if objects[key].resource.id() != object.resource.id():
+                for child in objects[key].children:
+                    if child.resource.id() == object.resource.id():
+                        return True
+        return False
+
 
     def _addAccessKey(self, result: dict, key: str, verts: List[dict]):
         for vert in verts:
