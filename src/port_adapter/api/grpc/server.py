@@ -14,6 +14,7 @@ from src.port_adapter.api.grpc.listener.PermissionContextAppServiceListener impo
 from src.port_adapter.api.grpc.listener.RoleAppServiceListener import RoleAppServiceListener
 from src.port_adapter.api.grpc.listener.UserAppServiceListener import UserAppServiceListener
 from src.port_adapter.api.grpc.listener.UserGroupAppServiceListener import UserGroupAppServiceListener
+from src.resource.logging.logger import logger
 from src.resource.proto._generated.auth_app_service_pb2_grpc import add_AuthAppServiceServicer_to_server
 from src.resource.proto._generated.authz_app_service_pb2_grpc import add_AuthzAppServiceServicer_to_server
 from src.resource.proto._generated.ou_app_service_pb2_grpc import add_OuAppServiceServicer_to_server
@@ -42,7 +43,9 @@ def serve():
     add_OuAppServiceServicer_to_server(OuAppServiceListener(), server)
     add_AuthAppServiceServicer_to_server(AuthAppServiceListener(), server)
     add_AuthzAppServiceServicer_to_server(AuthzAppServiceListener(), server)
-    server.add_insecure_port("[::]:9999")
+    port = "[::]:9999"
+    server.add_insecure_port(port)
+    logger.info(f'Identity server started/restarted on port {port}')
     server.start()
 
     # try:
