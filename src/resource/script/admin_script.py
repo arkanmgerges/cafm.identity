@@ -352,7 +352,8 @@ def init_kafka_topics_and_schemas():
     # Create topics
     topics = ['cafm.identity.cmd', 'cafm.identity.evt']
     newTopics = [NewTopic(topic, num_partitions=1, replication_factor=1) for topic in topics]
-    admin = AdminClient({'bootstrap.servers': os.getenv('MESSAGE_BROKER_SERVERS', '')})
+    # admin = AdminClient({'bootstrap.servers': os.getenv('MESSAGE_BROKER_SERVERS', '')})
+    admin = AdminClient({'bootstrap.servers': 'kafka:9092'})
     fs = admin.create_topics(newTopics)
     for topic, f in fs.items():
         try:

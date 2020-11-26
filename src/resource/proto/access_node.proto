@@ -2,12 +2,10 @@ syntax = "proto3";
 
 package cafm.identity.access_node;
 
-import "google/protobuf/struct.proto";
-
 message AccessNodeData {
   string contentType = 1;
-  google.protobuf.Struct context = 2;
-  google.protobuf.Struct content = 3;
+  string context = 2;
+  string content = 3;
 }
 
 message AccessNode {

@@ -12,7 +12,7 @@ message RoleAppService_rolesTreesResponse {
 }
 
 message RoleAppService_roleTreeRequest {
-  string id = 1;
+  string roleId = 1;
 }
 message RoleAppService_roleTreeResponse {
   RoleAccessPermission roleAccessPermission = 1;

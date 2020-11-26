@@ -11,7 +11,6 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import Struct_pb2 as google_dot_protobuf_dot_Struct__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +19,8 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x11\x61\x63\x63\x65ss_node.proto\x12\x19\x63\x61\x66m.identity.access_node\x1a\x1cgoogle/protobuf/Struct.proto\"y\n\x0e\x41\x63\x63\x65ssNodeData\x12\x13\n\x0b\x63ontentType\x18\x01 \x01(\t\x12(\n\x07\x63ontext\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\x12(\n\x07\x63ontent\x18\x03 \x01(\x0b\x32\x17.google.protobuf.Struct\"~\n\nAccessNode\x12\x37\n\x04\x64\x61ta\x18\x01 \x01(\x0b\x32).cafm.identity.access_node.AccessNodeData\x12\x37\n\x08\x63hildren\x18\x02 \x03(\x0b\x32%.cafm.identity.access_node.AccessNodeb\x06proto3'
-  ,
-  dependencies=[google_dot_protobuf_dot_Struct__pb2.DESCRIPTOR,])
+  serialized_pb=b'\n\x11\x61\x63\x63\x65ss_node.proto\x12\x19\x63\x61\x66m.identity.access_node\"G\n\x0e\x41\x63\x63\x65ssNodeData\x12\x13\n\x0b\x63ontentType\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontext\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x03 \x01(\t\"~\n\nAccessNode\x12\x37\n\x04\x64\x61ta\x18\x01 \x01(\x0b\x32).cafm.identity.access_node.AccessNodeData\x12\x37\n\x08\x63hildren\x18\x02 \x03(\x0b\x32%.cafm.identity.access_node.AccessNodeb\x06proto3'
+)
 
 
 
@@ -44,15 +42,15 @@ _ACCESSNODEDATA = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='context', full_name='cafm.identity.access_node.AccessNodeData.context', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='content', full_name='cafm.identity.access_node.AccessNodeData.content', index=2,
-      number=3, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -68,8 +66,8 @@ _ACCESSNODEDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=78,
-  serialized_end=199,
+  serialized_start=48,
+  serialized_end=119,
 )
 
 
@@ -107,12 +105,10 @@ _ACCESSNODE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=201,
-  serialized_end=327,
+  serialized_start=121,
+  serialized_end=247,
 )
 
-_ACCESSNODEDATA.fields_by_name['context'].message_type = google_dot_protobuf_dot_Struct__pb2._STRUCT
-_ACCESSNODEDATA.fields_by_name['content'].message_type = google_dot_protobuf_dot_Struct__pb2._STRUCT
 _ACCESSNODE.fields_by_name['data'].message_type = _ACCESSNODEDATA
 _ACCESSNODE.fields_by_name['children'].message_type = _ACCESSNODE
 DESCRIPTOR.message_types_by_name['AccessNodeData'] = _ACCESSNODEDATA

@@ -3,17 +3,7 @@
 """
 from typing import List
 
-from src.domain_model.policy.access_node_content.AccessNodeContent import AccessNodeContent, \
-    AccessNodeContentTypeConstant
-
-
-class AccessNodeData:
-    content: AccessNodeContent = AccessNodeContent(dataType=AccessNodeContentTypeConstant.RESOURCE_INSTANCE)
-    contentType: AccessNodeContentTypeConstant
-    context: dict = {}
-
-    def toMap(self):
-        return {"content": self.content.toMap(), "content_type": self.contentType.value, "context": self.context}
+from src.domain_model.policy.AccessNodeData import AccessNodeData
 
 
 class AccessNode:

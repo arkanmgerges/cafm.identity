@@ -10,7 +10,8 @@ services:
       - "9999:9999"
     entrypoint: ["hupper", "python", "-m", "src.port_adapter.api.grpc.server"]
     working_dir: /app
-    network_mode: "host"
+    networks:
+      - cafm-infra_default
     volumes:
       - ../../..:/app
 
@@ -18,7 +19,8 @@ services:
     image: cafm-identity:local
     entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.api_command.ApiCommandListener"]
     working_dir: /app
-    network_mode: "host"
+    networks:
+      - cafm-infra_default
     volumes:
       - ../../..:/app
     depends_on:
@@ -28,8 +30,13 @@ services:
     image: cafm-identity:local
     entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.identity_command.IdentityCommandListener"]
     working_dir: /app
-    network_mode: "host"
+    networks:
+      - cafm-infra_default
     volumes:
       - ../../..:/app
     depends_on:
       - cafm-identity-server
+
+networks:
+  cafm-infra_default:
+    external: true

@@ -203,7 +203,8 @@ class RoleRepositoryImpl(RoleRepository):
 
     def rolesTrees(self, tokenData: TokenData, roleAccessPermissionDataList: List[RoleAccessPermissionData]) -> List[
         RoleAccessPermissionData]:
-        logger.debug(f'[{RoleRepositoryImpl.rolesTrees.__qualname__}] Received tokenData: {tokenData}, roleAccessPermissionData: {roleAccessPermissionDataList}')
+        logger.debug(
+            f'[{RoleRepositoryImpl.rolesTrees.__qualname__}] Received tokenData: {tokenData}, roleAccessPermissionDataList: {roleAccessPermissionDataList}')
         result = self._policyService.rolesTrees(tokenData, roleAccessPermissionDataList)
 
         if result is None or len(result) == 0:
@@ -212,8 +213,8 @@ class RoleRepositoryImpl(RoleRepository):
 
     def roleTree(self, tokenData: TokenData, roleId: str,
                  roleAccessPermissionData: List[RoleAccessPermissionData]) -> RoleAccessPermissionData:
+        logger.debug(
+            f'[{RoleRepositoryImpl.roleTree.__qualname__}] Received tokenData: {tokenData}, roleAccessPermissionData: {roleAccessPermissionData}')
         result = self._policyService.roleTree(tokenData, roleId, roleAccessPermissionData)
 
-        if result is None or len(result) == 0:
-            return None
         return result

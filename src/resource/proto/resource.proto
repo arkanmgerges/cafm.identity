@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package cafm.identity.resource;
+
+message Resource {
+  string id = 1;
+  string type = 2;
+}

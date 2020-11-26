@@ -97,8 +97,7 @@ class RoleApplicationService:
         roleAccessPermissionDataList = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
         return self._roleRepository.rolesTrees(tokenData=tokenData, roleAccessPermissionDataList=roleAccessPermissionDataList)
 
-    def roleTree(self, roleId: str = '', token: str = '') -> List[RoleAccessPermissionData]:
+    def roleTree(self, roleId: str = '', token: str = '') -> RoleAccessPermissionData:
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
-        return []
-        # return self._roleRepository.roleTree(tokenData=tokenData, roleId=roleId, roleAccessPermissionData=roleAccessPermissionData)
+        return self._roleRepository.roleTree(tokenData=tokenData, roleId=roleId, roleAccessPermissionData=roleAccessPermissionData)

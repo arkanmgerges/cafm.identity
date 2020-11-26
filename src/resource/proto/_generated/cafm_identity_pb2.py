@@ -11,7 +11,6 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-import resource_pb2 as resource__pb2
 import access_node_pb2 as access__node__pb2
 import permission_with_permission_contexts_pb2 as permission__with__permission__contexts__pb2
 import role_access_permission_pb2 as role__access__permission__pb2
@@ -33,9 +32,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13\x63\x61\x66m_identity.proto\x1a\x0eresource.proto\x1a\x11\x61\x63\x63\x65ss_node.proto\x1a)permission_with_permission_contexts.proto\x1a\x1crole_access_permission.proto\x1a\x14ou_app_service.proto\x1a\x1cpermission_app_service.proto\x1a\x19project_app_service.proto\x1a\x17realm_app_service.proto\x1a$permission_context_app_service.proto\x1a\x16role_app_service.proto\x1a\x16user_app_service.proto\x1a\x1cuser_group_app_service.proto\x1a\x16\x61uth_app_service.proto\x1a\x17\x61uthz_app_service.protob\x06proto3'
+  serialized_pb=b'\n\x13\x63\x61\x66m_identity.proto\x1a\x11\x61\x63\x63\x65ss_node.proto\x1a)permission_with_permission_contexts.proto\x1a\x1crole_access_permission.proto\x1a\x14ou_app_service.proto\x1a\x1cpermission_app_service.proto\x1a\x19project_app_service.proto\x1a\x17realm_app_service.proto\x1a$permission_context_app_service.proto\x1a\x16role_app_service.proto\x1a\x16user_app_service.proto\x1a\x1cuser_group_app_service.proto\x1a\x16\x61uth_app_service.proto\x1a\x17\x61uthz_app_service.protob\x06proto3'
   ,
-  dependencies=[resource__pb2.DESCRIPTOR,access__node__pb2.DESCRIPTOR,permission__with__permission__contexts__pb2.DESCRIPTOR,role__access__permission__pb2.DESCRIPTOR,ou__app__service__pb2.DESCRIPTOR,permission__app__service__pb2.DESCRIPTOR,project__app__service__pb2.DESCRIPTOR,realm__app__service__pb2.DESCRIPTOR,permission__context__app__service__pb2.DESCRIPTOR,role__app__service__pb2.DESCRIPTOR,user__app__service__pb2.DESCRIPTOR,user__group__app__service__pb2.DESCRIPTOR,auth__app__service__pb2.DESCRIPTOR,authz__app__service__pb2.DESCRIPTOR,])
+  dependencies=[access__node__pb2.DESCRIPTOR,permission__with__permission__contexts__pb2.DESCRIPTOR,role__access__permission__pb2.DESCRIPTOR,ou__app__service__pb2.DESCRIPTOR,permission__app__service__pb2.DESCRIPTOR,project__app__service__pb2.DESCRIPTOR,realm__app__service__pb2.DESCRIPTOR,permission__context__app__service__pb2.DESCRIPTOR,role__app__service__pb2.DESCRIPTOR,user__app__service__pb2.DESCRIPTOR,user__group__app__service__pb2.DESCRIPTOR,auth__app__service__pb2.DESCRIPTOR,authz__app__service__pb2.DESCRIPTOR,])
 
 
 

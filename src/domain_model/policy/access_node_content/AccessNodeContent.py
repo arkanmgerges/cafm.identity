@@ -9,7 +9,6 @@ class AccessNodeContentTypeConstant(Enum):
     RESOURCE_TYPE = 'resource_type'
 
 
-
 class AccessNodeContent:
     def __init__(self, dataType: AccessNodeContentTypeConstant):
         self.dataType = dataType
