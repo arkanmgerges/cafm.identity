@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  cafm-identity-server:
+    image: cafm-identity:local
+    build:
+      context: ../../..
+      dockerfile: .pkg/local/docker/Dockerfile
+    ports:
+      - "9999:9999"
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.api.grpc.server"]
+    working_dir: /app
+    network_mode: "host"
+    volumes:
+      - ../../..:/app
+
+  cafm-identity-api-cmd:
+    image: cafm-identity:local
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.api_command.ApiCommandListener"]
+    working_dir: /app
+    network_mode: "host"
+    volumes:
+      - ../../..:/app
+    depends_on:
+      - cafm-identity-server
+
+  cafm-identity-cmd:
+    image: cafm-identity:local
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.identity_command.IdentityCommandListener"]
+    working_dir: /app
+    network_mode: "host"
+    volumes:
+      - ../../..:/app
+    depends_on:
+      - cafm-identity-server
