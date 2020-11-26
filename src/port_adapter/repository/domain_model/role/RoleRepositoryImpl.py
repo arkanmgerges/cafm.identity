@@ -201,9 +201,10 @@ class RoleRepositoryImpl(RoleRepository):
         return {"items": [Role.createFrom(id=x['id'], name=x['name']) for x in items],
                 "itemCount": itemCount}
 
-    def rolesTrees(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData]) -> List[
+    def rolesTrees(self, tokenData: TokenData, roleAccessPermissionDataList: List[RoleAccessPermissionData]) -> List[
         RoleAccessPermissionData]:
-        result = self._policyService.rolesTrees(tokenData, roleAccessPermissionData)
+        logger.debug(f'[{RoleRepositoryImpl.rolesTrees.__qualname__}] Received tokenData: {tokenData}, roleAccessPermissionData: {roleAccessPermissionDataList}')
+        result = self._policyService.rolesTrees(tokenData, roleAccessPermissionDataList)
 
         if result is None or len(result) == 0:
             return []

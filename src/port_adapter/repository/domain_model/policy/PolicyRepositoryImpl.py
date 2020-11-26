@@ -10,11 +10,15 @@ from pyArango.query import AQLQuery
 
 from src.domain_model.permission.Permission import Permission, PermissionAction
 from src.domain_model.permission_context.PermissionContext import PermissionContext, PermissionContextConstant
-from src.domain_model.policy.AccessNode import AccessNode
+from src.domain_model.policy.AccessNode import AccessNode, AccessNodeData
 from src.domain_model.policy.PermissionWithPermissionContexts import PermissionWithPermissionContexts
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
+from src.domain_model.policy.access_node_content.AccessNodeContent import AccessNodeContentTypeConstant
+from src.domain_model.policy.access_node_content.ResourceInstanceAccessNodeContent import \
+    ResourceInstanceAccessNodeContent
 from src.domain_model.resource.Resource import Resource
+from src.domain_model.resource.exception.InvalidResourceException import InvalidResourceException
 from src.domain_model.resource.exception.PermissionContextDoesNotExistException import \
     PermissionContextDoesNotExistException
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
@@ -667,11 +671,12 @@ class PolicyRepositoryImpl(PolicyRepository):
                             return True
 
     def rolesTrees(self, tokenData: TokenData = None,
-                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> List[RoleAccessPermissionData]:
+                   roleAccessPermissionDataList: List[RoleAccessPermissionData] = None) -> List[
+        RoleAccessPermissionData]:
         roles = tokenData.roles()
         doFilter = True
         if TokenService.isSuperAdmin(tokenData=tokenData) or \
-                self._hasReadAllRolesTreesInPermissionContext(roleAccessPermissionData):
+                self._hasReadAllRolesTreesInPermissionContext(roleAccessPermissionDataList):
             aql = '''
                 LET ds = (FOR d IN resource FILTER d.type == 'role' RETURN d)
                 RETURN {items: ds}
@@ -680,10 +685,10 @@ class PolicyRepositoryImpl(PolicyRepository):
             queryResult = self._db.AQLQuery(aql, rawResults=True)
             roles = queryResult.result[0]['items']
             doFilter = False
-        return self._roleTreeListOf(roles, roleAccessPermissionData, doFilter)
+        return self._roleTreeListOf(roles, roleAccessPermissionDataList, doFilter)
 
     def roleTree(self, tokenData: TokenData = None, roleId: str = '',
-                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> RoleAccessPermissionData:
+                 roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> RoleAccessPermissionData:
         roles = tokenData.roles()
         doFilter = True
         if TokenService.isSuperAdmin(tokenData=tokenData) or \
@@ -710,11 +715,11 @@ class PolicyRepositoryImpl(PolicyRepository):
                             return True
         return False
 
-    def _roleTreeListOf(self, roles: List[dict], roleAccessPermissionData: List[RoleAccessPermissionData],
+    def _roleTreeListOf(self, roles: List[dict], roleAccessPermissionDataList: List[RoleAccessPermissionData],
                         doFilter) -> List[RoleAccessPermissionData]:
         rawDataItems = self._rawRoleTreeItems(roles, True)
         if doFilter:
-            resultItems = self._filterRoleAccessPermissionDataItems(roleAccessPermissionData)
+            resultItems = self._filterRoleAccessPermissionDataItems(roleAccessPermissionDataList)
         else:
             resultItems = self._constructRoleAccessPermissionDataFromRawRoleTreeItems(rawDataItems)
 
@@ -769,7 +774,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         return {'items': filteredItems, 'itemCount': len(filteredItems)}
 
     def _filterRoleAccessPermissionDataItems(self, roleAccessPermissionDataList: List[RoleAccessPermissionData]) -> \
-    List[RoleAccessPermissionData]:
+            List[RoleAccessPermissionData]:
         deniedItems = {'deniedResources': {}, 'deniedResourceTypes': {}}
         # Collect denied items
         for roleAccessPermissionData in roleAccessPermissionDataList:
@@ -785,11 +790,16 @@ class PolicyRepositoryImpl(PolicyRepository):
     def _filterAccessTree(self, accessTree: List[AccessNode], deniedItems: dict):
         result = []
         for node in accessTree:
-            resource = node.resource
-            if resource.id() not in deniedItems['deniedResources'] and resource.type() != PermissionContextConstant.RESOURCE_TYPE:
-                filteredChildren = self._filterAccessTree(node.children, deniedItems)
-                node.children = filteredChildren
-                result.append(node)
+            # todo modified
+            nodeContentType = node.data.contentType
+            if nodeContentType is AccessNodeContentTypeConstant.RESOURCE_INSTANCE:
+                nodeDataContent: ResourceInstanceAccessNodeContent = node.data.content
+                resource = nodeDataContent.resource
+                if resource.id() not in deniedItems[
+                    'deniedResources'] and resource.type() != PermissionContextConstant.RESOURCE_TYPE:
+                    filteredChildren = self._filterAccessTree(node.children, deniedItems)
+                    node.children = filteredChildren
+                    result.append(node)
         return result
 
     def _populateDeniedItems(self, permissionsWithContexts: List[PermissionWithPermissionContexts]):
@@ -838,13 +848,18 @@ class PolicyRepositoryImpl(PolicyRepository):
                                                    resourceType: str, deniedItems: dict):
         result = []
         for node in accessTree:
-            if node.resource.type() == resourceType:
-                if node.resource.id() not in deniedItems['deniedResources']:
-                    item = self._itemFromFilteredItemsById(filteredItems, node.resource.id())
-                    if item is not None:
-                        result.append(item)
-                # Stop parsing new resources
-                return result
+            # todo modified
+            nodeContentType = node.data.contentType
+            if nodeContentType is AccessNodeContentTypeConstant.RESOURCE_INSTANCE:
+                nodeDataContent: ResourceInstanceAccessNodeContent = node.data.content
+                resource = nodeDataContent.resource
+                if resource.type() == resourceType:
+                    if resource.id() not in deniedItems['deniedResources']:
+                        item = self._itemFromFilteredItemsById(filteredItems, resource.id())
+                        if item is not None:
+                            result.append(item)
+                    # Stop parsing new resources
+                    return result
             if len(node.children) > 0:
                 newResult = self._filterOutItemsForResourceTypeByAccessTree(filteredItems, node.children, resourceType,
                                                                             deniedItems)
@@ -1028,7 +1043,11 @@ class PolicyRepositoryImpl(PolicyRepository):
 
                 found = False
                 for child in objects[edge['_from']].children:
-                    if child.resource.id() == objects[edge['_to']].resource.id():
+                    resourceInstanceAccessNodeContent: ResourceInstanceAccessNodeContent = ResourceInstanceAccessNodeContent.castFrom(
+                        child.data.content)
+                    resource = resourceInstanceAccessNodeContent.resource
+                    edgeToResource = self._resourceFromAccessNode(objects[edge['_to']])
+                    if resource.id() == edgeToResource.id():
                         found = True
                 if not found:
                     childrenKeys[edge['_to']] = True
@@ -1040,10 +1059,26 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return result
 
+    def _resourceFromAccessNode(self, accessNode: AccessNode):
+        content = accessNode.data.content
+        contentType = accessNode.data.contentType
+        if contentType is not AccessNodeContentTypeConstant.RESOURCE_INSTANCE:
+            raise InvalidResourceException(message=f'{PolicyRepositoryImpl._resourceFromAccessNode.__qualname__} invalid resource content: {content}, contentType: {contentType}, accessNode: {accessNode.toMap()}')
+        resourceInstanceAccessNodeContent: ResourceInstanceAccessNodeContent = ResourceInstanceAccessNodeContent.castFrom(content)
+        return resourceInstanceAccessNodeContent.resource
+
+
+
     def _addAccessKey(self, result: dict, key: str, verts: List[dict]):
         for vert in verts:
             if vert['_id'] == key:
+                # todo modify
                 node = AccessNode()
-                node.resource = Resource(id=vert['id'], type=vert['type'])
-                node.resourceName = vert['name']
+                resource = Resource(id=vert['id'], type=vert['type'])
+                resourceName = vert['name']
+                data = AccessNodeData()
+                data.content = ResourceInstanceAccessNodeContent(resource=resource, resourceName=resourceName)
+                data.contentType = AccessNodeContentTypeConstant.RESOURCE_INSTANCE
+                data.context['resource_type'] = resource.type()
+                node.data = data
                 result[key] = node

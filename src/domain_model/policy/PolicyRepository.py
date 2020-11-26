@@ -289,7 +289,7 @@ class PolicyRepository(ABC):
 
     @abstractmethod
     def roleTree(self, tokenData: TokenData = None, roleId: str = '',
-                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> RoleAccessPermissionData:
+                 roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> RoleAccessPermissionData:
         """Get trees of the a role that is filtered by the allowed permissions
 
         Args:

@@ -156,8 +156,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
     def _populateAccessTree(self, protoBuf, accessTree):
         for accessNode in accessTree:
             tmp = protoBuf.add()
-            self._populateResource(tmp, accessNode.resource)
-            tmp.name = accessNode.resourceName
+            self._populateData(tmp, accessNode.data)
             self._populateAccessTree(tmp.children, accessNode.children)
 
     def _populatePermissionWithPermissionContexts(self, protoBuf, permissionWithPermissionContexts):
@@ -167,9 +166,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             for permissionContext in permissionWithPermissionContext.permissionContexts:
                 self._populatePermissionContext(tmp.permissionContexts.add(), permissionContext)
 
-    def _populateResource(self, protoBuf, resource):
-        protoBuf.resource.id = resource.id()
-        protoBuf.resource.type = resource.type()
+    def _populateData(self, protoBuf, data):
+        protoBuf.contentType = data.contentType
+        protoBuf.context = data.context
+        protoBuf.content = data.content.toMap()
 
     def _populatePermission(self, protoBuf, permission):
         protoBuf.id = permission.id()

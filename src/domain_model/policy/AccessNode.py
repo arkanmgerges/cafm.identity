@@ -3,22 +3,28 @@
 """
 from typing import List
 
-from src.domain_model.resource.Resource import Resource
+from src.domain_model.policy.access_node_content.AccessNodeContent import AccessNodeContent, \
+    AccessNodeContentTypeConstant
+
+
+class AccessNodeData:
+    content: AccessNodeContent = AccessNodeContent(dataType=AccessNodeContentTypeConstant.RESOURCE_INSTANCE)
+    contentType: AccessNodeContentTypeConstant
+    context: dict = {}
+
+    def toMap(self):
+        return {"content": self.content.toMap(), "content_type": self.contentType.value, "context": self.context}
 
 
 class AccessNode:
     def __init__(self):
-        self.resource: Resource
-        self.resourceName: str
+        self.data: AccessNodeData = AccessNodeData()
         self.children: List[AccessNode] = []
 
     def toMap(self):
-        result = self.resource.toMap()
-        result['name'] = self.resourceName
+        result = self.data.toMap()
         mapsOfChildren = []
         for child in self.children:
             mapsOfChildren.append(child.toMap())
         result['children'] = mapsOfChildren
         return result
-
-
