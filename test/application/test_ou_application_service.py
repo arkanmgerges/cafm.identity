@@ -7,9 +7,10 @@ from mock import Mock
 from src.application.OuApplicationService import OuApplicationService
 from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
+from src.domain_model.ou.OuService import OuService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.ou.Ou import Ou
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.policy.PolicyRepository import PolicyRepository
@@ -21,7 +22,7 @@ authzService = None
 def setup_function():
     global token
     global authzService
-    token = TokenService.generateToken({'role': ['super_admin']})
+    token = TokenService.generateToken({'id': '11223344', 'name': 'user_1', 'roles': [{'id': '1234', 'name': 'super_admin'}]})
 
     authzRepoMock = Mock(spec=AuthorizationRepository)
     policyRepoMock = Mock(spec=PolicyRepository)
@@ -37,7 +38,9 @@ def test_create_ou_object_when_ou_already_exist():
     repo = Mock(spec=OuRepository)
     name = 'me'
     repo.ouByName = Mock(side_effect=OuAlreadyExistException)
-    appService = OuApplicationService(repo, authzService)
+    ouService = OuService(ouRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+
+    appService = OuApplicationService(repo, authzService, ouService)
     # Act, Assert
     with pytest.raises(OuAlreadyExistException):
         ou = appService.createOu(name=name, objectOnly=True, token=token)
@@ -50,7 +53,8 @@ def test_create_ou_object_when_ou_does_not_exist():
     repo = Mock(spec=OuRepository)
     name = 'me'
     repo.ouByName = Mock(side_effect=OuDoesNotExistException)
-    appService = OuApplicationService(repo, authzService)
+    ouService = OuService(ouRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = OuApplicationService(repo, authzService, ouService)
     # Act
     ou = appService.createOu(name=name, objectOnly=True, token=token)
     # Assert
@@ -67,7 +71,8 @@ def test_create_ou_with_event_publishing_when_ou_does_not_exist():
     name = 'me'
     repo.ouByName = Mock(side_effect=OuDoesNotExistException)
     repo.createOu = Mock(spec=OuRepository.createOu)
-    appService = OuApplicationService(repo, authzService)
+    ouService = OuService(ouRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = OuApplicationService(repo, authzService, ouService)
     # Act
     appService.createOu(id=id, name=name, token=token)
     # Assert
@@ -82,7 +87,8 @@ def test_get_ou_by_name_when_ou_exists():
     name = 'me'
     ou = Ou(name=name)
     repo.ouByName = Mock(return_value=ou)
-    appService = OuApplicationService(repo, authzService)
+    ouService = OuService(ouRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = OuApplicationService(repo, authzService, ouService)
     # Act
     appService.ouByName(name=name, token=token)
     # Assert
@@ -96,7 +102,8 @@ def test_create_object_only_raise_exception_when_ou_exists():
     name = 'me'
     ou = Ou(name=name)
     repo.ouByName = Mock(return_value=ou)
-    appService = OuApplicationService(repo, authzService)
+    ouService = OuService(ouRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = OuApplicationService(repo, authzService, ouService)
     # Act, Assert
     with pytest.raises(OuAlreadyExistException):
         ou = appService.createOu(name=name, objectOnly=True, token=token)
@@ -109,7 +116,8 @@ def test_create_ou_raise_exception_when_ou_exists():
     name = 'me'
     ou = Ou(name=name)
     repo.ouByName = Mock(return_value=ou)
-    appService = OuApplicationService(repo, authzService)
+    ouService = OuService(ouRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = OuApplicationService(repo, authzService, ouService)
     # Act, Assert
     with pytest.raises(OuAlreadyExistException):
         ou = appService.createOu(id='1', name=name, token=token)
@@ -121,7 +129,8 @@ def test_get_ou_by_id_when_ou_exists():
     name = 'me'
     ou = Ou(id='1234', name=name)
     repo.ouById = Mock(return_value=ou)
-    appService = OuApplicationService(repo, authzService)
+    ouService = OuService(ouRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = OuApplicationService(repo, authzService, ouService)
     # Act
     appService.ouById(id='1234', token=token)
     # Assert

@@ -84,8 +84,8 @@ python -m src.port_adapter.api.grpc.server
 In the `.pkg/local/docker/Dockerfile` use the variables that you get from the infra (see [here](https://github.com/DigitalMOB2/cafm.infra))
   
 **2 - Build the image and run the services**  
-Run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-api up` from the root of this repository
+Run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-identity up` from the root of this repository
 
 **3 - Stop/Run the services**  
-To stop the services, run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-api stop`  
-To start the services, run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-api start`
+To stop the services, run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-identity stop`  
+To start the services, run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-identity start`

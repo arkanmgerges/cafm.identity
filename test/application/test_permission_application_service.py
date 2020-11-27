@@ -7,9 +7,10 @@ from mock import Mock
 from src.application.PermissionApplicationService import PermissionApplicationService
 from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
+from src.domain_model.permission.PermissionService import PermissionService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.permission.PermissionRepository import PermissionRepository
 from src.domain_model.policy.PolicyRepository import PolicyRepository
@@ -21,7 +22,7 @@ authzService = None
 def setup_function():
     global token
     global authzService
-    token = TokenService.generateToken({'role': ['super_admin']})
+    token = TokenService.generateToken({'id': '11223344', 'name': 'user_1', 'roles': [{'id': '1234', 'name': 'super_admin'}]})
 
     authzRepoMock = Mock(spec=AuthorizationRepository)
     policyRepoMock = Mock(spec=PolicyRepository)
@@ -37,7 +38,8 @@ def test_create_permission_object_when_permission_already_exist():
     repo = Mock(spec=PermissionRepository)
     name = 'me'
     repo.permissionByName = Mock(side_effect=PermissionAlreadyExistException)
-    appService = PermissionApplicationService(repo, authzService)
+    permissionService = PermissionService(permissionRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = PermissionApplicationService(repo, authzService, permissionService)
     # Act, Assert
     with pytest.raises(PermissionAlreadyExistException):
         permission = appService.createPermission(name=name, objectOnly=True, token=token)
@@ -50,7 +52,8 @@ def test_create_permission_object_when_permission_does_not_exist():
     repo = Mock(spec=PermissionRepository)
     name = 'me'
     repo.permissionByName = Mock(side_effect=PermissionDoesNotExistException)
-    appService = PermissionApplicationService(repo, authzService)
+    permissionService = PermissionService(permissionRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = PermissionApplicationService(repo, authzService, permissionService)
     # Act
     permission = appService.createPermission(name=name, objectOnly=True, token=token)
     # Assert
@@ -67,7 +70,8 @@ def test_create_permission_with_event_publishing_when_permission_does_not_exist(
     name = 'me'
     repo.permissionByName = Mock(side_effect=PermissionDoesNotExistException)
     repo.createPermission = Mock(spec=PermissionRepository.createPermission)
-    appService = PermissionApplicationService(repo, authzService)
+    permissionService = PermissionService(permissionRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = PermissionApplicationService(repo, authzService, permissionService)
     # Act
     appService.createPermission(id=id, name=name, token=token)
     # Assert
@@ -82,7 +86,8 @@ def test_get_permission_by_name_when_permission_exists():
     name = 'me'
     permission = Permission(name=name)
     repo.permissionByName = Mock(return_value=permission)
-    appService = PermissionApplicationService(repo, authzService)
+    permissionService = PermissionService(permissionRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = PermissionApplicationService(repo, authzService, permissionService)
     # Act
     appService.permissionByName(name=name, token=token)
     # Assert
@@ -96,7 +101,8 @@ def test_create_object_only_raise_exception_when_permission_exists():
     name = 'me'
     permission = Permission(name=name)
     repo.permissionByName = Mock(return_value=permission)
-    appService = PermissionApplicationService(repo, authzService)
+    permissionService = PermissionService(permissionRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = PermissionApplicationService(repo, authzService, permissionService)
     # Act, Assert
     with pytest.raises(PermissionAlreadyExistException):
         permission = appService.createPermission(name=name, objectOnly=True, token=token)
@@ -109,7 +115,8 @@ def test_create_permission_raise_exception_when_permission_exists():
     name = 'me'
     permission = Permission(name=name)
     repo.permissionByName = Mock(return_value=permission)
-    appService = PermissionApplicationService(repo, authzService)
+    permissionService = PermissionService(permissionRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = PermissionApplicationService(repo, authzService, permissionService)
     # Act, Assert
     with pytest.raises(PermissionAlreadyExistException):
         permission = appService.createPermission(id='1', name=name, token=token)
@@ -121,7 +128,8 @@ def test_get_permission_by_id_when_permission_exists():
     name = 'me'
     permission = Permission(id='1234', name=name)
     repo.permissionById = Mock(return_value=permission)
-    appService = PermissionApplicationService(repo, authzService)
+    permissionService = PermissionService(permissionRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = PermissionApplicationService(repo, authzService, permissionService)
     # Act
     appService.permissionById(id='1234', token=token)
     # Assert

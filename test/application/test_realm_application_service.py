@@ -8,8 +8,9 @@ from src.application.RealmApplicationService import RealmApplicationService
 from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
+from src.domain_model.realm.RealmService import RealmService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.realm.Realm import Realm
 from src.domain_model.realm.RealmRepository import RealmRepository
@@ -21,7 +22,7 @@ authzService = None
 def setup_function():
     global token
     global authzService
-    token = TokenService.generateToken({'role': ['super_admin']})
+    token = TokenService.generateToken({'id': '11223344', 'name': 'user_1', 'roles': [{'id': '1234', 'name': 'super_admin'}]})
 
     authzRepoMock = Mock(spec=AuthorizationRepository)
     policyRepoMock = Mock(spec=PolicyRepository)
@@ -37,7 +38,8 @@ def test_create_realm_object_when_realm_already_exist():
     repo = Mock(spec=RealmRepository)
     name = 'me'
     repo.realmByName = Mock(side_effect=RealmAlreadyExistException)
-    appService = RealmApplicationService(repo, authzService)
+    realmService = RealmService(realmRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = RealmApplicationService(repo, authzService, realmService)
     # Act, Assert
     with pytest.raises(RealmAlreadyExistException):
         realm = appService.createRealm(name=name, objectOnly=True, token=token)
@@ -50,7 +52,8 @@ def test_create_realm_object_when_realm_does_not_exist():
     repo = Mock(spec=RealmRepository)
     name = 'me'
     repo.realmByName = Mock(side_effect=RealmDoesNotExistException)
-    appService = RealmApplicationService(repo, authzService)
+    realmService = RealmService(realmRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = RealmApplicationService(repo, authzService, realmService)
     # Act
     realm = appService.createRealm(name=name, objectOnly=True, token=token)
     # Assert
@@ -67,7 +70,8 @@ def test_create_realm_with_event_publishing_when_realm_does_not_exist():
     name = 'me'
     repo.realmByName = Mock(side_effect=RealmDoesNotExistException)
     repo.createRealm = Mock(spec=RealmRepository.createRealm)
-    appService = RealmApplicationService(repo, authzService)
+    realmService = RealmService(realmRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = RealmApplicationService(repo, authzService, realmService)
     # Act
     appService.createRealm(id=id, name=name, token=token)
     # Assert
@@ -82,7 +86,8 @@ def test_get_realm_by_name_when_realm_exists():
     name = 'me'
     realm = Realm(name=name)
     repo.realmByName = Mock(return_value=realm)
-    appService = RealmApplicationService(repo, authzService)
+    realmService = RealmService(realmRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = RealmApplicationService(repo, authzService, realmService)
     # Act
     appService.realmByName(name=name, token=token)
     # Assert
@@ -96,7 +101,8 @@ def test_create_object_only_raise_exception_when_realm_exists():
     name = 'me'
     realm = Realm(name=name)
     repo.realmByName = Mock(return_value=realm)
-    appService = RealmApplicationService(repo, authzService)
+    realmService = RealmService(realmRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = RealmApplicationService(repo, authzService, realmService)
     # Act, Assert
     with pytest.raises(RealmAlreadyExistException):
         realm = appService.createRealm(name=name, objectOnly=True, token=token)
@@ -109,7 +115,8 @@ def test_create_realm_raise_exception_when_realm_exists():
     name = 'me'
     realm = Realm(name=name)
     repo.realmByName = Mock(return_value=realm)
-    appService = RealmApplicationService(repo, authzService)
+    realmService = RealmService(realmRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = RealmApplicationService(repo, authzService, realmService)
     # Act, Assert
     with pytest.raises(RealmAlreadyExistException):
         realm = appService.createRealm(id='1', name=name, token=token)
@@ -121,7 +128,8 @@ def test_get_realm_by_id_when_realm_exists():
     name = 'me'
     realm = Realm(id='1234', name=name)
     repo.realmById = Mock(return_value=realm)
-    appService = RealmApplicationService(repo, authzService)
+    realmService = RealmService(realmRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = RealmApplicationService(repo, authzService, realmService)
     # Act
     appService.realmById(id='1234', token=token)
     # Assert

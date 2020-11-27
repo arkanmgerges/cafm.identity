@@ -9,7 +9,7 @@ from src.domain_model.authorization.AuthorizationRepository import Authorization
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.token.TokenService import TokenService
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
@@ -21,7 +21,7 @@ authzService = None
 def setup_function():
     global token
     global authzService
-    token = TokenService.generateToken({'role': ['super_admin']})
+    token = TokenService.generateToken({'id': '11223344', 'name': 'user_1', 'roles': [{'id': '1234', 'name': 'super_admin'}]})
 
     authzRepoMock = Mock(spec=AuthorizationRepository)
     policyRepoMock = Mock(spec=PolicyRepository)
