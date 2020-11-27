@@ -2,14 +2,14 @@
 
 This is a microservice that is responsible for managing the identity and access.
 
-### Local Development  
+### Local Development
 ##### Requirements:  
 **1 - All infra service are up and running**  
 If you don't have them already running then you can do it by following this [link](https://github.com/DigitalMOB2/cafm.infra)  
 **2 - Install Pipenv**  
 You can run `pip install pipenv` in order to install Pipenv
 
-##### Running this microservice
+##### Running the services (without docker)
 **1 - Set up the env vars**  
 Make a copy of .env.docker-compose and rename it to .env, then set up the ports for the following
 based on the ports of the infrastructure services that you got from [CAFM.Infra Repo](https://github.com/DigitalMOB2/cafm.infra):  
@@ -78,3 +78,14 @@ hupper python -m src.port_adapter.messaging.listener.identity_command.IdentityCo
 pipenv shell
 python -m src.port_adapter.api.grpc.server
 ```
+  
+##### Running the services (with docker compose)
+**1 - Modify the environment variables**  
+In the `.pkg/local/docker/Dockerfile` use the variables that you get from the infra (see [here](https://github.com/DigitalMOB2/cafm.infra))
+  
+**2 - Build the image and run the services**  
+Run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-api up` from the root of this repository
+
+**3 - Stop/Run the services**  
+To stop the services, run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-api stop`  
+To start the services, run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-api start`
