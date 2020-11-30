@@ -23,7 +23,7 @@ class PermissionContextService:
             raise PermissionContextAlreadyExistException(id)
         except PermissionContextDoesNotExistException:
             if objectOnly:
-                return PermissionContext.createFrom(data=data)
+                return PermissionContext.createFrom(id=id, data=data)
             else:
                 permissionContext = PermissionContext.createFrom(id=id, data=data, publishEvent=True)
                 self._repo.createPermissionContext(permissionContext=permissionContext, tokenData=tokenData)

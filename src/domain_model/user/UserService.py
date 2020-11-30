@@ -14,15 +14,15 @@ class UserService:
         self._repo = userRepo
         self._policyRepo = policyRepo
 
-    def createUser(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
+    def createUser(self, id: str = '', name: str = '', password:str = '', objectOnly: bool = False, tokenData: TokenData = None):
         try:
             self._repo.userByName(name=name)
             raise UserAlreadyExistException(name)
         except UserDoesNotExistException:
             if objectOnly:
-                return User.createFrom(name=name)
+                return User.createFrom(name=name, password=password)
             else:
-                user = User.createFrom(id=id, name=name, publishEvent=True)
+                user = User.createFrom(id=id, name=name, password=password, publishEvent=True)
                 self._repo.createUser(user=user, tokenData=tokenData)
                 return user
 

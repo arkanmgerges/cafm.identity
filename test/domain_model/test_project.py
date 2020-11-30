@@ -28,7 +28,7 @@ def test_create_project_with_semantic_constructor():
 
 
 def test_that_two_objects_with_same_attributes_are_equal():
-    # Arrange
+    # Act
     object1 = Project.createFrom('1234', 'test')
     object2 = Project.createFrom('1234', 'test')
     # Assert
@@ -36,7 +36,7 @@ def test_that_two_objects_with_same_attributes_are_equal():
 
 
 def test_that_two_objects_with_different_attributes_are_not_equal():
-    # Arrange
+    # Act
     object1 = Project.createFrom('1234', 'test')
     object2 = Project.createFrom('1234', 'test2')
     # Assert

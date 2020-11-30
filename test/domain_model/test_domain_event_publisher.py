@@ -6,7 +6,7 @@ import json
 from mock import Mock
 
 from src.domain_model.event.DomainEvent import DomainEvent
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.user.UserCreated import UserCreated
 
 

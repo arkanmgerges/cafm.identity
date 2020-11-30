@@ -13,6 +13,7 @@ from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.user.User import User
 from src.domain_model.user.UserRepository import UserRepository
+from src.domain_model.user.UserService import UserService
 
 token = ''
 authzService = None
@@ -37,7 +38,8 @@ def test_create_user_object_when_user_already_exist():
     repo = Mock(spec=UserRepository)
     name = 'me'
     repo.userByName = Mock(side_effect=UserAlreadyExistException)
-    appService = UserApplicationService(repo, authzService)
+    userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserApplicationService(repo, authzService, userService)
     # Act, Assert
     with pytest.raises(UserAlreadyExistException):
         user = appService.createUser(name=name, password='1234', objectOnly=True, token=token)
@@ -50,7 +52,8 @@ def test_create_user_object_when_user_does_not_exist():
     repo = Mock(spec=UserRepository)
     name = 'me'
     repo.userByName = Mock(side_effect=UserDoesNotExistException)
-    appService = UserApplicationService(repo, authzService)
+    userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserApplicationService(repo, authzService, userService)
     # Act
     user = appService.createUser(name=name, password='1234', objectOnly=True, token=token)
     # Assert
@@ -68,7 +71,8 @@ def test_create_user_with_event_publishing_when_user_does_not_exist():
     password = 'pass'
     repo.userByName = Mock(side_effect=UserDoesNotExistException)
     repo.createUser = Mock(spec=UserRepository.createUser)
-    appService = UserApplicationService(repo, authzService)
+    userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserApplicationService(repo, authzService, userService)
     # Act
     appService.createUser(id=id, name=name, password=password, token=token)
     # Assert
@@ -84,7 +88,8 @@ def test_get_user_by_name_and_password_when_user_exists():
     password = 'pass'
     user = User(name=name, password=password)
     repo.userByNameAndPassword = Mock(return_value=user)
-    appService = UserApplicationService(repo, authzService)
+    userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserApplicationService(repo, authzService, userService)
     # Act
     appService.userByNameAndPassword(name=name, password=password)
     # Assert
@@ -98,7 +103,8 @@ def test_create_object_only_raise_exception_when_user_exists():
     name = 'me'
     user = User(id='1', name=name, password='1234')
     repo.userByName = Mock(return_value=user)
-    appService = UserApplicationService(repo, authzService)
+    userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserApplicationService(repo, authzService, userService)
     # Act, Assert
     with pytest.raises(UserAlreadyExistException):
         user = appService.createUser(name=name, password='1234', objectOnly=True, token=token)
@@ -111,7 +117,8 @@ def test_create_user_raise_exception_when_user_exists():
     name = 'me'
     user = User(id='1', name=name, password='1234')
     repo.userByName = Mock(return_value=user)
-    appService = UserApplicationService(repo, authzService)
+    userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserApplicationService(repo, authzService, userService)
     # Act, Assert
     with pytest.raises(UserAlreadyExistException):
         user = appService.createUser(id='1', name=name, password='1234', token=token)
@@ -123,7 +130,8 @@ def test_get_user_by_id_when_user_exists():
     name = 'me'
     user = User(id='1234', name=name)
     repo.userById = Mock(return_value=user)
-    appService = UserApplicationService(repo, authzService)
+    userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserApplicationService(repo, authzService, userService)
     # Act
     appService.userById(id='1234', token=token)
     # Assert

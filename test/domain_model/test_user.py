@@ -29,7 +29,7 @@ def test_create_user_with_semantic_constructor():
 
 
 def test_that_two_objects_with_same_attributes_are_equal():
-    # Arrange
+    # Act
     object1 = User.createFrom('1234', 'test')
     object2 = User.createFrom('1234', 'test')
     # Assert
@@ -37,7 +37,7 @@ def test_that_two_objects_with_same_attributes_are_equal():
 
 
 def test_that_two_objects_with_different_attributes_are_not_equal():
-    # Arrange
+    # Act
     object1 = User.createFrom('1234', 'test')
     object2 = User.createFrom('1234', 'test2')
     # Assert

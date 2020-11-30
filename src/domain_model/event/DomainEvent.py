@@ -11,7 +11,7 @@ class DomainEvent(ABC):
         self._id = id
         self._name = name
         self._occurredOn = occurredOn
-        self._data = ''
+        self._data = {}
 
     def id(self) -> str:
         """Get identity of the object
@@ -35,10 +35,10 @@ class DomainEvent(ABC):
         """
         return self._occurredOn
 
-    def data(self) -> str:
+    def data(self) -> dict:
         """Get data associated for this object (assigned by the derived classes)
 
         Returns:
-            str: Data of the event
+            dict: Data of the event
         """
         return self._data

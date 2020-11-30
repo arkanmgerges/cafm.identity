@@ -3,8 +3,8 @@
 """
 from uuid import uuid4
 
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.event.DomainEventPublisher import DomainPublishedEvents
 from src.domain_model.user_group.UserGroup import UserGroup
 
 
@@ -29,11 +29,12 @@ def test_create_by_semantic_constructor():
     # Assert
     assert isinstance(userGroup, UserGroup)
     assert userGroup.id() == id
-    assert DomainPublishedEvents.postponedEvents()[0].data()['id'] == id
+    data = DomainPublishedEvents.postponedEvents()[0].data()
+    assert data['id'] == id
 
 
 def test_that_two_objects_with_same_attributes_are_equal():
-    # Arrange
+    # Act
     object1 = UserGroup.createFrom('1234', 'test')
     object2 = UserGroup.createFrom('1234', 'test')
     # Assert
@@ -41,7 +42,7 @@ def test_that_two_objects_with_same_attributes_are_equal():
 
 
 def test_that_two_objects_with_different_attributes_are_not_equal():
-    # Arrange
+    # Act
     object1 = UserGroup.createFrom('1234', 'test')
     object2 = UserGroup.createFrom('1234', 'test2')
     # Assert

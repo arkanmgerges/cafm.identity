@@ -13,6 +13,7 @@ from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
+from src.domain_model.user_group.UserGroupService import UserGroupService
 
 token = ''
 authzService = None
@@ -37,7 +38,8 @@ def test_create_userGroup_object_when_userGroup_already_exist():
     repo = Mock(spec=UserGroupRepository)
     name = 'me'
     repo.userGroupByName = Mock(side_effect=UserGroupAlreadyExistException)
-    appService = UserGroupApplicationService(repo, authzService)
+    userGroupService = UserGroupService(userGroupRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserGroupApplicationService(repo, authzService, userGroupService)
     # Act, Assert
     with pytest.raises(UserGroupAlreadyExistException):
         userGroup = appService.createUserGroup(name=name, objectOnly=True, token=token)
@@ -50,7 +52,8 @@ def test_create_userGroup_object_when_userGroup_does_not_exist():
     repo = Mock(spec=UserGroupRepository)
     name = 'me'
     repo.userGroupByName = Mock(side_effect=UserGroupDoesNotExistException)
-    appService = UserGroupApplicationService(repo, authzService)
+    userGroupService = UserGroupService(userGroupRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserGroupApplicationService(repo, authzService, userGroupService)
     # Act
     userGroup = appService.createUserGroup(name=name, objectOnly=True, token=token)
     # Assert
@@ -67,7 +70,8 @@ def test_create_userGroup_with_event_publishing_when_userGroup_does_not_exist():
     name = 'me'
     repo.userGroupByName = Mock(side_effect=UserGroupDoesNotExistException)
     repo.createUserGroup = Mock(spec=UserGroupRepository.createUserGroup)
-    appService = UserGroupApplicationService(repo, authzService)
+    userGroupService = UserGroupService(userGroupRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserGroupApplicationService(repo, authzService, userGroupService)
     # Act
     appService.createUserGroup(id=id, name=name, token=token)
     # Assert
@@ -82,7 +86,8 @@ def test_get_userGroup_by_name_when_userGroup_exists():
     name = 'me'
     userGroup = UserGroup(name=name)
     repo.userGroupByName = Mock(return_value=userGroup)
-    appService = UserGroupApplicationService(repo, authzService)
+    userGroupService = UserGroupService(userGroupRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserGroupApplicationService(repo, authzService, userGroupService)
     # Act
     appService.userGroupByName(name=name, token=token)
     # Assert
@@ -96,7 +101,8 @@ def test_create_object_only_raise_exception_when_userGroup_exists():
     name = 'me'
     userGroup = UserGroup(name=name)
     repo.userGroupByName = Mock(return_value=userGroup)
-    appService = UserGroupApplicationService(repo, authzService)
+    userGroupService = UserGroupService(userGroupRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserGroupApplicationService(repo, authzService, userGroupService)
     # Act, Assert
     with pytest.raises(UserGroupAlreadyExistException):
         userGroup = appService.createUserGroup(name=name, objectOnly=True, token=token)
@@ -109,7 +115,8 @@ def test_create_userGroup_raise_exception_when_userGroup_exists():
     name = 'me'
     userGroup = UserGroup(name=name)
     repo.userGroupByName = Mock(return_value=userGroup)
-    appService = UserGroupApplicationService(repo, authzService)
+    userGroupService = UserGroupService(userGroupRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserGroupApplicationService(repo, authzService, userGroupService)
     # Act, Assert
     with pytest.raises(UserGroupAlreadyExistException):
         userGroup = appService.createUserGroup(id='1', name=name, token=token)
@@ -121,7 +128,8 @@ def test_get_userGroup_by_id_when_userGroup_exists():
     name = 'me'
     userGroup = UserGroup(id='1234', name=name)
     repo.userGroupById = Mock(return_value=userGroup)
-    appService = UserGroupApplicationService(repo, authzService)
+    userGroupService = UserGroupService(userGroupRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
+    appService = UserGroupApplicationService(repo, authzService, userGroupService)
     # Act
     appService.userGroupById(id='1234', token=token)
     # Assert

@@ -30,7 +30,6 @@ class PermissionContextConstant(Enum):
     ALL = '*'
 
 
-
 class PermissionContext:
     def __init__(self, id: str = None, type: str = 'permission_context', data: dict = None):
         self._id = str(uuid4()) if id is None else id
@@ -45,7 +44,7 @@ class PermissionContext:
 
     @classmethod
     def createFrom(cls, id: str = None, type: str = '', data: dict = None, publishEvent: bool = False):
-        permissionContext = PermissionContext(id=id, type = type, data=data)
+        permissionContext = PermissionContext(id=id, type=type, data=data)
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
             from src.domain_model.permission_context.PermissionContextCreated import PermissionContextCreated
@@ -83,4 +82,4 @@ class PermissionContext:
     def __eq__(self, other):
         if not isinstance(other, PermissionContext):
             raise NotImplementedError(f'other: {other} can not be compared with PermissionContext class')
-        return self.id() == other.id() and self.data() == other.data()
+        return self.id() == other.id() and self.type() == other.type() and self.data() == other.data()
