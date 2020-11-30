@@ -57,27 +57,28 @@ class IdentityCommandListener:
 
                 if msg.error():
                     if msg.error().code() == KafkaError._PARTITION_EOF:
-                        logger.info(f'[{IdentityCommandListener.run.__qualname__}] - msg reached partition eof: {msg.error()}')
+                        logger.info(f'[{IdentityCommandListener.run.__qualname__}] msg reached partition eof: {msg.error()}')
                     else:
                         logger.error(msg.error())
                 else:
                     # Proper message
                     logger.info(
-                        f'[{IdentityCommandListener.run.__qualname__}] - topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
+                        f'[{IdentityCommandListener.run.__qualname__}] topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
                     logger.info(f'value: {msg.value()}')
 
                     try:
                         msgData = msg.value()
+                        logger.debug(f'[{IdentityCommandListener.run.__qualname__}] received message data = {msgData}')
                         handledResult = self.handleCommand(name=msgData['name'], data=msgData['data'], metadata=msgData['metadata'])
                         if handledResult is None:  # Consume the offset since there is no handler for it
                             logger.info(
-                                f'[{IdentityCommandListener.run.__qualname__}] - Command handle result is None, The offset is consumed for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})')
+                                f'[{IdentityCommandListener.run.__qualname__}] Command handle result is None, The offset is consumed for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})')
                             producer.sendOffsetsToTransaction(consumer)
                             producer.commitTransaction()
                             producer.beginTransaction()
                             continue
 
-                        logger.debug(f'[{IdentityCommandListener.run.__qualname__}] - handleResult returned with: {handledResult}')
+                        logger.debug(f'[{IdentityCommandListener.run.__qualname__}] handleResult returned with: {handledResult}')
                         # If the external service name who initiated the command is cafm api service name, then
                         if msgData['externalServiceName'] == self._cafmApiServiceName:
                             # Produce to api response
@@ -90,11 +91,11 @@ class IdentityCommandListener:
 
                         # Produce the domain events
                         logger.debug(
-                            f'[{IdentityCommandListener.run.__qualname__}] - get postponed events from the event publisher')
+                            f'[{IdentityCommandListener.run.__qualname__}] get postponed events from the event publisher')
                         domainEvents = DomainPublishedEvents.postponedEvents()
                         for domainEvent in domainEvents:
                             logger.debug(
-                                f'[{IdentityCommandListener.run.__qualname__}] - produce domain event with name = {domainEvent.name()}')
+                                f'[{IdentityCommandListener.run.__qualname__}] produce domain event with name = {domainEvent.name()}')
                             producer.produce(
                                 obj=IdentityEvent(id=domainEvent.id(),
                                                   creatorServiceName=self._creatorServiceName,
@@ -104,7 +105,7 @@ class IdentityCommandListener:
                                                   occurredOn=domainEvent.occurredOn()),
                                 schema=IdentityEvent.get_schema())
 
-                        logger.debug(f'[{IdentityCommandListener.run.__qualname__}] - cleanup event publisher')
+                        logger.debug(f'[{IdentityCommandListener.run.__qualname__}] cleanup event publisher')
                         DomainPublishedEvents.cleanup()
                         # Send the consumer's position to transaction to commit
                         # them along with the transaction, committing both
@@ -131,9 +132,9 @@ class IdentityCommandListener:
 
                 # sleep(3)
         except KeyboardInterrupt:
-            logger.info(f'[{IdentityCommandListener.run.__qualname__}] - Aborted by user')
+            logger.info(f'[{IdentityCommandListener.run.__qualname__}] Aborted by user')
         except SystemExit:
-            logger.info(f'[{IdentityCommandListener.run.__qualname__}] - Shutting down the process')
+            logger.info(f'[{IdentityCommandListener.run.__qualname__}] Shutting down the process')
         finally:
             producer.abortTransaction()
             # Close down consumer to commit final offsets.

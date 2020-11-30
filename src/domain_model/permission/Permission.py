@@ -26,7 +26,7 @@ class PermissionAction(Enum):
 
 class Permission:
     def __init__(self, id: str = None, name: str = '', allowedActions: List[str] = None, deniedActions: List[str] = None):
-        self._id = str(uuid4()) if id is None else id
+        self._id = str(uuid4()) if id is None or id == '' else id
         self._name = name
         self._allowedActions = [] if allowedActions is None else allowedActions
         self._deniedActions = [] if deniedActions is None else deniedActions

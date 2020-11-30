@@ -42,7 +42,7 @@ def test_create_user_object_when_user_already_exist():
     appService = UserApplicationService(repo, authzService, userService)
     # Act, Assert
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createUser(name=name, password='1234', objectOnly=True, token=token)
+        user = appService.createUser(id='1234', name=name, password='1234', objectOnly=True, token=token)
 
 
 def test_create_user_object_when_user_does_not_exist():
@@ -107,7 +107,7 @@ def test_create_object_only_raise_exception_when_user_exists():
     appService = UserApplicationService(repo, authzService, userService)
     # Act, Assert
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createUser(name=name, password='1234', objectOnly=True, token=token)
+        user = appService.createUser(id='1234', name=name, password='1234', objectOnly=True, token=token)
 
 
 def test_create_user_raise_exception_when_user_exists():

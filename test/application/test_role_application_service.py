@@ -42,7 +42,7 @@ def test_create_role_object_when_role_already_exist():
     appService = RoleApplicationService(repo, authzService, roleService)
     # Act, Assert
     with pytest.raises(RoleAlreadyExistException):
-        role = appService.createRole(name=name, objectOnly=True, token=token)
+        role = appService.createRole(id='1234', name=name, objectOnly=True, token=token)
 
 
 def test_create_role_object_when_role_does_not_exist():
@@ -105,7 +105,7 @@ def test_create_object_only_raise_exception_when_role_exists():
     appService = RoleApplicationService(repo, authzService, roleService)
     # Act, Assert
     with pytest.raises(RoleAlreadyExistException):
-        role = appService.createRole(name=name, objectOnly=True, token=token)
+        role = appService.createRole(id='1234', name=name, objectOnly=True, token=token)
 
 
 def test_create_role_raise_exception_when_role_exists():

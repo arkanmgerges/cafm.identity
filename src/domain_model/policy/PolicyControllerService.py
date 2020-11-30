@@ -28,17 +28,6 @@ class PolicyControllerService:
     def __init__(self, policyRepo: PolicyRepository):
         self._policyRepo = policyRepo
 
-    def isAllowed(self, token: str, action: str = '', permissionContext: str = '', resourceId: str = None) -> bool:
-        claims = TokenService.claimsFromToken(token=token)
-        roles = claims['role']
-        for role in roles:
-            if role['name'] == 'super_admin':
-                return True
-
-            tree = self._policyRepo.allTreeByRoleName(role)
-
-        return False
-
     def provideAccessRoleToResource(self, role: Role, resource: Resource):
         if resource.type() in [PermissionContextConstant.PROJECT.value, PermissionContextConstant.REALM.value,
                                PermissionContextConstant.OU.value]:

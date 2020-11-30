@@ -42,7 +42,7 @@ def test_create_project_object_when_project_already_exist():
     appService = ProjectApplicationService(repo, authzService, projectService)
     # Act, Assert
     with pytest.raises(ProjectAlreadyExistException):
-        project = appService.createProject(name=name, objectOnly=True, token=token)
+        project = appService.createProject(id='1234', name=name, objectOnly=True, token=token)
 
 
 def test_create_project_object_when_project_does_not_exist():
@@ -105,7 +105,7 @@ def test_create_object_only_raise_exception_when_role_exists():
     appService = ProjectApplicationService(repo, authzService, projectService)
     # Act, Assert
     with pytest.raises(ProjectAlreadyExistException):
-        role = appService.createProject(name=name, objectOnly=True, token=token)
+        role = appService.createProject(id='1234', name=name, objectOnly=True, token=token)
 
 
 def test_create_role_raise_exception_when_role_exists():

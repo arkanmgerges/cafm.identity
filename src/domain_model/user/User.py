@@ -11,7 +11,7 @@ from src.resource.logging.logger import logger
 
 class User(Resource):
     def __init__(self, id: str = None, name='', password=''):
-        anId = str(uuid4()) if id is None else id
+        anId = str(uuid4()) if id is None or id == '' else id
         super().__init__(id=anId, type='user')
         self._name = name
         self._password = password

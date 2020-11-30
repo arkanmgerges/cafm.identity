@@ -20,6 +20,8 @@ class OuService:
 
     def createOu(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
         try:
+            if id == '':
+                raise OuDoesNotExistException()
             self._repo.ouByName(name=name)
             raise OuAlreadyExistException(name)
         except OuDoesNotExistException:

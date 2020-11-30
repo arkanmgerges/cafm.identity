@@ -47,9 +47,7 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
                 let res = db.permission_context.byExample({id: params['permission_context']['id'], type: params['permission_context']['type']}).toArray();
                 if (res.length == 0) {
                     p = params['permission_context']
-                    res = db.permission_context.insert({id: p['id'], name: p['name'], type: p['type']});
-                    fromDocId = res['_id'];
-                    p = params['permission_context']; p['fromId'] = fromDocId; p['fromType'] = params['permission_context']['type'];
+                    res = db.permission_context.insert({id: p['id'], data: p['data'], type: p['type']});
                 } else {
                     let err = new Error(`Could not create permission context, ${params['permission_context']['id']} is already exist`);
                     err.errorNum = params['OBJECT_ALREADY_EXIST_CODE'];
@@ -62,7 +60,7 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
                          "type": permissionContext.type()},
             'OBJECT_ALREADY_EXIST_CODE': CodeExceptionConstant.OBJECT_ALREADY_EXIST.value
         }
-        self._db.transaction(collections={'write': ['permission_context', 'owned_by']}, action=actionFunction, params=params)
+        self._db.transaction(collections={'write': ['permission_context']}, action=actionFunction, params=params)
 
     def updatePermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData) -> None:
         oldObject = self.permissionContextById(permissionContext.id())

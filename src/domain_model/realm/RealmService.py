@@ -16,6 +16,8 @@ class RealmService:
 
     def createRealm(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
         try:
+            if id == '':
+                raise RealmDoesNotExistException()
             self._repo.realmByName(name=name)
             raise RealmAlreadyExistException(name)
         except RealmDoesNotExistException:

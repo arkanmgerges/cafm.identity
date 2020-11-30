@@ -30,7 +30,7 @@ class UpdatePermissionContextHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.updatePermissionContext(id=dataDict['id'], name=dataDict['name'], token=metadataDict['token'])
+        appService.updatePermissionContext(id=dataDict['id'], type=dataDict['type'], data=dataDict['data'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'id': dataDict['id'], 'name': dataDict['name']},
                 'metadata': metadataDict}

@@ -16,6 +16,8 @@ class UserService:
 
     def createUser(self, id: str = '', name: str = '', password:str = '', objectOnly: bool = False, tokenData: TokenData = None):
         try:
+            if id == '':
+                raise UserDoesNotExistException()
             self._repo.userByName(name=name)
             raise UserAlreadyExistException(name)
         except UserDoesNotExistException:

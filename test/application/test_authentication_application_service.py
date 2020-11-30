@@ -10,7 +10,7 @@ from src.domain_model.authentication.AuthenticationService import Authentication
 
 def test_authenticate_user_when_exist():
     authRepo = Mock(spec=AuthenticationRepository)
-    authRepo.authenticateUserByNameAndPassword = Mock(return_value={'id': '1234', 'name': 'john', 'role': ['admin']})
+    authRepo.authenticateUserByNameAndPassword = Mock(return_value={'id': '1234', 'name': 'john', 'roles': [{'id': '5678', 'name': 'admin'}]})
     authAppService = AuthenticationApplicationService(AuthenticationService(authRepo))
 
     token = authAppService.authenticateUserByNameAndPassword(name='john', password='1234')
@@ -22,7 +22,7 @@ def test_authenticate_user_when_exist():
 
 def test_logout_user_when_exist():
     authRepo = Mock(spec=AuthenticationRepository)
-    authRepo.authenticateUserByNameAndPassword = Mock(return_value={'id': '1234', 'name': 'john', 'role': ['admin']})
+    authRepo.authenticateUserByNameAndPassword = Mock(return_value={'id': '1234', 'name': 'john', 'roles': [{'id': '5678', 'name': 'admin'}]})
     authAppService = AuthenticationApplicationService(AuthenticationService(authRepo))
 
     token = authAppService.authenticateUserByNameAndPassword(name='john', password='1234')

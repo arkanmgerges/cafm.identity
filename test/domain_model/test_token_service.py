@@ -8,7 +8,7 @@ from src.domain_model.token.TokenService import TokenService
 
 def test_generate_and_validate_token():
     # Arrange
-    payload = {'id': '1234', 'name': 'john', 'role': ['super_admin']}
+    payload = {'id': '1234', 'name': 'john', 'roles': [{'id': '5678', 'name': 'admin'}]}
     # Act
     token = TokenService.generateToken(payload)
     tokenData: TokenData = TokenService.tokenDataFromToken(token=token)

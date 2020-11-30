@@ -5,7 +5,6 @@ from concurrent import futures
 import grpc
 
 from src.port_adapter.api.grpc.listener.AuthAppServiceListener import AuthAppServiceListener
-from src.port_adapter.api.grpc.listener.AuthzAppServiceListener import AuthzAppServiceListener
 from src.port_adapter.api.grpc.listener.OuAppServiceListener import OuAppServiceListener
 from src.port_adapter.api.grpc.listener.PermissionAppServiceListener import PermissionAppServiceListener
 from src.port_adapter.api.grpc.listener.ProjectAppServiceListener import ProjectAppServiceListener
@@ -42,7 +41,6 @@ def serve():
     add_PermissionAppServiceServicer_to_server(PermissionAppServiceListener(), server)
     add_OuAppServiceServicer_to_server(OuAppServiceListener(), server)
     add_AuthAppServiceServicer_to_server(AuthAppServiceListener(), server)
-    add_AuthzAppServiceServicer_to_server(AuthzAppServiceListener(), server)
     port = "[::]:9999"
     server.add_insecure_port(port)
     logger.info(f'Identity server started/restarted on port {port}')

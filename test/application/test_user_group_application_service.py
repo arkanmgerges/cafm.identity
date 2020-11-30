@@ -42,7 +42,7 @@ def test_create_userGroup_object_when_userGroup_already_exist():
     appService = UserGroupApplicationService(repo, authzService, userGroupService)
     # Act, Assert
     with pytest.raises(UserGroupAlreadyExistException):
-        userGroup = appService.createUserGroup(name=name, objectOnly=True, token=token)
+        userGroup = appService.createUserGroup(id='1234', name=name, objectOnly=True, token=token)
 
 
 def test_create_userGroup_object_when_userGroup_does_not_exist():
@@ -105,7 +105,7 @@ def test_create_object_only_raise_exception_when_userGroup_exists():
     appService = UserGroupApplicationService(repo, authzService, userGroupService)
     # Act, Assert
     with pytest.raises(UserGroupAlreadyExistException):
-        userGroup = appService.createUserGroup(name=name, objectOnly=True, token=token)
+        userGroup = appService.createUserGroup(id='1234', name=name, objectOnly=True, token=token)
 
 
 def test_create_userGroup_raise_exception_when_userGroup_exists():

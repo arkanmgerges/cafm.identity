@@ -31,7 +31,7 @@ class CreatePermissionContextHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        obj = appService.createPermissionContext(name=dataDict['name'], objectOnly=True, token=metadataDict['token'])
+        obj = appService.createPermissionContext(type=dataDict['type'], data=dataDict['data'], objectOnly=True, token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
-                'data': {'id': obj.id(), 'name': obj.name()},
+                'data': {'id': obj.id(), 'type': obj.type(), 'data': obj.data()},
                 'metadata': metadataDict}

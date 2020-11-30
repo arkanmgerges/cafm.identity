@@ -42,7 +42,7 @@ def test_create_realm_object_when_realm_already_exist():
     appService = RealmApplicationService(repo, authzService, realmService)
     # Act, Assert
     with pytest.raises(RealmAlreadyExistException):
-        realm = appService.createRealm(name=name, objectOnly=True, token=token)
+        realm = appService.createRealm(id='1234', name=name, objectOnly=True, token=token)
 
 
 def test_create_realm_object_when_realm_does_not_exist():
@@ -105,7 +105,7 @@ def test_create_object_only_raise_exception_when_realm_exists():
     appService = RealmApplicationService(repo, authzService, realmService)
     # Act, Assert
     with pytest.raises(RealmAlreadyExistException):
-        realm = appService.createRealm(name=name, objectOnly=True, token=token)
+        realm = appService.createRealm(id='1234', name=name, objectOnly=True, token=token)
 
 
 def test_create_realm_raise_exception_when_realm_exists():

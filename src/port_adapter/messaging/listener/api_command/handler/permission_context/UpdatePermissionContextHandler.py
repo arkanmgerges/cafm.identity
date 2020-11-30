@@ -33,5 +33,5 @@ class UpdatePermissionContextHandler(Handler):
 
         # Put the command into the messaging system, in order to be processed later
         return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
-                'data': {'id': dataDict['id'], 'name': dataDict['name']},
+                'data': {'id': dataDict['id'], 'type': dataDict['type'], 'data': dataDict['data']},
                 'metadata': metadataDict}

@@ -19,6 +19,8 @@ class PermissionService:
     def createPermission(self, id: str = '', name: str = '', allowedActions: List[str] = None,
                          deniedActions: List[str] = None, objectOnly: bool = False, tokenData: TokenData = None):
         try:
+            if id == '':
+                raise PermissionDoesNotExistException()
             self._repo.permissionByName(name=name)
             raise PermissionAlreadyExistException(name)
         except PermissionDoesNotExistException:

@@ -13,7 +13,7 @@ from src.domain_model.resource.exception.UserDoesNotExistException import UserDo
 def test_authenticate_user_when_exist():
     # Arrange
     authRepo = Mock(spec=AuthenticationRepository)
-    authRepo.authenticateUserByNameAndPassword = Mock(return_value={'id': '1234', 'name': 'john', 'role': ['admin']})
+    authRepo.authenticateUserByNameAndPassword = Mock(return_value={'id': '1234', 'name': 'john', 'roles': [{'id': '5678', 'name': 'admin'}]})
     authAppService = AuthenticationApplicationService(AuthenticationService(authRepo))
     # Act
     token = authAppService.authenticateUserByNameAndPassword(name='john', password='1234')

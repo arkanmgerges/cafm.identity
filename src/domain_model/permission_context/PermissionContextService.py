@@ -16,16 +16,18 @@ class PermissionContextService:
         self._repo = permissionContextRepo
         self._policyRepo = policyRepo
 
-    def createPermissionContext(self, id: str = '', data: dict = None, objectOnly: bool = False,
+    def createPermissionContext(self, id: str = '', type: str = '', data: dict = None, objectOnly: bool = False,
                                 tokenData: TokenData = None):
         try:
+            if id == '':
+                raise PermissionContextDoesNotExistException()
             self._repo.permissionContextById(id=id)
             raise PermissionContextAlreadyExistException(id)
         except PermissionContextDoesNotExistException:
             if objectOnly:
-                return PermissionContext.createFrom(id=id, data=data)
+                return PermissionContext.createFrom(id=id, type=type, data=data)
             else:
-                permissionContext = PermissionContext.createFrom(id=id, data=data, publishEvent=True)
+                permissionContext = PermissionContext.createFrom(id=id, type=type, data=data, publishEvent=True)
                 self._repo.createPermissionContext(permissionContext=permissionContext, tokenData=tokenData)
                 return permissionContext
 

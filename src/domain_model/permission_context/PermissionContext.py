@@ -32,7 +32,7 @@ class PermissionContextConstant(Enum):
 
 class PermissionContext:
     def __init__(self, id: str = None, type: str = 'permission_context', data: dict = None):
-        self._id = str(uuid4()) if id is None else id
+        self._id = str(uuid4()) if id is None or id == '' else id
         self._type = type
         self._data = data if data is not None else {}
 

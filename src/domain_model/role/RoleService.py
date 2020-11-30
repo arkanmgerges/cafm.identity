@@ -18,6 +18,8 @@ class RoleService:
 
     def createRole(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
         try:
+            if id == '':
+                raise RoleDoesNotExistException()
             self._repo.roleByName(name=name)
             raise RoleAlreadyExistException(name)
         except RoleDoesNotExistException:

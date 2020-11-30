@@ -55,28 +55,29 @@ class ApiCommandListener:
                 if msg.error():
                     if msg.error().code() == KafkaError._PARTITION_EOF:
                         logger.info(
-                            f'[{ApiCommandListener.run.__qualname__}] - msg reached partition eof: {msg.error()}')
+                            f'[{ApiCommandListener.run.__qualname__}] msg reached partition eof: {msg.error()}')
                     else:
                         logger.error(msg.error())
                 else:
                     # Proper message
                     logger.info(
-                        f'[{ApiCommandListener.run.__qualname__}] - topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
+                        f'[{ApiCommandListener.run.__qualname__}] topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
                     logger.info(f'value: {msg.value()}')
 
                     try:
                         msgData = msg.value()
+                        logger.debug(f'[{ApiCommandListener.run.__qualname__}] received message data = {msgData}')
                         handledResult = self.handleCommand(name=msgData['name'], data=msgData['data'], metadata=msgData['metadata'])
                         if handledResult is None:  # Consume the offset since there is no handler for it
                             logger.info(
-                                f'[{ApiCommandListener.run.__qualname__}] - Consume the offset for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})')
+                                f'[{ApiCommandListener.run.__qualname__}] Consume the offset for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})')
                             producer.sendOffsetsToTransaction(consumer)
                             producer.commitTransaction()
                             producer.beginTransaction()
                             continue
 
                         logger.debug(
-                            f'[{ApiCommandListener.run.__qualname__}] - handleResult returned with: {handledResult}')
+                            f'[{ApiCommandListener.run.__qualname__}] handleResult returned with: {handledResult}')
                         producer.produce(
                             obj=IdentityCommand(id=msgData['id'],
                                                 creatorServiceName=self._creatorServiceName,
@@ -116,9 +117,9 @@ class ApiCommandListener:
 
                 # sleep(3)
         except KeyboardInterrupt:
-            logger.info(f'[{ApiCommandListener.run.__qualname__}] - Aborted by user')
+            logger.info(f'[{ApiCommandListener.run.__qualname__}] Aborted by user')
         except SystemExit:
-            logger.info(f'[{ApiCommandListener.run.__qualname__}] - Shutting down the process')
+            logger.info(f'[{ApiCommandListener.run.__qualname__}] Shutting down the process')
         finally:
             producer.abortTransaction()
             # Close down consumer to commit final offsets.

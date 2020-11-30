@@ -16,6 +16,8 @@ class ProjectService:
 
     def createProject(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
         try:
+            if id == '':
+                raise ProjectDoesNotExistException()
             self._repo.projectByName(name=name)
             raise ProjectAlreadyExistException(name)
         except ProjectDoesNotExistException:

@@ -15,6 +15,7 @@ from src.domain_model.policy.request_context_data.PermissionContextDataRequest i
 from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest import ResourceTypeContextDataRequest
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.logger import logger
 
 
 class PermissionContextApplicationService:
@@ -24,7 +25,7 @@ class PermissionContextApplicationService:
         self._authzService: AuthorizationService = authzService
         self._permissionContextService = permissionContextService
 
-    def createPermissionContext(self, id: str = '', data: dict = None, objectOnly: bool = False, token: str = ''):
+    def createPermissionContext(self, id: str = '', type: str = '', data: dict = None, objectOnly: bool = False, token: str = ''):
         data = {} if data is None else data
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -34,10 +35,10 @@ class PermissionContextApplicationService:
                                         requestedContextData=ResourceTypeContextDataRequest(
                                             resourceType=PermissionContextConstant.PERMISSION_CONTEXT.value),
                                         tokenData=tokenData)
-        return self._permissionContextService.createPermissionContext(id=id, data=data, objectOnly=objectOnly,
+        return self._permissionContextService.createPermissionContext(id=id, type=type, data=data, objectOnly=objectOnly,
                                                                       tokenData=tokenData)
 
-    def updatePermissionContext(self, id: str, data: dict = None, token: str = ''):
+    def updatePermissionContext(self, id: str, type: str = '', data: dict = None, token: str = ''):
         data = {} if data is None else data
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -52,7 +53,7 @@ class PermissionContextApplicationService:
                                             objType=RequestedAuthzObjectEnum.PERMISSION_CONTEXT, obj=resource),
                                         tokenData=tokenData)
         self._permissionContextService.updatePermissionContext(oldObject=resource,
-                                                               newObject=PermissionContext.createFrom(id=id, data=data),
+                                                               newObject=PermissionContext.createFrom(id=id, type=type, data=data),
                                                                tokenData=tokenData)
 
     def deletePermissionContext(self, id: str, token: str = ''):

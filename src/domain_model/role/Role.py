@@ -15,7 +15,7 @@ from uuid import uuid4
 
 class Role(Resource):
     def __init__(self, id: str = None, name=''):
-        anId = str(uuid4()) if id is None else id
+        anId = str(uuid4()) if id is None or id == '' else id
         super().__init__(id=anId, type='role')
         self._name = name
 

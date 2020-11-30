@@ -16,6 +16,8 @@ class UserGroupService:
 
     def createUserGroup(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
         try:
+            if id == '':
+                raise UserGroupDoesNotExistException()
             self._repo.userGroupByName(name=name)
             raise UserGroupAlreadyExistException(name)
         except UserGroupDoesNotExistException:

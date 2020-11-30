@@ -48,3 +48,12 @@ def test_that_inserting_data_and_retrieving_an_item_from_it():
     assert object1.data()['item1'] == 'value1'
     assert object1.data()['item2']['sub-item2'] == 'value1-2'
 
+
+def test_create_object_without_id_and_verify_that_the_created_object_has_id():
+    # Act
+    object1 = PermissionContext.createFrom(type=PermissionContextConstant.RESOURCE_INSTANCE.value,
+                                           data={})
+    # Assert
+    assert object1.id() is not None
+    assert object1.id() != ''
+    assert isinstance(object1.id(), str)
