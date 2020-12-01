@@ -20,6 +20,7 @@ from src.domain_model.role.Role import Role
 from src.domain_model.role.RoleRepository import RoleRepository
 from src.domain_model.token.TokenData import TokenData
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -38,6 +39,7 @@ class RoleRepositoryImpl(RoleRepository):
             logger.warn(f'[{RoleRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(f'Could not connect to the db, message: {e}')
 
+    @debugLogger
     def createRole(self, role: Role, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -91,6 +93,7 @@ class RoleRepositoryImpl(RoleRepository):
         }
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
+    @debugLogger
     def updateRole(self, role: Role, tokenData: TokenData) -> None:
         oldObject = self.roleById(role.id())
         if oldObject == role:
@@ -116,6 +119,7 @@ class RoleRepositoryImpl(RoleRepository):
                 f'[{RoleRepositoryImpl.updateRole.__qualname__}] The object role: {role} could not be updated in the database')
             raise ObjectCouldNotBeUpdatedException(f'role: {role}')
 
+    @debugLogger
     def deleteRole(self, role: Role, tokenData: TokenData):
         try:
             actionFunction = '''
@@ -149,6 +153,7 @@ class RoleRepositoryImpl(RoleRepository):
                 f'[{RoleRepositoryImpl.deleteRole.__qualname__}] Object could not be found exception for role id: {role.id()}')
             raise ObjectCouldNotBeDeletedException(f'role id: {role.id()}')
 
+    @debugLogger
     def roleByName(self, name: str) -> Role:
         aql = '''
             FOR d IN resource
@@ -165,6 +170,7 @@ class RoleRepositoryImpl(RoleRepository):
 
         return Role.createFrom(id=result[0]['id'], name=result[0]['name'])
 
+    @debugLogger
     def roleById(self, id: str) -> Role:
         aql = '''
             FOR d IN resource
@@ -181,6 +187,7 @@ class RoleRepositoryImpl(RoleRepository):
 
         return Role.createFrom(id=result[0]['id'], name=result[0]['name'])
 
+    @debugLogger
     def roles(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
               resultSize: int = 100,
               order: List[dict] = None) -> dict:
@@ -201,6 +208,7 @@ class RoleRepositoryImpl(RoleRepository):
         return {"items": [Role.createFrom(id=x['id'], name=x['name']) for x in items],
                 "itemCount": itemCount}
 
+    @debugLogger
     def rolesTrees(self, tokenData: TokenData, roleAccessPermissionDataList: List[RoleAccessPermissionData]) -> List[
         RoleAccessPermissionData]:
         logger.debug(
@@ -211,6 +219,7 @@ class RoleRepositoryImpl(RoleRepository):
             return []
         return result
 
+    @debugLogger
     def roleTree(self, tokenData: TokenData, roleId: str,
                  roleAccessPermissionData: List[RoleAccessPermissionData]) -> RoleAccessPermissionData:
         logger.debug(

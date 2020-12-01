@@ -7,6 +7,7 @@ from src.domain_model.project.ProjectRepository import ProjectRepository
 from src.domain_model.resource.exception.ProjectAlreadyExistException import ProjectAlreadyExistException
 from src.domain_model.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
 from src.domain_model.token.TokenData import TokenData
+from src.resource.logging.decorator import debugLogger
 
 
 class ProjectService:
@@ -14,6 +15,7 @@ class ProjectService:
         self._repo = projectRepo
         self._policyRepo = policyRepo
 
+    @debugLogger
     def createProject(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
         try:
             if id == '':
@@ -28,10 +30,12 @@ class ProjectService:
                 self._repo.createProject(project=project, tokenData=tokenData)
                 return project
 
+    @debugLogger
     def deleteProject(self, project: Project, tokenData: TokenData = None):
         self._repo.deleteProject(project, tokenData=tokenData)
         project.publishDelete()
 
+    @debugLogger
     def updateProject(self, oldObject: Project, newObject: Project, tokenData: TokenData = None):
         self._repo.updateProject(newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)

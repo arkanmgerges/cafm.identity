@@ -15,6 +15,7 @@ from src.domain_model.realm.RealmRepository import RealmRepository
 from src.domain_model.realm.RealmService import RealmService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.decorator import debugLogger
 
 
 class RealmApplicationService:
@@ -24,6 +25,7 @@ class RealmApplicationService:
         self._authzService: AuthorizationService = authzService
         self._realmService = realmService
 
+    @debugLogger
     def createRealm(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -34,6 +36,7 @@ class RealmApplicationService:
                                         tokenData=tokenData)
         return self._realmService.createRealm(id=id, name=name, objectOnly=objectOnly, tokenData=tokenData)
 
+    @debugLogger
     def updateRealm(self, id: str, name: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -48,6 +51,7 @@ class RealmApplicationService:
         self._realmService.updateRealm(oldObject=resource,
                                        newObject=Realm.createFrom(id=id, name=name), tokenData=tokenData)
 
+    @debugLogger
     def deleteRealm(self, id: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -61,6 +65,7 @@ class RealmApplicationService:
                                         tokenData=tokenData)
         self._realmService.deleteRealm(realm=resource, tokenData=tokenData)
 
+    @debugLogger
     def realmByName(self, name: str, token: str = ''):
         resource =  self._realmRepository.realmByName(name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -72,6 +77,7 @@ class RealmApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
 
+    @debugLogger
     def realmById(self, id: str, token: str = ''):
         resource = self._realmRepository.realmById(id=id)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -83,6 +89,7 @@ class RealmApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
 
+    @debugLogger
     def realms(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                order: List[dict] = None) -> dict:
         tokenData = TokenService.tokenDataFromToken(token=token)

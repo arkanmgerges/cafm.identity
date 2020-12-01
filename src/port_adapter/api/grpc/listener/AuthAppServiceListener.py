@@ -9,6 +9,7 @@ import src.port_adapter.AppDi as AppDi
 from src.application.AuthenticationApplicationService import AuthenticationApplicationService
 from src.domain_model.resource.exception.InvalidCredentialsException import InvalidCredentialsException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.auth_app_service_pb2 import AuthAppService_authenticateUserByNameAndPasswordResponse, \
     AuthAppService_isAuthenticatedResponse, AuthAppService_logoutResponse
@@ -25,6 +26,7 @@ class AuthAppServiceListener(AuthAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
+    @debugLogger
     def authenticateUserByNameAndPassword(self, request, context):
         try:
             # logger.debug(
@@ -74,6 +76,7 @@ class AuthAppServiceListener(AuthAppServiceServicer):
     #             context.set_details(e)
     #             return AuthAppService_isAuthenticatedResponse()
 
+    @debugLogger
     def isAuthenticated(self, request, context):
         try:
             authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
@@ -87,6 +90,7 @@ class AuthAppServiceListener(AuthAppServiceServicer):
             context.set_details(e)
             return AuthAppService_isAuthenticatedResponse()
 
+    @debugLogger
     def logout(self, request, context):
         try:
             authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)

@@ -15,6 +15,7 @@ from src.domain_model.policy.request_context_data.PermissionContextDataRequest i
 from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest import ResourceTypeContextDataRequest
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -25,6 +26,7 @@ class PermissionContextApplicationService:
         self._authzService: AuthorizationService = authzService
         self._permissionContextService = permissionContextService
 
+    @debugLogger
     def createPermissionContext(self, id: str = '', type: str = '', data: dict = None, objectOnly: bool = False, token: str = ''):
         data = {} if data is None else data
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -38,6 +40,7 @@ class PermissionContextApplicationService:
         return self._permissionContextService.createPermissionContext(id=id, type=type, data=data, objectOnly=objectOnly,
                                                                       tokenData=tokenData)
 
+    @debugLogger
     def updatePermissionContext(self, id: str, type: str = '', data: dict = None, token: str = ''):
         data = {} if data is None else data
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -56,6 +59,7 @@ class PermissionContextApplicationService:
                                                                newObject=PermissionContext.createFrom(id=id, type=type, data=data),
                                                                tokenData=tokenData)
 
+    @debugLogger
     def deletePermissionContext(self, id: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -71,6 +75,7 @@ class PermissionContextApplicationService:
                                         tokenData=tokenData)
         self._permissionContextService.deletePermissionContext(permissionContext=resource, tokenData=tokenData)
 
+    @debugLogger
     def permissionContextById(self, id: str, token: str = ''):
         permissionContext = self._permissionContextRepository.permissionContextById(id=id)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -82,6 +87,7 @@ class PermissionContextApplicationService:
                                         tokenData=tokenData)
         return permissionContext
 
+    @debugLogger
     def permissionContexts(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                            order: List[dict] = None) -> dict:
         tokenData = TokenService.tokenDataFromToken(token=token)

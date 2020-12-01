@@ -10,6 +10,7 @@ from pyArango.query import AQLQuery
 
 from src.domain_model.authentication.AuthenticationRepository import AuthenticationRepository
 from src.domain_model.resource.exception.InvalidCredentialsException import InvalidCredentialsException
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -35,6 +36,7 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
             raise Exception(
                 f'[{AuthenticationRepositoryImpl.__init__.__qualname__}] Could not connect to the redis, message: {e}')
 
+    @debugLogger
     def authenticateUserByNameAndPassword(self, name: str, password: str) -> dict:
         logger.debug(
             f'[{AuthenticationRepositoryImpl.authenticateUserByNameAndPassword.__qualname__}] - with name: {name}')
@@ -65,14 +67,18 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
         result = result[0]
         return {'id': result['id'], 'name': result['name'], 'roles': result['roles']}
 
+    @debugLogger
     def persistToken(self, token: str, ttl: int = 300) -> None:
         self._cache.setex(f'{self._cacheSessionKeyPrefix}{token}', ttl, token)
 
+    @debugLogger
     def refreshToken(self, token: str, ttl: int = 300) -> None:
         self._cache.setex(f'{self._cacheSessionKeyPrefix}{token}', ttl, token)
 
+    @debugLogger
     def tokenExists(self, token: str) -> bool:
         return self._cache.exists(f'{self._cacheSessionKeyPrefix}{token}') == 1
 
+    @debugLogger
     def deleteToken(self, token: str) -> None:
         return self._cache.delete(f'{self._cacheSessionKeyPrefix}{token}')

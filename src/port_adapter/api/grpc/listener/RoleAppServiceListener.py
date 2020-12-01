@@ -15,6 +15,7 @@ from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDo
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.role.Role import Role
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.role_app_service_pb2 import RoleAppService_roleByNameResponse, \
     RoleAppService_rolesResponse, RoleAppService_roleByIdResponse, RoleAppService_rolesTreesResponse
@@ -32,6 +33,7 @@ class RoleAppServiceListener(RoleAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
+    @debugLogger
     def roleByName(self, request, context):
         try:
             token = self._token(context)
@@ -51,6 +53,7 @@ class RoleAppServiceListener(RoleAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.RoleResponse()
 
+    @debugLogger
     def roles(self, request, context):
         try:
             token = self._token(context)
@@ -84,6 +87,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return RoleAppService_roleByNameResponse()
 
+    @debugLogger
     def roleById(self, request, context):
         try:
             token = self._token(context)
@@ -100,6 +104,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Role does not exist')
             return RoleAppService_roleByIdResponse()
 
+    @debugLogger
     def roleTree(self, request, context):
         try:
             token = self._token(context)
@@ -153,6 +158,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
         return RoleAppService_roleByNameResponse()
 
+    @debugLogger
     def rolesTrees(self, request, context):
         try:
             token = self._token(context)
@@ -207,12 +213,14 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
         return RoleAppService_roleByNameResponse()
 
+    @debugLogger
     def _populateAccessTree(self, protoBuf, accessTree: List[AccessNode]):
         for accessNode in accessTree:
             tmp = protoBuf.add()
             self._populateData(tmp, accessNode.data)
             self._populateAccessTree(tmp.children, accessNode.children)
 
+    @debugLogger
     def _populatePermissionWithPermissionContexts(self, protoBuf, permissionWithPermissionContexts):
         for permissionWithPermissionContext in permissionWithPermissionContexts:
             tmp = protoBuf.add()
@@ -220,11 +228,13 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             for permissionContext in permissionWithPermissionContext.permissionContexts:
                 self._populatePermissionContext(tmp.permissionContexts.add(), permissionContext)
 
+    @debugLogger
     def _populateData(self, protoBuf, data):
         protoBuf.data.contentType = data.contentType.value
         protoBuf.data.context = json.dumps(data.context)
         protoBuf.data.content = json.dumps(data.content.toMap())
 
+    @debugLogger
     def _populatePermission(self, protoBuf, permission):
         protoBuf.id = permission.id()
         protoBuf.name = permission.name()
@@ -233,11 +243,13 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         for action in permission.deniedActions():
             protoBuf.deniedActions.append(action)
 
+    @debugLogger
     def _populatePermissionContext(self, protoBuf, permissionContext):
         protoBuf.id = permissionContext.id()
         protoBuf.type = permissionContext.type()
         protoBuf.data = json.dumps(permissionContext.data())
 
+    @debugLogger
     def _token(self, context) -> str:
         metadata = context.invocation_metadata()
         if 'token' in metadata[0]:

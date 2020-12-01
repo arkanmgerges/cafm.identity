@@ -13,6 +13,7 @@ from src.domain_model.role.Role import Role
 from src.domain_model.role.RoleRepository import RoleRepository
 from src.domain_model.role.RoleService import RoleService
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.decorator import debugLogger
 
 
 class RoleApplicationService:
@@ -21,6 +22,7 @@ class RoleApplicationService:
         self._authzService: AuthorizationService = authzService
         self._roleService = roleService
 
+    @debugLogger
     def createRole(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -31,6 +33,7 @@ class RoleApplicationService:
                                         tokenData=tokenData)
         return self._roleService.createRole(id=id, name=name, objectOnly=objectOnly, tokenData=tokenData)
 
+    @debugLogger
     def updateRole(self, id: str, name: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -45,6 +48,7 @@ class RoleApplicationService:
 
         self._roleService.updateRole(oldObject=role, newObject=Role.createFrom(id=id, name=name), tokenData=tokenData)
 
+    @debugLogger
     def deleteRole(self, id: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -59,6 +63,7 @@ class RoleApplicationService:
 
         self._roleService.deleteRole(role=role, tokenData=tokenData)
 
+    @debugLogger
     def roleByName(self, name: str, token: str = ''):
         resource = self._roleRepository.roleByName(name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -71,6 +76,7 @@ class RoleApplicationService:
                                         tokenData=tokenData)
         return resource
 
+    @debugLogger
     def roleById(self, id: str, token: str = ''):
         resource = self._roleRepository.roleById(id=id)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -83,6 +89,7 @@ class RoleApplicationService:
                                         tokenData=tokenData)
         return resource
 
+    @debugLogger
     def roles(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
               order: List[dict] = None) -> dict:
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -92,11 +99,13 @@ class RoleApplicationService:
                                           resultSize=resultSize,
                                           order=order)
 
+    @debugLogger
     def rolesTrees(self, token: str = '') -> List[RoleAccessPermissionData]:
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessPermissionDataList = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
         return self._roleRepository.rolesTrees(tokenData=tokenData, roleAccessPermissionDataList=roleAccessPermissionDataList)
 
+    @debugLogger
     def roleTree(self, roleId: str = '', token: str = '') -> RoleAccessPermissionData:
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)

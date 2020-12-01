@@ -20,6 +20,7 @@ from src.domain_model.resource.exception.ObjectIdenticalException import ObjectI
 from src.domain_model.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
 from src.domain_model.token.TokenData import TokenData
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -39,6 +40,7 @@ class ProjectRepositoryImpl(ProjectRepository):
             raise Exception(
                 f'Could not connect to the db, message: {e}')
 
+    @debugLogger
     def createProject(self, project: Project, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -92,6 +94,7 @@ class ProjectRepositoryImpl(ProjectRepository):
         }
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
+    @debugLogger
     def updateProject(self, project: Project, tokenData: TokenData) -> None:
         oldObject = self.projectById(project.id())
         if oldObject == project:
@@ -117,6 +120,7 @@ class ProjectRepositoryImpl(ProjectRepository):
                 f'[{ProjectRepositoryImpl.updateProject.__qualname__}] The object project: {project} could not be updated in the database')
             raise ObjectCouldNotBeUpdatedException(f'project: {project}')
 
+    @debugLogger
     def deleteProject(self, project: Project, tokenData: TokenData):
         try:
             actionFunction = '''
@@ -150,6 +154,7 @@ class ProjectRepositoryImpl(ProjectRepository):
                 f'[{ProjectRepositoryImpl.deleteProject.__qualname__}] Object could not be found exception for project id: {project.id()}')
             raise ObjectCouldNotBeDeletedException(f'project id: {project.id()}')
 
+    @debugLogger
     def projectByName(self, name: str) -> Project:
         aql = '''
             FOR d IN resource
@@ -166,6 +171,7 @@ class ProjectRepositoryImpl(ProjectRepository):
 
         return Project.createFrom(id=result[0]['id'], name=result[0]['name'])
 
+    @debugLogger
     def projectById(self, id: str) -> Project:
         aql = '''
             FOR d IN resource
@@ -182,6 +188,7 @@ class ProjectRepositoryImpl(ProjectRepository):
 
         return Project.createFrom(id=result[0]['id'], name=result[0]['name'])
 
+    @debugLogger
     def projects(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
             resultSize: int = 100,
             order: List[dict] = None) -> dict:

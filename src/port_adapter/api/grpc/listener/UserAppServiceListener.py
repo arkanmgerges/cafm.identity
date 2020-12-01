@@ -11,6 +11,7 @@ from src.domain_model.token.TokenService import TokenService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.domain_model.user.User import User
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.user_app_service_pb2 import UserAppService_userByNameAndPasswordResponse, \
     UserAppService_usersResponse, UserAppService_userByIdResponse
@@ -28,6 +29,7 @@ class UserAppServiceListener(UserAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
+    @debugLogger
     def userByNameAndPassword(self, request, context):
         try:
             userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
@@ -46,6 +48,7 @@ class UserAppServiceListener(UserAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.UserResponse()
 
+    @debugLogger
     def users(self, request, context):
         try:
             token = self._token(context)
@@ -78,6 +81,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return UserAppService_usersResponse()
 
+    @debugLogger
     def userById(self, request, context):
         try:
             token = self._token(context)
@@ -97,6 +101,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return UserAppService_userByIdResponse()
 
+    @debugLogger
     def _token(self, context) -> str:
         metadata = context.invocation_metadata()
         if 'token' in metadata[0]:

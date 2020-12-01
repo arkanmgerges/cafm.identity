@@ -11,6 +11,7 @@ from src.domain_model.permission.Permission import Permission
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.permission_app_service_pb2 import PermissionAppService_permissionByNameResponse, \
     PermissionAppService_permissionsResponse, PermissionAppService_permissionByIdResponse
@@ -28,6 +29,7 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
+    @debugLogger
     def permissionByName(self, request, context):
         try:
             token = self._token(context)
@@ -54,6 +56,7 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.PermissionResponse()
 
+    @debugLogger
     def permissions(self, request, context):
         try:
             metadata = context.invocation_metadata()
@@ -93,6 +96,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return PermissionAppService_permissionByNameResponse()
 
+    @debugLogger
     def permissionById(self, request, context):
         try:
             token = self._token(context)
@@ -116,6 +120,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return PermissionAppService_permissionByIdResponse()
 
+    @debugLogger
     def _token(self, context) -> str:
         metadata = context.invocation_metadata()
         if 'token' in metadata[0]:

@@ -11,6 +11,7 @@ from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
 from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
+from src.resource.logging.decorator import debugLogger
 
 
 class OuService:
@@ -18,6 +19,7 @@ class OuService:
         self._repo = ouRepo
         self._policyRepo = policyRepo
 
+    @debugLogger
     def createOu(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
         try:
             if id == '':
@@ -37,10 +39,12 @@ class OuService:
                 #     tokenData=tokenData)
                 return ou
 
+    @debugLogger
     def deleteOu(self, ou:Ou, tokenData: TokenData = None):
         self._repo.deleteOu(ou, tokenData=tokenData)
         ou.publishDelete()
 
+    @debugLogger
     def updateOu(self, oldObject:Ou, newObject: Ou, tokenData: TokenData = None):
         self._repo.updateOu(newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)

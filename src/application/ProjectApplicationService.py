@@ -15,6 +15,7 @@ from src.domain_model.project.ProjectRepository import ProjectRepository
 from src.domain_model.project.ProjectService import ProjectService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.decorator import debugLogger
 
 
 class ProjectApplicationService:
@@ -24,6 +25,7 @@ class ProjectApplicationService:
         self._authzService: AuthorizationService = authzService
         self._projectService = projectService
 
+    @debugLogger
     def createProject(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -34,6 +36,7 @@ class ProjectApplicationService:
                                         tokenData=tokenData)
         return self._projectService.createProject(id=id, name=name, objectOnly=objectOnly, tokenData=tokenData)
 
+    @debugLogger
     def updateProject(self, id: str, name: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -48,6 +51,7 @@ class ProjectApplicationService:
         self._projectService.updateProject(oldObject=resource,
                                            newObject=Project.createFrom(id=id, name=name), tokenData=tokenData)
 
+    @debugLogger
     def deleteProject(self, id: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -61,6 +65,7 @@ class ProjectApplicationService:
                                         tokenData=tokenData)
         self._projectService.deleteProject(project=resource, tokenData=tokenData)
 
+    @debugLogger
     def projectByName(self, name: str, token: str = ''):
         resource = self._projectRepository.projectByName(name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -72,6 +77,7 @@ class ProjectApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
 
+    @debugLogger
     def projectById(self, id: str, token: str = ''):
         resource = self._projectRepository.projectById(id=id)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -83,6 +89,7 @@ class ProjectApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
 
+    @debugLogger
     def projects(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                  order: List[dict] = None) -> dict:
         tokenData = TokenService.tokenDataFromToken(token=token)

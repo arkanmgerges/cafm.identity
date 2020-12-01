@@ -10,6 +10,7 @@ from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -26,6 +27,7 @@ class HelperRepositoryImpl(HelperRepository):
             logger.warn(f'[{HelperRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(f'Could not connect to the db, message: {e}')
 
+    @debugLogger
     def roleDocumentId(self, id: str):
         # Get the role doc id
         aql = '''
@@ -44,6 +46,7 @@ class HelperRepositoryImpl(HelperRepository):
         roleDocId = result['_id']
         return roleDocId
 
+    @debugLogger
     def userDocumentId(self, id: str):
         aql = '''
             FOR d IN resource
@@ -61,6 +64,7 @@ class HelperRepositoryImpl(HelperRepository):
         userDocId = result['_id']
         return userDocId
 
+    @debugLogger
     def resourceDocumentId(self, resource: Resource):
         aql = '''
             FOR d IN resource

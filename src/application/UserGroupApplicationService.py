@@ -15,6 +15,7 @@ from src.domain_model.token.TokenService import TokenService
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
 from src.domain_model.user_group.UserGroupService import UserGroupService
+from src.resource.logging.decorator import debugLogger
 
 
 class UserGroupApplicationService:
@@ -24,6 +25,7 @@ class UserGroupApplicationService:
         self._authzService: AuthorizationService = authzService
         self._userGroupService = userGroupService
 
+    @debugLogger
     def createUserGroup(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -34,6 +36,7 @@ class UserGroupApplicationService:
                                         tokenData=tokenData)
         return self._userGroupService.createUserGroup(id=id, name=name, objectOnly=objectOnly, tokenData=tokenData)
 
+    @debugLogger
     def updateUserGroup(self, id: str, name: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -48,6 +51,7 @@ class UserGroupApplicationService:
         self._userGroupService.updateUserGroup(oldObject=resource,
                                                newObject=UserGroup.createFrom(id=id, name=name), tokenData=tokenData)
 
+    @debugLogger
     def deleteUserGroup(self, id: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -61,6 +65,7 @@ class UserGroupApplicationService:
                                         tokenData=tokenData)
         self._userGroupService.deleteUserGroup(userGroup=resource, tokenData=tokenData)
 
+    @debugLogger
     def userGroupByName(self, name: str, token: str = ''):
         resource = self._userGroupRepository.userGroupByName(name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -72,6 +77,7 @@ class UserGroupApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
 
+    @debugLogger
     def userGroupById(self, id: str, token: str = ''):
         resource = self._userGroupRepository.userGroupById(id=id)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -83,6 +89,7 @@ class UserGroupApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
 
+    @debugLogger
     def userGroups(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                    order: List[dict] = None) -> dict:
         tokenData = TokenService.tokenDataFromToken(token=token)

@@ -17,6 +17,7 @@ from src.domain_model.policy.request_context_data.ResourceInstanceContextDataReq
 from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest import ResourceTypeContextDataRequest
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.decorator import debugLogger
 
 
 class OuApplicationService:
@@ -25,6 +26,7 @@ class OuApplicationService:
         self._authzService: AuthorizationService = authzService
         self._ouService = ouService
 
+    @debugLogger
     def createOu(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -35,6 +37,7 @@ class OuApplicationService:
                                         tokenData=tokenData)
         return self._ouService.createOu(id=id, name=name, objectOnly=objectOnly, tokenData=tokenData)
 
+    @debugLogger
     def updateOu(self, id: str, name: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -48,6 +51,7 @@ class OuApplicationService:
                                         tokenData=tokenData)
         self._ouService.updateOu(oldObject=resource, newObject=Ou.createFrom(id=id, name=name), tokenData=tokenData)
 
+    @debugLogger
     def deleteOu(self, id: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -62,6 +66,7 @@ class OuApplicationService:
 
         self._ouService.deleteOu(ou=resource, tokenData=tokenData)
 
+    @debugLogger
     def ouByName(self, name: str, token: str = ''):
         resource = self._ouRepository.ouByName(name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -74,6 +79,7 @@ class OuApplicationService:
                                         tokenData=tokenData)
         return resource
 
+    @debugLogger
     def ouById(self, id: str, token: str = ''):
         resource = self._ouRepository.ouById(id=id)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -86,6 +92,7 @@ class OuApplicationService:
                                         tokenData=tokenData)
         return resource
 
+    @debugLogger
     def ous(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
             order: List[dict] = None) -> dict:
         tokenData = TokenService.tokenDataFromToken(token=token)

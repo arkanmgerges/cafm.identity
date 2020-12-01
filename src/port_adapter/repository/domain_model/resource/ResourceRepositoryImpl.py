@@ -9,6 +9,7 @@ from pyArango.query import AQLQuery
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.ResourceRepository import ResourceRepository
 from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -25,6 +26,7 @@ class ResourceRepositoryImpl(ResourceRepository):
             logger.warn(f'[{ResourceRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(f'Could not connect to the db, message: {e}')
 
+    @debugLogger
     def resourceById(self, id: str = '') -> Resource:
         aql = '''
             FOR d IN resource

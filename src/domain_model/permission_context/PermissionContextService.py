@@ -9,6 +9,7 @@ from src.domain_model.resource.exception.PermissionContextAlreadyExistException 
 from src.domain_model.resource.exception.PermissionContextDoesNotExistException import \
     PermissionContextDoesNotExistException
 from src.domain_model.token.TokenData import TokenData
+from src.resource.logging.decorator import debugLogger
 
 
 class PermissionContextService:
@@ -16,6 +17,7 @@ class PermissionContextService:
         self._repo = permissionContextRepo
         self._policyRepo = policyRepo
 
+    @debugLogger
     def createPermissionContext(self, id: str = '', type: str = '', data: dict = None, objectOnly: bool = False,
                                 tokenData: TokenData = None):
         try:
@@ -31,10 +33,12 @@ class PermissionContextService:
                 self._repo.createPermissionContext(permissionContext=permissionContext, tokenData=tokenData)
                 return permissionContext
 
+    @debugLogger
     def deletePermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData = None):
         self._repo.deletePermissionContext(permissionContext, tokenData=tokenData)
         permissionContext.publishDelete()
 
+    @debugLogger
     def updatePermissionContext(self, oldObject: PermissionContext, newObject: PermissionContext,
                                 tokenData: TokenData = None):
         self._repo.updatePermissionContext(newObject, tokenData=tokenData)

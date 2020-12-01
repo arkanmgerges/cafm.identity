@@ -11,6 +11,7 @@ from src.domain_model.token.TokenService import TokenService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
 from src.domain_model.user_group.UserGroup import UserGroup
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.user_group_app_service_pb2 import UserGroupAppService_userGroupByNameResponse, \
     UserGroupAppService_userGroupsResponse, UserGroupAppService_userGroupByIdResponse
@@ -28,6 +29,7 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
+    @debugLogger
     def userGroupByName(self, request, context):
         try:
             token = self._token(context)
@@ -50,6 +52,7 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.UserGroupResponse()
 
+    @debugLogger
     def userGroups(self, request, context):
         try:
             token = self._token(context)
@@ -82,6 +85,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return UserGroupAppService_userGroupByNameResponse()
 
+    @debugLogger
     def userGroupById(self, request, context):
         try:
             token = self._token(context)
@@ -101,6 +105,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return UserGroupAppService_userGroupByIdResponse()
 
+    @debugLogger
     def _token(self, context) -> str:
         metadata = context.invocation_metadata()
         if 'token' in metadata[0]:

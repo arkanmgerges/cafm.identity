@@ -20,6 +20,7 @@ from src.domain_model.resource.exception.ObjectIdenticalException import ObjectI
 from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
 from src.domain_model.token.TokenData import TokenData
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -38,6 +39,7 @@ class RealmRepositoryImpl(RealmRepository):
             logger.warn(f'[{RealmRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(f'Could not connect to the db, message: {e}')
 
+    @debugLogger
     def createRealm(self, realm: Realm, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -91,6 +93,7 @@ class RealmRepositoryImpl(RealmRepository):
         }
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
+    @debugLogger
     def updateRealm(self, realm: Realm, tokenData: TokenData) -> None:
         oldObject = self.realmById(realm.id())
         if oldObject == realm:
@@ -116,6 +119,7 @@ class RealmRepositoryImpl(RealmRepository):
                 f'[{RealmRepositoryImpl.updateRealm.__qualname__}] The object realm: {realm} could not be updated in the database')
             raise ObjectCouldNotBeUpdatedException(f'realm: {realm}')
 
+    @debugLogger
     def deleteRealm(self, realm: Realm, tokenData: TokenData):
         try:
             actionFunction = '''
@@ -149,6 +153,7 @@ class RealmRepositoryImpl(RealmRepository):
                 f'[{RealmRepositoryImpl.deleteRealm.__qualname__}] Object could not be found exception for realm id: {realm.id()}')
             raise ObjectCouldNotBeDeletedException(f'realm id: {realm.id()}')
 
+    @debugLogger
     def realmByName(self, name: str) -> Realm:
         aql = '''
             FOR d IN resource
@@ -165,6 +170,7 @@ class RealmRepositoryImpl(RealmRepository):
 
         return Realm.createFrom(id=result[0]['id'], name=result[0]['name'])
 
+    @debugLogger
     def realmById(self, id: str) -> Realm:
         aql = '''
             FOR d IN realm
@@ -181,6 +187,7 @@ class RealmRepositoryImpl(RealmRepository):
 
         return Realm.createFrom(id=result[0]['id'], name=result[0]['name'])
 
+    @debugLogger
     def realms(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
                         order: List[dict] = None) -> dict:
         sortData = ''

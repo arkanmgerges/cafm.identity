@@ -14,6 +14,7 @@ from src.domain_model.permission_context.PermissionContextRepository import Perm
 from src.domain_model.role.RoleRepository import RoleRepository
 from src.domain_model.user.UserRepository import UserRepository
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
+from src.resource.logging.decorator import debugLogger
 
 
 class PolicyApplicationService:
@@ -35,6 +36,7 @@ class PolicyApplicationService:
         self._resourceRepository = resourceRepository
         self._authzService: AuthorizationService = authzService
 
+    @debugLogger
     def assignRoleToUser(self, roleId: str = '', userId: str = '', token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.ASSIGN.value,
                                         permissionContext=PermissionContextConstant.ASSIGNMENT_ROLE_TO_USER.value):
@@ -44,6 +46,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def revokeAssignmentRoleToUser(self, roleId: str = '', userId: str = '', token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.REVOKE.value,
                                         permissionContext=PermissionContextConstant.ASSIGNMENT_ROLE_TO_USER.value):
@@ -53,6 +56,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def assignRoleToUserGroup(self, roleId: str = '', userGroupId: str = '', token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.ASSIGN.value,
                                         permissionContext=PermissionContextConstant.ASSIGNMENT_ROLE_TO_USER.value):
@@ -62,6 +66,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def revokeAssignmentRoleToUserGroup(self, roleId: str = '', userGroupId: str = '', token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.REVOKE.value,
                                         permissionContext=PermissionContextConstant.ASSIGNMENT_ROLE_TO_USER.value):
@@ -71,6 +76,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def assignUserToUserGroup(self, userId: str = '', userGroupId: str = '', token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.ASSIGN.value,
                                         permissionContext=PermissionContextConstant.ASSIGNMENT_USER_TO_USER_GROUP.value):
@@ -80,6 +86,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def revokeAssignmentUserToUserGroup(self, userId: str = '', userGroupId: str = '', token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.REVOKE.value,
                                         permissionContext=PermissionContextConstant.ASSIGNMENT_USER_TO_USER_GROUP.value):
@@ -89,6 +96,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def assignRoleToPermission(self, roleId: str = '',
                                permissionId: str = '',
                                token: str = ''):
@@ -100,6 +108,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def revokeAssignmentRoleToPermission(self, roleId: str = '',
                                          permissionId: str = '',
                                          token: str = ''):
@@ -111,6 +120,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def assignPermissionToPermissionContext(self, permissionId: str = '',
                                        permissionContextId: str = '',
                                        token: str = ''):
@@ -122,6 +132,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def revokeAssignmentPermissionToPermissionContext(self, permissionId: str = '',
                                                  permissionContextId: str = '',
                                                  token: str = ''):
@@ -134,6 +145,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def provideAccessRoleToResource(self, roleId: str = '', resourceId: str = '', token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.REVOKE.value,
                                         permissionContext=PermissionContextConstant.ASSIGNMENT_ROLE_TO_ACCESS_RESOURCE.value):
@@ -143,6 +155,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def revokeAccessRoleFromResource(self, roleId: str = '', resourceId: str = '', token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.REVOKE.value,
                                         permissionContext=PermissionContextConstant.ASSIGNMENT_ROLE_TO_ACCESS_RESOURCE.value):
@@ -152,6 +165,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def assignResourceToResource(self, resourceSrcId: str = '', resourceDstId: str = '', token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.REVOKE.value,
                                         permissionContext=PermissionContextConstant.ASSIGNMENT_ROLE_TO_ACCESS_RESOURCE.value):
@@ -161,6 +175,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def revokeAssignmentResourceToResource(self, resourceSrcId: str = '', resourceDstId: str = '', token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.REVOKE.value,
                                         permissionContext=PermissionContextConstant.ASSIGNMENT_ROLE_TO_ACCESS_RESOURCE.value):
@@ -171,6 +186,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def roleByName(self, name: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         permissionContext=PermissionContextConstant.ROLE.value):
@@ -178,6 +194,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def roleById(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,
                                         permissionContext=PermissionContextConstant.ROLE.value):
@@ -185,6 +202,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def deleteRole(self, id: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.DELETE.value,
                                         permissionContext=PermissionContextConstant.ROLE.value):
@@ -193,6 +211,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def updateRole(self, id: str, name: str, token: str = ''):
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.UPDATE.value,
                                         permissionContext=PermissionContextConstant.ROLE.value):
@@ -202,6 +221,7 @@ class PolicyApplicationService:
         else:
             raise UnAuthorizedException()
 
+    @debugLogger
     def roles(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
               order: List[dict] = None) -> dict:
         if self._authzService.isAllowed(token=token, action=PolicyActionConstant.READ.value,

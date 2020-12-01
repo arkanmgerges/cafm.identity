@@ -5,12 +5,14 @@ import os
 
 from src.domain_model.authentication.AuthenticationRepository import AuthenticationRepository
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.decorator import debugLogger
 
 
 class AuthenticationService:
     def __init__(self, authRepo: AuthenticationRepository):
         self._authRepo = authRepo
 
+    @debugLogger
     def authenticateUser(self, name: str, password: str) -> str:
         """Authenticate user and return jwt token
 
@@ -31,6 +33,7 @@ class AuthenticationService:
         self._authRepo.persistToken(token=token, ttl=ttl)
         return token
 
+    @debugLogger
     def isAuthenticated(self, token: str) -> bool:
         """Check if the user is authenticated, by checking if the token exists, and if exists then refresh it
 
@@ -48,6 +51,7 @@ class AuthenticationService:
         except:
             return False
 
+    @debugLogger
     def logout(self, token: str) -> None:
         """Logout the user
 

@@ -12,6 +12,7 @@ from src.domain_model.permission_context.PermissionContext import PermissionCont
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.policy.request_context_data.PermissionContextDataRequest import PermissionContextDataRequest
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.decorator import debugLogger
 
 
 class PermissionApplicationService:
@@ -21,6 +22,7 @@ class PermissionApplicationService:
         self._authzService: AuthorizationService = authzService
         self._permissionService = permissionService
 
+    @debugLogger
     def createPermission(self, id: str = '', name: str = '', allowedActions: List[str] = None,
                          deniedActions: List[str] = None, objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -35,6 +37,7 @@ class PermissionApplicationService:
                                                         deniedActions=deniedActions, objectOnly=objectOnly,
                                                         tokenData=tokenData)
 
+    @debugLogger
     def updatePermission(self, id: str, name: str, token: str = '', allowedActions: List[str] = None,
                          deniedActions: List[str] = None, ):
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -55,6 +58,7 @@ class PermissionApplicationService:
                                                                                  deniedActions=deniedActions),
                                                  tokenData=tokenData)
 
+    @debugLogger
     def deletePermission(self, id: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         permissionAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -70,6 +74,7 @@ class PermissionApplicationService:
                                         tokenData=tokenData)
         self._permissionService.deletePermission(permission=permission, tokenData=tokenData)
 
+    @debugLogger
     def permissionByName(self, name: str, token: str = ''):
         permission = self._permissionRepository.permissionByName(name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -82,6 +87,7 @@ class PermissionApplicationService:
                                         tokenData=tokenData)
         return permission
 
+    @debugLogger
     def permissionById(self, id: str, token: str = ''):
         permission = self._permissionRepository.permissionById(id=id)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -94,6 +100,7 @@ class PermissionApplicationService:
                                         tokenData=tokenData)
         return permission
 
+    @debugLogger
     def permissions(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
                     order: List[dict] = None) -> dict:
         tokenData = TokenService.tokenDataFromToken(token=token)

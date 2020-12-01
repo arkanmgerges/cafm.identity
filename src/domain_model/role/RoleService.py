@@ -9,6 +9,7 @@ from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
 from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
 from src.domain_model.token.TokenData import TokenData
+from src.resource.logging.decorator import debugLogger
 
 
 class RoleService:
@@ -16,6 +17,7 @@ class RoleService:
         self._repo = roleRepo
         self._policyRepo = policyRepo
 
+    @debugLogger
     def createRole(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
         try:
             if id == '':
@@ -30,10 +32,12 @@ class RoleService:
                 self._repo.createRole(role=role, tokenData=tokenData)
                 return role
 
+    @debugLogger
     def deleteRole(self, role: Role, tokenData: TokenData = None):
         self._repo.deleteRole(role, tokenData=tokenData)
         role.publishDelete()
 
+    @debugLogger
     def updateRole(self, oldObject: Role, newObject: Role, tokenData: TokenData = None):
         self._repo.updateRole(newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)

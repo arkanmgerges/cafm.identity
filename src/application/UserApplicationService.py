@@ -13,6 +13,7 @@ from src.domain_model.token.TokenService import TokenService
 from src.domain_model.user.User import User
 from src.domain_model.user.UserRepository import UserRepository
 from src.domain_model.user.UserService import UserService
+from src.resource.logging.decorator import debugLogger
 
 
 class UserApplicationService:
@@ -21,6 +22,7 @@ class UserApplicationService:
         self._authzService: AuthorizationService = authzService
         self._userService = userService
 
+    @debugLogger
     def createUser(self, id: str = '', name: str = '', password:str = '', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -31,6 +33,7 @@ class UserApplicationService:
                                         tokenData=tokenData)
         return self._userService.createUser(id=id, name=name, password=password, objectOnly=objectOnly, tokenData=tokenData)
 
+    @debugLogger
     def updateUser(self, id: str, name: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -45,6 +48,7 @@ class UserApplicationService:
         self._userService.updateUser(oldObject=resource,
                                      newObject=User.createFrom(id=id, name=name), tokenData=tokenData)
 
+    @debugLogger
     def deleteUser(self, id: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -58,9 +62,11 @@ class UserApplicationService:
                                         tokenData=tokenData)
         self._userService.deleteUser(user=resource, tokenData=tokenData)
 
+    @debugLogger
     def userByNameAndPassword(self, name: str, password: str):
         return self._userRepository.userByNameAndPassword(name=name, password=password)
 
+    @debugLogger
     def userById(self, id: str, token: str = ''):
         resource = self._userRepository.userById(id=id)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -72,6 +78,7 @@ class UserApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
 
+    @debugLogger
     def users(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
               order: List[dict] = None) -> dict:
         tokenData = TokenService.tokenDataFromToken(token=token)

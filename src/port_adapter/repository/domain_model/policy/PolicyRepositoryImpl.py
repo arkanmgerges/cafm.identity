@@ -36,6 +36,7 @@ from src.domain_model.token.TokenData import TokenData
 from src.domain_model.token.TokenService import TokenService
 from src.domain_model.user.User import User
 from src.domain_model.user_group.UserGroup import UserGroup
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -52,6 +53,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             logger.warn(f'[{PolicyRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(f'Could not connect to the db, message: {e}')
 
+    @debugLogger
     def allTreeByRoleName(self, roleName: str) -> List[Any]:
         # aql = '''
         #     FOR u IN project
@@ -68,6 +70,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         # return Project.createFrom(id=result[0]['id'], name=result[0]['name'])
         return []
 
+    @debugLogger
     def roleDocumentId(self, role: Role):
         # Get the role doc id
         aql = '''
@@ -86,6 +89,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         roleDocId = result['_id']
         return roleDocId
 
+    @debugLogger
     def userDocumentId(self, user: User):
         aql = '''
             FOR d IN resource
@@ -103,6 +107,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         userDocId = result['_id']
         return userDocId
 
+    @debugLogger
     def userGroupDocumentId(self, userGroup: UserGroup):
         aql = '''
             FOR d IN resource
@@ -121,6 +126,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         return userDocId
 
     # region Assignment Role - User
+    @debugLogger
     def assignRoleToUser(self, role: Role, user: User) -> None:
         userDocId = self.userDocumentId(user)
         roleDocId = self.roleDocumentId(role)
@@ -143,6 +149,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         bindVars = {"fromId": userDocId, "toId": roleDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+    @debugLogger
     def revokeRoleFromUser(self, role: Role, user: User) -> None:
         userDocId = self.userDocumentId(user)
         roleDocId = self.roleDocumentId(role)
@@ -166,6 +173,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
+    @debugLogger
     def assignmentRoleToUser(self, roleDocId, userDocId) -> List:
         # Check if there is a link
         aql = '''
@@ -184,6 +192,7 @@ class PolicyRepositoryImpl(PolicyRepository):
     # endregion
 
     # region Assignment Role - User Group
+    @debugLogger
     def assignRoleToUserGroup(self, role: Role, userGroup: UserGroup) -> None:
         userGroupDocId = self.userGroupDocumentId(userGroup)
         roleDocId = self.roleDocumentId(role)
@@ -206,6 +215,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         bindVars = {"fromId": userGroupDocId, "toId": roleDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+    @debugLogger
     def revokeRoleFromUserGroup(self, role: Role, userGroup: UserGroup) -> None:
         userGroupDocId = self.userGroupDocumentId(userGroup)
         roleDocId = self.roleDocumentId(role)
@@ -229,6 +239,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
+    @debugLogger
     def assignmentRoleToUserGroup(self, roleDocId, userGroupDocId) -> List:
         # Check if there is a link
         aql = '''
@@ -247,6 +258,7 @@ class PolicyRepositoryImpl(PolicyRepository):
     # endregion
 
     # region Assignment User - User Group
+    @debugLogger
     def assignUserToUserGroup(self, user: User, userGroup: UserGroup) -> None:
         userGroupDocId = self.userGroupDocumentId(userGroup)
         userDocId = self.userDocumentId(user)
@@ -269,6 +281,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         bindVars = {"fromId": userGroupDocId, "toId": userDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+    @debugLogger
     def revokeUserFromUserGroup(self, user: User, userGroup: UserGroup) -> None:
         userGroupDocId = self.userGroupDocumentId(userGroup)
         userDocId = self.userDocumentId(user)
@@ -292,6 +305,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
+    @debugLogger
     def assignmentUserToUserGroup(self, userDocId, userGroupDocId) -> List:
         # Check if there is a link
         aql = '''
@@ -310,6 +324,7 @@ class PolicyRepositoryImpl(PolicyRepository):
     # endregion
 
     # region Assignment Role - Permission - Permission Context
+    @debugLogger
     def assignRoleToPermission(self, role: Role, permission: Permission) -> None:
         roleDocId = self.roleDocumentId(role)
         permissionDocId = self.permissionDocumentId(permission)
@@ -332,6 +347,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         bindVars = {"fromId": roleDocId, "toId": permissionDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+    @debugLogger
     def permissionDocumentId(self, permission: Permission):
         # Get the doc id
         aql = '''
@@ -350,6 +366,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         docId = result['_id']
         return docId
 
+    @debugLogger
     def permissionContextDocumentId(self, permissionContext: PermissionContext):
         # Get the doc id
         aql = '''
@@ -369,6 +386,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         docId = result['_id']
         return docId
 
+    @debugLogger
     def assignmentRoleToPermission(self, roleDocId, permissionDocId) -> List:
         # Check if there is a link
         aql = '''
@@ -388,6 +406,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return result
 
+    @debugLogger
     def revokeAssignmentRoleToPermission(self, role: Role, permission: Permission) -> None:
         roleDocId = self.roleDocumentId(role)
         permissionDocId = self.permissionDocumentId(permission)
@@ -415,6 +434,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         logger.debug(
             f'[{PolicyRepositoryImpl.revokeRoleFromUserGroup.__qualname__}] Revoke assignment of role with id: {role.id()} to permission with id: {permission.id()}')
 
+    @debugLogger
     def assignPermissionToPermissionContext(self, permission: Permission, permissionContext: PermissionContext) -> None:
         permissionDocId = self.permissionDocumentId(permission)
         permissionContextDocId = self.permissionContextDocumentId(permissionContext)
@@ -437,6 +457,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         bindVars = {"fromId": permissionDocId, "toId": permissionContextDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+    @debugLogger
     def assignmentPermissionToPermissionContext(self, permissionDocId, permissionContextDocId) -> List:
         # Check if there is a link
         aql = '''
@@ -456,6 +477,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return result
 
+    @debugLogger
     def revokeAssignmentPermissionToPermissionContext(self, permission: Permission,
                                                       permissionContext: PermissionContext) -> None:
         permissionDocId = self.permissionDocumentId(permission)
@@ -487,6 +509,7 @@ class PolicyRepositoryImpl(PolicyRepository):
     # endregion
 
     # region Access Role - Resource
+    @debugLogger
     def provideAccessRoleToResource(self, role: Role, resource: Resource) -> None:
         resourceDocId = self.resourceDocumentId(resource)
         roleDocId = self.roleDocumentId(role)
@@ -509,6 +532,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         bindVars = {"fromId": roleDocId, "toId": resourceDocId, "permissionContextName": resource.type()}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+    @debugLogger
     def revokeAccessRoleFromResource(self, role: Role, resource: Resource) -> None:
         resourceDocId = self.resourceDocumentId(resource)
         roleDocId = self.roleDocumentId(role)
@@ -532,6 +556,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
+    @debugLogger
     def accessRoleToResource(self, roleDocId, resourceDocId, resource: Resource) -> List:
         # Check if there is a link
         aql = '''
@@ -547,6 +572,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return result
 
+    @debugLogger
     def resourceDocumentId(self, resource: Resource):
         aql = '''
             FOR d IN resource
@@ -567,6 +593,7 @@ class PolicyRepositoryImpl(PolicyRepository):
     # endregion
 
     # region Assignment Resource - Resource
+    @debugLogger
     def assignResourceToResource(self, resourceSrc: Resource, resourceDst: Resource) -> None:
         resourceSrcDocId = self.resourceDocumentId(resourceSrc)
         resourceDstDocId = self.resourceDocumentId(resourceDst)
@@ -589,6 +616,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                     "toType": resourceDst.type()}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+    @debugLogger
     def revokeAssignmentResourceToResource(self, resourceSrc: Resource, resourceDst: Resource) -> None:
         resourceSrcDocId = self.resourceDocumentId(resourceSrc)
         resourceDstDocId = self.resourceDocumentId(resourceDst)
@@ -613,6 +641,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
+    @debugLogger
     def assignmentResourceToResource(self, resourceSrcDocId, resourceDstDocId) -> List:
         aql = '''
             FOR d IN has
@@ -628,6 +657,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
     # endregion
 
+    @debugLogger
     def permissionsByTokenData(self, tokenData: TokenData = None,
                                roleAccessPermissionData: List[RoleAccessPermissionData] = None,
                                sortData: str = '') -> dict:
@@ -645,6 +675,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             queryResult = self._db.AQLQuery(aql, rawResults=True)
             return queryResult.result[0]
 
+    @debugLogger
     def permissionContextsByTokenData(self, tokenData: TokenData = None,
                                       roleAccessPermissionData: List[RoleAccessPermissionData] = None,
                                       sortData: str = '') -> dict:
@@ -662,6 +693,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             queryResult = self._db.AQLQuery(aql, rawResults=True)
             return queryResult.result[0]
 
+    @debugLogger
     def _canRead(self, roleAccessPermissionData: List[RoleAccessPermissionData],
                  permissionContext: PermissionContextConstant):
         for roleAccessPermission in roleAccessPermissionData:
@@ -672,6 +704,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                         if context.type() == permissionContext.value:
                             return True
 
+    @debugLogger
     def rolesTrees(self, tokenData: TokenData = None,
                    roleAccessPermissionDataList: List[RoleAccessPermissionData] = None) -> List[
         RoleAccessPermissionData]:
@@ -690,6 +723,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return self._roleTreeListOf(roles, roleAccessPermissionDataList, doFilter)
 
+    @debugLogger
     def roleTree(self, tokenData: TokenData = None, roleId: str = '',
                  roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> RoleAccessPermissionData:
         roles = tokenData.roles()
@@ -714,6 +748,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         else:
             return None
 
+    @debugLogger
     def _roleById(self, roleId):
         aql = '''
                 LET ds = (FOR d IN resource FILTER d.type == 'role' AND d.id == @id RETURN d)
@@ -723,6 +758,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         return queryResult.result[0]['items']
 
+    @debugLogger
     def _hasReadAllRolesTreesInPermissionContext(self,
                                                  roleAccessPermissionData: List[RoleAccessPermissionData]) -> bool:
         for roleAccessPermission in roleAccessPermissionData:
@@ -734,6 +770,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                             return True
         return False
 
+    @debugLogger
     def _roleTreeListOf(self, roles: List[dict], roleAccessPermissionDataList: List[RoleAccessPermissionData],
                         doFilter) -> List[RoleAccessPermissionData]:
         rawDataItems = self._rawRoleTreeItems(roles, True)
@@ -744,6 +781,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return resultItems
 
+    @debugLogger
     def resourcesOfTypeByTokenData(self, resourceType: str = '', tokenData: TokenData = None,
                                    roleAccessPermissionData: List[RoleAccessPermissionData] = None,
                                    sortData: str = '') -> dict:
@@ -792,6 +830,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         filteredItems = self._filterItems(result['items'], roleAccessPermissionData, resourceType)
         return {'items': filteredItems, 'itemCount': len(filteredItems)}
 
+    @debugLogger
     def _filterRoleAccessPermissionDataItems(self, roleAccessPermissionDataList: List[RoleAccessPermissionData]) -> \
             List[RoleAccessPermissionData]:
         deniedItems = {'deniedResources': {}, 'deniedResourceTypes': {}}
@@ -822,6 +861,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                     result.append(node)
         return result
 
+    @debugLogger
     def _populateDeniedItems(self, permissionsWithContexts: List[PermissionWithPermissionContexts]):
         deniedItems = {'deniedResources': {}, 'deniedResourceTypes': {}}
         for permissionWithContexts in permissionsWithContexts:
@@ -839,6 +879,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                             deniedItems['deniedResources'][data['id']] = True
         return deniedItems
 
+    @debugLogger
     def _filterItems(self, items, roleAccessPermissionDataList: List[RoleAccessPermissionData], resourceType: str = ''):
         deniedItems = {'deniedResources': {}, 'denyAll': False}
         filteredItems = items
@@ -888,12 +929,14 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return result
 
+    @debugLogger
     def _itemFromFilteredItemsById(self, filteredItems, id):
         for item in filteredItems:
             if item['id'] == id:
                 return item
         return None
 
+    @debugLogger
     def _populateDeniedResourcesForRead(self, permissionWithContexts, resourceType):
         result = {'deniedResources': {}, 'denyAll': False}
         deniedActions = permissionWithContexts.permission.deniedActions()
@@ -912,6 +955,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return result
 
+    @debugLogger
     def connectResourceToOwner(self, resource: Resource, tokenData: TokenData):
         userDocId = self.userDocumentId(User.createFrom(id=tokenData.id(), name=tokenData.name()))
         resourceDocId = self.resourceDocumentId(resource)
@@ -938,11 +982,13 @@ class PolicyRepositoryImpl(PolicyRepository):
                         "toType": PermissionContextConstant.ROLE.value}
             _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+    @debugLogger
     def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True) -> List[
         RoleAccessPermissionData]:
         items = self._rawRoleTreeItems(tokenData.roles(), includeAccessTree)
         return self._constructRoleAccessPermissionDataFromRawRoleTreeItems(items)
 
+    @debugLogger
     def _constructRoleAccessPermissionDataFromRawRoleTreeItems(self, items) -> List[RoleAccessPermissionData]:
         result = []
         for item in items:
@@ -976,6 +1022,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
         return result
 
+    @debugLogger
     def _rawRoleTreeItems(self, roles: List[dict], includeAccessTree):
         rolesConditions = ''
         for role in roles:
@@ -1022,6 +1069,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             return []
         return qResult
 
+    @debugLogger
     def isOwnerOfResource(self, resource: Resource, tokenData: TokenData) -> bool:
         # (v1.id == @ownerId OR v1.id == @ownerId)
         ownerIdConditions = ''
@@ -1046,6 +1094,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             return False
         return True
 
+    @debugLogger
     def _fetchAccessTree(self, accesses: List[dict] = None) -> List[AccessNode]:
         if accesses is None:
             return []

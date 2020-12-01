@@ -11,6 +11,7 @@ from src.domain_model.project.Project import Project
 from src.domain_model.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.project_app_service_pb2 import ProjectAppService_projectByNameResponse, \
     ProjectAppService_projectsResponse, ProjectAppService_projectByIdResponse
@@ -28,6 +29,7 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
+    @debugLogger
     def projectByName(self, request, context):
         try:
             token = self._token(context)
@@ -50,6 +52,7 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.ProjectResponse()
 
+    @debugLogger
     def projects(self, request, context):
         try:
             token = self._token(context)
@@ -82,6 +85,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return ProjectAppService_projectByNameResponse()
 
+    @debugLogger
     def projectById(self, request, context):
         try:
             token = self._token(context)
@@ -101,6 +105,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return ProjectAppService_projectByIdResponse()
 
+    @debugLogger
     def _token(self, context) -> str:
         metadata = context.invocation_metadata()
         if 'token' in metadata[0]:

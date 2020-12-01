@@ -20,6 +20,7 @@ from src.domain_model.resource.exception.ObjectIdenticalException import ObjectI
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
 from src.domain_model.token.TokenData import TokenData
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -39,6 +40,7 @@ class PermissionRepositoryImpl(PermissionRepository):
             raise Exception(
                 f'Could not connect to the db, message: {e}')
 
+    @debugLogger
     def createPermission(self, permission: Permission, tokenData: TokenData):
         actionFunction = '''
             function (params) {                                            
@@ -62,6 +64,7 @@ class PermissionRepositoryImpl(PermissionRepository):
         }
         self._db.transaction(collections={'write': ['permission', 'owned_by']}, action=actionFunction, params=params)
 
+    @debugLogger
     def updatePermission(self, permission: Permission, tokenData: TokenData) -> None:
         oldObject = self.permissionById(permission.id())
         if oldObject == permission:
@@ -89,6 +92,7 @@ class PermissionRepositoryImpl(PermissionRepository):
                 f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] The object permission: {permission} could not be updated in the database')
             raise ObjectCouldNotBeUpdatedException(f'permission: {permission}')
 
+    @debugLogger
     def deletePermission(self, permission: Permission, tokenData: TokenData):
         try:
             actionFunction = '''
@@ -117,6 +121,7 @@ class PermissionRepositoryImpl(PermissionRepository):
                 f'[{PermissionRepositoryImpl.deletePermission.__qualname__}] Object could not be found exception for permission id: {permission.id()}')
             raise ObjectCouldNotBeDeletedException(f'permission id: {permission.id()}')
 
+    @debugLogger
     def permissionByName(self, name: str) -> Permission:
         aql = '''
             FOR d IN permission
@@ -134,6 +139,7 @@ class PermissionRepositoryImpl(PermissionRepository):
         return Permission.createFrom(id=result[0]['id'], name=result[0]['name'],
                                      allowedActions=result[0]['allowed_actions'])
 
+    @debugLogger
     def permissionById(self, id: str) -> Permission:
         aql = '''
             FOR d IN permission
@@ -152,6 +158,7 @@ class PermissionRepositoryImpl(PermissionRepository):
         return Permission.createFrom(id=result[0]['id'], name=result[0]['name'],
                                      allowedActions=result[0]['allowed_actions'])
 
+    @debugLogger
     def permissions(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
                         order: List[dict] = None) -> dict:
         sortData = ''

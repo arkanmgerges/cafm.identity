@@ -20,6 +20,7 @@ from src.domain_model.token.TokenData import TokenData
 from src.domain_model.user.User import User
 from src.domain_model.user.UserRepository import UserRepository
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -38,6 +39,7 @@ class UserRepositoryImpl(UserRepository):
             logger.warn(f'[{UserRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(f'Could not connect to the db, message: {e}')
 
+    @debugLogger
     def createUser(self, user: User, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -91,6 +93,7 @@ class UserRepositoryImpl(UserRepository):
         }
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
+    @debugLogger
     def updateUser(self, user: User, tokenData: TokenData) -> None:
         oldObject = self.userById(user.id())
         if oldObject == user:
@@ -116,6 +119,7 @@ class UserRepositoryImpl(UserRepository):
                 f'[{UserRepositoryImpl.updateUser.__qualname__}] The object user: {user} could not be updated in the database')
             raise ObjectCouldNotBeUpdatedException(f'user: {user}')
 
+    @debugLogger
     def deleteUser(self, user: User, tokenData: TokenData):
         try:
             actionFunction = '''
@@ -149,6 +153,7 @@ class UserRepositoryImpl(UserRepository):
                 f'[{UserRepositoryImpl.deleteUser.__qualname__}] Object could not be found exception for user id: {user.id()}')
             raise ObjectCouldNotBeDeletedException(f'user id: {user.id()}')
 
+    @debugLogger
     def userByName(self, name: str) -> User:
         logger.debug(f'[{UserRepositoryImpl.userByName.__qualname__}] - with name = {name}')
         aql = '''
@@ -166,6 +171,7 @@ class UserRepositoryImpl(UserRepository):
 
         return User.createFrom(id=result[0]['id'], name=result[0]['name'], password=result[0]['password'])
 
+    @debugLogger
     def userByNameAndPassword(self, name: str, password: str) -> User:
         logger.debug(f'[{UserRepositoryImpl.userByNameAndPassword.__qualname__}] - with name = {name}')
         aql = '''
@@ -183,6 +189,7 @@ class UserRepositoryImpl(UserRepository):
 
         return User.createFrom(id=result[0]['id'], name=result[0]['name'], password=result[0]['password'])
 
+    @debugLogger
     def userById(self, id: str) -> User:
         aql = '''
             FOR d IN resource
@@ -199,6 +206,7 @@ class UserRepositoryImpl(UserRepository):
 
         return User.createFrom(id=result[0]['id'], name=result[0]['name'])
 
+    @debugLogger
     def users(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
               resultSize: int = 100,
               order: List[dict] = None) -> dict:

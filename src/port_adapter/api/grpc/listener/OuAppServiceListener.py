@@ -11,6 +11,7 @@ from src.domain_model.ou.Ou import Ou
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenService import TokenService
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.proto._generated.ou_app_service_pb2 import OuAppService_ouByNameResponse, OuAppService_ousResponse, \
     OuAppService_ouByIdResponse
@@ -28,6 +29,7 @@ class OuAppServiceListener(OuAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
+    @debugLogger
     def ouByName(self, request, context):
         try:
             ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
@@ -46,6 +48,7 @@ class OuAppServiceListener(OuAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.OuResponse()
 
+    @debugLogger
     def ous(self, request, context):
         try:
             metadata = context.invocation_metadata()
@@ -77,6 +80,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return OuAppService_ouByNameResponse()
 
+    @debugLogger
     def ouById(self, request, context):
         try:
             ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
@@ -96,6 +100,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return OuAppService_ouByIdResponse()
 
+    @debugLogger
     def _token(self, context) -> str:
         metadata = context.invocation_metadata()
         if 'token' in metadata[0]:

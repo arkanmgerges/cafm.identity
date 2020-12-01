@@ -18,6 +18,7 @@ from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenData import TokenData
+from src.resource.logging.decorator import debugLogger
 
 
 class AuthorizationService:
@@ -26,10 +27,12 @@ class AuthorizationService:
         self._authzRepo = authzRepo
         self._policyService = policyService
 
+    @debugLogger
     def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True) -> List[
         RoleAccessPermissionData]:
         return self._policyService.roleAccessPermissionsData(tokenData=tokenData, includeAccessTree=includeAccessTree)
 
+    @debugLogger
     def verifyAccess(self,
                      roleAccessPermissionsData: List[RoleAccessPermissionData],
                      requestedPermissionAction: PermissionAction,
@@ -74,12 +77,14 @@ class AuthorizationService:
             # By default the access is forbidden
             raise UnAuthorizedException()
 
+    @debugLogger
     def _isSuperAdmin(self, tokenData) -> bool:
         for role in tokenData.roles():
             if role['name'] == 'super_admin':
                 return True
         return False
 
+    @debugLogger
     def _verifyActionByPermissionWithPermissionContext(self, requestedPermissionAction: PermissionAction,
                                                        requestedContextData: ContextDataRequest,
                                                        roleAccessPermissionsData: List[
@@ -119,6 +124,7 @@ class AuthorizationService:
         # We did not find action with permission context, then return false
         return False
 
+    @debugLogger
     def _checkForResourceTypeRequest(self, requestedPermissionAction: PermissionAction,
                                      permissionContext: PermissionContext,
                                      tokenData: TokenData,
@@ -159,10 +165,12 @@ class AuthorizationService:
 
         return False
 
+    @debugLogger
     def _treeCheck(self, accessTree: List[AccessNode], requestedResource: Resource,
                    requestedPermissionAction: PermissionAction) -> bool:
         for treeItem in accessTree:
             # Get the current resource from the tree
+            #todo fix it
             currentResource = treeItem.resource
             # Check if the user/role has read access to it
             if self._isDeniedInstance(currentResource, PermissionAction.READ):
@@ -177,6 +185,7 @@ class AuthorizationService:
                     return True
             return False
 
+    @debugLogger
     def _isDeniedInstance(self, resource: Resource, requestedPermissionAction: PermissionAction) -> bool:
         id = resource.id()
         if id in self._deniedResourcesWithActions:
@@ -185,6 +194,7 @@ class AuthorizationService:
                 return True
         return False
 
+    @debugLogger
     def _populateDeniedResources(self, roleAccessPermissionsData: List[
         RoleAccessPermissionData]):
         for item in roleAccessPermissionsData:

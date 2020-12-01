@@ -20,6 +20,7 @@ from src.domain_model.resource.exception.ObjectIdenticalException import ObjectI
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
 from src.domain_model.token.TokenData import TokenData
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -38,6 +39,7 @@ class OuRepositoryImpl(OuRepository):
             logger.warn(f'[{OuRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(f'Could not connect to the db, message: {e}')
 
+    @debugLogger
     def createOu(self, ou: Ou, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -91,6 +93,7 @@ class OuRepositoryImpl(OuRepository):
         }
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
+    @debugLogger
     def deleteOu(self, ou: Ou, tokenData: TokenData):
         try:
             actionFunction = '''
@@ -124,6 +127,7 @@ class OuRepositoryImpl(OuRepository):
                 f'[{OuRepositoryImpl.deleteOu.__qualname__}] Object could not be found exception for ou id: {ou.id()}')
             raise ObjectCouldNotBeDeletedException(f'ou id: {ou.id()}')
 
+    @debugLogger
     def updateOu(self, ou: Ou, tokenData: TokenData) -> None:
         oldOu = self.ouById(ou.id())
         if oldOu == ou:
@@ -149,6 +153,7 @@ class OuRepositoryImpl(OuRepository):
                 f'[{OuRepositoryImpl.updateOu.__qualname__}] The object ou: {ou} could not be updated in the database')
             raise ObjectCouldNotBeUpdatedException(f'ou: {ou}')
 
+    @debugLogger
     def ouByName(self, name: str) -> Ou:
         aql = '''
             FOR d IN resource
@@ -165,6 +170,7 @@ class OuRepositoryImpl(OuRepository):
 
         return Ou.createFrom(id=result[0]['id'], name=result[0]['name'])
 
+    @debugLogger
     def ouById(self, id: str) -> Ou:
         aql = '''
             FOR d IN resource
@@ -181,6 +187,7 @@ class OuRepositoryImpl(OuRepository):
 
         return Ou.createFrom(id=result[0]['id'], name=result[0]['name'])
 
+    @debugLogger
     def ous(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
             resultSize: int = 100,
             order: List[dict] = None) -> dict:

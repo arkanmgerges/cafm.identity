@@ -7,6 +7,7 @@ from src.domain_model.resource.exception.UserDoesNotExistException import UserDo
 from src.domain_model.token.TokenData import TokenData
 from src.domain_model.user.User import User
 from src.domain_model.user.UserRepository import UserRepository
+from src.resource.logging.decorator import debugLogger
 
 
 class UserService:
@@ -14,6 +15,7 @@ class UserService:
         self._repo = userRepo
         self._policyRepo = policyRepo
 
+    @debugLogger
     def createUser(self, id: str = '', name: str = '', password:str = '', objectOnly: bool = False, tokenData: TokenData = None):
         try:
             if id == '':
@@ -28,10 +30,12 @@ class UserService:
                 self._repo.createUser(user=user, tokenData=tokenData)
                 return user
 
+    @debugLogger
     def deleteUser(self, user: User, tokenData: TokenData = None):
         self._repo.deleteUser(user, tokenData=tokenData)
         user.publishDelete()
 
+    @debugLogger
     def updateUser(self, oldObject: User, newObject: User, tokenData: TokenData = None):
         self._repo.updateUser(newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)

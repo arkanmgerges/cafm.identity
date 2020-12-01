@@ -20,6 +20,7 @@ from src.domain_model.token.TokenData import TokenData
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -38,6 +39,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
             logger.warn(f'[{UserGroupRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
             raise Exception(f'Could not connect to the db, message: {e}')
 
+    @debugLogger
     def createUserGroup(self, userGroup: UserGroup, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -82,6 +84,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         }
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
+    @debugLogger
     def updateUserGroup(self, userGroup: UserGroup, tokenData: TokenData) -> None:
         oldObject = self.userGroupById(userGroup.id())
         if oldObject == userGroup:
@@ -108,6 +111,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
                 f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] The object user group: {userGroup} could not be updated in the database')
             raise ObjectCouldNotBeUpdatedException(f'user group: {userGroup}')
 
+    @debugLogger
     def deleteUserGroup(self, userGroup: UserGroup, tokenData: TokenData):
         try:
             actionFunction = '''
@@ -141,6 +145,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
                 f'[{UserGroupRepositoryImpl.deleteUserGroup.__qualname__}] Object could not be found exception for user group id: {userGroup.id()}')
             raise ObjectCouldNotBeDeletedException(f'user group id: {userGroup.id()}')
 
+    @debugLogger
     def userGroupByName(self, name: str) -> UserGroup:
         aql = '''
             FOR d IN resource
@@ -157,6 +162,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
 
         return UserGroup.createFrom(id=result[0]['id'], name=result[0]['name'])
 
+    @debugLogger
     def userGroupById(self, id: str) -> UserGroup:
         aql = '''
             FOR d IN resource
@@ -173,6 +179,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
 
         return UserGroup.createFrom(id=result[0]['id'], name=result[0]['name'])
 
+    @debugLogger
     def userGroups(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
             resultSize: int = 100,
             order: List[dict] = None) -> dict:

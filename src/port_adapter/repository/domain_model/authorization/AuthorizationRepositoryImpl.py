@@ -9,6 +9,7 @@ from pyArango.connection import Connection
 from pyArango.query import AQLQuery
 
 from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
+from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
 
@@ -34,6 +35,7 @@ class AuthorizationRepositoryImpl(AuthorizationRepository):
             raise Exception(
                 f'[{AuthorizationRepositoryImpl.__init__.__qualname__}] Could not connect to the redis, message: {e}')
 
+    @debugLogger
     def rolesByUserId(self, id: str) -> List[str]:
         logger.debug(
             f'[{AuthorizationRepositoryImpl.rolesByUserId.__qualname__}] - with id: {id}')
@@ -64,5 +66,6 @@ class AuthorizationRepositoryImpl(AuthorizationRepository):
         result = result[0]
         return result['role']
 
+    @debugLogger
     def tokenExists(self, token: str) -> bool:
         return self._cache.exists(f'{self._cacheSessionKeyPrefix}{token}') == 1
