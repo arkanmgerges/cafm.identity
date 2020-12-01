@@ -15,7 +15,7 @@ from src.resource.logging.logger import logger
 class RevokeAssignmentPermissionToPermissionContextHandler(Handler):
 
     def __init__(self):
-        self._commandConstant = CommonCommandConstant.REVOKE_ASSIGNMENT_PERMISSION_TO_RESOURCE_TYPE
+        self._commandConstant = CommonCommandConstant.REVOKE_ASSIGNMENT_PERMISSION_TO_PERMISSION_CONTEXT
 
     def canHandle(self, name: str) -> bool:
         return name == self._commandConstant.value

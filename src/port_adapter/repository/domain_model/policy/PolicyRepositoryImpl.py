@@ -510,7 +510,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
     # region Access Role - Resource
     @debugLogger
-    def provideAccessRoleToResource(self, role: Role, resource: Resource) -> None:
+    def grantAccessRoleToResource(self, role: Role, resource: Resource) -> None:
         resourceDocId = self.resourceDocumentId(resource)
         roleDocId = self.roleDocumentId(role)
 
@@ -518,7 +518,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         result = self.accessRoleToResource(roleDocId, resourceDocId, resource)
         if len(result) > 0:
             logger.debug(
-                f'[{PolicyRepositoryImpl.provideAccessRoleToResource.__qualname__}] Resource already assigned for role: {role.id()}, resource: {resource.id()}')
+                f'[{PolicyRepositoryImpl.grantAccessRoleToResource.__qualname__}] Resource already assigned for role: {role.id()}, resource: {resource.id()}')
             raise ResourceAssignmentAlreadyExistException(
                 f'Resource already assigned for role: {role.id()}, resource: {resource.id()}')
 
@@ -848,7 +848,6 @@ class PolicyRepositoryImpl(PolicyRepository):
     def _filterAccessTree(self, accessTree: List[AccessNode], deniedItems: dict):
         result = []
         for node in accessTree:
-            # todo modified
             nodeContentType = node.data.contentType
             if nodeContentType is AccessNodeContentTypeConstant.RESOURCE_INSTANCE:
                 nodeDataContent: ResourceInstanceAccessNodeContent = ResourceInstanceAccessNodeContent.castFrom(

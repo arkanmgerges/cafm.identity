@@ -33,7 +33,7 @@ class PolicyControllerService:
     def provideAccessRoleToResource(self, role: Role, resource: Resource):
         if resource.type() in [PermissionContextConstant.PROJECT.value, PermissionContextConstant.REALM.value,
                                PermissionContextConstant.OU.value]:
-            self._policyRepo.provideAccessRoleToResource(role, resource)
+            self._policyRepo.grantAccessRoleToResource(role, resource)
         else:
             raise NotAllowedAccessAssignmentException(
                 f'role id: {role.id()} resource id: {resource.id()} and permission context: {resource.type()}')

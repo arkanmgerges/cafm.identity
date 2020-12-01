@@ -11,6 +11,9 @@ from src.domain_model.policy.AccessNode import AccessNode
 from src.domain_model.policy.PermissionWithPermissionContexts import PermissionWithPermissionContexts
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
+from src.domain_model.policy.access_node_content.AccessNodeContent import AccessNodeContentTypeConstant
+from src.domain_model.policy.access_node_content.ResourceInstanceAccessNodeContent import \
+    ResourceInstanceAccessNodeContent
 from src.domain_model.policy.request_context_data.ContextDataRequest import ContextDataRequestConstant, \
     ContextDataRequest
 from src.domain_model.policy.request_context_data.PermissionContextDataRequest import PermissionContextDataRequest
@@ -149,11 +152,9 @@ class AuthorizationService:
                                                      PermissionAction.DELETE]:
                         if requestedObject.type == RequestedAuthzObjectEnum.RESOURCE:
                             for ownerItem in ownerOf:
+                                # Check if it is the owner of the resource, and if it is, then return True
                                 if requestedObject.obj.id() == ownerItem.id():
                                     return True
-                            # # Check if it is the owner of the resource, and if it is then return True
-                            # if self._policyService.isOwnerOfResource(resource=requestedObject.obj, tokenData=tokenData):
-                            #     return True
 
                             # Check if the resource is accessible in the tree
                             if self._isDeniedInstance(requestedObject.obj, requestedPermissionAction):
@@ -170,19 +171,23 @@ class AuthorizationService:
                    requestedPermissionAction: PermissionAction) -> bool:
         for treeItem in accessTree:
             # Get the current resource from the tree
-            #todo fix it
-            currentResource = treeItem.resource
-            # Check if the user/role has read access to it
-            if self._isDeniedInstance(currentResource, PermissionAction.READ):
-                return False
-            # Check if the current resource is the same as the requested resource
-            if currentResource.id() == requestedResource.id():
-                return True
-            # Parse the children
-            if len(treeItem.children) > 0:
-                result = self._treeCheck(treeItem.children, requestedResource, requestedPermissionAction)
-                if result is True:
+            # todo keep an eye on it, if the code is working, then delete it
+            nodeContentType = treeItem.data.contentType
+            if nodeContentType is AccessNodeContentTypeConstant.RESOURCE_INSTANCE:
+                nodeDataContent: ResourceInstanceAccessNodeContent = ResourceInstanceAccessNodeContent.castFrom(
+                    treeItem.data.content)
+                currentResource = nodeDataContent.resource
+                # Check if the user/role has read access to it
+                if self._isDeniedInstance(currentResource, PermissionAction.READ):
+                    return False
+                # Check if the current resource is the same as the requested resource
+                if currentResource.id() == requestedResource.id():
                     return True
+                # Parse the children
+                if len(treeItem.children) > 0:
+                    result = self._treeCheck(treeItem.children, requestedResource, requestedPermissionAction)
+                    if result is True:
+                        return True
             return False
 
     @debugLogger

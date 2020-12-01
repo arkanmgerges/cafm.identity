@@ -20,6 +20,7 @@ class PermissionAction(Enum):
     READ = 'read'
     UPDATE = 'update'
     DELETE = 'delete'
+    GRANT = 'grant'
     ASSIGN = 'assign'
     REVOKE = 'revoke'
 

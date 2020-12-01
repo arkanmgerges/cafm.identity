@@ -146,7 +146,7 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def provideAccessRoleToResource(self, role: Role, resource: Resource) -> None:
+    def grantAccessRoleToResource(self, role: Role, resource: Resource) -> None:
         """Make a link access for a role to a resource
 
         Args:
