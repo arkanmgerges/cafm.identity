@@ -16,8 +16,10 @@ def debugLogger(f):
     reset = "\x1b[0m"
 
     # link: https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
-    color1 = "\u001b[34;1m"
+    color1 = "\u001b[35m"
     color2 = "\u001b[33;1m"
+
+    bgColor1 = "\u001b[43;1m"
 
     from src.resource.logging.logger import logger
     if os.getenv('DECORATOR_DEBUGGING_INFO_STATUS', True):
@@ -34,7 +36,7 @@ def debugLogger(f):
             functionName = f.__code__.co_name
 
             logger.debug(
-                f'{color1} Code execution entered {reset}{color2}[{className}.{functionName}]{reset}{color1} with parameters:{reset} {color2}{params}{reset}\n{color1}File: {reset}{color2}{fileName} {reset}')
+                f'{bgColor1}{color1} Debug Logger: {reset}\n{color1} Code execution entered {reset}{color2}[{className}.{functionName}]{reset}{color1} with parameters:{reset} {color2}{params}{reset}\n{color1}File: {reset}{color2}{fileName} {reset}')
 
             return f(*args, **kwargs)
 
