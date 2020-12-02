@@ -50,6 +50,7 @@ jobs:
           --cache-from $ECR_REGISTRY/$ECR_REPOSITORY:latest \
           -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} \
           -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest \
+          -f ${GITHUB_WORKSPACE}/.pkg/local/docker/Dockerfile \
           ${GITHUB_WORKSPACE}
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:${IMAGE_TAG}
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
