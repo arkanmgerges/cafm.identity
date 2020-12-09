@@ -67,7 +67,9 @@ class UserRepositoryImpl(UserRepository):
                 let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                 if (res.length == 0) {
                     p = params['resource']
-                    res = db.resource.insert({id: p['id'], name: p['name'], type: p['type']});
+                    res = db.resource.insert({id: p['id'], name: p['name'], firstName: p['firstName'], lastName: p['lastName'],
+                                              addressOne: p['addressOne'], addressTwo: p['addressTwo'], postalCode: p['postalCode'],
+                                              avatarImage: p['avatarImage'], type: p['type']});
                     fromDocId = res['_id'];
                     p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
                     db._query(queryLink, p).execute();
@@ -85,7 +87,9 @@ class UserRepositoryImpl(UserRepository):
             }
         '''
         params = {
-            'resource': {"id": user.id(), "name": user.name(), "type": user.type()},
+            'resource': {"id": user.id(), "name": user.name(), "firstName": user.firstName(),
+                         "lastName": user.lastName(), "addressOne": user.addressOne(), "addressTwo": user.addressTwo(),
+                         "postalCode": user.postalCode(), "avatarImage": user.avatarImage(), "type": user.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
             'rolesDocIds': rolesDocIds,
             'toTypeRole': PermissionContextConstant.ROLE.value,

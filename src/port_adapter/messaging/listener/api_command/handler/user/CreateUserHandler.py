@@ -31,7 +31,17 @@ class CreateUserHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        obj = appService.createUser(name=dataDict['name'], password=dataDict['password'], objectOnly=True, token=metadataDict['token'])
+        obj = appService.createUser(name=dataDict['name'], 
+                                    password=dataDict['password'], 
+                                    firstName=dataDict['firstName'], 
+                                    lastName=dataDict['lastName'], 
+                                    addressLineOne=dataDict['addressLineOne'], 
+                                    addressLineTwo=dataDict['addressLineTwo'], 
+                                    postalCode=dataDict['postalCode'], 
+                                    avatarImage=dataDict['avatarImage'], 
+                                    objectOnly=True, token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
-                'data': {'id': obj.id(), 'name': obj.name(), 'password': obj.password()},
+                'data': {'id': obj.id(), 'name': obj.name(), 'password': obj.password(),
+                         'firstName': obj.firstName(), 'lastName': obj.lastName(), 'addressOne': obj.addressOne(),
+                         'addressTwo': obj.addressTwo(), 'postalCode': obj.postalCode(), 'avatarImage': obj.avatarImage()},
                 'metadata': metadataDict}

@@ -23,7 +23,8 @@ class UserApplicationService:
         self._userService = userService
 
     @debugLogger
-    def createUser(self, id: str = '', name: str = '', password:str = '', objectOnly: bool = False, token: str = ''):
+    def createUser(self, id: str = '', name: str = '', password:str = '', firstName='', lastName='',
+                 addressLineOne='', addressLineTwo='', postalCode='', avatarImage='', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -31,7 +32,10 @@ class UserApplicationService:
                                         requestedPermissionAction=PermissionAction.CREATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='user'),
                                         tokenData=tokenData)
-        return self._userService.createUser(id=id, name=name, password=password, objectOnly=objectOnly, tokenData=tokenData)
+        return self._userService.createUser(id=id, name=name, password=password,
+                                            firstName=firstName, lastName=lastName, addressLineOne=addressLineOne, 
+                                            addressLineTwo=addressLineTwo, postalCode=postalCode, avatarImage=avatarImage,
+                                            objectOnly=objectOnly, tokenData=tokenData)
 
     @debugLogger
     def updateUser(self, id: str, name: str, token: str = ''):

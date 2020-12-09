@@ -10,16 +10,25 @@ from src.resource.logging.logger import logger
 
 
 class User(Resource):
-    def __init__(self, id: str = None, name='', password=''):
+    def __init__(self, id: str = None, name='', password='', firstName='', lastName='',
+                 addressLineOne='', addressLineTwo='', postalCode='', avatarImage=''):
         anId = str(uuid4()) if id is None or id == '' else id
         super().__init__(id=anId, type='user')
         self._name = name
         self._password = password
+        self._firstName = firstName
+        self._lastName = lastName
+        self._addressLineOne = addressLineOne
+        self._addressLineTwo = addressLineTwo
+        self._postalCode = postalCode
+        self._avatarImage = avatarImage
 
     @classmethod
-    def createFrom(cls, id: str = None, name='', password='', publishEvent: bool = False):
+    def createFrom(cls, id: str = None, name='', password='', firstName='', lastName='',
+                 addressLineOne='', addressLineTwo='', postalCode='', avatarImage='', publishEvent: bool = False):
         logger.debug(f'[{User.createFrom.__qualname__}] - with name {name}')
-        user = User(id, name, password)
+        user = User(id, name, password, firstName, lastName,
+                    addressLineOne, addressLineTwo, postalCode, avatarImage)
         if publishEvent:
             logger.debug(f'[{User.createFrom.__qualname__}] - publish UserCreated event')
             from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
@@ -29,6 +38,24 @@ class User(Resource):
 
     def name(self) -> str:
         return self._name
+    
+    def firstName(self) -> str:
+        return self._firstName
+    
+    def lastName(self) -> str:
+        return self._lastName
+    
+    def addressOne(self) -> str:
+        return self._addressLineOne
+    
+    def addressTwo(self) -> str:
+        return self._addressLineTwo
+    
+    def postalCode(self) -> str:
+        return self._postalCode
+    
+    def avatarImage(self) -> str:
+        return self._avatarImage
 
     def update(self, data: dict):
         updated = False
@@ -54,7 +81,9 @@ class User(Resource):
         DomainPublishedEvents.addEventForPublishing(UserUpdated(old, self))
 
     def toMap(self) -> dict:
-        return {"id": self.id(), "name": self.name()}
+        return {"id": self.id(), "name": self.name(),
+                "firstName": self.firstName(), "lastName": self.lastName(), "addressOne": self.addressOne(),
+                "addressTwo": self.addressTwo(), "postalCode": self.postalCode(), "avatarImage": self.avatarImage()}
 
     def __eq__(self, other):
         if not isinstance(other, User):

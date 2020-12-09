@@ -31,7 +31,12 @@ class CreateUserHandler(Handler):
             raise UnAuthorizedException()
 
         obj = appService.createUser(id=dataDict['id'], name=dataDict['name'], password=dataDict['password'],
+                                    firstName=dataDict['firstName'], lastName=dataDict['lastName'], 
+                                    addressLineOne=dataDict['addressOne'], addressLineTwo=dataDict['addressTwo'], 
+                                    postalCode=dataDict['postalCode'], avatarImage=dataDict['avatarImage'],
                                     token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
-                'data': {'id': obj.id(), 'name': obj.name()},
+                'data': {'id': obj.id(), 'name': obj.name(), 'firstName': obj.firstName(),
+                'lastName': obj.lastName(), 'addressOne': obj.addressOne(), 'addressTwo': obj.addressTwo(),
+                'postalCode': obj.postalCode(), 'avatarImage': obj.avatarImage()},
                 'metadata': metadataDict}

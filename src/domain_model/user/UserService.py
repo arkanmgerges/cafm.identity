@@ -16,7 +16,8 @@ class UserService:
         self._policyRepo = policyRepo
 
     @debugLogger
-    def createUser(self, id: str = '', name: str = '', password:str = '', objectOnly: bool = False, tokenData: TokenData = None):
+    def createUser(self, id: str = '', name: str = '', password:str = '', firstName='', lastName='',
+                   addressLineOne='', addressLineTwo='', postalCode='', avatarImage='', objectOnly: bool = False, tokenData: TokenData = None):
         try:
             if id == '':
                 raise UserDoesNotExistException()
@@ -24,9 +25,15 @@ class UserService:
             raise UserAlreadyExistException(name)
         except UserDoesNotExistException:
             if objectOnly:
-                return User.createFrom(name=name, password=password)
+                return User.createFrom(name=name, password=password, firstName=firstName,
+                                       lastName=lastName, addressLineOne=addressLineOne, 
+                                       addressLineTwo=addressLineTwo, postalCode=postalCode, 
+                                       avatarImage=avatarImage)
             else:
-                user = User.createFrom(id=id, name=name, password=password, publishEvent=True)
+                user = User.createFrom(id=id, name=name, password=password,  firstName=firstName,
+                                       lastName=lastName, addressLineOne=addressLineOne, 
+                                       addressLineTwo=addressLineTwo, postalCode=postalCode, 
+                                       avatarImage=avatarImage, publishEvent=True)
                 self._repo.createUser(user=user, tokenData=tokenData)
                 return user
 
