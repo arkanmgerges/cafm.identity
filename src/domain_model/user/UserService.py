@@ -30,7 +30,7 @@ class UserService:
                                        addressLineTwo=addressLineTwo, postalCode=postalCode, 
                                        avatarImage=avatarImage)
             else:
-                user = User.createFrom(id=id, name=name, password=password,  firstName=firstName,
+                user = User.createFrom(id=id, name=name, password=password, firstName=firstName,
                                        lastName=lastName, addressLineOne=addressLineOne, 
                                        addressLineTwo=addressLineTwo, postalCode=postalCode, 
                                        avatarImage=avatarImage, publishEvent=True)

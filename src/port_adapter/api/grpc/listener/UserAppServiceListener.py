@@ -68,7 +68,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
                                                 order=orderData)
             response = UserAppService_usersResponse()
             for user in result['items']:
-                response.users.add(id=user.id(), name=user.name())
+                response.users.add(id=user.id(), name=user.name(), firstName=user.firstName(), lastName=user.lastName(), 
+                                   addressLineOne=user.addressOne(), addressLineTwo=user.addressTwo(), postalCode=user.postalCode(), 
+                                   avatarImage=user.avatarImage())
             response.itemCount = result['itemCount']
             logger.debug(f'[{UserAppServiceListener.users.__qualname__}] - response: {response}')
             return UserAppService_usersResponse(users=response.users, itemCount=response.itemCount)
