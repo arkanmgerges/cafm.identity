@@ -24,7 +24,7 @@ class UserApplicationService:
 
     @debugLogger
     def createUser(self, id: str = '', name: str = '', password:str = '', firstName='', lastName='',
-                 addressLineOne='', addressLineTwo='', postalCode='', avatarImage='', objectOnly: bool = False, token: str = ''):
+                   addressLineOne='', addressLineTwo='', postalCode='', avatarImage='', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -38,7 +38,8 @@ class UserApplicationService:
                                             objectOnly=objectOnly, tokenData=tokenData)
 
     @debugLogger
-    def updateUser(self, id: str, name: str, token: str = ''):
+    def updateUser(self, id: str, name: str, firstName='', lastName='',
+                   addressLineOne='', addressLineTwo='', postalCode='', avatarImage='', token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -50,7 +51,9 @@ class UserApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
         self._userService.updateUser(oldObject=resource,
-                                     newObject=User.createFrom(id=id, name=name), tokenData=tokenData)
+                                     newObject=User.createFrom(id=id, name=name, firstName=firstName, lastName=lastName,
+                                                               addressLineOne=addressLineOne, addressLineTwo=addressLineTwo,
+                                                               postalCode=postalCode, avatarImage=avatarImage), tokenData=tokenData)
 
     @debugLogger
     def deleteUser(self, id: str, token: str = ''):

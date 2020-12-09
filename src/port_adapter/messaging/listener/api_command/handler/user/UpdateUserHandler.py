@@ -32,5 +32,7 @@ class UpdateUserHandler(Handler):
 
         # Put the command into the messaging system, in order to be processed later
         return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
-                'data': {'id': dataDict['id'], 'name': dataDict['name'], 'password': dataDict['password']},
+                'data': {'id': dataDict['id'], 'name': dataDict['name'], 'password': dataDict['password'],
+                         'firstName': dataDict['firstName'], 'lastName': dataDict['lastName'], 'addressLineOne': dataDict['addressLineOne'],
+                         'addressLineTwo': dataDict['addressLineTwo'], 'postalCode': dataDict['postalCode'], 'avatarImage': dataDict['avatarImage']},
                 'metadata': metadataDict}
