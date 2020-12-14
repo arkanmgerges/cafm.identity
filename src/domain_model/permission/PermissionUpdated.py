@@ -10,6 +10,6 @@ from src.domain_model.permission.Permission import Permission
 
 class PermissionUpdated(DomainEvent):
     def __init__(self, oldPermission: Permission, newPermission: Permission):
-        super().__init__(id=str(uuid4()), name='permission_updated')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.PERMISSION_UPDATED.value)
         self._data = {'old': oldPermission.toMap(), 'new': newPermission.toMap()}
 

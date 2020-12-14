@@ -9,5 +9,5 @@ from src.domain_model.permission_context.PermissionContext import PermissionCont
 
 class PermissionContextCreated(DomainEvent):
     def __init__(self, permissionContext: PermissionContext):
-        super().__init__(id=str(uuid4()), name='permission_context_created')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.PERMISSION_CONTEXT_CREATED.value)
         self._data = permissionContext.toMap()

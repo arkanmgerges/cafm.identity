@@ -9,5 +9,5 @@ import src.domain_model.permission_context.PermissionContext as PermissionContex
 
 class PermissionContextDeleted(DomainEvent):
     def __init__(self, permissionContext: PermissionContext):
-        super().__init__(id=str(uuid4()), name='permission_context_deleted')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.PERMISSION_CONTEXT_DELETED.value)
         self._data = permissionContext.toMap()

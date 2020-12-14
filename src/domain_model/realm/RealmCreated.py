@@ -10,6 +10,6 @@ from src.domain_model.realm.Realm import Realm
 
 class RealmCreated(DomainEvent):
     def __init__(self, realm: Realm):
-        super().__init__(id=str(uuid4()), name='realm_created')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.REALM_CREATED.value)
         self._data = realm.toMap()
 

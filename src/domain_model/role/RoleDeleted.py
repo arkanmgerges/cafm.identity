@@ -9,5 +9,5 @@ import src.domain_model.role.Role as Role
 
 class RoleDeleted(DomainEvent):
     def __init__(self, role: Role):
-        super().__init__(id=str(uuid4()), name='role_deleted')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.ROLE_DELETED.value)
         self._data = role.toMap()

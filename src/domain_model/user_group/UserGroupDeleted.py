@@ -9,5 +9,5 @@ from src.domain_model.event.DomainEvent import DomainEvent
 
 class UserGroupDeleted(DomainEvent):
     def __init__(self, userGroup: UserGroup):
-        super().__init__(id=str(uuid4()), name='user_group_deleted')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.USER_GROUP_DELETED.value)
         self._data = userGroup.toMap()

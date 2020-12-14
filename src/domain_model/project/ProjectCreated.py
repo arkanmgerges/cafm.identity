@@ -10,6 +10,6 @@ from src.domain_model.project.Project import Project
 
 class ProjectCreated(DomainEvent):
     def __init__(self, project: Project):
-        super().__init__(id=str(uuid4()), name='project_created')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.PROJECT_CREATED.value)
         self._data = project.toMap()
 

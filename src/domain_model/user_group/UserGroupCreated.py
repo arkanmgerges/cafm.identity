@@ -10,5 +10,5 @@ from src.domain_model.user_group.UserGroup import UserGroup
 
 class UserGroupCreated(DomainEvent):
     def __init__(self, userGroup: UserGroup):
-        super().__init__(id=str(uuid4()), name='user_group_created')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.USER_GROUP_CREATED.value)
         self._data = userGroup.toMap()

@@ -10,6 +10,6 @@ from src.domain_model.ou.Ou import Ou
 
 class OuCreated(DomainEvent):
     def __init__(self, ou: Ou):
-        super().__init__(id=str(uuid4()), name='ou_created')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.OU_CREATED.value)
         self._data = ou.toMap()
 

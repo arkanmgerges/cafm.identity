@@ -9,5 +9,5 @@ import src.domain_model.realm.Realm as Realm
 
 class RealmDeleted(DomainEvent):
     def __init__(self, realm: Realm):
-        super().__init__(id=str(uuid4()), name='realm_deleted')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.REALM_DELETED.value)
         self._data = realm.toMap()

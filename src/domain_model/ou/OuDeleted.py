@@ -9,5 +9,5 @@ import src.domain_model.ou.Ou as Ou
 
 class OuDeleted(DomainEvent):
     def __init__(self, ou: Ou):
-        super().__init__(id=str(uuid4()), name='ou_deleted')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.OU_DELETED.value)
         self._data = ou.toMap()

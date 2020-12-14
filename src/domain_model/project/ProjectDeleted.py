@@ -9,5 +9,5 @@ import src.domain_model.project.Project as Project
 
 class ProjectDeleted(DomainEvent):
     def __init__(self, project: Project):
-        super().__init__(id=str(uuid4()), name='project_deleted')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.PROJECT_DELETED.value)
         self._data = project.toMap()

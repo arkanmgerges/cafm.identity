@@ -9,5 +9,5 @@ from src.domain_model.user_group.UserGroup import UserGroup
 
 class UserGroupUpdated(DomainEvent):
     def __init__(self, oldUserGroup: UserGroup, newUserGroup: UserGroup):
-        super().__init__(id=str(uuid4()), name='user_group_updated')
+        super().__init__(id=str(uuid4()), name=CommonEventConstant.USER_GROUP_UPDATED.value)
         self._data = {'old': oldUserGroup.toMap(), 'new': newUserGroup.toMap()}
