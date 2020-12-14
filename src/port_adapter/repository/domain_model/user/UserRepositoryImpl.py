@@ -67,9 +67,9 @@ class UserRepositoryImpl(UserRepository):
                 let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                 if (res.length == 0) {
                     p = params['resource']
-                    res = db.resource.insert({id: p['id'], name: p['name'], firstName: p['firstName'], lastName: p['lastName'],
-                                              addressOne: p['addressOne'], addressTwo: p['addressTwo'], postalCode: p['postalCode'],
-                                              avatarImage: p['avatarImage'], type: p['type']});
+                    res = db.resource.insert({id: p['id'], name: p['name'], first_name: p['firstName'], last_name: p['lastName'],
+                                              address_one: p['addressOne'], address_two: p['addressTwo'], postal_code: p['postalCode'],
+                                              avatar_image: p['avatarImage'], type: p['type']});
                     fromDocId = res['_id'];
                     p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
                     db._query(queryLink, p).execute();
@@ -232,7 +232,7 @@ class UserRepositoryImpl(UserRepository):
         itemCount = len(items)
         items = items[resultFrom:resultSize]
         return {"items": [User.createFrom(id=x['id'], name=x['name'], firstName=x['firstName'],
-                                       lastName=x['lastName'], addressLineOne=x['addressOne'], 
-                                       addressLineTwo=x['addressTwo'], postalCode=x['postalCode'], 
+                                       lastName=x['lastName'], addressOne=x['addressOne'], 
+                                       addressTwo=x['addressTwo'], postalCode=x['postalCode'], 
                                        avatarImage=x['avatarImage']) for x in items],
                 "itemCount": itemCount}

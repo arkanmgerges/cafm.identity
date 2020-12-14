@@ -339,7 +339,16 @@ def createUser(db, id, name, password):
     password = hashlib.sha256(password.encode()).hexdigest()
     aql = '''
             UPSERT {name: @name, type: 'user'}
-                INSERT {id: @id, name: @name, password: @password, type: 'user'}
+                INSERT {id: @id,
+                        name: @name,
+                        password: @password,
+                        first_name: "",
+                        last_name: "",
+                        address_one: "",
+                        address_two: "",
+                        postal_code: "",
+                        avatar_image: "",
+                        type: 'user'}
                 UPDATE {name: @name, password: @password, type: 'user'}
               IN resource
             '''

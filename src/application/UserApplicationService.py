@@ -24,7 +24,7 @@ class UserApplicationService:
 
     @debugLogger
     def createUser(self, id: str = '', name: str = '', password:str = '', firstName='', lastName='',
-                   addressLineOne='', addressLineTwo='', postalCode='', avatarImage='', objectOnly: bool = False, token: str = ''):
+                   addressOne='', addressTwo='', postalCode='', avatarImage='', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -33,13 +33,13 @@ class UserApplicationService:
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='user'),
                                         tokenData=tokenData)
         return self._userService.createUser(id=id, name=name, password=password,
-                                            firstName=firstName, lastName=lastName, addressLineOne=addressLineOne, 
-                                            addressLineTwo=addressLineTwo, postalCode=postalCode, avatarImage=avatarImage,
+                                            firstName=firstName, lastName=lastName, addressOne=addressOne, 
+                                            addressTwo=addressTwo, postalCode=postalCode, avatarImage=avatarImage,
                                             objectOnly=objectOnly, tokenData=tokenData)
 
     @debugLogger
     def updateUser(self, id: str, name: str, firstName='', lastName='',
-                   addressLineOne='', addressLineTwo='', postalCode='', avatarImage='', token: str = ''):
+                   addressOne='', addressTwo='', postalCode='', avatarImage='', token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -52,7 +52,7 @@ class UserApplicationService:
                                         tokenData=tokenData)
         self._userService.updateUser(oldObject=resource,
                                      newObject=User.createFrom(id=id, name=name, firstName=firstName, lastName=lastName,
-                                                               addressLineOne=addressLineOne, addressLineTwo=addressLineTwo,
+                                                               addressOne=addressOne, addressTwo=addressTwo,
                                                                postalCode=postalCode, avatarImage=avatarImage), tokenData=tokenData)
 
     @debugLogger

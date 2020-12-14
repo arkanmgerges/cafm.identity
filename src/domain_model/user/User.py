@@ -11,24 +11,24 @@ from src.resource.logging.logger import logger
 
 class User(Resource):
     def __init__(self, id: str = None, name='', password='', firstName='', lastName='',
-                 addressLineOne='', addressLineTwo='', postalCode='', avatarImage=''):
+                 addressOne='', addressTwo='', postalCode='', avatarImage=''):
         anId = str(uuid4()) if id is None or id == '' else id
         super().__init__(id=anId, type='user')
         self._name = name
         self._password = password
         self._firstName = firstName
         self._lastName = lastName
-        self._addressLineOne = addressLineOne
-        self._addressLineTwo = addressLineTwo
+        self._addressOne = addressOne
+        self._addressTwo = addressTwo
         self._postalCode = postalCode
         self._avatarImage = avatarImage
 
     @classmethod
     def createFrom(cls, id: str = None, name='', password='', firstName='', lastName='',
-                 addressLineOne='', addressLineTwo='', postalCode='', avatarImage='', publishEvent: bool = False):
+                 addressOne='', addressTwo='', postalCode='', avatarImage='', publishEvent: bool = False):
         logger.debug(f'[{User.createFrom.__qualname__}] - with name {name}')
         user = User(id, name, password, firstName, lastName,
-                    addressLineOne, addressLineTwo, postalCode, avatarImage)
+                    addressOne, addressTwo, postalCode, avatarImage)
         if publishEvent:
             logger.debug(f'[{User.createFrom.__qualname__}] - publish UserCreated event')
             from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
@@ -46,10 +46,10 @@ class User(Resource):
         return self._lastName
     
     def addressOne(self) -> str:
-        return self._addressLineOne
+        return self._addressOne
     
     def addressTwo(self) -> str:
-        return self._addressLineTwo
+        return self._addressTwo
     
     def postalCode(self) -> str:
         return self._postalCode
@@ -82,8 +82,8 @@ class User(Resource):
 
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name(),
-                "firstName": self.firstName(), "lastName": self.lastName(), "addressOne": self.addressOne(),
-                "addressTwo": self.addressTwo(), "postalCode": self.postalCode(), "avatarImage": self.avatarImage()}
+                "first_name": self.firstName(), "last_name": self.lastName(), "address_one": self.addressOne(),
+                "address_two": self.addressTwo(), "postal_code": self.postalCode(), "avatar_image": self.avatarImage()}
 
     def __eq__(self, other):
         if not isinstance(other, User):

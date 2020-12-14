@@ -7,8 +7,8 @@ message User {
   string name = 2;
   string firstName = 3;
   string lastName = 4;
-  string addressLineOne = 5;
-  string addressLineTwo = 6;
+  string addressOne = 5;
+  string addressTwo = 6;
   string postalCode = 7;
   string avatarImage = 8;
 }
