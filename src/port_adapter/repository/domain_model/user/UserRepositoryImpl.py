@@ -67,7 +67,9 @@ class UserRepositoryImpl(UserRepository):
                 let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                 if (res.length == 0) {
                     p = params['resource']
-                    res = db.resource.insert({id: p['id'], name: p['name'], type: p['type']});
+                    res = db.resource.insert({id: p['id'], name: p['name'], first_name: p['firstName'], last_name: p['lastName'],
+                                              address_one: p['addressOne'], address_two: p['addressTwo'], postal_code: p['postalCode'],
+                                              avatar_image: p['avatarImage'], type: p['type']});
                     fromDocId = res['_id'];
                     p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
                     db._query(queryLink, p).execute();
@@ -85,7 +87,9 @@ class UserRepositoryImpl(UserRepository):
             }
         '''
         params = {
-            'resource': {"id": user.id(), "name": user.name(), "type": user.type()},
+            'resource': {"id": user.id(), "name": user.name(), "firstName": user.firstName(),
+                         "lastName": user.lastName(), "addressOne": user.addressOne(), "addressTwo": user.addressTwo(),
+                         "postalCode": user.postalCode(), "avatarImage": user.avatarImage(), "type": user.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
             'rolesDocIds': rolesDocIds,
             'toTypeRole': PermissionContextConstant.ROLE.value,
@@ -104,10 +108,13 @@ class UserRepositoryImpl(UserRepository):
         aql = '''
             FOR d IN resource
                 FILTER d.id == @id AND d.type == 'user'
-                UPDATE d WITH {name: @name} IN resource
+                UPDATE d WITH {name: @name, first_name: @firstName, last_name: @lastName, 
+                               address_one: @addressOne, address_two: @addressTwo, postal_code: @postalCode, avatar_image: @avatarImage} IN resource
         '''
 
-        bindVars = {"id": user.id(), "name": user.name()}
+        bindVars = {"id": user.id(), "name": user.name(), "firstName": user.firstName(),
+                    "lastName": user.lastName(), "addressOne": user.addressOne(), "addressTwo": user.addressTwo(),
+                    "postalCode": user.postalCode(), "avatarImage": user.avatarImage()}
         logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {user.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
@@ -224,5 +231,8 @@ class UserRepositoryImpl(UserRepository):
         items = result['items']
         itemCount = len(items)
         items = items[resultFrom:resultSize]
-        return {"items": [User.createFrom(id=x['id'], name=x['name']) for x in items],
+        return {"items": [User.createFrom(id=x['id'], name=x['name'], firstName=x['firstName'],
+                                       lastName=x['lastName'], addressOne=x['addressOne'], 
+                                       addressTwo=x['addressTwo'], postalCode=x['postalCode'], 
+                                       avatarImage=x['avatarImage']) for x in items],
                 "itemCount": itemCount}
