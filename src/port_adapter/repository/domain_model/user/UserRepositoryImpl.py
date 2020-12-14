@@ -108,8 +108,8 @@ class UserRepositoryImpl(UserRepository):
         aql = '''
             FOR d IN resource
                 FILTER d.id == @id AND d.type == 'user'
-                UPDATE d WITH {name: @name, firstName: @firstName, lastName: @lastName, 
-                               addressOne: @addressOne, addressTwo: @addressTwo, postalCode: @postalCode, avatarImage: @avatarImage} IN resource
+                UPDATE d WITH {name: @name, first_name: @firstName, last_name: @lastName, 
+                               address_one: @addressOne, address_two: @addressTwo, postal_code: @postalCode, avatar_image: @avatarImage} IN resource
         '''
 
         bindVars = {"id": user.id(), "name": user.name(), "firstName": user.firstName(),
