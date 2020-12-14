@@ -9,7 +9,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import UnAuthoriz
 import src.port_adapter.AppDi as AppDi
 from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant, \
     CommonCommandConstant
-from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
+from src.port_adapter.messaging.listener.identity_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
@@ -21,7 +21,11 @@ class RevokeRoleToAccessResourceHandler(Handler):
     def canHandle(self, name: str) -> bool:
         return name == self._commandConstant.value
 
-    def handleCommand(self, name: str, data: str, metadata: str) -> dict:
+    def handleCommand(self, messageData: dict) -> dict:
+        name = messageData['name']
+        data = messageData['data']
+        metadata = messageData['metadata']
+
         logger.debug(
             f'[{RevokeRoleToAccessResourceHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
         dataDict = json.loads(data)
@@ -33,6 +37,9 @@ class RevokeRoleToAccessResourceHandler(Handler):
         appService: PolicyApplicationService = AppDi.instance.get(PolicyApplicationService)
         appService.revokeAccessRoleFromResource(roleId=dataDict['role_id'], resourceId=dataDict['resource_id'],
                                                token=metadataDict['token'])
-        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
                 'data': {'role_id': dataDict['role_id'], 'resource_id': dataDict['resource_id']},
                 'metadata': metadataDict}
+
+    def targetsOnSuccess(self):
+        return [Handler.targetOnSuccess]

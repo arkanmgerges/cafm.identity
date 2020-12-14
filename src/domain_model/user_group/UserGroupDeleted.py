@@ -4,6 +4,7 @@
 from uuid import uuid4
 
 import src.domain_model.user_group.UserGroup as UserGroup
+from src.domain_model.EventConstant import CommonEventConstant
 from src.domain_model.event.DomainEvent import DomainEvent
 
 

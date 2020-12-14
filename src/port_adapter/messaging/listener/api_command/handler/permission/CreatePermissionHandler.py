@@ -21,7 +21,11 @@ class CreatePermissionHandler(Handler):
     def canHandle(self, name: str) -> bool:
         return name == self._commandConstant.value
 
-    def handleCommand(self, name: str, data: str, metadata: str) -> dict:
+    def handleCommand(self, messageData: dict) -> dict:
+        name = messageData['name']
+        data = messageData['data']
+        metadata = messageData['metadata']
+
         logger.debug(
             f'[{CreatePermissionHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
         appService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
@@ -34,7 +38,7 @@ class CreatePermissionHandler(Handler):
         obj = appService.createPermission(name=dataDict['name'], allowedActions=dataDict['allowed_actions'],
                                           deniedActions=dataDict['denied_actions'],
                                           objectOnly=True, token=metadataDict['token'])
-        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
                 'data': {'id': obj.id(), 'name': obj.name(), 'allowed_actions': obj.allowedActions(),
                          'denied_actions': obj.deniedActions()},
                 'metadata': metadataDict}

@@ -14,7 +14,6 @@ from src.domain_model.resource.exception.DomainModelException import DomainModel
 from src.port_adapter.messaging.common.Consumer import Consumer
 from src.port_adapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
 from src.port_adapter.messaging.common.TransactionalProducer import TransactionalProducer
-from src.port_adapter.messaging.common.model.ApiResponse import ApiResponse
 from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.resource.logging.logger import logger
 
@@ -24,6 +23,7 @@ class ApiCommandListener:
         self._handlers = []
         self._creatorServiceName = os.getenv('CAFM_IDENTITY_SERVICE_NAME', 'cafm.identity')
         self.addHandlers()
+        self.targetsOnException = []
         signal.signal(signal.SIGINT, self.interruptExecution)
         signal.signal(signal.SIGTERM, self.interruptExecution)
 
@@ -67,7 +67,7 @@ class ApiCommandListener:
                     try:
                         msgData = msg.value()
                         logger.debug(f'[{ApiCommandListener.run.__qualname__}] received message data = {msgData}')
-                        handledResult = self.handleCommand(name=msgData['name'], data=msgData['data'], metadata=msgData['metadata'])
+                        handledResult = self.handleCommand(messageData=msgData)
                         if handledResult is None:  # Consume the offset since there is no handler for it
                             logger.info(
                                 f'[{ApiCommandListener.run.__qualname__}] Consume the offset for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})')
@@ -78,19 +78,29 @@ class ApiCommandListener:
 
                         logger.debug(
                             f'[{ApiCommandListener.run.__qualname__}] handleResult returned with: {handledResult}')
+
+                        if 'external' in msgData:
+                            external = msgData['external']
+                        else:
+                            external = []
+
+                        external.append({
+                            'id': msgData['id'],
+                            'creator_service_name': msgData['creator_service_name'],
+                            'name': msgData['name'],
+                            'metadata': msgData['metadata'],
+                            'data': msgData['data'],
+                            'created_on': msgData['created_on']
+                        })
                         producer.produce(
                             obj=IdentityCommand(id=msgData['id'],
                                                 creatorServiceName=self._creatorServiceName,
                                                 name=msgData['name'],
                                                 metadata=msgData['metadata'],
                                                 data=json.dumps(handledResult['data']),
-                                                createdOn=handledResult['createdOn'],
-                                                externalId=msgData['id'],
-                                                externalServiceName=msgData['creatorServiceName'],
-                                                externalName=msgData['name'],
-                                                externalMetadata=msgData['metadata'],
-                                                externalData=msgData['data'],
-                                                externalCreatedOn=msgData['createdOn']),
+                                                createdOn=handledResult['created_on'],
+                                                external=external
+                                                ),
                             schema=IdentityCommand.get_schema())
 
                         # Send the consumer's position to transaction to commit
@@ -103,12 +113,11 @@ class ApiCommandListener:
                     except DomainModelException as e:
                         logger.warn(e)
                         msgData = msg.value()
-                        producer.produce(
-                            obj=ApiResponse(commandId=msgData['id'], commandName=msgData['name'],
-                                            metadata=msgData['metadata'],
-                                            data=json.dumps({'reason': {'message': e.message, 'code': e.code}}),
-                                            creatorServiceName=self._creatorServiceName, success=False),
-                            schema=ApiResponse.get_schema())
+                        for target in self.targetsOnException:
+                            res = target(msgData, e, self._creatorServiceName)
+                            producer.produce(
+                                obj=res['obj'],
+                                schema=res['schema'])
                         producer.sendOffsetsToTransaction(consumer)
                         producer.commitTransaction()
                         producer.beginTransaction()
@@ -125,10 +134,14 @@ class ApiCommandListener:
             # Close down consumer to commit final offsets.
             consumer.close()
 
-    def handleCommand(self, name, data, metadata: str):
+    def handleCommand(self, messageData: dict):
         for handler in self._handlers:
+            name = messageData['name']
+            metadata = messageData['metadata']
+
             if handler.canHandle(name):
-                result = handler.handleCommand(name=name, data=data, metadata=metadata)
+                self.targetsOnException = handler.targetsOnException()
+                result = handler.handleCommand(messageData=messageData)
                 return {"data": "", "metadata": metadata} if result is None else result
         return None
 

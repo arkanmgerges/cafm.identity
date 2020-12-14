@@ -21,7 +21,11 @@ class UpdatePermissionContextHandler(Handler):
     def canHandle(self, name: str) -> bool:
         return name == self._commandConstant.value
 
-    def handleCommand(self, name: str, data: str, metadata: str) -> dict:
+    def handleCommand(self, messageData: dict) -> dict:
+        name = messageData['name']
+        data = messageData['data']
+        metadata = messageData['metadata']
+
         logger.debug(
             f'[{UpdatePermissionContextHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
         appService: PermissionContextApplicationService = AppDi.instance.get(PermissionContextApplicationService)
@@ -32,6 +36,6 @@ class UpdatePermissionContextHandler(Handler):
             raise UnAuthorizedException()
 
         # Put the command into the messaging system, in order to be processed later
-        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
                 'data': {'id': dataDict['id'], 'type': dataDict['type'], 'data': dataDict['data']},
                 'metadata': metadataDict}

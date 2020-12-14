@@ -8,7 +8,7 @@
      {"name": "name",  "type": "string", "default": "", "doc": "The name of the command"},
      {"name": "metadata",  "type": "string", "default": "", "doc": "The information about the command"},
      {"name": "data",  "type": "string", "default": "", "doc": "The data of the command"},
-     {"name": "creatorServiceName",  "type": "string", "default": "", "doc": "The service who created the command"},
-     {"name": "createdOn",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this command got created"}
+     {"name": "creator_service_name",  "type": "string", "default": "", "doc": "The service who created the command"},
+     {"name": "created_on",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this command got created"}
  ]
 }

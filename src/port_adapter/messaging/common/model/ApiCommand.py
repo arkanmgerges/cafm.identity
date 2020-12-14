@@ -20,7 +20,7 @@ class ApiCommand(MessageBase):
     def __init__(self, id, creatorServiceName='cafm.api', name='', metadata='', data='',
                  createdOn=round(time.time() * 1000)):
         super().__init__(
-            {'id': id, 'creatorServiceName': creatorServiceName, 'name': name, 'createdOn': createdOn,
+            {'id': id, 'creator_service_name': creatorServiceName, 'name': name, 'created_on': createdOn,
              'metadata': metadata, 'data': data})
 
     def toMap(self, thisObjectForMapping=None, _ctx=None):

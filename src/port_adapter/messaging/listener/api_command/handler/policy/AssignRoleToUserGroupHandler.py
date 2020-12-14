@@ -19,7 +19,11 @@ class AssignRoleToUserGroupHandler(Handler):
     def canHandle(self, name: str) -> bool:
         return name == self._commandConstant.value
 
-    def handleCommand(self, name: str, data: str, metadata: str) -> dict:
+    def handleCommand(self, messageData: dict) -> dict:
+        name = messageData['name']
+        data = messageData['data']
+        metadata = messageData['metadata']
+
         logger.debug(
             f'[{AssignRoleToUserGroupHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
         dataDict = json.loads(data)
@@ -28,6 +32,6 @@ class AssignRoleToUserGroupHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
                 'data': {'role_id': dataDict['role_id'], 'user_group_id': dataDict['user_group_id']},
                 'metadata': metadataDict}

@@ -21,7 +21,11 @@ class CreateProjectHandler(Handler):
     def canHandle(self, name: str) -> bool:
         return name == self._commandConstant.value
 
-    def handleCommand(self, name: str, data: str, metadata: str) -> dict:
+    def handleCommand(self, messageData: dict) -> dict:
+        name = messageData['name']
+        data = messageData['data']
+        metadata = messageData['metadata']
+
         logger.debug(
             f'[{CreateProjectHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
         appService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
@@ -32,6 +36,6 @@ class CreateProjectHandler(Handler):
             raise UnAuthorizedException()
 
         obj = appService.createProject(name=dataDict['name'], objectOnly=True, token=metadataDict['token'])
-        return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
                 'data': {'id': obj.id(), 'name': obj.name()},
                 'metadata': metadataDict}

@@ -4,11 +4,29 @@
  "name": "Event",
  "doc": "Event that has occurred in identity",
  "fields": [
+     {
+        "name": "external",
+        "type": {
+            "type": "array",
+            "items": {
+                "type": "record",
+                "name": "Data",
+                "fields": [
+                     {"name": "id", "type": "string", "doc": "The identity of the command"},
+                     {"name": "name",  "type": "string", "default": "", "doc": "The name of the command"},
+                     {"name": "metadata",  "type": "string", "default": "", "doc": "The metadata of the command"},
+                     {"name": "data",  "type": "string", "default": "", "doc": "The data of the command"},
+                     {"name": "creator_service_name",  "type": "string", "default": "", "doc": "The service who created the command"},
+                     {"name": "created_on",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this command got created"}
+                ]
+            }
+        }
+     },
      {"name": "id", "type": "string", "doc": "The identity of the event"},
      {"name": "name",  "type": "string", "default": "", "doc": "The name of the event"},
      {"name": "metadata",  "type": "string", "default": "", "doc": "The metadata of the event"},
      {"name": "data",  "type": "string", "default": "", "doc": "The data of the event"},
-     {"name": "creatorServiceName",  "type": "string", "default": "", "doc": "The service who created the event"},
-     {"name": "occurredOn",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this event has occurred"}
+     {"name": "creator_service_name",  "type": "string", "default": "", "doc": "The service who created the event"},
+     {"name": "occurred_on",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this event has occurred"}
  ]
 }

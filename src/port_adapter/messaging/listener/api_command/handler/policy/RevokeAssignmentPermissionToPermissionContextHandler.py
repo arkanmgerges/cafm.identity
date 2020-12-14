@@ -19,7 +19,11 @@ class RevokeAssignmentPermissionToPermissionContextHandler(Handler):
     def canHandle(self, name: str) -> bool:
         return name == self._commandConstant.value
 
-    def handleCommand(self, name: str, data: str, metadata: str) -> dict:
+    def handleCommand(self, messageData: dict) -> dict:
+        name = messageData['name']
+        data = messageData['data']
+        metadata = messageData['metadata']
+
         logger.debug(
             f'[{RevokeAssignmentPermissionToPermissionContextHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
         dataDict = json.loads(data)
@@ -29,6 +33,6 @@ class RevokeAssignmentPermissionToPermissionContextHandler(Handler):
             raise UnAuthorizedException()
 
         return {'name': self._commandConstant.value,
-                'createdOn': round(time.time() * 1000),
+                'created_on': round(time.time() * 1000),
                 'data': {'permission_id': dataDict['permission_id'], 'permission_context_id': dataDict['permission_context_id']},
                 'metadata': metadataDict}

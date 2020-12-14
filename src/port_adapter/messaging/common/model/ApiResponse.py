@@ -20,9 +20,9 @@ class ApiResponse(MessageBase):
     def __init__(self, commandId, commandName, metadata='', data='', creatorServiceName='', success=False,
                  createdOn=round(time.time() * 1000)):
         super().__init__(
-            {'commandId': commandId, 'commandName': commandName, 'metadata': metadata, 'data': data,
-             'creatorServiceName': creatorServiceName,
-             'success': success, 'createdOn': createdOn})
+            {'command_id': commandId, 'command_name': commandName, 'metadata': metadata, 'data': data,
+             'creator_service_name': creatorServiceName,
+             'success': success, 'created_on': createdOn})
 
     def toMap(self, thisObjectForMapping=None, _ctx=None):
         return vars(self)['_value']
@@ -31,4 +31,4 @@ class ApiResponse(MessageBase):
         return os.getenv('CAFM_API_RESPONSE_TOPIC', 'cafm.api.rsp')
 
     def msgId(self):
-        return self.commandId
+        return self.command_id
