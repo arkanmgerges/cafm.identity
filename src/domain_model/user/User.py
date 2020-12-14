@@ -66,6 +66,24 @@ class User(Resource):
         if 'password' in data and data['password'] != self._password and data['password'] is not None:
             updated = True
             self._password = data['password']
+        if 'first_name' in data and data['first_name'] != self._firstName and data['first_name'] is not None:
+            updated = True
+            self._firstName = data['first_name']
+        if 'last_name' in data and data['last_name'] != self._lastName and data['last_name'] is not None:
+            updated = True
+            self._lastName = data['last_name']
+        if 'address_one' in data and data['address_one'] != self._addressOne and data['address_one'] is not None:
+            updated = True
+            self._addressOne = data['address_one']
+        if 'address_two' in data and data['address_two'] != self._addressTwo and data['address_two'] is not None:
+            updated = True
+            self._addressTwo = data['address_two']
+        if 'postal_code' in data and data['postal_code'] != self._postalCode and data['postal_code'] is not None:
+            updated = True
+            self._postalCode = data['postal_code']
+        if 'avatar_image' in data and data['avatar_image'] != self._avatarImage and data['avatar_image'] is not None:
+            updated = True
+            self._avatarImage = data['avatar_image']
         if updated:
             self.publishUpdate(old)
 
@@ -88,4 +106,6 @@ class User(Resource):
     def __eq__(self, other):
         if not isinstance(other, User):
             raise NotImplementedError(f'other: {other} can not be compared with User class')
-        return self.id() == other.id() and self.name() == other.name()
+        return self.id() == other.id() and self.name() == other.name() and self.firstName() == other.firstName() and \
+               self.lastName() == other.lastName() and self.addressOne() == other.addressOne() and self.addressTwo() == other.addressTwo() and \
+               self.postalCode() == other.postalCode() and self.avatarImage() == other.avatarImage()
