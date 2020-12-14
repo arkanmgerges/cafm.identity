@@ -32,7 +32,9 @@ class CreatePermissionHandler(Handler):
             raise UnAuthorizedException()
 
         obj = appService.createPermission(name=dataDict['name'], allowedActions=dataDict['allowed_actions'],
+                                          deniedActions=dataDict['denied_actions'],
                                           objectOnly=True, token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
-                'data': {'id': obj.id(), 'name': obj.name(), 'allowed_actions': obj.allowedActions()},
+                'data': {'id': obj.id(), 'name': obj.name(), 'allowed_actions': obj.allowedActions(),
+                         'denied_actions': obj.deniedActions()},
                 'metadata': metadataDict}
