@@ -37,6 +37,6 @@ class UpdateUserHandler(Handler):
                               token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'createdOn': round(time.time() * 1000),
                 'data': {'id': dataDict['id'], 'name': dataDict['name'], 'password': dataDict['password'],
-                         'firstName': dataDict['firstName'], 'lastName': dataDict['lastName'], 'addressOne': dataDict['addressOne'],
-                         'addressTwo': dataDict['addressTwo'], 'postalCode': dataDict['postalCode'], 'avatarImage': dataDict['avatarImage']},
+                         'first_name': dataDict['first_name'], 'last_name': dataDict['last_name'], 'address_one': dataDict['address_one'],
+                         'address_two': dataDict['address_two'], 'postal_code': dataDict['postal_code'], 'avatar_image': dataDict['avatar_image']},
                 'metadata': metadataDict}
