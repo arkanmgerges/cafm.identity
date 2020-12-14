@@ -23,7 +23,8 @@ class UserApplicationService:
         self._userService = userService
 
     @debugLogger
-    def createUser(self, id: str = '', name: str = '', password:str = '', objectOnly: bool = False, token: str = ''):
+    def createUser(self, id: str = '', name: str = '', password:str = '', firstName='', lastName='',
+                   addressOne='', addressTwo='', postalCode='', avatarImage='', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -31,10 +32,14 @@ class UserApplicationService:
                                         requestedPermissionAction=PermissionAction.CREATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='user'),
                                         tokenData=tokenData)
-        return self._userService.createUser(id=id, name=name, password=password, objectOnly=objectOnly, tokenData=tokenData)
+        return self._userService.createUser(id=id, name=name, password=password,
+                                            firstName=firstName, lastName=lastName, addressOne=addressOne, 
+                                            addressTwo=addressTwo, postalCode=postalCode, avatarImage=avatarImage,
+                                            objectOnly=objectOnly, tokenData=tokenData)
 
     @debugLogger
-    def updateUser(self, id: str, name: str, token: str = ''):
+    def updateUser(self, id: str, name: str, firstName='', lastName='',
+                   addressOne='', addressTwo='', postalCode='', avatarImage='', token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -46,7 +51,9 @@ class UserApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
         self._userService.updateUser(oldObject=resource,
-                                     newObject=User.createFrom(id=id, name=name), tokenData=tokenData)
+                                     newObject=User.createFrom(id=id, name=name, firstName=firstName, lastName=lastName,
+                                                               addressOne=addressOne, addressTwo=addressTwo,
+                                                               postalCode=postalCode, avatarImage=avatarImage), tokenData=tokenData)
 
     @debugLogger
     def deleteUser(self, id: str, token: str = ''):
