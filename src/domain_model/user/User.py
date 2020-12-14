@@ -88,6 +88,4 @@ class User(Resource):
     def __eq__(self, other):
         if not isinstance(other, User):
             raise NotImplementedError(f'other: {other} can not be compared with User class')
-        return self.id() == other.id() and self.name() == other.name() and self.firstName() == other.firstName() and \
-               self.lastName() == other.lastName() and self.addressOne() == other.addressOne() and self.addressTwo() == other.addressTwo() and \
-               self.postalCode() == other.postalCode() and self.avatarImage() == other.avatarImage()
+        return self.id() == other.id() and self.name() == other.name()
