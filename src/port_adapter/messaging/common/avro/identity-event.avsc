@@ -27,6 +27,6 @@
      {"name": "metadata",  "type": "string", "default": "", "doc": "The metadata of the event"},
      {"name": "data",  "type": "string", "default": "", "doc": "The data of the event"},
      {"name": "creator_service_name",  "type": "string", "default": "", "doc": "The service who created the event"},
-     {"name": "occurred_on",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this event has occurred"}
+     {"name": "created_on",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this event has occurred"}
  ]
 }

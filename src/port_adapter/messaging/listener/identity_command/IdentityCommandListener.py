@@ -116,7 +116,7 @@ class IdentityCommandListener:
                                                   name=domainEvent.name(),
                                                   metadata=msgData['metadata'],
                                                   data=json.dumps(domainEvent.data()),
-                                                  occurredOn=domainEvent.occurredOn(),
+                                                  createdOn=domainEvent.occurredOn(),
                                                   external=external),
                                 schema=IdentityEvent.get_schema())
 
