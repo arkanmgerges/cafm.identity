@@ -35,7 +35,7 @@ message UserAppService_usersResponse {
 
 
 service UserAppService {
-  rpc userByName (UserAppService_userByNameAndPasswordRequest) returns (UserAppService_userByNameAndPasswordResponse) {}
+  rpc userByNameAndPassword (UserAppService_userByNameAndPasswordRequest) returns (UserAppService_userByNameAndPasswordResponse) {}
   rpc userById (UserAppService_userByIdRequest) returns (UserAppService_userByIdResponse) {}
   rpc users (UserAppService_usersRequest) returns (UserAppService_usersResponse) {}
 }

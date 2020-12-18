@@ -84,6 +84,7 @@ class UserApplicationService:
                                             resourceType=PermissionContextConstant.USER.value),
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
+        return resource
 
     @debugLogger
     def users(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',

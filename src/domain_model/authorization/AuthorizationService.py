@@ -22,6 +22,7 @@ from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenData import TokenData
 from src.resource.logging.decorator import debugLogger
+from src.resource.logging.logger import logger
 
 
 class AuthorizationService:
@@ -42,7 +43,6 @@ class AuthorizationService:
                      requestedContextData: ContextDataRequest,
                      tokenData: TokenData,
                      requestedObject: RequestedAuthzObject = None):
-
         if not self._isSuperAdmin(tokenData=tokenData):
             if requestedPermissionAction in [PermissionAction.READ]:
                 if self._verifyActionByPermissionWithPermissionContext(

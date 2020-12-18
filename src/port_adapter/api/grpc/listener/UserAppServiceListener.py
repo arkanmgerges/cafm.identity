@@ -7,9 +7,9 @@ import grpc
 
 import src.port_adapter.AppDi as AppDi
 from src.application.UserApplicationService import UserApplicationService
-from src.domain_model.token.TokenService import TokenService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
+from src.domain_model.token.TokenService import TokenService
 from src.domain_model.user.User import User
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
@@ -38,6 +38,12 @@ class UserAppServiceListener(UserAppServiceServicer):
             response = UserAppService_userByNameAndPasswordResponse()
             response.user.id = user.id()
             response.user.name = user.name()
+            response.user.firstName = user.firstName()
+            response.user.lastName = user.lastName()
+            response.user.addressOne = user.addressOne()
+            response.user.addressTwo = user.addressTwo()
+            response.user.postalCode = user.postalCode()
+            response.user.avatarImage = user.avatarImage()
             return response
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -62,14 +68,15 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
             result: dict = userAppService.users(
-                                                resultFrom=request.resultFrom,
-                                                resultSize=resultSize,
-                                                token=token,
-                                                order=orderData)
+                resultFrom=request.resultFrom,
+                resultSize=resultSize,
+                token=token,
+                order=orderData)
             response = UserAppService_usersResponse()
             for user in result['items']:
-                response.users.add(id=user.id(), name=user.name(), firstName=user.firstName(), lastName=user.lastName(), 
-                                   addressOne=user.addressOne(), addressTwo=user.addressTwo(), postalCode=user.postalCode(), 
+                response.users.add(id=user.id(), name=user.name(), firstName=user.firstName(), lastName=user.lastName(),
+                                   addressOne=user.addressOne(), addressTwo=user.addressTwo(),
+                                   postalCode=user.postalCode(),
                                    avatarImage=user.avatarImage())
             response.itemCount = result['itemCount']
             logger.debug(f'[{UserAppServiceListener.users.__qualname__}] - response: {response}')
@@ -93,6 +100,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             response = UserAppService_userByIdResponse()
             response.user.id = user.id()
             response.user.name = user.name()
+            response.user.firstName = user.firstName()
+            response.user.lastName = user.lastName()
+            response.user.addressOne = user.addressOne()
+            response.user.addressTwo = user.addressTwo()
+            response.user.postalCode = user.postalCode()
+            response.user.avatarImage = user.avatarImage()
             return response
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

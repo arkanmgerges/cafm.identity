@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x16user_app_service.proto\x12\x12\x63\x61\x66m.identity.user\x1a\nuser.proto\x1a\x0border.proto\"M\n+UserAppService_userByNameAndPasswordRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"V\n,UserAppService_userByNameAndPasswordResponse\x12&\n\x04user\x18\x01 \x01(\x0b\x32\x18.cafm.identity.user.User\",\n\x1eUserAppService_userByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"I\n\x1fUserAppService_userByIdResponse\x12&\n\x04user\x18\x01 \x01(\x0b\x32\x18.cafm.identity.user.User\"p\n\x1bUserAppService_usersRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\x12)\n\x05order\x18\x03 \x03(\x0b\x32\x1a.cafm.identity.order.Order\"Z\n\x1cUserAppService_usersResponse\x12\'\n\x05users\x18\x01 \x03(\x0b\x32\x18.cafm.identity.user.User\x12\x11\n\titemCount\x18\x02 \x01(\x05\x32\x89\x03\n\x0eUserAppService\x12\x91\x01\n\nuserByName\x12?.cafm.identity.user.UserAppService_userByNameAndPasswordRequest\x1a@.cafm.identity.user.UserAppService_userByNameAndPasswordResponse\"\x00\x12u\n\x08userById\x12\x32.cafm.identity.user.UserAppService_userByIdRequest\x1a\x33.cafm.identity.user.UserAppService_userByIdResponse\"\x00\x12l\n\x05users\x12/.cafm.identity.user.UserAppService_usersRequest\x1a\x30.cafm.identity.user.UserAppService_usersResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x16user_app_service.proto\x12\x12\x63\x61\x66m.identity.user\x1a\nuser.proto\x1a\x0border.proto\"M\n+UserAppService_userByNameAndPasswordRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"V\n,UserAppService_userByNameAndPasswordResponse\x12&\n\x04user\x18\x01 \x01(\x0b\x32\x18.cafm.identity.user.User\",\n\x1eUserAppService_userByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"I\n\x1fUserAppService_userByIdResponse\x12&\n\x04user\x18\x01 \x01(\x0b\x32\x18.cafm.identity.user.User\"p\n\x1bUserAppService_usersRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\x12)\n\x05order\x18\x03 \x03(\x0b\x32\x1a.cafm.identity.order.Order\"Z\n\x1cUserAppService_usersResponse\x12\'\n\x05users\x18\x01 \x03(\x0b\x32\x18.cafm.identity.user.User\x12\x11\n\titemCount\x18\x02 \x01(\x05\x32\x94\x03\n\x0eUserAppService\x12\x9c\x01\n\x15userByNameAndPassword\x12?.cafm.identity.user.UserAppService_userByNameAndPasswordRequest\x1a@.cafm.identity.user.UserAppService_userByNameAndPasswordResponse\"\x00\x12u\n\x08userById\x12\x32.cafm.identity.user.UserAppService_userByIdRequest\x1a\x33.cafm.identity.user.UserAppService_userByIdResponse\"\x00\x12l\n\x05users\x12/.cafm.identity.user.UserAppService_usersRequest\x1a\x30.cafm.identity.user.UserAppService_usersResponse\"\x00\x62\x06proto3'
   ,
   dependencies=[user__pb2.DESCRIPTOR,order__pb2.DESCRIPTOR,])
 
@@ -311,11 +311,11 @@ _USERAPPSERVICE = _descriptor.ServiceDescriptor(
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
   serialized_start=566,
-  serialized_end=959,
+  serialized_end=970,
   methods=[
   _descriptor.MethodDescriptor(
-    name='userByName',
-    full_name='cafm.identity.user.UserAppService.userByName',
+    name='userByNameAndPassword',
+    full_name='cafm.identity.user.UserAppService.userByNameAndPassword',
     index=0,
     containing_service=None,
     input_type=_USERAPPSERVICE_USERBYNAMEANDPASSWORDREQUEST,
