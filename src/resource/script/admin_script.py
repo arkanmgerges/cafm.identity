@@ -1,6 +1,7 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+import csv
 import sys
 
 sys.path.append("../../../")
@@ -48,7 +49,7 @@ def init_db():
 
         dbConnection = connection[dbName]
         click.echo(click.style(f'Create collections:', fg='green'))
-        collections = ['resource', 'permission', 'permission_context']
+        collections = ['resource', 'permission', 'permission_context', 'country', 'city']
         for colName in collections:
             if not dbConnection.hasCollection(colName):
                 dbConnection.createCollection(name=colName, keyOptions={"type": "autoincrement"})
@@ -149,6 +150,58 @@ def drop_db():
         url = f'{connection.getURL()}/database/{dbName}'
         connection.session.delete(url)
 
+@cli.command(help='Import countries and cities to db')
+def init_geo_data():
+    try:
+        dbName = os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', None)
+        if dbName is None:
+            raise Exception('Db name is not set')
+        # Connect to arango database
+        conn = dbClientConnection()
+        db = conn[dbName]
+
+        # Create countries from csv file
+        click.echo(click.style("Importing countries", fg='green'))
+        with open('../maxmind/GeoLite2-Country-Locations-en.csv', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            cnt = 0
+            for row in reader:
+                countryIsoCode = row['country_iso_code']
+                if row['country_iso_code'] == '':
+                    countryIsoCode = f'VAL-{cnt}'
+                    cnt += 1
+                createCountry(db=db, geoNameId=row['geoname_id'], localeCode=row['locale_code'],
+                              continentCode=row['continent_code'], continentName=row['continent_name'],
+                              countryIsoCode=countryIsoCode, countryName=row['country_name'],
+                              isInEuropeanUnion=row['is_in_european_union'] == '1')
+        # Create cities from csv file
+        click.echo(click.style("Importing cities", fg='green'))
+        with open('../maxmind/GeoLite2-City-Locations-en.csv', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                metroCode = row['metro_code']
+                if row['metro_code'] == '':
+                    metroCode = None
+                    createCity(db=db, geoNameId=row['geoname_id'], localeCode=row['locale_code'],
+                               continentCode=row['continent_code'],
+                               continentName=row['continent_name'], countryIsoCode=row['country_iso_code'],
+                               countryName=row['country_name'],
+                               subdivisionOneIsoCode=row['subdivision_1_iso_code'],
+                               subdivisionOneIsoName=row['subdivision_1_name'],
+                               subdivisionTwoIsoCode=row['subdivision_2_iso_code'],
+                               subdivisionTwoIsoName=row['subdivision_2_name'],
+                               cityName=row['city_name'],
+                               metroCode=metroCode,
+                               timeZone=row['time_zone'],
+                               isInEuropeanUnion=row['is_in_european_union'] == '1')
+    except Exception as e:
+        click.echo(click.style(str(e), fg='red'))
+        exit(0)
+    
+    # session.add_all(cities)
+    # session.commit()
+    # click.echo(click.style("Done importing countries and cities", fg='green'))
+    # session.close()
 
 @cli.command(help='Create an admin user for the database')
 @click.argument('email')
@@ -374,6 +427,51 @@ def createUser(db, id, email, password):
     bindVars = {"id": id, "email": email, "password": password}
     queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+def createCountry(db, geoNameId, localeCode, continentCode, continentName, countryIsoCode, countryName, isInEuropeanUnion):
+    aql = '''
+        UPSERT {geo_name_id: @geoNameId}
+            INSERT {id: @id, geo_name_id: @geoNameId, locale_code: @localeCode, 
+                    continent_code: @continentCode, continent_name: @continentName, 
+                    country_iso_code: @countryIsoCode, country_name: @countryName, 
+                    is_in_european_union: @isInEuropeanUnion}
+            UPDATE {geo_name_id: @geoNameId, locale_code: @localeCode, 
+                    continent_code: @continentCode, continent_name: @continentName, 
+                    country_iso_code: @countryIsoCode, country_name: @countryName, 
+                    is_in_european_union: @isInEuropeanUnion}
+          IN country
+        '''
+    id = str(uuid.uuid4())
+    bindVars = {"id": id, "geoNameId": geoNameId, "localeCode": localeCode, 
+                "continentCode": continentCode, "continentName": continentName, 
+                "countryIsoCode": countryIsoCode, "countryName": countryName,
+                "isInEuropeanUnion": isInEuropeanUnion}
+    queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+def createCity(db, geoNameId, localeCode, continentCode, continentName, countryIsoCode,
+               countryName, subdivisionOneIsoCode, subdivisionOneIsoName,
+               subdivisionTwoIsoCode, subdivisionTwoIsoName, cityName,
+               metroCode, timeZone, isInEuropeanUnion):
+    aql = '''
+        UPSERT {geo_name_id: @geoNameId}
+            INSERT {id: @id, geo_name_id: @geoNameId, locale_code: @localeCode, continent_code: @continentCode, 
+                    continent_name: @continentName, country_iso_code: @countryIsoCode, country_name: @countryName,
+                    subdivision_one_iso_code: @subdivisionOneIsoCode, subdivision_one_iso_name: @subdivisionOneIsoName,
+                    subdivision_two_iso_code: @subdivisionTwoIsoCode, subdivision_two_iso_name: @subdivisionTwoIsoName,
+                    city_name: @cityName, metro_code: @metroCode, time_zone: @timeZone, is_in_european_union: @isInEuropeanUnion}
+            UPDATE {geo_name_id: @geoNameId, locale_code: @localeCode, continent_code: @continentCode, 
+                    continent_name: @continentName, country_iso_code: @countryIsoCode, country_name: @countryName,
+                    subdivision_one_iso_code: @subdivisionOneIsoCode, subdivision_one_iso_name: @subdivisionOneIsoName,
+                    subdivision_two_iso_code: @subdivisionTwoIsoCode, subdivision_two_iso_name: @subdivisionTwoIsoName,
+                    city_name: @cityName, metro_code: @metroCode, time_zone: @timeZone, is_in_european_union: @isInEuropeanUnion}
+          IN city
+        '''
+    id = str(uuid.uuid4())
+    bindVars = {"id": id, "geoNameId": geoNameId, "localeCode": localeCode, "continentCode": continentCode, 
+                "continentName": continentName, "countryIsoCode": countryIsoCode, "countryName": countryName,
+                "subdivisionOneIsoCode":subdivisionOneIsoCode, "subdivisionOneIsoName":subdivisionOneIsoName,
+                "subdivisionTwoIsoCode":subdivisionTwoIsoCode, "subdivisionTwoIsoName":subdivisionTwoIsoName, 
+                "cityName":cityName, "metroCode":metroCode, "timeZone":timeZone, "isInEuropeanUnion": isInEuropeanUnion}
+    queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
 @cli.command(help='Initialize kafka topics and schema registries')
 def init_kafka_topics_and_schemas():
