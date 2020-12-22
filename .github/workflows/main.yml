@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Checkout repository code
@@ -24,7 +24,7 @@ jobs:
         status: STARTED
         color: warning
 
-    - name: Verify that we can build the Docker imag
+    - name: Verify that we can build the Docker image
       run: |
         docker build \
           -t cafm-identity:local \
