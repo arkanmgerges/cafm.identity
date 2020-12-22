@@ -31,6 +31,10 @@ jobs:
           -f ${GITHUB_WORKSPACE}/.pkg/local/docker/Dockerfile \
           ${GITHUB_WORKSPACE}
 
+    - name: Run tests inside the built image
+      run: |
+        docker run --rm cafm-identity:local pytest /app/test
+
     - name: Deploy to the-bull
       uses: fifsky/ssh-action@master
       with:
