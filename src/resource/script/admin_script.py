@@ -72,7 +72,8 @@ def init_db():
                           IN permission_context
                         '''
 
-            bindVars = {"id": str(uuid.uuid4()), "type": 'resource_type', "resourceTypeName": permissionContextResourceName,
+            bindVars = {"id": str(uuid.uuid4()), "type": 'resource_type',
+                        "resourceTypeName": permissionContextResourceName,
                         "data": {"name": permissionContextResourceName, "type": 'resource_type'}}
             queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
@@ -157,9 +158,13 @@ def create_user(username, password, database_name):
     click.echo(click.style(f'Creating an admin user: {username} for the database: {database_name}', fg='green'))
     conn = dbClientConnection()
     users = Users(connection=conn)
-    user = users.createUser(username, password)
-    user.save()
-    user.setPermissions(dbName=database_name, access=True)
+    try:
+        users.fetchUser(username)
+        user = users.createUser(username, password)
+        user.save()
+        user.setPermissions(dbName=database_name, access=True)
+    except:
+        pass
 
 
 @cli.command(help='Delete a user from the database')
@@ -353,29 +358,44 @@ def createUser(db, id, name, password):
 @cli.command(help='Initialize kafka topics and schema registries')
 def init_kafka_topics_and_schemas():
     # Create topics
-    topics = ['cafm.identity.cmd', 'cafm.identity.evt']
-    newTopics = [NewTopic(topic, num_partitions=int(os.getenv('KAFKA_PARTITIONS_COUNT_PER_TOPIC', 1)), replication_factor=1) for topic in topics]
-    # admin = AdminClient({'bootstrap.servers': os.getenv('MESSAGE_BROKER_SERVERS', '')})
-    admin = AdminClient({'bootstrap.servers': 'kafka:9092'})
-    fs = admin.create_topics(newTopics)
-    for topic, f in fs.items():
-        try:
-            f.result()  # The result itself is None
-            click.echo(click.style("Topic {} created".format(topic), fg='green'))
-        except Exception as e:
-            click.echo(click.style(f'Failed to create topic {topic}: {e}', fg='red'))
+    requiredTopics = ['cafm.identity.cmd', 'cafm.identity.evt']
+    click.echo(click.style(f"Initializing kafka topics and schema registries", fg='green'))
+    newTopics = []
+    admin = AdminClient({'bootstrap.servers': os.getenv('MESSAGE_BROKER_SERVERS', '')})
+    installedTopics = admin.list_topics().topics.keys()
+
+    for requiredTopic in requiredTopics:
+        if requiredTopic not in installedTopics:
+            newTopics.append(
+                NewTopic(requiredTopic, num_partitions=int(os.getenv('KAFKA_PARTITIONS_COUNT_PER_TOPIC', 1)),
+                         replication_factor=1))
+
+    if len(newTopics) > 0:
+        fs = admin.create_topics(newTopics)
+        for topic, f in fs.items():
+            try:
+                f.result()  # The result itself is None
+                click.echo(click.style("Topic {} created".format(topic), fg='green'))
+            except Exception as e:
+                click.echo(click.style(f'Failed to create topic {topic}: {e}', fg='red'))
 
     # Create schemas
     c = CachedSchemaRegistryClient({'url': os.getenv('MESSAGE_SCHEMA_REGISTRY_URL', '')})
-    schemas = [{'name': 'cafm.identity.Command', 'schema': IdentityCommand.get_schema()},
-               {'name': 'cafm.identity.Event', 'schema': IdentityEvent.get_schema()}]
-    [c.register(schema['name'], schema['schema']) for schema in schemas]
+    requiredSchemas = [{'name': 'cafm.identity.Command', 'schema': IdentityCommand.get_schema()},
+                       {'name': 'cafm.identity.Event', 'schema': IdentityEvent.get_schema()}]
+    newSchemas = []
+    for requiredSchema in requiredSchemas:
+        r = c.get_latest_schema(subject=f'{requiredSchema["name"]}')
+        if r is None:
+            newSchemas.append(requiredSchema)
+    [c.register(schema['name'], schema['schema']) for schema in newSchemas]
 
 
 @cli.command(help='Drop kafka topics and schema registries')
 def drop_kafka_topics_and_schemas():
     # Delete topics
     topics = ['cafm.identity.cmd', 'cafm.identity.evt']
+    click.echo(click.style(f"Dropping kafka topics and schema registries", fg='green'))
     admin = AdminClient({'bootstrap.servers': os.getenv('MESSAGE_BROKER_SERVERS', '')})
     fs = admin.delete_topics(topics, operation_timeout=30)
     for topic, f in fs.items():

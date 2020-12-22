@@ -5,7 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 pytest = "==6.1.2"
-mock = "==4.0.2"
+mock = "==4.0.3"
 pytest-cov = "==2.10.1"
 
 [packages]
@@ -70,5 +70,6 @@ redis = "==3.5.3"
 pyyaml = "==5.3.1"
 sendgrid = "==6.4.8"
 
+
 [requires]
-python_version = "3.9"
+python_version = "3.8"

@@ -1,12 +1,12 @@
 FROM python:3.8-slim
 
-RUN pip3 install pipenv
-RUN pip3 install hupper
+RUN apt update
+RUN pip3 install --upgrade pip && pip3 install pipenv && pip3 install hupper
 
 # -- Adding Pipfiles
-COPY Pipfile Pipfile Pipfile.lock ./
+COPY Pipfile Pipfile.lock ./
 # -- Install dependencies:
-RUN set -ex && pipenv install --deploy --system
+RUN set -ex && pipenv install --dev --deploy --system
 COPY . /app
 
 ENV CAFM_IDENTITY_LOGGING=DEBUG
