@@ -1,10 +1,9 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-import json
 from uuid import uuid4
 
-from src.domain_model.EventConstant import CommonEventConstant
+from src.domain_model.event.EventConstant import CommonEventConstant
 from src.domain_model.event.DomainEvent import DomainEvent
 from src.domain_model.ou.Ou import Ou
 

@@ -3,7 +3,7 @@
 """
 from uuid import uuid4
 
-from src.domain_model.EventConstant import CommonEventConstant
+from src.domain_model.event.EventConstant import CommonEventConstant
 from src.domain_model.event.DomainEvent import DomainEvent
 from src.domain_model.role.Role import Role
 

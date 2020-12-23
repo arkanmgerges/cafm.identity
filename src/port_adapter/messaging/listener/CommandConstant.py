@@ -55,6 +55,7 @@ class CommonCommandConstant(Enum):
     REVOKE_ACCESS_ROLE_TO_RESOURCE = 'revoke_access_role_to_resource'
     ASSIGN_RESOURCE_TO_RESOURCE = 'assign_resource_to_resource'
     REVOKE_ASSIGNMENT_RESOURCE_TO_RESOURCE = 'revoke_assignment_resource_to_resource'
+    SEND_ONE_TIME_USER_PASSWORD = 'send_one_time_user_password'
 
 @extendEnum(CommonCommandConstant)
 class ApiCommandConstant(Enum):
