@@ -7,6 +7,6 @@ from src.domain_model.resource.exception.CodeExceptionConstant import CodeExcept
 
 class ObjectCouldNotBeUpdatedException(DomainModelException):
     def __init__(self, message: str = ''):
-        self.message = f'{message} Could not updated the object'
+        self.message = f'{message} Could not update the object'
         self.code = CodeExceptionConstant.OBJECT_COULD_NOT_BE_UPDATED.value
         super().__init__(self.message, self.code)

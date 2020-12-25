@@ -67,8 +67,10 @@ class UserRepositoryImpl(UserRepository):
                 let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                 if (res.length == 0) {
                     p = params['resource']
-                    res = db.resource.insert({id: p['id'], name: p['name'], first_name: p['firstName'], last_name: p['lastName'],
-                                              address_one: p['addressOne'], address_two: p['addressTwo'], postal_code: p['postalCode'],
+                    res = db.resource.insert({id: p['id'], name: p['name'], password: p['password'], 
+                                              first_name: p['firstName'], last_name: p['lastName'],
+                                              address_one: p['addressOne'], address_two: p['addressTwo'],
+                                              postal_code: p['postalCode'],
                                               avatar_image: p['avatarImage'], type: p['type']});
                     fromDocId = res['_id'];
                     p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
@@ -87,7 +89,7 @@ class UserRepositoryImpl(UserRepository):
             }
         '''
         params = {
-            'resource': {"id": user.id(), "name": user.name(), "firstName": user.firstName(),
+            'resource': {"id": user.id(), "name": user.name(), "password": user.password(), "firstName": user.firstName(),
                          "lastName": user.lastName(), "addressOne": user.addressOne(), "addressTwo": user.addressTwo(),
                          "postalCode": user.postalCode(), "avatarImage": user.avatarImage(), "type": user.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
@@ -95,7 +97,8 @@ class UserRepositoryImpl(UserRepository):
             'toTypeRole': PermissionContextConstant.ROLE.value,
             'OBJECT_ALREADY_EXIST_CODE': CodeExceptionConstant.OBJECT_ALREADY_EXIST.value
         }
-        self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
+        self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params,
+                             waitForSync = True)
 
     @debugLogger
     def updateUser(self, user: User, tokenData: TokenData) -> None:
@@ -176,7 +179,7 @@ class UserRepositoryImpl(UserRepository):
             logger.debug(f'[{UserRepositoryImpl.userByName.__qualname__}] {name}')
             raise UserDoesNotExistException(name)
 
-        return User.createFrom(id=result[0]['id'], name=result[0]['name'], password=result[0]['password'])
+        return User.createFrom(**self._constructUserDictFromResult(result[0]))
 
     @debugLogger
     def userByNameAndPassword(self, name: str, password: str) -> User:
@@ -194,7 +197,7 @@ class UserRepositoryImpl(UserRepository):
             logger.debug(f'[{UserRepositoryImpl.userByNameAndPassword.__qualname__}] name: {name}')
             raise UserDoesNotExistException(name)
 
-        return User.createFrom(id=result[0]['id'], name=result[0]['name'], password=result[0]['password'])
+        return User.createFrom(**self._constructUserDictFromResult(result[0]))
 
     @debugLogger
     def userById(self, id: str) -> User:
@@ -211,7 +214,21 @@ class UserRepositoryImpl(UserRepository):
             logger.debug(f'[{UserRepositoryImpl.userById.__qualname__}] user id: {id}')
             raise UserDoesNotExistException(f'user id: {id}')
 
-        return User.createFrom(id=result[0]['id'], name=result[0]['name'])
+        return User.createFrom(**self._constructUserDictFromResult(result[0]))
+
+    @debugLogger
+    def _constructUserDictFromResult(self, result) -> dict:
+        return {
+            'id': result['id'] if 'id' in result and result['id'] is not None else None,
+            'name': result['name'] if 'name' in result else '',
+            'password': result['password'] if 'password' in result else '',
+            'firstName': result['first_name'] if 'first_name' in result else '',
+            'lastName': result['last_name'] if 'last_name' in result else '',
+            'addressOne': result['address_one'] if 'address_one' in result else '',
+            'addressTwo': result['address_two'] if 'address_two' in result else '',
+            'postalCode': result['postal_code'] if 'postal_code' in result else '',
+            'avatarImage': result['avatar_image'] if 'avatar_image' in result else ''
+        }
 
     @debugLogger
     def users(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,

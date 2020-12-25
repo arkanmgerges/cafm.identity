@@ -7,7 +7,7 @@ import time
 import src.port_adapter.AppDi as AppDi
 from src.application.UserGroupApplicationService import UserGroupApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant, CommonCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.identity_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
@@ -41,3 +41,6 @@ class CreateUserGroupHandler(Handler):
 
     def targetsOnSuccess(self):
         return [Handler.targetOnSuccess]
+
+    def targetsOnException(self):
+        return [Handler.targetOnException]

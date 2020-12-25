@@ -17,6 +17,7 @@ class UserCreatedHandler(Handler):
 
     def __init__(self):
         self._eventConstant = CommonEventConstant.USER_CREATED
+        self._commandConstant = CommonCommandConstant.SEND_ONE_TIME_USER_PASSWORD
 
     def canHandle(self, name: str) -> bool:
         return name == self._eventConstant.value
@@ -28,15 +29,12 @@ class UserCreatedHandler(Handler):
 
         logger.debug(
             f'[{UserCreatedHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
-        appService: UserApplicationService = AppDi.instance.get(UserApplicationService)
         dataDict = json.loads(data)
         metadataDict = json.loads(metadata)
 
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        obj = appService.createUser(id=dataDict['id'], name=dataDict['name'], token=metadataDict['token'],
-                                    objectOnly=True)
-        return {'name': CommonCommandConstant.SEND_ONE_TIME_USER_PASSWORD.value, 'created_on': round(time.time() * 1000),
-                'data': {'id': obj.id(), 'name': obj.name()},
+        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
+                'data': {'id': dataDict['id'], 'name': dataDict['name']},
                 'metadata': metadataDict}

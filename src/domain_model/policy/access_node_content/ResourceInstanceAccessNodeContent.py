@@ -25,3 +25,9 @@ class ResourceInstanceAccessNodeContent(AccessNodeContent):
         result = self.resource.toMap()
         result["name"] = self.resourceName
         return result
+
+    def __repr__(self):
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+
+    def __str__(self) -> str:
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'

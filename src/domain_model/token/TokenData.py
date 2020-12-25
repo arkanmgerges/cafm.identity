@@ -21,10 +21,13 @@ class TokenData:
 
     def toMap(self) -> dict:
         return {'id': self.id(), 'name': self.name(),
-                'role': [{'id': item['id'], 'name': item['name']} for item in self.roles()]}
+                'roles': str(self.roles())}
+
+    def __repr__(self):
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
 
     def __str__(self) -> str:
-        return f'{{"id": "{self.id()}", "name": "{self.name()}", "roles": {str(self.roles())}}}'
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
 
     def __eq__(self, other):
         if not isinstance(other, TokenData):

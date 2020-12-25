@@ -23,3 +23,9 @@ class RoleAccessPermissionData:
                 "owned_by": self.ownedBy.toMap() if self.ownedBy is not None else None,
                 "owner_of": [x.toMap() for x in self.ownerOf],
                 "access_tree": [x.toMap() for x in self.accessTree]}
+
+    def __repr__(self):
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+
+    def __str__(self) -> str:
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'

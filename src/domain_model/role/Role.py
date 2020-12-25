@@ -44,6 +44,12 @@ class Role(Resource):
     def toMap(self) -> dict:
         return {"id": self.id(), "type": self.type(), "name": self.name()}
 
+    def __repr__(self):
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+
+    def __str__(self) -> str:
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+
     def update(self, data: dict):
         updated = False
         old = copy(self)

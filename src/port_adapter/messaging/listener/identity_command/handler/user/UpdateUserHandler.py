@@ -7,7 +7,7 @@ import time
 import src.port_adapter.AppDi as AppDi
 from src.application.UserApplicationService import UserApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant, CommonCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.identity_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
@@ -35,15 +35,19 @@ class UpdateUserHandler(Handler):
             raise UnAuthorizedException()
 
         appService.updateUser(id=dataDict['id'], name=dataDict['name'],
-                              firstName=dataDict['first_name'], lastName=dataDict['last_name'], 
-                              addressOne=dataDict['address_one'], addressTwo=dataDict['address_two'], 
+                              firstName=dataDict['first_name'], lastName=dataDict['last_name'],
+                              addressOne=dataDict['address_one'], addressTwo=dataDict['address_two'],
                               postalCode=dataDict['postal_code'], avatarImage=dataDict['avatar_image'],
                               token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
-                'data': {'id': dataDict['id'], 'name': dataDict['name'], 'password': dataDict['password'],
-                         'first_name': dataDict['first_name'], 'last_name': dataDict['last_name'], 'address_one': dataDict['address_one'],
-                         'address_two': dataDict['address_two'], 'postal_code': dataDict['postal_code'], 'avatar_image': dataDict['avatar_image']},
+                'data': {'id': dataDict['id'], 'name': dataDict['name'],
+                         'first_name': dataDict['first_name'], 'last_name': dataDict['last_name'],
+                         'address_one': dataDict['address_one'], 'address_two': dataDict['address_two'],
+                         'postal_code': dataDict['postal_code'], 'avatar_image': dataDict['avatar_image']},
                 'metadata': metadataDict}
 
     def targetsOnSuccess(self):
         return [Handler.targetOnSuccess]
+
+    def targetsOnException(self):
+        return [Handler.targetOnException]

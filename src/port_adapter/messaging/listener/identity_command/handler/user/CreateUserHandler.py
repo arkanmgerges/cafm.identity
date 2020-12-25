@@ -7,7 +7,8 @@ import time
 import src.port_adapter.AppDi as AppDi
 from src.application.UserApplicationService import UserApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant, CommonCommandConstant
+from src.domain_model.user.User import User
+from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.identity_command.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
@@ -34,16 +35,19 @@ class CreateUserHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        obj = appService.createUser(id=dataDict['id'], name=dataDict['name'], password=dataDict['password'],
-                                    firstName=dataDict['first_name'], lastName=dataDict['last_name'], 
-                                    addressOne=dataDict['address_one'], addressTwo=dataDict['address_two'], 
-                                    postalCode=dataDict['postal_code'], avatarImage=dataDict['avatar_image'],
-                                    token=metadataDict['token'])
+        obj: User = appService.createUser(id=dataDict['id'], name=dataDict['name'], password=dataDict['password'],
+                                          firstName=dataDict['first_name'], lastName=dataDict['last_name'],
+                                          addressOne=dataDict['address_one'], addressTwo=dataDict['address_two'],
+                                          postalCode=dataDict['postal_code'], avatarImage=dataDict['avatar_image'],
+                                          token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
                 'data': {'id': obj.id(), 'name': obj.name(), 'first_name': obj.firstName(),
-                'last_name': obj.lastName(), 'address_one': obj.addressOne(), 'address_two': obj.addressTwo(),
-                'postal_code': obj.postalCode(), 'avatar_image': obj.avatarImage()},
+                         'last_name': obj.lastName(), 'address_one': obj.addressOne(), 'address_two': obj.addressTwo(),
+                         'postal_code': obj.postalCode(), 'avatar_image': obj.avatarImage()},
                 'metadata': metadataDict}
 
     def targetsOnSuccess(self):
         return [Handler.targetOnSuccess]
+
+    def targetsOnException(self):
+        return [Handler.targetOnException]

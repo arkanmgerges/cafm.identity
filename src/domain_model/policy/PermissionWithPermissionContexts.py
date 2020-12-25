@@ -13,4 +13,11 @@ class PermissionWithPermissionContexts:
         self.permissionContexts: List[PermissionContext] = permissionContexts
 
     def toMap(self):
-        return {"permission": self.permission.toMap(), "permission_contexts": [x.toMap() for x in self.permissionContexts]}
+        return {"permission": self.permission.toMap(),
+                "permission_contexts": [x.toMap() for x in self.permissionContexts]}
+
+    def __repr__(self):
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+
+    def __str__(self) -> str:
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'

@@ -81,6 +81,12 @@ class Permission:
     def toMap(self) -> dict:
         return {"id": self.id(), "name": self.name(), "allowedActions": self.allowedActions(), "deniedActions": self.deniedActions()}
 
+    def __repr__(self):
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+
+    def __str__(self) -> str:
+        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+
     def __eq__(self, other):
         if not isinstance(other, Permission):
             raise NotImplementedError(f'other: {other} can not be compared with Permission class')

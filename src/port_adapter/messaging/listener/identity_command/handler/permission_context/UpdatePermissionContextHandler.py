@@ -41,3 +41,6 @@ class UpdatePermissionContextHandler(Handler):
 
     def targetsOnSuccess(self):
         return [Handler.targetOnSuccess]
+
+    def targetsOnException(self):
+        return [Handler.targetOnException]
