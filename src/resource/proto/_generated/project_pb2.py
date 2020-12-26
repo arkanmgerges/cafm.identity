@@ -15,11 +15,11 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='project.proto',
-  package='cafm.identity.project',
+  package='cafm.project.project',
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\rproject.proto\x12\x15\x63\x61\x66m.identity.project\"#\n\x07Project\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\tb\x06proto3'
+  serialized_pb=b'\n\rproject.proto\x12\x14\x63\x61\x66m.project.project\"#\n\x07Project\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\tb\x06proto3'
 )
 
 
@@ -27,21 +27,21 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _PROJECT = _descriptor.Descriptor(
   name='Project',
-  full_name='cafm.identity.project.Project',
+  full_name='cafm.project.project.Project',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='cafm.identity.project.Project.id', index=0,
+      name='id', full_name='cafm.project.project.Project.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='name', full_name='cafm.identity.project.Project.name', index=1,
+      name='name', full_name='cafm.project.project.Project.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -59,8 +59,8 @@ _PROJECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=40,
-  serialized_end=75,
+  serialized_start=39,
+  serialized_end=74,
 )
 
 DESCRIPTOR.message_types_by_name['Project'] = _PROJECT
@@ -69,7 +69,7 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 Project = _reflection.GeneratedProtocolMessageType('Project', (_message.Message,), {
   'DESCRIPTOR' : _PROJECT,
   '__module__' : 'project_pb2'
-  # @@protoc_insertion_point(class_scope:cafm.identity.project.Project)
+  # @@protoc_insertion_point(class_scope:cafm.project.project.Project)
   })
 _sym_db.RegisterMessage(Project)
 

@@ -37,13 +37,13 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
                 f'[{AuthenticationRepositoryImpl.__init__.__qualname__}] Could not connect to the redis, message: {e}')
 
     @debugLogger
-    def authenticateUserByNameAndPassword(self, name: str, password: str) -> dict:
+    def authenticateUserByEmailAndPassword(self, email: str, password: str) -> dict:
         logger.debug(
-            f'[{AuthenticationRepositoryImpl.authenticateUserByNameAndPassword.__qualname__}] - with name: {name}')
+            f'[{AuthenticationRepositoryImpl.authenticateUserByEmailAndPassword.__qualname__}] - with name: {email}')
         aql = '''
                 WITH resource
                 FOR u IN resource
-                FILTER u.name == @name AND u.password == @password AND u.type == 'user'
+                FILTER u.email == @email AND u.password == @password AND u.type == 'user'
                 LET r1 = (FOR v,e IN 1..1 OUTBOUND u._id has FILTER e._to_type == "role" RETURN v)
                 LET r2 = (
                             FOR ug IN resource
@@ -53,19 +53,19 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
                          )
                          LET r4 = union_distinct(r1, r2)
                          LET r5 = (FOR d5 IN r4 RETURN {"id": d5.id, "name": d5.name})
-                        RETURN {'id': u.id, 'name': u.name, 'roles': r5}
+                        RETURN {'id': u.id, 'email': u.email, 'roles': r5}
               '''
 
-        bindVars = {"name": name, "password": password}
+        bindVars = {"email": email, "password": password}
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
             logger.info(
-                f'[{AuthenticationRepositoryImpl.authenticateUserByNameAndPassword.__qualname__}] - invalid credentials for user with name: {name}')
-            raise InvalidCredentialsException(name)
+                f'[{AuthenticationRepositoryImpl.authenticateUserByEmailAndPassword.__qualname__}] - invalid credentials for user with name: {email}')
+            raise InvalidCredentialsException(email)
 
         result = result[0]
-        return {'id': result['id'], 'name': result['name'], 'roles': result['roles']}
+        return {'id': result['id'], 'email': result['email'], 'roles': result['roles']}
 
     @debugLogger
     def persistToken(self, token: str, ttl: int = 300) -> None:

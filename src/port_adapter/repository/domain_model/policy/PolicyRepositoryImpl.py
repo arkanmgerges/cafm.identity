@@ -956,7 +956,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
     @debugLogger
     def connectResourceToOwner(self, resource: Resource, tokenData: TokenData):
-        userDocId = self.userDocumentId(User.createFrom(id=tokenData.id(), name=tokenData.name()))
+        userDocId = self.userDocumentId(User.createFrom(id=tokenData.id(), email=tokenData.email()))
         resourceDocId = self.resourceDocumentId(resource)
 
         aql = '''

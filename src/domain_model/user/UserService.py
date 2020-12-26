@@ -16,23 +16,23 @@ class UserService:
         self._policyRepo = policyRepo
 
     @debugLogger
-    def createUser(self, id: str = '', name: str = '', password:str = '', firstName='', lastName='',
+    def createUser(self, id: str = '', email: str = '', password:str = '', firstName='', lastName='',
                    addressOne='', addressTwo='', postalCode='', avatarImage='', objectOnly: bool = False, tokenData: TokenData = None):
         try:
             if id == '':
                 raise UserDoesNotExistException()
-            self._repo.userByName(name=name)
-            raise UserAlreadyExistException(name)
+            self._repo.userByEmail(email=email)
+            raise UserAlreadyExistException(email)
         except UserDoesNotExistException:
             if objectOnly:
-                return User.createFrom(name=name, password=password, firstName=firstName,
-                                       lastName=lastName, addressOne=addressOne, 
-                                       addressTwo=addressTwo, postalCode=postalCode, 
+                return User.createFrom(email=email, password=password, firstName=firstName,
+                                       lastName=lastName, addressOne=addressOne,
+                                       addressTwo=addressTwo, postalCode=postalCode,
                                        avatarImage=avatarImage)
             else:
-                user = User.createFrom(id=id, name=name, password=password, firstName=firstName,
-                                       lastName=lastName, addressOne=addressOne, 
-                                       addressTwo=addressTwo, postalCode=postalCode, 
+                user = User.createFrom(id=id, email=email, password=password, firstName=firstName,
+                                       lastName=lastName, addressOne=addressOne,
+                                       addressTwo=addressTwo, postalCode=postalCode,
                                        avatarImage=avatarImage, publishEvent=True)
                 self._repo.createUser(user=user, tokenData=tokenData)
                 return user

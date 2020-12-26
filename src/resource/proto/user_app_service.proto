@@ -5,12 +5,12 @@ package cafm.identity.user;
 import "user.proto";
 import "order.proto";
 
-message UserAppService_userByNameAndPasswordRequest {
-  string name = 1;
+message UserAppService_userByEmailAndPasswordRequest {
+  string email = 1;
   string password = 2;
 }
 
-message UserAppService_userByNameAndPasswordResponse {
+message UserAppService_userByEmailAndPasswordResponse {
   User user = 1;
 }
 
@@ -25,7 +25,7 @@ message UserAppService_userByIdResponse {
 message UserAppService_usersRequest {
   int32 resultFrom = 1;
   int32 resultSize = 2;
-  repeated order.Order order = 3;
+  repeated cafm.common.order.Order order = 3;
 }
 
 message UserAppService_usersResponse {
@@ -35,7 +35,7 @@ message UserAppService_usersResponse {
 
 
 service UserAppService {
-  rpc userByNameAndPassword (UserAppService_userByNameAndPasswordRequest) returns (UserAppService_userByNameAndPasswordResponse) {}
+  rpc userByEmailAndPassword (UserAppService_userByEmailAndPasswordRequest) returns (UserAppService_userByEmailAndPasswordResponse) {}
   rpc userById (UserAppService_userByIdRequest) returns (UserAppService_userByIdResponse) {}
   rpc users (UserAppService_usersRequest) returns (UserAppService_usersResponse) {}
 }

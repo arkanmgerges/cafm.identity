@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package cafm.identity.project;
+package cafm.project.project;
 
 message Project {
   string id = 1;

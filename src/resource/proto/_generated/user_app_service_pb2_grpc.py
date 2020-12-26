@@ -14,10 +14,10 @@ class UserAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.userByNameAndPassword = channel.unary_unary(
-                '/cafm.identity.user.UserAppService/userByNameAndPassword',
-                request_serializer=user__app__service__pb2.UserAppService_userByNameAndPasswordRequest.SerializeToString,
-                response_deserializer=user__app__service__pb2.UserAppService_userByNameAndPasswordResponse.FromString,
+        self.userByEmailAndPassword = channel.unary_unary(
+                '/cafm.identity.user.UserAppService/userByEmailAndPassword',
+                request_serializer=user__app__service__pb2.UserAppService_userByEmailAndPasswordRequest.SerializeToString,
+                response_deserializer=user__app__service__pb2.UserAppService_userByEmailAndPasswordResponse.FromString,
                 )
         self.userById = channel.unary_unary(
                 '/cafm.identity.user.UserAppService/userById',
@@ -34,7 +34,7 @@ class UserAppServiceStub(object):
 class UserAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def userByNameAndPassword(self, request, context):
+    def userByEmailAndPassword(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -55,10 +55,10 @@ class UserAppServiceServicer(object):
 
 def add_UserAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'userByNameAndPassword': grpc.unary_unary_rpc_method_handler(
-                    servicer.userByNameAndPassword,
-                    request_deserializer=user__app__service__pb2.UserAppService_userByNameAndPasswordRequest.FromString,
-                    response_serializer=user__app__service__pb2.UserAppService_userByNameAndPasswordResponse.SerializeToString,
+            'userByEmailAndPassword': grpc.unary_unary_rpc_method_handler(
+                    servicer.userByEmailAndPassword,
+                    request_deserializer=user__app__service__pb2.UserAppService_userByEmailAndPasswordRequest.FromString,
+                    response_serializer=user__app__service__pb2.UserAppService_userByEmailAndPasswordResponse.SerializeToString,
             ),
             'userById': grpc.unary_unary_rpc_method_handler(
                     servicer.userById,
@@ -81,7 +81,7 @@ class UserAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def userByNameAndPassword(request,
+    def userByEmailAndPassword(request,
             target,
             options=(),
             channel_credentials=None,
@@ -91,9 +91,9 @@ class UserAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user.UserAppService/userByNameAndPassword',
-            user__app__service__pb2.UserAppService_userByNameAndPasswordRequest.SerializeToString,
-            user__app__service__pb2.UserAppService_userByNameAndPasswordResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user.UserAppService/userByEmailAndPassword',
+            user__app__service__pb2.UserAppService_userByEmailAndPasswordRequest.SerializeToString,
+            user__app__service__pb2.UserAppService_userByEmailAndPasswordResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

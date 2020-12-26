@@ -22,8 +22,9 @@ authzService = None
 def setup_function():
     global token
     global authzService
-    token = TokenService.generateToken({'id': '11223344', 'name': 'user_1', 'roles': [{'id': '1234', 'name': 'super_admin'}]})
+    token = TokenService.generateToken({'id': '11223344', 'email': 'user_1@local.test', 'roles': [{'id': '1234', 'name': 'super_admin'}]})
 
+    DomainPublishedEvents.cleanup()
     authzRepoMock = Mock(spec=AuthorizationRepository)
     policyRepoMock = Mock(spec=PolicyRepository)
     policyRepoMock.allTreeByRoleName = Mock(return_value=[])
@@ -36,13 +37,13 @@ def test_create_user_object_when_user_already_exist():
     from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
     DomainPublishedEvents.cleanup()
     repo = Mock(spec=UserRepository)
-    name = 'me'
+    email = 'me@local.test'
     repo.userByName = Mock(side_effect=UserAlreadyExistException)
     userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = UserApplicationService(repo, authzService, userService)
     # Act, Assert
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createUser(id='1234', name=name, password='1234', objectOnly=True, token=token)
+        user = appService.createUser(id='1234', email=email, password='1234', objectOnly=True, token=token)
 
 
 def test_create_user_object_when_user_does_not_exist():
@@ -50,15 +51,15 @@ def test_create_user_object_when_user_does_not_exist():
     from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
     DomainPublishedEvents.cleanup()
     repo = Mock(spec=UserRepository)
-    name = 'me'
+    email = 'me@me.test'
     repo.userByName = Mock(side_effect=UserDoesNotExistException)
     userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = UserApplicationService(repo, authzService, userService)
     # Act
-    user = appService.createUser(name=name, password='1234', objectOnly=True, token=token)
+    user = appService.createUser(email=email, password='1234', objectOnly=True, token=token)
     # Assert
     assert isinstance(user, User)
-    assert user.name() == name
+    assert user.email() == email
 
 
 def test_create_user_with_event_publishing_when_user_does_not_exist():
@@ -67,16 +68,16 @@ def test_create_user_with_event_publishing_when_user_does_not_exist():
     DomainPublishedEvents.cleanup()
     repo = Mock(spec=UserRepository)
     id = '1234567'
-    name = 'me'
+    email = 'me@local.test'
     password = 'pass'
-    repo.userByName = Mock(side_effect=UserDoesNotExistException)
+    repo.userByEmail = Mock(side_effect=UserDoesNotExistException)
     repo.createUser = Mock(spec=UserRepository.createUser)
     userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = UserApplicationService(repo, authzService, userService)
     # Act
-    appService.createUser(id=id, name=name, password=password, token=token)
+    appService.createUser(id=id, email=email, password=password, token=token)
     # Assert
-    repo.userByName.assert_called_once()
+    repo.userByEmail.assert_called_once()
     repo.createUser.assert_called_once()
     assert len(DomainPublishedEvents.postponedEvents()) > 0
 
@@ -84,51 +85,51 @@ def test_create_user_with_event_publishing_when_user_does_not_exist():
 def test_get_user_by_name_and_password_when_user_exists():
     # Arrange
     repo = Mock(spec=UserRepository)
-    name = 'me'
+    email = 'me@local.test'
     password = 'pass'
-    user = User(name=name, password=password)
-    repo.userByNameAndPassword = Mock(return_value=user)
+    user = User(email=email, password=password)
+    repo.userByEmailAndPassword = Mock(return_value=user)
     userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = UserApplicationService(repo, authzService, userService)
     # Act
-    appService.userByNameAndPassword(name=name, password=password)
+    appService.userByEmailAndPassword(email=email, password=password)
     # Assert
-    repo.userByNameAndPassword.assert_called_once_with(name=name, password=password)
+    repo.userByEmailAndPassword.assert_called_once_with(email=email, password=password)
 
 
 def test_create_object_only_raise_exception_when_user_exists():
     # Arrange
     from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
     repo = Mock(spec=UserRepository)
-    name = 'me'
-    user = User(id='1', name=name, password='1234')
+    email = 'me@me.local'
+    user = User(id='1', email=email, password='1234')
     repo.userByName = Mock(return_value=user)
     userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = UserApplicationService(repo, authzService, userService)
     # Act, Assert
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createUser(id='1234', name=name, password='1234', objectOnly=True, token=token)
+        user = appService.createUser(id='1234', email=email, password='1234', objectOnly=True, token=token)
 
 
 def test_create_user_raise_exception_when_user_exists():
     # Arrange
     from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
     repo = Mock(spec=UserRepository)
-    name = 'me'
-    user = User(id='1', name=name, password='1234')
+    email = 'me@test.me'
+    user = User(id='1', email=email, password='1234')
     repo.userByName = Mock(return_value=user)
     userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = UserApplicationService(repo, authzService, userService)
     # Act, Assert
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createUser(id='1', name=name, password='1234', token=token)
+        user = appService.createUser(id='1', email=email, password='1234', token=token)
 
 
 def test_get_user_by_id_when_user_exists():
     # Arrange
     repo = Mock(spec=UserRepository)
-    name = 'me'
-    user = User(id='1234', name=name)
+    email = 'me@test.me'
+    user = User(id='1234', email=email)
     repo.userById = Mock(return_value=user)
     userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = UserApplicationService(repo, authzService, userService)

@@ -151,16 +151,16 @@ def drop_db():
 
 
 @cli.command(help='Create an admin user for the database')
-@click.argument('username')
+@click.argument('email')
 @click.argument('password')
 @click.argument('database_name')
-def create_user(username, password, database_name):
-    click.echo(click.style(f'Creating an admin user: {username} for the database: {database_name}', fg='green'))
+def create_user(email, password, database_name):
+    click.echo(click.style(f'Creating an admin user email: {email} for the database: {database_name}', fg='green'))
     conn = dbClientConnection()
     users = Users(connection=conn)
     try:
-        users.fetchUser(username)
-        user = users.createUser(username, password)
+        users.fetchUser(email)
+        user = users.createUser(email, password)
         user.save()
         user.setPermissions(dbName=database_name, access=True)
     except:
@@ -168,33 +168,33 @@ def create_user(username, password, database_name):
 
 
 @cli.command(help='Delete a user from the database')
-@click.argument('username')
+@click.argument('email')
 @click.argument('database_name')
-def delete_user(username, database_name):
-    click.echo(click.style(f'Deleting user: {username} from the database: {database_name}', fg='green'))
+def delete_user(email, database_name):
+    click.echo(click.style(f'Deleting user email: {email} from the database: {database_name}', fg='green'))
     conn = dbClientConnection()
     users = Users(connection=conn)
-    user = users.fetchUser(username)
+    user = users.fetchUser(email)
     user.delete()
 
 
 @cli.command(help='Create user document and assign it a super admin role in database')
-@click.argument('username')
+@click.argument('email')
 @click.argument('password')
 @click.argument('database_name')
-def assign_user_super_admin_role(username, password, database_name):
+def assign_user_super_admin_role(email, password, database_name):
     click.echo(click.style(
-        f'Creating user: {username} document in the database: {database_name} and assigning a super admin role',
+        f'Creating user email: {email} document in the database: {database_name} and assigning a super admin role',
         fg='green'))
     conn = dbClientConnection()
     db = conn[database_name]
 
     # Creating a user
     userId = str(uuid.uuid4())
-    createUser(db, userId, username, password)
+    createUser(db, userId, email, password)
 
     # Get the user doc id
-    userDocId = resourceDocId(db, username, 'user')
+    userDocId = resourceDocId(db, email, 'user')
 
     # Create a role
     roleId = str(uuid.uuid4())
@@ -225,15 +225,15 @@ def build_resource_tree_from_file(file_name):
         addNode(db=db, parent=treeNode, children=treeNode['children'])
 
     for user in fileData['users']:
-        username = user['name']
+        email = user['email']
         password = user['password']
         click.echo(click.style(
-            f'Creating user: {username} document in the database: {databaseName} and assigning a super admin role',
+            f'Creating user email: {email} document in the database: {databaseName} and assigning a super admin role',
             fg='green'))
 
         id = str(uuid.uuid4())
-        createUser(db, id, username, password)
-        userDocId = resourceDocId(db, username, 'user')
+        createUser(db, id, email, password)
+        userDocId = resourceDocId(db, email, 'user')
         roles = user['roles']
         for role in roles:
             id = str(uuid.uuid4())
@@ -302,26 +302,46 @@ def assignRoleAccessToResource(db, fromId, toId, fromType, toType):
     queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
 
-def createResource(db, id, name, type):
-    aql = '''
-        UPSERT {name: @name, type: @type}
-            INSERT {id: @id, name: @name, type: @type}
-            UPDATE {name: @name, type: @type}
-          IN resource
-        '''
+def createResource(db, id, nameOrEmail, type):
+    if type == 'user':
+        aql = '''
+            UPSERT {email: @nameOrEmail, type: @type}
+                INSERT {id: @id, email: @nameOrEmail, type: @type}
+                UPDATE {email: @nameOrEmail, type: @type}
+              IN resource
+            '''
+    else:
+        aql = '''
+            UPSERT {name: @nameOrEmail, type: @type}
+                INSERT {id: @id, name: @nameOrEmail, type: @type}
+                UPDATE {name: @nameOrEmail, type: @type}
+              IN resource
+            '''
 
-    bindVars = {"id": id, "name": name, "type": type}
+    bindVars = {"id": id, "nameOrEmail": nameOrEmail, "type": type}
     queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
 
-def resourceDocId(db, name, type):
+def resourceDocId(db, nameOrEmail, type):
     aql = '''
         FOR r IN resource
         FILTER r.name == @name AND r.type == @type
         RETURN r
     '''
 
-    bindVars = {"name": name, "type": type}
+    if type == 'user':
+        aql = '''
+            FOR r IN resource
+            FILTER r.email == @nameOrEmail AND r.type == @type
+            RETURN r
+            '''
+    else:
+        aql = '''
+            FOR r IN resource
+            FILTER r.name == @nameOrEmail AND r.type == @type
+            RETURN r
+            '''
+    bindVars = {"nameOrEmail": nameOrEmail, "type": type}
     queryResult: AQLQuery = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
     result = queryResult.result[0]
     return result['_id']
@@ -340,18 +360,18 @@ def permissionDocId(db, name):
     return result['_id']
 
 
-def createUser(db, id, name, password):
+def createUser(db, id, email, password):
     password = hashlib.sha256(password.encode()).hexdigest()
     aql = '''
-            UPSERT {name: @name, type: 'user'}
+            UPSERT {email: @email, type: 'user'}
                 INSERT {id: @id,
-                        name: @name,
+                        email: @email,
                         password: @password,
                         type: 'user'}
-                UPDATE {name: @name, password: @password, type: 'user'}
+                UPDATE {email: @email, password: @password, type: 'user'}
               IN resource
             '''
-    bindVars = {"id": id, "name": name, "password": password}
+    bindVars = {"id": id, "email": email, "password": password}
     queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
 

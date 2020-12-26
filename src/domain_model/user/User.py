@@ -1,20 +1,24 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+import re
 from copy import copy
 from uuid import uuid4
 
 from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.resource.Resource import Resource
+from src.domain_model.resource.exception.InvalidValueException import InvalidValueException
 from src.resource.logging.logger import logger
 
 
 class User(Resource):
-    def __init__(self, id: str = None, name: str = '', password: str = '', firstName: str = '', lastName: str = '',
-                   addressOne: str = '', addressTwo: str = '', postalCode: str = '', avatarImage: str = ''):
+    def __init__(self, id: str = None, email: str = '', password: str = '', firstName: str = '', lastName: str = '',
+                 addressOne: str = '', addressTwo: str = '', postalCode: str = '', avatarImage: str = ''):
         anId = str(uuid4()) if id is None or id == '' else id
         super().__init__(id=anId, type='user')
-        self._name = name
+
+        self._validateEmail(email)
+        self._email = email
         self._password = password
         self._firstName = firstName
         self._lastName = lastName
@@ -24,11 +28,11 @@ class User(Resource):
         self._avatarImage = avatarImage
 
     @classmethod
-    def createFrom(cls, id: str = None, name: str = '', password: str = '', firstName: str = '', lastName: str = '',
+    def createFrom(cls, id: str = None, email: str = '', password: str = '', firstName: str = '', lastName: str = '',
                    addressOne: str = '', addressTwo: str = '', postalCode: str = '', avatarImage: str = '',
                    publishEvent: bool = False):
-        logger.debug(f'[{User.createFrom.__qualname__}] - with name {name}')
-        user = User(id=id, name=name, password=password, firstName=firstName, lastName=lastName,
+        logger.debug(f'[{User.createFrom.__qualname__}] - with name {email}')
+        user = User(id=id, email=email, password=password, firstName=firstName, lastName=lastName,
                     addressOne=addressOne, addressTwo=addressTwo, postalCode=postalCode, avatarImage=avatarImage)
         if publishEvent:
             logger.debug(f'[{User.createFrom.__qualname__}] - publish UserCreated event')
@@ -37,8 +41,13 @@ class User(Resource):
             DomainPublishedEvents.addEventForPublishing(UserCreated(user))
         return user
 
-    def name(self) -> str:
-        return self._name
+    def _validateEmail(self, email):
+        regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,6}$'
+        if not (re.search(regex, email)):
+            raise InvalidValueException(f'Email is not valid: {email}')
+
+    def email(self) -> str:
+        return self._email
 
     def firstName(self) -> str:
         return self._firstName
@@ -61,9 +70,9 @@ class User(Resource):
     def update(self, data: dict):
         updated = False
         old = copy(self)
-        if 'name' in data and data['name'] != self._name and data['name'] is not None:
+        if 'email' in data and data['email'] != self._email and data['email'] is not None:
             updated = True
-            self._name = data['name']
+            self._email = data['name']
         if 'first_name' in data and data['first_name'] != self._firstName and data['first_name'] is not None:
             updated = True
             self._firstName = data['first_name']
@@ -97,7 +106,7 @@ class User(Resource):
         DomainPublishedEvents.addEventForPublishing(UserUpdated(old, self))
 
     def toMap(self) -> dict:
-        return {"id": self.id(), "name": self.name(),
+        return {"id": self.id(), "email": self.email(),
                 "first_name": self.firstName(), "last_name": self.lastName(), "address_one": self.addressOne(),
                 "address_two": self.addressTwo(), "postal_code": self.postalCode(), "avatar_image": self.avatarImage()}
 
@@ -110,7 +119,7 @@ class User(Resource):
     def __eq__(self, other):
         if not isinstance(other, User):
             raise NotImplementedError(f'other: {other} can not be compared with User class')
-        return self.id() == other.id() and self.name() == other.name() and self.firstName() == other.firstName() and \
+        return self.id() == other.id() and self.email() == other.email() and self.firstName() == other.firstName() and \
                self.lastName() == other.lastName() and self.addressOne() == other.addressOne() and \
                self.addressTwo() == other.addressTwo() and self.postalCode() == other.postalCode() and \
                self.avatarImage() == other.avatarImage()

@@ -13,11 +13,11 @@ class AuthenticationService:
         self._authRepo = authRepo
 
     @debugLogger
-    def authenticateUser(self, name: str, password: str) -> str:
+    def authenticateUser(self, email: str, password: str) -> str:
         """Authenticate user and return jwt token
 
         Args:
-            name (str): User name
+            email (str): User email
             password (str): User password
 
         Return:
@@ -26,8 +26,8 @@ class AuthenticationService:
         :raises:
             `UserDoesNotExistException <UserDoesNotExistException>`: When user does not exist
         """
-        result = self._authRepo.authenticateUserByNameAndPassword(name=name, password=password)
-        payload = {'id': result['id'], 'roles': result['roles'], 'name': result['name']}
+        result = self._authRepo.authenticateUserByEmailAndPassword(email=email, password=password)
+        payload = {'id': result['id'], 'roles': result['roles'], 'email': result['email']}
         token = TokenService.generateToken(payload=payload)
         ttl = os.getenv('CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS', 300)
         self._authRepo.persistToken(token=token, ttl=ttl)

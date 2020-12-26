@@ -24,7 +24,7 @@ message PermissionAppService_permissionByIdResponse {
 message PermissionAppService_permissionsRequest {
   int32 resultFrom = 1;
   int32 resultSize = 2;
-  repeated order.Order order = 3;
+  repeated cafm.common.order.Order order = 3;
 }
 
 message PermissionAppService_permissionsResponse {

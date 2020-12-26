@@ -17,7 +17,7 @@ tree: &tree
             type: "project"
             children: []
 users:
-  - name: "user_1"
+  - email: "user_1@local.me"
     password: "1234"
     roles:
       - name: "role_1"

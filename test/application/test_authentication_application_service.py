@@ -13,7 +13,7 @@ def test_authenticate_user_when_exist():
     authRepo.authenticateUserByNameAndPassword = Mock(return_value={'id': '1234', 'name': 'john', 'roles': [{'id': '5678', 'name': 'admin'}]})
     authAppService = AuthenticationApplicationService(AuthenticationService(authRepo))
 
-    token = authAppService.authenticateUserByNameAndPassword(name='john', password='1234')
+    token = authAppService.authenticateUserByEmailAndPassword(email='john', password='1234')
 
     assert isinstance(token, str)
     assert len(token) > 0
@@ -25,7 +25,7 @@ def test_logout_user_when_exist():
     authRepo.authenticateUserByNameAndPassword = Mock(return_value={'id': '1234', 'name': 'john', 'roles': [{'id': '5678', 'name': 'admin'}]})
     authAppService = AuthenticationApplicationService(AuthenticationService(authRepo))
 
-    token = authAppService.authenticateUserByNameAndPassword(name='john', password='1234')
+    token = authAppService.authenticateUserByEmailAndPassword(email='john', password='1234')
     authAppService.logout(token=token)
 
     assert isinstance(token, str)

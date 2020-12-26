@@ -15,17 +15,17 @@ class ProjectAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.projectByName = channel.unary_unary(
-                '/cafm.identity.project.ProjectAppService/projectByName',
+                '/cafm.project.project.ProjectAppService/projectByName',
                 request_serializer=project__app__service__pb2.ProjectAppService_projectByNameRequest.SerializeToString,
                 response_deserializer=project__app__service__pb2.ProjectAppService_projectByNameResponse.FromString,
                 )
         self.projectById = channel.unary_unary(
-                '/cafm.identity.project.ProjectAppService/projectById',
+                '/cafm.project.project.ProjectAppService/projectById',
                 request_serializer=project__app__service__pb2.ProjectAppService_projectByIdRequest.SerializeToString,
                 response_deserializer=project__app__service__pb2.ProjectAppService_projectByIdResponse.FromString,
                 )
         self.projects = channel.unary_unary(
-                '/cafm.identity.project.ProjectAppService/projects',
+                '/cafm.project.project.ProjectAppService/projects',
                 request_serializer=project__app__service__pb2.ProjectAppService_projectsRequest.SerializeToString,
                 response_deserializer=project__app__service__pb2.ProjectAppService_projectsResponse.FromString,
                 )
@@ -72,7 +72,7 @@ def add_ProjectAppServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'cafm.identity.project.ProjectAppService', rpc_method_handlers)
+            'cafm.project.project.ProjectAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -91,7 +91,7 @@ class ProjectAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/projectByName',
+        return grpc.experimental.unary_unary(request, target, '/cafm.project.project.ProjectAppService/projectByName',
             project__app__service__pb2.ProjectAppService_projectByNameRequest.SerializeToString,
             project__app__service__pb2.ProjectAppService_projectByNameResponse.FromString,
             options, channel_credentials,
@@ -108,7 +108,7 @@ class ProjectAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/projectById',
+        return grpc.experimental.unary_unary(request, target, '/cafm.project.project.ProjectAppService/projectById',
             project__app__service__pb2.ProjectAppService_projectByIdRequest.SerializeToString,
             project__app__service__pb2.ProjectAppService_projectByIdResponse.FromString,
             options, channel_credentials,
@@ -125,7 +125,7 @@ class ProjectAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/projects',
+        return grpc.experimental.unary_unary(request, target, '/cafm.project.project.ProjectAppService/projects',
             project__app__service__pb2.ProjectAppService_projectsRequest.SerializeToString,
             project__app__service__pb2.ProjectAppService_projectsResponse.FromString,
             options, channel_credentials,

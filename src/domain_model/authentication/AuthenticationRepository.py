@@ -6,11 +6,11 @@ from abc import ABC, abstractmethod
 
 class AuthenticationRepository(ABC):
     @abstractmethod
-    def authenticateUserByNameAndPassword(self, name: str, password: str) -> dict:
+    def authenticateUserByEmailAndPassword(self, email: str, password: str) -> dict:
         """Authenticate user and return dict for id, role, and name
 
         Args:
-            name (str): name of user to be authenticated
+            email (str): email of the user to be authenticated
             password (str): user password used for authentication
 
         Returns:

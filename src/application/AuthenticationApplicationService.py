@@ -10,11 +10,11 @@ class AuthenticationApplicationService:
         self._authService: AuthenticationService = authService
 
     @debugLogger
-    def authenticateUserByNameAndPassword(self, name: str, password: str) -> str:
+    def authenticateUserByEmailAndPassword(self, email: str, password: str) -> str:
         """Authenticate user and return token in bytes
 
         Args:
-            name (str): User name
+            email (str): User email
             password (str): User password
 
         Returns:
@@ -23,7 +23,7 @@ class AuthenticationApplicationService:
         :raises:
             `UserDoesNotExistException <UserDoesNotExistException>`: When user does not exist
         """
-        return self._authService.authenticateUser(name=name, password=password)
+        return self._authService.authenticateUser(email=email, password=password)
 
     @debugLogger
     def isAuthenticated(self, token: str) -> bool:

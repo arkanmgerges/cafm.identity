@@ -22,8 +22,9 @@ authzService = None
 def setup_function():
     global token
     global authzService
-    token = TokenService.generateToken({'id': '11223344', 'name': 'user_1', 'roles': [{'id': '1234', 'name': 'super_admin'}]})
+    token = TokenService.generateToken({'id': '11223344', 'email': 'user_1@local.test', 'roles': [{'id': '1234', 'name': 'super_admin'}]})
 
+    DomainPublishedEvents.cleanup()
     authzRepoMock = Mock(spec=AuthorizationRepository)
     policyRepoMock = Mock(spec=PolicyRepository)
     policyRepoMock.allTreeByRoleName = Mock(return_value=[])

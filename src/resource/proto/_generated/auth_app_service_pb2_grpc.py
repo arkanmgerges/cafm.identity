@@ -14,10 +14,10 @@ class AuthAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.authenticateUserByNameAndPassword = channel.unary_unary(
-                '/cafm.identity.auth.AuthAppService/authenticateUserByNameAndPassword',
-                request_serializer=auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordRequest.SerializeToString,
-                response_deserializer=auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordResponse.FromString,
+        self.authenticateUserByEmailAndPassword = channel.unary_unary(
+                '/cafm.identity.auth.AuthAppService/authenticateUserByEmailAndPassword',
+                request_serializer=auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordRequest.SerializeToString,
+                response_deserializer=auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordResponse.FromString,
                 )
         self.isAuthenticated = channel.unary_unary(
                 '/cafm.identity.auth.AuthAppService/isAuthenticated',
@@ -34,7 +34,7 @@ class AuthAppServiceStub(object):
 class AuthAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def authenticateUserByNameAndPassword(self, request, context):
+    def authenticateUserByEmailAndPassword(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -55,10 +55,10 @@ class AuthAppServiceServicer(object):
 
 def add_AuthAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'authenticateUserByNameAndPassword': grpc.unary_unary_rpc_method_handler(
-                    servicer.authenticateUserByNameAndPassword,
-                    request_deserializer=auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordRequest.FromString,
-                    response_serializer=auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordResponse.SerializeToString,
+            'authenticateUserByEmailAndPassword': grpc.unary_unary_rpc_method_handler(
+                    servicer.authenticateUserByEmailAndPassword,
+                    request_deserializer=auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordRequest.FromString,
+                    response_serializer=auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordResponse.SerializeToString,
             ),
             'isAuthenticated': grpc.unary_unary_rpc_method_handler(
                     servicer.isAuthenticated,
@@ -81,7 +81,7 @@ class AuthAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def authenticateUserByNameAndPassword(request,
+    def authenticateUserByEmailAndPassword(request,
             target,
             options=(),
             channel_credentials=None,
@@ -91,9 +91,9 @@ class AuthAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.auth.AuthAppService/authenticateUserByNameAndPassword',
-            auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordRequest.SerializeToString,
-            auth__app__service__pb2.AuthAppService_authenticateUserByNameAndPasswordResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.auth.AuthAppService/authenticateUserByEmailAndPassword',
+            auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordRequest.SerializeToString,
+            auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

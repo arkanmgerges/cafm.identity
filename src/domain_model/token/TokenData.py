@@ -5,22 +5,22 @@ from typing import List
 
 
 class TokenData:
-    def __init__(self, id: str, name: str, roles: List[dict]):
+    def __init__(self, id: str, email: str, roles: List[dict]):
         self._id = id
-        self._name = name
+        self._email = email
         self._roles = roles
 
     def id(self) -> str:
         return self._id
 
-    def name(self) -> str:
-        return self._name
+    def email(self) -> str:
+        return self._email
 
     def roles(self) -> List[dict]:
         return self._roles
 
     def toMap(self) -> dict:
-        return {'id': self.id(), 'name': self.name(),
+        return {'id': self.id(), 'email': self.email(),
                 'roles': str(self.roles())}
 
     def __repr__(self):
@@ -32,4 +32,4 @@ class TokenData:
     def __eq__(self, other):
         if not isinstance(other, TokenData):
             raise NotImplementedError(f'other: {other} can not be compared with TokenData class')
-        return self.id() == other.id() and self.name() == other.name()
+        return self.id() == other.id() and self.email() == other.email()

@@ -11,7 +11,8 @@ from src.domain_model.resource.exception.InvalidCredentialsException import Inva
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
-from src.resource.proto._generated.auth_app_service_pb2 import AuthAppService_authenticateUserByNameAndPasswordResponse, \
+from src.resource.proto._generated.auth_app_service_pb2 import \
+    AuthAppService_authenticateUserByEmailAndPasswordResponse, \
     AuthAppService_isAuthenticatedResponse, AuthAppService_logoutResponse
 from src.resource.proto._generated.auth_app_service_pb2_grpc import AuthAppServiceServicer
 
@@ -27,35 +28,35 @@ class AuthAppServiceListener(AuthAppServiceServicer):
         return self.__class__.__name__
 
     @debugLogger
-    def authenticateUserByNameAndPassword(self, request, context):
+    def authenticateUserByEmailAndPassword(self, request, context):
         try:
             # logger.debug(
             # f'request: {request}\n, target: {target}\n, options: {options}\n, channel_credentials: {channel_credentials}\n insecure: {insecure}\n, compression: {compression}\n, wait_for_ready: {wait_for_ready}\n, timeout: {timeout}\n, metadata: {metadata}')
             # for key, value in context.invocation_metadata():
             #     print('Received initial metadata: key=%s value=%s' % (key, value))
             logger.debug(
-                f'[{AuthAppServiceListener.authenticateUserByNameAndPassword.__qualname__}] - receive request with name: {request.name}')
+                f'[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - receive request with name: {request.email}')
             authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
-            token: str = authAppService.authenticateUserByNameAndPassword(name=request.name,
-                                                                          password=request.password)
+            token: str = authAppService.authenticateUserByEmailAndPassword(email=request.email,
+                                                                           password=request.password)
             logger.debug(
-                f'[{AuthAppServiceListener.authenticateUserByNameAndPassword.__qualname__}] - token returned token: {token}')
-            return AuthAppService_authenticateUserByNameAndPasswordResponse(token=token)
+                f'[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - token returned token: {token}')
+            return AuthAppService_authenticateUserByEmailAndPasswordResponse(token=token)
         except InvalidCredentialsException:
             logger.debug(
-                f'[{AuthAppServiceListener.authenticateUserByNameAndPassword.__qualname__}] - exception, {InvalidCredentialsException.__qualname__}')
+                f'[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, {InvalidCredentialsException.__qualname__}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('Invalid credentials')
-            return AuthAppService_authenticateUserByNameAndPasswordResponse()
+            return AuthAppService_authenticateUserByEmailAndPasswordResponse()
         except UserDoesNotExistException:
             logger.debug(
-                f'[{AuthAppServiceListener.authenticateUserByNameAndPassword.__qualname__}] - exception, {UserDoesNotExistException.__qualname__}')
+                f'[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, {UserDoesNotExistException.__qualname__}')
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('User does not exist')
-            return AuthAppService_authenticateUserByNameAndPasswordResponse()
+            return AuthAppService_authenticateUserByEmailAndPasswordResponse()
         except Exception as e:
             logger.warn(
-                f'[{AuthAppServiceListener.authenticateUserByNameAndPassword.__qualname__}] - exception, Unknown: {e}')
+                f'[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, Unknown: {e}')
             raise e
 
     # def isAuthenticated(self, request, context):

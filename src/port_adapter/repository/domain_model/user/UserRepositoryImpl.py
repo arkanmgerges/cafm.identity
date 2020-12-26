@@ -48,12 +48,12 @@ class UserRepositoryImpl(UserRepository):
             rolesDocIds.append(self._helperRepo.roleDocumentId(id=role['id']))
         # aql = '''
         # UPSERT {id: @id, type: 'user'}
-        #     INSERT {id: @id, name: @name, type: 'user'}
-        #     UPDATE {name: @name}
+        #     INSERT {id: @id, email: @email, type: 'user'}
+        #     UPDATE {email: @email}
         #   IN resource
         # '''
 
-        # bindVars = {"id": user.id(), "name": user.name()}
+        # bindVars = {"id": user.id(), "email": user.email()}
         # queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
         actionFunction = '''
@@ -67,7 +67,7 @@ class UserRepositoryImpl(UserRepository):
                 let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                 if (res.length == 0) {
                     p = params['resource']
-                    res = db.resource.insert({id: p['id'], name: p['name'], password: p['password'], 
+                    res = db.resource.insert({id: p['id'], email: p['email'], password: p['password'], 
                                               first_name: p['firstName'], last_name: p['lastName'],
                                               address_one: p['addressOne'], address_two: p['addressTwo'],
                                               postal_code: p['postalCode'],
@@ -89,7 +89,7 @@ class UserRepositoryImpl(UserRepository):
             }
         '''
         params = {
-            'resource': {"id": user.id(), "name": user.name(), "password": user.password(), "firstName": user.firstName(),
+            'resource': {"id": user.id(), "email": user.email(), "password": user.password(), "firstName": user.firstName(),
                          "lastName": user.lastName(), "addressOne": user.addressOne(), "addressTwo": user.addressTwo(),
                          "postalCode": user.postalCode(), "avatarImage": user.avatarImage(), "type": user.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
@@ -111,11 +111,11 @@ class UserRepositoryImpl(UserRepository):
         aql = '''
             FOR d IN resource
                 FILTER d.id == @id AND d.type == 'user'
-                UPDATE d WITH {name: @name, first_name: @firstName, last_name: @lastName, 
+                UPDATE d WITH {email: @email, first_name: @firstName, last_name: @lastName, 
                                address_one: @addressOne, address_two: @addressTwo, postal_code: @postalCode, avatar_image: @avatarImage} IN resource
         '''
 
-        bindVars = {"id": user.id(), "name": user.name(), "firstName": user.firstName(),
+        bindVars = {"id": user.id(), "email": user.email(), "firstName": user.firstName(),
                     "lastName": user.lastName(), "addressOne": user.addressOne(), "addressTwo": user.addressTwo(),
                     "postalCode": user.postalCode(), "avatarImage": user.avatarImage()}
         logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {user.id()}')
@@ -152,7 +152,7 @@ class UserRepositoryImpl(UserRepository):
                 }
             '''
             params = {
-                'resource': {"id": user.id(), "name": user.name(), "type": user.type()},
+                'resource': {"id": user.id(), "email": user.email(), "type": user.type()},
                 'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
             }
             self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
@@ -164,38 +164,38 @@ class UserRepositoryImpl(UserRepository):
             raise ObjectCouldNotBeDeletedException(f'user id: {user.id()}')
 
     @debugLogger
-    def userByName(self, name: str) -> User:
-        logger.debug(f'[{UserRepositoryImpl.userByName.__qualname__}] - with name = {name}')
+    def userByEmail(self, email: str) -> User:
+        logger.debug(f'[{UserRepositoryImpl.userByEmail.__qualname__}] - with email = {email}')
         aql = '''
             FOR d IN resource
-                FILTER d.name == @name AND d.type == 'user'
+                FILTER d.email == @email AND d.type == 'user'
                 RETURN d
         '''
 
-        bindVars = {"name": name}
+        bindVars = {"email": email}
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            logger.debug(f'[{UserRepositoryImpl.userByName.__qualname__}] {name}')
-            raise UserDoesNotExistException(name)
+            logger.debug(f'[{UserRepositoryImpl.userByEmail.__qualname__}] {email}')
+            raise UserDoesNotExistException(email)
 
         return User.createFrom(**self._constructUserDictFromResult(result[0]))
 
     @debugLogger
-    def userByNameAndPassword(self, name: str, password: str) -> User:
-        logger.debug(f'[{UserRepositoryImpl.userByNameAndPassword.__qualname__}] - with name = {name}')
+    def userByEmailAndPassword(self, email: str, password: str) -> User:
+        logger.debug(f'[{UserRepositoryImpl.userByEmailAndPassword.__qualname__}] - with email = {email}')
         aql = '''
             FOR d IN resource
-                FILTER d.name == @name AND d.password == @password AND d.type == 'user'
+                FILTER d.email == @email AND d.password == @password AND d.type == 'user'
                 RETURN d
         '''
 
-        bindVars = {"name": name, "password": password}
+        bindVars = {"email": email, "password": password}
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            logger.debug(f'[{UserRepositoryImpl.userByNameAndPassword.__qualname__}] name: {name}')
-            raise UserDoesNotExistException(name)
+            logger.debug(f'[{UserRepositoryImpl.userByEmailAndPassword.__qualname__}] email: {email}')
+            raise UserDoesNotExistException(email)
 
         return User.createFrom(**self._constructUserDictFromResult(result[0]))
 
@@ -220,7 +220,7 @@ class UserRepositoryImpl(UserRepository):
     def _constructUserDictFromResult(self, result) -> dict:
         return {
             'id': result['id'] if 'id' in result and result['id'] is not None else None,
-            'name': result['name'] if 'name' in result else '',
+            'email': result['email'] if 'email' in result else '',
             'password': result['password'] if 'password' in result else '',
             'firstName': result['first_name'] if 'first_name' in result else '',
             'lastName': result['last_name'] if 'last_name' in result else '',
@@ -248,7 +248,7 @@ class UserRepositoryImpl(UserRepository):
         items = result['items']
         itemCount = len(items)
         items = items[resultFrom:resultSize]
-        return {"items": [User.createFrom(id=x['id'], name=x['name'],
+        return {"items": [User.createFrom(id=x['id'], email=x['email'],
                                           firstName=x['firstName'] if 'firstName' in x else '',
                                           lastName=x['lastName'] if 'lastName' in x else '',
                                           addressOne=x['addressOne'] if 'addressOne' in x else '',

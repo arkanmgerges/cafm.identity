@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package cafm.identity.project;
+package cafm.project.project;
 
 import "project.proto";
 import "order.proto";
@@ -24,7 +24,7 @@ message ProjectAppService_projectByIdResponse {
 message ProjectAppService_projectsRequest {
   int32 resultFrom = 1;
   int32 resultSize = 2;
-  repeated order.Order order = 3;
+  repeated cafm.common.order.Order order = 3;
 }
 
 message ProjectAppService_projectsResponse {

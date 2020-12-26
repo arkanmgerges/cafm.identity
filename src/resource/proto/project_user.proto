@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package cafm.project.user;
+
+message User {
+  string id = 1;
+  string email = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string addressOne = 5;
+  string addressTwo = 6;
+  string postalCode = 7;
+  string avatarImage = 8;
+}

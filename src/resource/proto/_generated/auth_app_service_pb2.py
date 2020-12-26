@@ -19,29 +19,29 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x16\x61uth_app_service.proto\x12\x12\x63\x61\x66m.identity.auth\"Y\n7AuthAppService_authenticateUserByNameAndPasswordRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"I\n8AuthAppService_authenticateUserByNameAndPasswordResponse\x12\r\n\x05token\x18\x01 \x01(\t\"6\n%AuthAppService_isAuthenticatedRequest\x12\r\n\x05token\x18\x01 \x01(\t\":\n&AuthAppService_isAuthenticatedResponse\x12\x10\n\x08response\x18\x01 \x01(\x08\"-\n\x1c\x41uthAppService_logoutRequest\x12\r\n\x05token\x18\x01 \x01(\t\"\x1f\n\x1d\x41uthAppService_logoutResponse2\xd1\x03\n\x0e\x41uthAppService\x12\xc0\x01\n!authenticateUserByNameAndPassword\x12K.cafm.identity.auth.AuthAppService_authenticateUserByNameAndPasswordRequest\x1aL.cafm.identity.auth.AuthAppService_authenticateUserByNameAndPasswordResponse\"\x00\x12\x8a\x01\n\x0fisAuthenticated\x12\x39.cafm.identity.auth.AuthAppService_isAuthenticatedRequest\x1a:.cafm.identity.auth.AuthAppService_isAuthenticatedResponse\"\x00\x12o\n\x06logout\x12\x30.cafm.identity.auth.AuthAppService_logoutRequest\x1a\x31.cafm.identity.auth.AuthAppService_logoutResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x16\x61uth_app_service.proto\x12\x12\x63\x61\x66m.identity.auth\"[\n8AuthAppService_authenticateUserByEmailAndPasswordRequest\x12\r\n\x05\x65mail\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"J\n9AuthAppService_authenticateUserByEmailAndPasswordResponse\x12\r\n\x05token\x18\x01 \x01(\t\"6\n%AuthAppService_isAuthenticatedRequest\x12\r\n\x05token\x18\x01 \x01(\t\":\n&AuthAppService_isAuthenticatedResponse\x12\x10\n\x08response\x18\x01 \x01(\x08\"-\n\x1c\x41uthAppService_logoutRequest\x12\r\n\x05token\x18\x01 \x01(\t\"\x1f\n\x1d\x41uthAppService_logoutResponse2\xd4\x03\n\x0e\x41uthAppService\x12\xc3\x01\n\"authenticateUserByEmailAndPassword\x12L.cafm.identity.auth.AuthAppService_authenticateUserByEmailAndPasswordRequest\x1aM.cafm.identity.auth.AuthAppService_authenticateUserByEmailAndPasswordResponse\"\x00\x12\x8a\x01\n\x0fisAuthenticated\x12\x39.cafm.identity.auth.AuthAppService_isAuthenticatedRequest\x1a:.cafm.identity.auth.AuthAppService_isAuthenticatedResponse\"\x00\x12o\n\x06logout\x12\x30.cafm.identity.auth.AuthAppService_logoutRequest\x1a\x31.cafm.identity.auth.AuthAppService_logoutResponse\"\x00\x62\x06proto3'
 )
 
 
 
 
-_AUTHAPPSERVICE_AUTHENTICATEUSERBYNAMEANDPASSWORDREQUEST = _descriptor.Descriptor(
-  name='AuthAppService_authenticateUserByNameAndPasswordRequest',
-  full_name='cafm.identity.auth.AuthAppService_authenticateUserByNameAndPasswordRequest',
+_AUTHAPPSERVICE_AUTHENTICATEUSERBYEMAILANDPASSWORDREQUEST = _descriptor.Descriptor(
+  name='AuthAppService_authenticateUserByEmailAndPasswordRequest',
+  full_name='cafm.identity.auth.AuthAppService_authenticateUserByEmailAndPasswordRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='cafm.identity.auth.AuthAppService_authenticateUserByNameAndPasswordRequest.name', index=0,
+      name='email', full_name='cafm.identity.auth.AuthAppService_authenticateUserByEmailAndPasswordRequest.email', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='password', full_name='cafm.identity.auth.AuthAppService_authenticateUserByNameAndPasswordRequest.password', index=1,
+      name='password', full_name='cafm.identity.auth.AuthAppService_authenticateUserByEmailAndPasswordRequest.password', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -60,20 +60,20 @@ _AUTHAPPSERVICE_AUTHENTICATEUSERBYNAMEANDPASSWORDREQUEST = _descriptor.Descripto
   oneofs=[
   ],
   serialized_start=46,
-  serialized_end=135,
+  serialized_end=137,
 )
 
 
-_AUTHAPPSERVICE_AUTHENTICATEUSERBYNAMEANDPASSWORDRESPONSE = _descriptor.Descriptor(
-  name='AuthAppService_authenticateUserByNameAndPasswordResponse',
-  full_name='cafm.identity.auth.AuthAppService_authenticateUserByNameAndPasswordResponse',
+_AUTHAPPSERVICE_AUTHENTICATEUSERBYEMAILANDPASSWORDRESPONSE = _descriptor.Descriptor(
+  name='AuthAppService_authenticateUserByEmailAndPasswordResponse',
+  full_name='cafm.identity.auth.AuthAppService_authenticateUserByEmailAndPasswordResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='token', full_name='cafm.identity.auth.AuthAppService_authenticateUserByNameAndPasswordResponse.token', index=0,
+      name='token', full_name='cafm.identity.auth.AuthAppService_authenticateUserByEmailAndPasswordResponse.token', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -91,8 +91,8 @@ _AUTHAPPSERVICE_AUTHENTICATEUSERBYNAMEANDPASSWORDRESPONSE = _descriptor.Descript
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=137,
-  serialized_end=210,
+  serialized_start=139,
+  serialized_end=213,
 )
 
 
@@ -123,8 +123,8 @@ _AUTHAPPSERVICE_ISAUTHENTICATEDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=212,
-  serialized_end=266,
+  serialized_start=215,
+  serialized_end=269,
 )
 
 
@@ -155,8 +155,8 @@ _AUTHAPPSERVICE_ISAUTHENTICATEDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=268,
-  serialized_end=326,
+  serialized_start=271,
+  serialized_end=329,
 )
 
 
@@ -187,8 +187,8 @@ _AUTHAPPSERVICE_LOGOUTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=328,
-  serialized_end=373,
+  serialized_start=331,
+  serialized_end=376,
 )
 
 
@@ -212,31 +212,31 @@ _AUTHAPPSERVICE_LOGOUTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=375,
-  serialized_end=406,
+  serialized_start=378,
+  serialized_end=409,
 )
 
-DESCRIPTOR.message_types_by_name['AuthAppService_authenticateUserByNameAndPasswordRequest'] = _AUTHAPPSERVICE_AUTHENTICATEUSERBYNAMEANDPASSWORDREQUEST
-DESCRIPTOR.message_types_by_name['AuthAppService_authenticateUserByNameAndPasswordResponse'] = _AUTHAPPSERVICE_AUTHENTICATEUSERBYNAMEANDPASSWORDRESPONSE
+DESCRIPTOR.message_types_by_name['AuthAppService_authenticateUserByEmailAndPasswordRequest'] = _AUTHAPPSERVICE_AUTHENTICATEUSERBYEMAILANDPASSWORDREQUEST
+DESCRIPTOR.message_types_by_name['AuthAppService_authenticateUserByEmailAndPasswordResponse'] = _AUTHAPPSERVICE_AUTHENTICATEUSERBYEMAILANDPASSWORDRESPONSE
 DESCRIPTOR.message_types_by_name['AuthAppService_isAuthenticatedRequest'] = _AUTHAPPSERVICE_ISAUTHENTICATEDREQUEST
 DESCRIPTOR.message_types_by_name['AuthAppService_isAuthenticatedResponse'] = _AUTHAPPSERVICE_ISAUTHENTICATEDRESPONSE
 DESCRIPTOR.message_types_by_name['AuthAppService_logoutRequest'] = _AUTHAPPSERVICE_LOGOUTREQUEST
 DESCRIPTOR.message_types_by_name['AuthAppService_logoutResponse'] = _AUTHAPPSERVICE_LOGOUTRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-AuthAppService_authenticateUserByNameAndPasswordRequest = _reflection.GeneratedProtocolMessageType('AuthAppService_authenticateUserByNameAndPasswordRequest', (_message.Message,), {
-  'DESCRIPTOR' : _AUTHAPPSERVICE_AUTHENTICATEUSERBYNAMEANDPASSWORDREQUEST,
+AuthAppService_authenticateUserByEmailAndPasswordRequest = _reflection.GeneratedProtocolMessageType('AuthAppService_authenticateUserByEmailAndPasswordRequest', (_message.Message,), {
+  'DESCRIPTOR' : _AUTHAPPSERVICE_AUTHENTICATEUSERBYEMAILANDPASSWORDREQUEST,
   '__module__' : 'auth_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:cafm.identity.auth.AuthAppService_authenticateUserByNameAndPasswordRequest)
+  # @@protoc_insertion_point(class_scope:cafm.identity.auth.AuthAppService_authenticateUserByEmailAndPasswordRequest)
   })
-_sym_db.RegisterMessage(AuthAppService_authenticateUserByNameAndPasswordRequest)
+_sym_db.RegisterMessage(AuthAppService_authenticateUserByEmailAndPasswordRequest)
 
-AuthAppService_authenticateUserByNameAndPasswordResponse = _reflection.GeneratedProtocolMessageType('AuthAppService_authenticateUserByNameAndPasswordResponse', (_message.Message,), {
-  'DESCRIPTOR' : _AUTHAPPSERVICE_AUTHENTICATEUSERBYNAMEANDPASSWORDRESPONSE,
+AuthAppService_authenticateUserByEmailAndPasswordResponse = _reflection.GeneratedProtocolMessageType('AuthAppService_authenticateUserByEmailAndPasswordResponse', (_message.Message,), {
+  'DESCRIPTOR' : _AUTHAPPSERVICE_AUTHENTICATEUSERBYEMAILANDPASSWORDRESPONSE,
   '__module__' : 'auth_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:cafm.identity.auth.AuthAppService_authenticateUserByNameAndPasswordResponse)
+  # @@protoc_insertion_point(class_scope:cafm.identity.auth.AuthAppService_authenticateUserByEmailAndPasswordResponse)
   })
-_sym_db.RegisterMessage(AuthAppService_authenticateUserByNameAndPasswordResponse)
+_sym_db.RegisterMessage(AuthAppService_authenticateUserByEmailAndPasswordResponse)
 
 AuthAppService_isAuthenticatedRequest = _reflection.GeneratedProtocolMessageType('AuthAppService_isAuthenticatedRequest', (_message.Message,), {
   'DESCRIPTOR' : _AUTHAPPSERVICE_ISAUTHENTICATEDREQUEST,
@@ -275,16 +275,16 @@ _AUTHAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=409,
-  serialized_end=874,
+  serialized_start=412,
+  serialized_end=880,
   methods=[
   _descriptor.MethodDescriptor(
-    name='authenticateUserByNameAndPassword',
-    full_name='cafm.identity.auth.AuthAppService.authenticateUserByNameAndPassword',
+    name='authenticateUserByEmailAndPassword',
+    full_name='cafm.identity.auth.AuthAppService.authenticateUserByEmailAndPassword',
     index=0,
     containing_service=None,
-    input_type=_AUTHAPPSERVICE_AUTHENTICATEUSERBYNAMEANDPASSWORDREQUEST,
-    output_type=_AUTHAPPSERVICE_AUTHENTICATEUSERBYNAMEANDPASSWORDRESPONSE,
+    input_type=_AUTHAPPSERVICE_AUTHENTICATEUSERBYEMAILANDPASSWORDREQUEST,
+    output_type=_AUTHAPPSERVICE_AUTHENTICATEUSERBYEMAILANDPASSWORDRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
