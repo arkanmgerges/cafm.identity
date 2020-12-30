@@ -13,6 +13,7 @@ from src.domain_model.resource.exception.UserGroupDoesNotExistException import U
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
+from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.user_group_app_service_pb2 import UserGroupAppService_userGroupByNameResponse, \
     UserGroupAppService_userGroupsResponse, UserGroupAppService_userGroupByIdResponse
 from src.resource.proto._generated.user_group_app_service_pb2_grpc import UserGroupAppServiceServicer
@@ -30,6 +31,7 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
         return self.__class__.__name__
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def userGroupByName(self, request, context):
         try:
             token = self._token(context)
@@ -53,6 +55,7 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
         #     return identity_pb2.UserGroupResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def userGroups(self, request, context):
         try:
             token = self._token(context)
@@ -86,6 +89,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             return UserGroupAppService_userGroupByNameResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def userGroupById(self, request, context):
         try:
             token = self._token(context)

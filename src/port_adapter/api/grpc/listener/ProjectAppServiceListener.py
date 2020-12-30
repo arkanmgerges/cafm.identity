@@ -13,6 +13,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import UnAuthoriz
 from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
+from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.project_app_service_pb2 import ProjectAppService_projectByNameResponse, \
     ProjectAppService_projectsResponse, ProjectAppService_projectByIdResponse
 from src.resource.proto._generated.project_app_service_pb2_grpc import ProjectAppServiceServicer
@@ -30,6 +31,7 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
         return self.__class__.__name__
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def projectByName(self, request, context):
         try:
             token = self._token(context)
@@ -53,6 +55,7 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
         #     return identity_pb2.ProjectResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def projects(self, request, context):
         try:
             token = self._token(context)
@@ -86,6 +89,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             return ProjectAppService_projectByNameResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def projectById(self, request, context):
         try:
             token = self._token(context)

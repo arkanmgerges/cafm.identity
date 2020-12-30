@@ -13,6 +13,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import UnAuthoriz
 from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
+from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.ou_app_service_pb2 import OuAppService_ouByNameResponse, OuAppService_ousResponse, \
     OuAppService_ouByIdResponse
 from src.resource.proto._generated.ou_app_service_pb2_grpc import OuAppServiceServicer
@@ -30,6 +31,7 @@ class OuAppServiceListener(OuAppServiceServicer):
         return self.__class__.__name__
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def ouByName(self, request, context):
         try:
             ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
@@ -49,6 +51,7 @@ class OuAppServiceListener(OuAppServiceServicer):
         #     return identity_pb2.OuResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def ous(self, request, context):
         try:
             metadata = context.invocation_metadata()
@@ -81,6 +84,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             return OuAppService_ouByNameResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def ouById(self, request, context):
         try:
             ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)

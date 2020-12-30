@@ -17,6 +17,7 @@ from src.domain_model.role.Role import Role
 from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
+from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.role_app_service_pb2 import RoleAppService_roleByNameResponse, \
     RoleAppService_rolesResponse, RoleAppService_roleByIdResponse, RoleAppService_rolesTreesResponse
 from src.resource.proto._generated.role_app_service_pb2_grpc import RoleAppServiceServicer
@@ -34,6 +35,7 @@ class RoleAppServiceListener(RoleAppServiceServicer):
         return self.__class__.__name__
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def roleByName(self, request, context):
         try:
             token = self._token(context)
@@ -54,6 +56,7 @@ class RoleAppServiceListener(RoleAppServiceServicer):
         #     return identity_pb2.RoleResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def roles(self, request, context):
         try:
             token = self._token(context)
@@ -88,6 +91,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             return RoleAppService_roleByNameResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def roleById(self, request, context):
         try:
             token = self._token(context)
@@ -105,6 +109,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             return RoleAppService_roleByIdResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def roleTree(self, request, context):
         try:
             token = self._token(context)
@@ -159,6 +164,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         return RoleAppService_roleByNameResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def rolesTrees(self, request, context):
         try:
             token = self._token(context)

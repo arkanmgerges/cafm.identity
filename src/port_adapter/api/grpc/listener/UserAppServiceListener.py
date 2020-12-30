@@ -1,6 +1,7 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+import json
 import time
 
 import grpc
@@ -13,6 +14,7 @@ from src.domain_model.token.TokenService import TokenService
 from src.domain_model.user.User import User
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
+from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.user_app_service_pb2 import UserAppService_userByEmailAndPasswordResponse, \
     UserAppService_usersResponse, UserAppService_userByIdResponse
 from src.resource.proto._generated.user_app_service_pb2_grpc import UserAppServiceServicer
@@ -30,6 +32,7 @@ class UserAppServiceListener(UserAppServiceServicer):
         return self.__class__.__name__
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def userByNameAndPassword(self, request, context):
         try:
             userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
@@ -55,6 +58,7 @@ class UserAppServiceListener(UserAppServiceServicer):
         #     return identity_pb2.UserResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def users(self, request, context):
         try:
             token = self._token(context)
@@ -93,6 +97,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             return UserAppService_usersResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def userById(self, request, context):
         try:
             token = self._token(context)

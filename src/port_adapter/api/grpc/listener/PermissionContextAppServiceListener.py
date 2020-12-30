@@ -15,6 +15,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import UnAuthoriz
 from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
+from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.permission_context_app_service_pb2 import \
     PermissionContextAppService_permissionContextsResponse, \
     PermissionContextAppService_permissionContextByIdResponse
@@ -33,6 +34,7 @@ class PermissionContextAppServiceListener(PermissionContextAppServiceServicer):
         return self.__class__.__name__
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def permissionContexts(self, request, context):
         try:
             token = self._token(context)
@@ -72,6 +74,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             return PermissionContextAppService_permissionContextByIdResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def permissionContextById(self, request, context):
         try:
             token = self._token(context)

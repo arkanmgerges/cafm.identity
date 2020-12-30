@@ -59,6 +59,7 @@ from src.port_adapter.repository.domain_model.resource.ResourceRepositoryImpl im
 from src.port_adapter.repository.domain_model.role.RoleRepositoryImpl import RoleRepositoryImpl
 from src.port_adapter.repository.domain_model.user.UserRepositoryImpl import UserRepositoryImpl
 from src.port_adapter.repository.domain_model.user_group.UserGroupRepositoryImpl import UserGroupRepositoryImpl
+from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 
 
 class AppDi(Module):
@@ -297,6 +298,12 @@ class AppDi(Module):
 
     # endregion
 
+    # region Resource
+    @singleton
+    @provider
+    def provideOpenTelemetry(self) -> OpenTelemetry:
+        return OpenTelemetry()
+    # endregion
 
 class Builder:
     @classmethod

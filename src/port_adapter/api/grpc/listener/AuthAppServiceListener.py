@@ -11,6 +11,7 @@ from src.domain_model.resource.exception.InvalidCredentialsException import Inva
 from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
+from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.auth_app_service_pb2 import \
     AuthAppService_authenticateUserByEmailAndPasswordResponse, \
     AuthAppService_isAuthenticatedResponse, AuthAppService_logoutResponse
@@ -28,6 +29,7 @@ class AuthAppServiceListener(AuthAppServiceServicer):
         return self.__class__.__name__
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def authenticateUserByEmailAndPassword(self, request, context):
         try:
             # logger.debug(
@@ -78,6 +80,7 @@ class AuthAppServiceListener(AuthAppServiceServicer):
     #             return AuthAppService_isAuthenticatedResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def isAuthenticated(self, request, context):
         try:
             authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
@@ -92,6 +95,7 @@ class AuthAppServiceListener(AuthAppServiceServicer):
             return AuthAppService_isAuthenticatedResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def logout(self, request, context):
         try:
             authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)

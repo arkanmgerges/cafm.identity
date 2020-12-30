@@ -1,9 +1,12 @@
 # https://www.youtube.com/watch?v=dQK0VLahrDk&list=PLXs6ze70rLY9u0X6qz_91bCvsjq3Kqn_O&index=5
 """The Python implementation of the GRPC Seans-gRPC server."""
+from datetime import datetime
 from concurrent import futures
+import random
 
 import grpc
 
+import src.port_adapter.AppDi as AppDi
 from src.port_adapter.api.grpc.listener.AuthAppServiceListener import AuthAppServiceListener
 from src.port_adapter.api.grpc.listener.OuAppServiceListener import OuAppServiceListener
 from src.port_adapter.api.grpc.listener.PermissionAppServiceListener import PermissionAppServiceListener
@@ -14,6 +17,7 @@ from src.port_adapter.api.grpc.listener.RoleAppServiceListener import RoleAppSer
 from src.port_adapter.api.grpc.listener.UserAppServiceListener import UserAppServiceListener
 from src.port_adapter.api.grpc.listener.UserGroupAppServiceListener import UserGroupAppServiceListener
 from src.resource.logging.logger import logger
+from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.auth_app_service_pb2_grpc import add_AuthAppServiceServicer_to_server
 from src.resource.proto._generated.ou_app_service_pb2_grpc import add_OuAppServiceServicer_to_server
 from src.resource.proto._generated.permission_app_service_pb2_grpc import add_PermissionAppServiceServicer_to_server
@@ -56,4 +60,6 @@ def serve():
 
 
 if __name__ == "__main__":
+    random.seed(datetime.utcnow().timestamp())
+    openTelemetry = AppDi.instance.get(OpenTelemetry)
     serve()

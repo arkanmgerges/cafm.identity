@@ -13,6 +13,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import UnAuthoriz
 from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
+from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.realm_app_service_pb2 import RealmAppService_realmByNameResponse, \
     RealmAppService_realmsResponse, RealmAppService_realmByIdResponse
 from src.resource.proto._generated.realm_app_service_pb2_grpc import RealmAppServiceServicer
@@ -30,6 +31,7 @@ class RealmAppServiceListener(RealmAppServiceServicer):
         return self.__class__.__name__
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def realmByName(self, request, context):
         try:
             token = self._token(context)
@@ -53,6 +55,7 @@ class RealmAppServiceListener(RealmAppServiceServicer):
         #     return identity_pb2.RealmResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def realms(self, request, context):
         try:
             token = self._token(context)
@@ -86,6 +89,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             return RealmAppService_realmByNameResponse()
 
     @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def realmById(self, request, context):
         try:
             token = self._token(context)
