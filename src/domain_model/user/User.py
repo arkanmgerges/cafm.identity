@@ -42,7 +42,7 @@ class User(Resource):
         return user
 
     def _validateEmail(self, email):
-        regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,6}$'
+        regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,6}$'
         if not (re.search(regex, email)):
             raise InvalidValueException(f'Email is not valid: {email}')
 
