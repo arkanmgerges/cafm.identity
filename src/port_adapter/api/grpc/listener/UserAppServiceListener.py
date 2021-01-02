@@ -15,9 +15,9 @@ from src.domain_model.user.User import User
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.user_app_service_pb2 import UserAppService_userByEmailAndPasswordResponse, \
+from src.resource.proto._generated.identity.user_app_service_pb2 import UserAppService_userByEmailAndPasswordResponse, \
     UserAppService_usersResponse, UserAppService_userByIdResponse
-from src.resource.proto._generated.user_app_service_pb2_grpc import UserAppServiceServicer
+from src.resource.proto._generated.identity.user_app_service_pb2_grpc import UserAppServiceServicer
 
 
 class UserAppServiceListener(UserAppServiceServicer):

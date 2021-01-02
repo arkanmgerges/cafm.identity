@@ -16,10 +16,10 @@ from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.permission_context_app_service_pb2 import \
+from src.resource.proto._generated.identity.permission_context_app_service_pb2 import \
     PermissionContextAppService_permissionContextsResponse, \
     PermissionContextAppService_permissionContextByIdResponse
-from src.resource.proto._generated.permission_context_app_service_pb2_grpc import PermissionContextAppServiceServicer
+from src.resource.proto._generated.identity.permission_context_app_service_pb2_grpc import PermissionContextAppServiceServicer
 
 
 class PermissionContextAppServiceListener(PermissionContextAppServiceServicer):

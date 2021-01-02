@@ -14,9 +14,9 @@ from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.permission_app_service_pb2 import PermissionAppService_permissionByNameResponse, \
+from src.resource.proto._generated.identity.permission_app_service_pb2 import PermissionAppService_permissionByNameResponse, \
     PermissionAppService_permissionsResponse, PermissionAppService_permissionByIdResponse
-from src.resource.proto._generated.permission_app_service_pb2_grpc import PermissionAppServiceServicer
+from src.resource.proto._generated.identity.permission_app_service_pb2_grpc import PermissionAppServiceServicer
 
 
 class PermissionAppServiceListener(PermissionAppServiceServicer):

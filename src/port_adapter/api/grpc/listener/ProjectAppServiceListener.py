@@ -14,9 +14,9 @@ from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.project_app_service_pb2 import ProjectAppService_projectByNameResponse, \
+from src.resource.proto._generated.identity.project_app_service_pb2 import ProjectAppService_projectByNameResponse, \
     ProjectAppService_projectsResponse, ProjectAppService_projectByIdResponse
-from src.resource.proto._generated.project_app_service_pb2_grpc import ProjectAppServiceServicer
+from src.resource.proto._generated.identity.project_app_service_pb2_grpc import ProjectAppServiceServicer
 
 
 class ProjectAppServiceListener(ProjectAppServiceServicer):

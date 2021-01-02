@@ -1,14 +1,13 @@
 syntax = "proto3";
 
-import "access_node.proto";
-import "permission_with_permission_contexts.proto";
-import "role_access_permission.proto";
-import "ou_app_service.proto";
-import "permission_app_service.proto";
-import "project_app_service.proto";
-import "realm_app_service.proto";
-import "permission_context_app_service.proto";
-import "role_app_service.proto";
-import "user_app_service.proto";
-import "user_group_app_service.proto";
-import "auth_app_service.proto";
+import "identity/access_node.proto";
+import "identity/permission_with_permission_contexts.proto";
+import "identity/role_access_permission.proto";
+import "identity/ou_app_service.proto";
+import "identity/permission_app_service.proto";
+import "identity/realm_app_service.proto";
+import "identity/permission_context_app_service.proto";
+import "identity/role_app_service.proto";
+import "identity/user_app_service.proto";
+import "identity/user_group_app_service.proto";
+import "identity/auth_app_service.proto";

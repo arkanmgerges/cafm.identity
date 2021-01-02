@@ -1,3 +1,4 @@
 syntax = "proto3";
 
-import "project_app_service.proto";
+import "project/project_app_service.proto";
+import "project/user_app_service.proto";

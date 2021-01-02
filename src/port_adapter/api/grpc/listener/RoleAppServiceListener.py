@@ -18,9 +18,9 @@ from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.role_app_service_pb2 import RoleAppService_roleByNameResponse, \
+from src.resource.proto._generated.identity.role_app_service_pb2 import RoleAppService_roleByNameResponse, \
     RoleAppService_rolesResponse, RoleAppService_roleByIdResponse, RoleAppService_rolesTreesResponse
-from src.resource.proto._generated.role_app_service_pb2_grpc import RoleAppServiceServicer
+from src.resource.proto._generated.identity.role_app_service_pb2_grpc import RoleAppServiceServicer
 
 
 class RoleAppServiceListener(RoleAppServiceServicer):

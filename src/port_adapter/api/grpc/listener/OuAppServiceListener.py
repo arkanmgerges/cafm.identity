@@ -14,9 +14,9 @@ from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.ou_app_service_pb2 import OuAppService_ouByNameResponse, OuAppService_ousResponse, \
+from src.resource.proto._generated.identity.ou_app_service_pb2 import OuAppService_ouByNameResponse, OuAppService_ousResponse, \
     OuAppService_ouByIdResponse
-from src.resource.proto._generated.ou_app_service_pb2_grpc import OuAppServiceServicer
+from src.resource.proto._generated.identity.ou_app_service_pb2_grpc import OuAppServiceServicer
 
 
 class OuAppServiceListener(OuAppServiceServicer):

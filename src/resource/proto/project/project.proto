@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package cafm.project.project;
+
+message Project {
+  string id = 1;
+  string name = 2;
+  int32 cityId = 3;
+  int32 countryId = 4;
+  string addressLine = 5;
+  string beneficiaryId = 6;
+  string state = 7;
+}

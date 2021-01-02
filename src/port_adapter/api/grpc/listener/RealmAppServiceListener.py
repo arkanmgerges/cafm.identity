@@ -14,9 +14,9 @@ from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.realm_app_service_pb2 import RealmAppService_realmByNameResponse, \
+from src.resource.proto._generated.identity.realm_app_service_pb2 import RealmAppService_realmByNameResponse, \
     RealmAppService_realmsResponse, RealmAppService_realmByIdResponse
-from src.resource.proto._generated.realm_app_service_pb2_grpc import RealmAppServiceServicer
+from src.resource.proto._generated.identity.realm_app_service_pb2_grpc import RealmAppServiceServicer
 
 
 class RealmAppServiceListener(RealmAppServiceServicer):

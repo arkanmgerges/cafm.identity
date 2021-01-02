@@ -14,9 +14,9 @@ from src.domain_model.user_group.UserGroup import UserGroup
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.user_group_app_service_pb2 import UserGroupAppService_userGroupByNameResponse, \
+from src.resource.proto._generated.identity.user_group_app_service_pb2 import UserGroupAppService_userGroupByNameResponse, \
     UserGroupAppService_userGroupsResponse, UserGroupAppService_userGroupByIdResponse
-from src.resource.proto._generated.user_group_app_service_pb2_grpc import UserGroupAppServiceServicer
+from src.resource.proto._generated.identity.user_group_app_service_pb2_grpc import UserGroupAppServiceServicer
 
 
 class UserGroupAppServiceListener(UserGroupAppServiceServicer):

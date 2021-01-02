@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package cafm.project.user;
+
+import "project/user.proto";
+import "order.proto";
+
+message UserAppService_userByEmailAndPasswordRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message UserAppService_userByEmailAndPasswordResponse {
+  User user = 1;
+}
+
+message UserAppService_userByIdRequest {
+  string id = 1;
+}
+
+message UserAppService_userByIdResponse {
+  User user = 1;
+}
+
+message UserAppService_usersRequest {
+  int32 resultFrom = 1;
+  int32 resultSize = 2;
+  repeated cafm.common.order.Order order = 3;
+}
+
+message UserAppService_usersResponse {
+  repeated User users = 1;
+  int32 itemCount = 2;
+}
+
+
+service UserAppService {
+  rpc userByEmailAndPassword (UserAppService_userByEmailAndPasswordRequest) returns (UserAppService_userByEmailAndPasswordResponse) {}
+  rpc userById (UserAppService_userByIdRequest) returns (UserAppService_userByIdResponse) {}
+  rpc users (UserAppService_usersRequest) returns (UserAppService_usersResponse) {}
+}

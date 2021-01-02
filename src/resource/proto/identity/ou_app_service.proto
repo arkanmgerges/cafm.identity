@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package cafm.identity.ou;
+
+import "identity/ou.proto";
+import "order.proto";
+
+message OuAppService_ouByNameRequest {
+  string name = 1;
+}
+
+message OuAppService_ouByNameResponse {
+  Ou ou = 1;
+}
+
+message OuAppService_ouByIdRequest {
+  string id = 1;
+}
+
+message OuAppService_ouByIdResponse {
+  Ou ou = 1;
+}
+
+message OuAppService_ousRequest {
+  int32 resultFrom = 1;
+  int32 resultSize = 2;
+  repeated cafm.common.order.Order order = 3;
+}
+
+message OuAppService_ousResponse {
+  repeated Ou ous = 1;
+  int32 itemCount = 2;
+}
+
+service OuAppService {
+  rpc ouByName (OuAppService_ouByNameRequest) returns (OuAppService_ouByNameResponse) {}
+  rpc ouById (OuAppService_ouByIdRequest) returns (OuAppService_ouByIdResponse) {}
+  rpc ous (OuAppService_ousRequest) returns (OuAppService_ousResponse) {}
+}
+

@@ -12,10 +12,10 @@ from src.domain_model.resource.exception.UserDoesNotExistException import UserDo
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.auth_app_service_pb2 import \
+from src.resource.proto._generated.identity.auth_app_service_pb2 import \
     AuthAppService_authenticateUserByEmailAndPasswordResponse, \
     AuthAppService_isAuthenticatedResponse, AuthAppService_logoutResponse
-from src.resource.proto._generated.auth_app_service_pb2_grpc import AuthAppServiceServicer
+from src.resource.proto._generated.identity.auth_app_service_pb2_grpc import AuthAppServiceServicer
 
 
 class AuthAppServiceListener(AuthAppServiceServicer):
