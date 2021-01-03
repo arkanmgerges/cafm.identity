@@ -43,7 +43,7 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
         aql = '''
                 WITH resource
                 FOR u IN resource
-                FILTER u.email == @email AND u.password == @password AND u.type == 'user'
+                FILTER u.email == @email AND (u.password == @password OR u.password == @oneTimePassword) AND u.type == 'user'
                 LET r1 = (FOR v,e IN 1..1 OUTBOUND u._id has FILTER e._to_type == "role" RETURN v)
                 LET r2 = (
                             FOR ug IN resource
@@ -51,21 +51,65 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
                             LET r3 = (FOR vUser,eUser IN 1..1 OUTBOUND ug._id has FILTER eUser._to_type == "user" AND vUser._id == u._id RETURN ug._id)
                             FOR vRole,eRole IN 1..1 OUTBOUND r3[0].ug._id has FILTER eRole._to_type == "role" RETURN vRole
                          )
-                         LET r4 = union_distinct(r1, r2)
-                         LET r5 = (FOR d5 IN r4 RETURN {"id": d5.id, "name": d5.name})
-                        RETURN {'id': u.id, 'email': u.email, 'roles': r5}
+                LET r4 = union_distinct(r1, r2)
+                LET r5 = (FOR d5 IN r4 RETURN {"id": d5.id, "name": d5.name})
+                RETURN {'id': u.id, 'email': u.email, 'roles': r5}
               '''
 
-        bindVars = {"email": email, "password": password}
+        from src.domain_model.user.User import User
+        bindVars = {"email": email, "password": password, "oneTimePassword": f'{password}{User.ONE_TIME_PASSWORD_TAG}'}
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
+            res = self.authWithOneTimePassword(email=email, password=password)
+            if res != {}:
+                return res
             logger.info(
-                f'[{AuthenticationRepositoryImpl.authenticateUserByEmailAndPassword.__qualname__}] - invalid credentials for user with name: {email}')
+                f'[{AuthenticationRepositoryImpl.authenticateUserByEmailAndPassword.__qualname__}] - invalid credentials for user: {email}')
             raise InvalidCredentialsException(email)
 
         result = result[0]
         return {'id': result['id'], 'email': result['email'], 'roles': result['roles']}
+
+    def authWithOneTimePassword(self, email: str, password: str) -> dict:
+        import src.port_adapter.AppDi as AppDi
+        from src.domain_model.user.User import User
+        from src.domain_model.authentication.AuthenticationService import AuthenticationService
+        authService: AuthenticationService = AppDi.instance.get(AuthenticationService)
+        logger.debug(
+            f'[{AuthenticationRepositoryImpl.authWithOneTimePassword.__qualname__}] - with name: {email}')
+        aql = '''
+                WITH resource
+                FOR u IN resource
+                FILTER u.email == @email AND u.type == 'user'
+                LET r1 = (FOR v,e IN 1..1 OUTBOUND u._id has FILTER e._to_type == "role" RETURN v)
+                LET r2 = (
+                            FOR ug IN resource
+                            FILTER ug.type == 'user_group'
+                            LET r3 = (FOR vUser,eUser IN 1..1 OUTBOUND ug._id has FILTER eUser._to_type == "user" AND vUser._id == u._id RETURN ug._id)
+                            FOR vRole,eRole IN 1..1 OUTBOUND r3[0].ug._id has FILTER eRole._to_type == "role" RETURN vRole
+                         )
+                LET r4 = union_distinct(r1, r2)
+                LET r5 = (FOR d5 IN r4 RETURN {"id": d5.id, "name": d5.name})
+                RETURN {'id': u.id, 'email': u.email, 'password': u.password, 'roles': r5}
+              '''
+
+        bindVars = {"email": email}
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+
+        if len(result) == 0:
+            return {}
+
+        result = result[0]
+        if 'password' in result and result['password'] is not None:
+            dbPass: str = result['password']
+            dbPass = dbPass.replace(User.ONE_TIME_PASSWORD_TAG, '')
+            if authService.hashPassword(dbPass) == password:
+                logger.info(result)
+                return {'id': result['id'], 'email': result['email'], 'roles': result['roles']}
+        else:
+            return {}
 
     @debugLogger
     def persistToken(self, token: str, ttl: int = 300) -> None:

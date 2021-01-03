@@ -48,6 +48,17 @@ services:
     depends_on:
       - cafm-identity-server
 
+  cafm-identity-identity-evt:
+    image: cafm-identity:local
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.identity_event.IdentityEventListener"]
+    working_dir: /app
+    networks:
+      - cafm-infra_default
+    volumes:
+      - ../../..:/app
+    depends_on:
+      - cafm-identity-server
+
   cafm-identity-script:
     image: cafm-identity:local
     command: >

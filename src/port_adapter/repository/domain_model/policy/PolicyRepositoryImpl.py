@@ -1013,7 +1013,8 @@ class PolicyRepositoryImpl(PolicyRepository):
             if item['owner_of'] is not None:
                 ownerOf = []
                 for ownerOfItem in item['owner_of']:
-                    ownerOf.append(Resource(id=ownerOfItem['id'], type=ownerOfItem['type']))
+                    if ownerOfItem is not None:
+                        ownerOf.append(Resource(id=ownerOfItem['id'], type=ownerOfItem['type']))
             accessTree = self._fetchAccessTree(accesses=item['accesses'])
             permData = RoleAccessPermissionData(role=role, permissions=permList, ownedBy=ownedBy, ownerOf=ownerOf,
                                                 accessTree=accessTree)

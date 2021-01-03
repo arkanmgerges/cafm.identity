@@ -12,6 +12,8 @@ from src.resource.logging.logger import logger
 
 
 class User(Resource):
+    ONE_TIME_PASSWORD_TAG = '###ABC_ZYX_1_TIME_PASS'
+
     def __init__(self, id: str = None, email: str = '', password: str = '', firstName: str = '', lastName: str = '',
                  addressOne: str = '', addressTwo: str = '', postalCode: str = '', avatarImage: str = ''):
         anId = str(uuid4()) if id is None or id == '' else id
@@ -42,7 +44,7 @@ class User(Resource):
         return user
 
     def _validateEmail(self, email):
-        regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,6}$'
+        regex = r'^[a-zA-Z0-9]+[a-zA-Z0-9\._]+[@]\w+[.]\w{2,6}$'
         if not (re.search(regex, email)):
             raise InvalidValueException(f'Email is not valid: {email}')
 
@@ -73,6 +75,9 @@ class User(Resource):
         if 'email' in data and data['email'] != self._email and data['email'] is not None:
             updated = True
             self._email = data['name']
+        if 'password' in data and data['password'] != self._password and data['password'] is not None:
+            updated = True
+            self._password = data['password']
         if 'first_name' in data and data['first_name'] != self._firstName and data['first_name'] is not None:
             updated = True
             self._firstName = data['first_name']
@@ -97,6 +102,17 @@ class User(Resource):
     def password(self) -> str:
         return self._password
 
+    def generateOneTimePassword(self):
+        from src.domain_model.user.UserOneTimePasswordGenerated import UserOneTimePasswordGenerated
+        self._password = f'{str(uuid4()).replace("-", "")}{User.ONE_TIME_PASSWORD_TAG}'
+        DomainPublishedEvents.addEventForPublishing(UserOneTimePasswordGenerated(self))
+
+    def isPasswordOneTimePassword(self):
+        return self._password.endswith(User.ONE_TIME_PASSWORD_TAG)
+
+    def stripOneTimePasswordTag(self):
+        return self._password.replace(User.ONE_TIME_PASSWORD_TAG, '')
+
     def publishDelete(self):
         from src.domain_model.user.UserDeleted import UserDeleted
         DomainPublishedEvents.addEventForPublishing(UserDeleted(self))
@@ -119,7 +135,10 @@ class User(Resource):
     def __eq__(self, other):
         if not isinstance(other, User):
             raise NotImplementedError(f'other: {other} can not be compared with User class')
-        return self.id() == other.id() and self.email() == other.email() and self.firstName() == other.firstName() and \
+        return self.id() == other.id() and self.email() == other.email() and \
+               self.password() == other.password() and self.firstName() == other.firstName() and \
                self.lastName() == other.lastName() and self.addressOne() == other.addressOne() and \
                self.addressTwo() == other.addressTwo() and self.postalCode() == other.postalCode() and \
                self.avatarImage() == other.avatarImage()
+
+

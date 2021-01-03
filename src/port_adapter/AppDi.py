@@ -36,6 +36,8 @@ from src.domain_model.user.UserRepository import UserRepository
 from src.domain_model.user.UserService import UserService
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
 from src.domain_model.user_group.UserGroupService import UserGroupService
+from src.port_adapter.email.Mailer import Mailer
+from src.port_adapter.email.SendGrid import SendGrid
 from src.port_adapter.messaging.common.Consumer import Consumer
 from src.port_adapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
 from src.port_adapter.messaging.common.SimpleProducer import SimpleProducer
@@ -303,6 +305,11 @@ class AppDi(Module):
     @provider
     def provideOpenTelemetry(self) -> OpenTelemetry:
         return OpenTelemetry()
+
+    @singleton
+    @provider
+    def provideSendGrid(self) -> Mailer:
+        return SendGrid()
     # endregion
 
 class Builder:

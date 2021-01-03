@@ -5,6 +5,7 @@ import "identity/permission_with_permission_contexts.proto";
 import "identity/role_access_permission.proto";
 import "identity/ou_app_service.proto";
 import "identity/permission_app_service.proto";
+import "identity/project_app_service.proto";
 import "identity/realm_app_service.proto";
 import "identity/permission_context_app_service.proto";
 import "identity/role_app_service.proto";

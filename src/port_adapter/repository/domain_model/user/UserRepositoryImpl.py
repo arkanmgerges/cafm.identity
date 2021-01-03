@@ -89,7 +89,8 @@ class UserRepositoryImpl(UserRepository):
             }
         '''
         params = {
-            'resource': {"id": user.id(), "email": user.email(), "password": user.password(), "firstName": user.firstName(),
+            'resource': {"id": user.id(), "email": user.email(), "password": user.password(),
+                         "firstName": user.firstName(),
                          "lastName": user.lastName(), "addressOne": user.addressOne(), "addressTwo": user.addressTwo(),
                          "postalCode": user.postalCode(), "avatarImage": user.avatarImage(), "type": user.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
@@ -98,7 +99,7 @@ class UserRepositoryImpl(UserRepository):
             'OBJECT_ALREADY_EXIST_CODE': CodeExceptionConstant.OBJECT_ALREADY_EXIST.value
         }
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params,
-                             waitForSync = True)
+                             waitForSync=True)
 
     @debugLogger
     def updateUser(self, user: User, tokenData: TokenData) -> None:
@@ -111,11 +112,11 @@ class UserRepositoryImpl(UserRepository):
         aql = '''
             FOR d IN resource
                 FILTER d.id == @id AND d.type == 'user'
-                UPDATE d WITH {email: @email, first_name: @firstName, last_name: @lastName, 
+                UPDATE d WITH {email: @email, password: @password, first_name: @firstName, last_name: @lastName, 
                                address_one: @addressOne, address_two: @addressTwo, postal_code: @postalCode, avatar_image: @avatarImage} IN resource
         '''
 
-        bindVars = {"id": user.id(), "email": user.email(), "firstName": user.firstName(),
+        bindVars = {"id": user.id(), "email": user.email(), "password": user.password(), "firstName": user.firstName(),
                     "lastName": user.lastName(), "addressOne": user.addressOne(), "addressTwo": user.addressTwo(),
                     "postalCode": user.postalCode(), "avatarImage": user.avatarImage()}
         logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {user.id()}')
@@ -127,7 +128,7 @@ class UserRepositoryImpl(UserRepository):
         if anObject != user:
             logger.warn(
                 f'[{UserRepositoryImpl.updateUser.__qualname__}] The object user: {user} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'user: {user}')
+            raise ObjectCouldNotBeUpdatedException(f'user: {user.toMap()}')
 
     @debugLogger
     def deleteUser(self, user: User, tokenData: TokenData):

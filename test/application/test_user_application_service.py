@@ -43,7 +43,7 @@ def test_create_user_object_when_user_already_exist():
     appService = UserApplicationService(repo, authzService, userService)
     # Act, Assert
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createUser(id='1234', email=email, password='1234', objectOnly=True, token=token)
+        user = appService.createUser(id='1234', email=email, objectOnly=True, token=token)
 
 
 def test_create_user_object_when_user_does_not_exist():
@@ -56,7 +56,7 @@ def test_create_user_object_when_user_does_not_exist():
     userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = UserApplicationService(repo, authzService, userService)
     # Act
-    user = appService.createUser(email=email, password='1234', objectOnly=True, token=token)
+    user = appService.createUser(email=email, objectOnly=True, token=token)
     # Assert
     assert isinstance(user, User)
     assert user.email() == email
@@ -75,7 +75,7 @@ def test_create_user_with_event_publishing_when_user_does_not_exist():
     userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = UserApplicationService(repo, authzService, userService)
     # Act
-    appService.createUser(id=id, email=email, password=password, token=token)
+    appService.createUser(id=id, email=email, token=token)
     # Assert
     repo.userByEmail.assert_called_once()
     repo.createUser.assert_called_once()
@@ -108,7 +108,7 @@ def test_create_object_only_raise_exception_when_user_exists():
     appService = UserApplicationService(repo, authzService, userService)
     # Act, Assert
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createUser(id='1234', email=email, password='1234', objectOnly=True, token=token)
+        user = appService.createUser(id='1234', email=email, objectOnly=True, token=token)
 
 
 def test_create_user_raise_exception_when_user_exists():
@@ -122,7 +122,7 @@ def test_create_user_raise_exception_when_user_exists():
     appService = UserApplicationService(repo, authzService, userService)
     # Act, Assert
     with pytest.raises(UserAlreadyExistException):
-        user = appService.createUser(id='1', email=email, password='1234', token=token)
+        user = appService.createUser(id='1', email=email, token=token)
 
 
 def test_get_user_by_id_when_user_exists():

@@ -13,11 +13,11 @@ from src.port_adapter.messaging.listener.project_event.handler.Handler import Ha
 from src.resource.logging.logger import logger
 
 
-class UserCreatedHandler(Handler):
+class UserOneTimePasswordGeneratedHandler(Handler):
 
     def __init__(self):
-        self._eventConstant = CommonEventConstant.USER_CREATED
-        self._commandConstant = CommonCommandConstant.GENERATE_USER_ONE_TIME_PASSWORD
+        self._eventConstant = CommonEventConstant.USER_ONE_TIME_PASSWORD_GENERATED
+        self._commandConstant = CommonCommandConstant.SEND_EMAIL_ONE_TIME_USER_PASSWORD
 
     def canHandle(self, name: str) -> bool:
         return name == self._eventConstant.value
@@ -28,7 +28,7 @@ class UserCreatedHandler(Handler):
         metadata = messageData['metadata']
 
         logger.debug(
-            f'[{UserCreatedHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
+            f'[{UserOneTimePasswordGeneratedHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
         dataDict = json.loads(data)
         metadataDict = json.loads(metadata)
 

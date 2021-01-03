@@ -6,6 +6,7 @@ import os
 from src.domain_model.authentication.AuthenticationRepository import AuthenticationRepository
 from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
+import hashlib
 
 
 class AuthenticationService:
@@ -61,3 +62,6 @@ class AuthenticationService:
         exists = self._authRepo.tokenExists(token=token)
         if exists:
             self._authRepo.deleteToken(token=token)
+
+    def hashPassword(self, password: str) -> str:
+        return hashlib.sha256(password.encode()).hexdigest()

@@ -23,7 +23,7 @@ class UserApplicationService:
         self._userService = userService
 
     @debugLogger
-    def createUser(self, id: str = '', email: str = '', password:str = '', firstName='', lastName='',
+    def createUser(self, id: str = '', email: str = '', firstName='', lastName='',
                    addressOne='', addressTwo='', postalCode='', avatarImage='', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -32,7 +32,7 @@ class UserApplicationService:
                                         requestedPermissionAction=PermissionAction.CREATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='user'),
                                         tokenData=tokenData)
-        return self._userService.createUser(id=id, email=email, password=password,
+        return self._userService.createUser(id=id, email=email,
                                             firstName=firstName, lastName=lastName, addressOne=addressOne,
                                             addressTwo=addressTwo, postalCode=postalCode, avatarImage=avatarImage,
                                             objectOnly=objectOnly, tokenData=tokenData)
@@ -95,3 +95,18 @@ class UserApplicationService:
                                           resultFrom=resultFrom,
                                           resultSize=resultSize,
                                           order=order)
+
+    def generateUserOneTimePassword(self, id: str, token: str = ''):
+        resource: User = self._userRepository.userById(id=id)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+                                        requestedPermissionAction=PermissionAction.READ,
+                                        requestedContextData=ResourceTypeContextDataRequest(
+                                            resourceType=PermissionContextConstant.USER.value),
+                                        requestedObject=RequestedAuthzObject(obj=resource),
+                                        tokenData=tokenData)
+        resource.generateOneTimePassword()
+        self._userRepository.updateUser(resource, tokenData=tokenData)
+        return resource
+
