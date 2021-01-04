@@ -405,8 +405,10 @@ def init_kafka_topics_and_schemas():
                        {'name': 'cafm.identity.Event', 'schema': IdentityEvent.get_schema()}]
     newSchemas = []
     for requiredSchema in requiredSchemas:
+        click.echo(click.style(f'Verify if schema {requiredSchema["name"]} is available', fg='green'))
         r = c.get_latest_schema(subject=f'{requiredSchema["name"]}')
-        if r is None:
+        if r[0] is None:
+            click.echo(click.style(f'Schema {requiredSchema["name"]} will be created', fg='green'))
             newSchemas.append(requiredSchema)
     [c.register(schema['name'], schema['schema']) for schema in newSchemas]
 
