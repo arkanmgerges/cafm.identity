@@ -6,7 +6,7 @@
  "fields": [
      {"name": "id", "type": "string", "doc": "The identity of the command"},
      {"name": "name",  "type": "string", "default": "", "doc": "The name of the command"},
-     {"name": "version",  "type": "string", "default": "1", "doc": "The version of this message"},
+     {"name": "version",  "type": "int", "default": 1, "doc": "The version of this message"},
      {"name": "metadata",  "type": "string", "default": "", "doc": "The information about the command"},
      {"name": "data",  "type": "string", "default": "", "doc": "The data of the command"},
      {"name": "creator_service_name",  "type": "string", "default": "", "doc": "The service who created the command"},
