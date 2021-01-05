@@ -69,6 +69,11 @@ class UserApplicationService:
                                         tokenData=tokenData)
         self._userService.deleteUser(user=resource, tokenData=tokenData)
 
+    def deleteUserOneTimePassword(self, id: str, token: str = ''):
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        resource = self._userRepository.userById(id=id)
+        self._userRepository.deleteUserOneTimePassword(user=resource, tokenData=tokenData)
+
     @debugLogger
     def userByEmailAndPassword(self, email: str, password: str):
         return self._userRepository.userByEmailAndPassword(email=email, password=password)

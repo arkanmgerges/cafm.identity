@@ -29,6 +29,10 @@ class AuthenticationService:
         """
         result = self._authRepo.authenticateUserByEmailAndPassword(email=email, password=password)
         payload = {'id': result['id'], 'roles': result['roles'], 'email': result['email']}
+        if 'isOneTimePassword' in result and result['isOneTimePassword'] is True:
+            from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
+            from src.domain_model.user.UserWithOneTimePasswordLoggedIn import UserWithOneTimePasswordLoggedIn
+            DomainPublishedEvents.addEventForPublishing(UserWithOneTimePasswordLoggedIn(result['id']))
         token = TokenService.generateToken(payload=payload)
         ttl = os.getenv('CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS', 300)
         self._authRepo.persistToken(token=token, ttl=ttl)

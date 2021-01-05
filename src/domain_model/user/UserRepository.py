@@ -33,6 +33,15 @@ class UserRepository(ABC):
         """
 
     @abstractmethod
+    def deleteUserOneTimePassword(self, user: User, tokenData: TokenData) -> None:
+        """Delete a user one time password
+
+        Args:
+            user (User): The user that needs for its one time password to be deleted
+            tokenData (TokenData): Token data used for deleting the resource
+        """
+
+    @abstractmethod
     def updateUser(self, user: User, tokenData: TokenData) -> None:
         """Update a user
 
@@ -88,8 +97,9 @@ class UserRepository(ABC):
         """
 
     @abstractmethod
-    def users(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
-                        order: List[dict] = None) -> dict:
+    def users(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
+              resultSize: int = 100,
+              order: List[dict] = None) -> dict:
         """Get list of users based on the owned roles that the user has
 
         Args:

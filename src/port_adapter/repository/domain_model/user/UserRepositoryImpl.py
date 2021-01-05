@@ -165,6 +165,21 @@ class UserRepositoryImpl(UserRepository):
             raise ObjectCouldNotBeDeletedException(f'user id: {user.id()}')
 
     @debugLogger
+    def deleteUserOneTimePassword(self, user: User, tokenData: TokenData):
+        oldObject = self.userById(user.id())
+        if oldObject.isPasswordOneTimePassword():
+            aql = '''
+                        FOR d IN resource
+                            FILTER d.id == @id AND d.type == 'user'
+                            UPDATE d WITH {password: ""} IN resource
+                    '''
+
+            logger.debug(f'[{UserRepositoryImpl.deleteUserOneTimePassword.__qualname__}] - Delete user password with user id: {user.id()}')
+            bindVars = {"id": user.id()}
+            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            _ = queryResult.result
+
+    @debugLogger
     def userByEmail(self, email: str) -> User:
         logger.debug(f'[{UserRepositoryImpl.userByEmail.__qualname__}] - with email = {email}')
         aql = '''

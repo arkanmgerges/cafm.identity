@@ -43,7 +43,7 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
         aql = '''
                 WITH resource
                 FOR u IN resource
-                FILTER u.email == @email AND (u.password == @password OR u.password == @oneTimePassword) AND u.type == 'user'
+                FILTER u.email == @email AND u.password == @password AND u.type == 'user'
                 LET r1 = (FOR v,e IN 1..1 OUTBOUND u._id has FILTER e._to_type == "role" RETURN v)
                 LET r2 = (
                             FOR ug IN resource
@@ -56,8 +56,7 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
                 RETURN {'id': u.id, 'email': u.email, 'roles': r5}
               '''
 
-        from src.domain_model.user.User import User
-        bindVars = {"email": email, "password": password, "oneTimePassword": f'{password}{User.ONE_TIME_PASSWORD_TAG}'}
+        bindVars = {"email": email, "password": password}
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
@@ -69,7 +68,7 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
             raise InvalidCredentialsException(email)
 
         result = result[0]
-        return {'id': result['id'], 'email': result['email'], 'roles': result['roles']}
+        return {'id': result['id'], 'email': result['email'], 'roles': result['roles'], 'isOneTimePassword': False}
 
     def authWithOneTimePassword(self, email: str, password: str) -> dict:
         import src.port_adapter.AppDi as AppDi
@@ -104,12 +103,12 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
         result = result[0]
         if 'password' in result and result['password'] is not None:
             dbPass: str = result['password']
+            isOneTimePassword = User.ONE_TIME_PASSWORD_TAG in dbPass
             dbPass = dbPass.replace(User.ONE_TIME_PASSWORD_TAG, '')
             if authService.hashPassword(dbPass) == password:
-                logger.info(result)
-                return {'id': result['id'], 'email': result['email'], 'roles': result['roles']}
-        else:
-            return {}
+                return {'id': result['id'], 'email': result['email'], 'roles': result['roles'],
+                        'isOneTimePassword': isOneTimePassword}
+        return {}
 
     @debugLogger
     def persistToken(self, token: str, ttl: int = 300) -> None:

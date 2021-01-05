@@ -37,6 +37,7 @@ class CommonEventConstant(Enum):
     ROLE_UPDATED = 'role_updated'
     USER_CREATED = 'user_created'
     USER_ONE_TIME_PASSWORD_GENERATED = 'user_one_time_password_generated'
+    USER_WITH_ONE_TIME_PASSWORD_LOGGED_IN = 'user_with_one_time_password_logged_in'
     USER_DELETED = 'user_deleted'
     USER_UPDATED = 'user_updated'
     USER_GROUP_CREATED = 'user_group_created'
