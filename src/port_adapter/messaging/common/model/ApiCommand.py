@@ -17,11 +17,11 @@ DIR_NAME = os.path.dirname(os.path.realpath(__file__)) + '/../avro'
 @avro_schema(AvroModelContainer(default_namespace="cafm.api"),
              schema_file=os.path.join(DIR_NAME, "api-command.avsc"))
 class ApiCommand(MessageBase):
-    def __init__(self, id, creatorServiceName='cafm.api', name='', metadata='', data='',
+    def __init__(self, id, creatorServiceName='cafm.api', name='', version=1, metadata='', data='',
                  createdOn=round(time.time() * 1000)):
         super().__init__(
-            {'id': id, 'creator_service_name': creatorServiceName, 'name': name, 'created_on': createdOn,
-             'metadata': metadata, 'data': data})
+            {'id': id, 'creator_service_name': creatorServiceName, 'name': name, 'version': version,
+             'created_on': createdOn, 'metadata': metadata, 'data': data})
 
     def toMap(self, thisObjectForMapping=None, _ctx=None):
         return vars(self)['_value']

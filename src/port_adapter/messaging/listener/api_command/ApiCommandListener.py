@@ -88,6 +88,7 @@ class ApiCommandListener:
                             'id': msgData['id'],
                             'creator_service_name': msgData['creator_service_name'],
                             'name': msgData['name'],
+                            'version': msgData['version'],
                             'metadata': msgData['metadata'],
                             'data': msgData['data'],
                             'created_on': msgData['created_on']
