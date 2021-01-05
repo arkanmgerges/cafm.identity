@@ -42,6 +42,15 @@ class UserRepository(ABC):
         """
 
     @abstractmethod
+    def setUserPassword(self, user: User, tokenData: TokenData) -> None:
+        """Set a user password
+
+        Args:
+            user (User): The user that needs for its one time password to be deleted
+            tokenData (TokenData): Token data used for deleting the resource
+        """
+
+    @abstractmethod
     def updateUser(self, user: User, tokenData: TokenData) -> None:
         """Update a user
 

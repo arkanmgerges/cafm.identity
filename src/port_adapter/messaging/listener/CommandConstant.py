@@ -59,6 +59,8 @@ class CommonCommandConstant(Enum):
     GENERATE_USER_ONE_TIME_PASSWORD = 'generate_user_one_time_password'
     DELETE_USER_ONE_TIME_PASSWORD = 'delete_user_one_time_password'
     SET_USER_PASSWORD = 'set_user_password'
+    RESET_USER_PASSWORD = 'reset_user_password'
+
 
 @extendEnum(CommonCommandConstant)
 class ApiCommandConstant(Enum):

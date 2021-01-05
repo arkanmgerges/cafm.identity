@@ -43,4 +43,5 @@ class CommonEventConstant(Enum):
     USER_GROUP_CREATED = 'user_group_created'
     USER_GROUP_DELETED = 'user_group_deleted'
     USER_GROUP_UPDATED = 'user_group_updated'
+    USER_PASSWORD_SET = 'user_password_set'
 

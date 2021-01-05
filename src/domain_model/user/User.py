@@ -99,6 +99,11 @@ class User(Resource):
         if updated:
             self.publishUpdate(old)
 
+    def setPassword(self, password: str):
+        from src.domain_model.user.UserPasswordSet import UserPasswordSet
+        self._password = password
+        DomainPublishedEvents.addEventForPublishing(UserPasswordSet(self))
+
     def password(self) -> str:
         return self._password
 

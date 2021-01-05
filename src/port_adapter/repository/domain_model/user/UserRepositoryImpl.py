@@ -180,6 +180,19 @@ class UserRepositoryImpl(UserRepository):
             _ = queryResult.result
 
     @debugLogger
+    def setUserPassword(self, user: User, tokenData: TokenData):
+        aql = '''
+                    FOR d IN resource
+                        FILTER d.id == @id AND d.type == 'user'
+                        UPDATE d WITH {password: @password} IN resource
+                '''
+
+        logger.debug(f'[{UserRepositoryImpl.setUserPassword.__qualname__}] - Set user password with user id: {user.id()}')
+        bindVars = {"id": user.id(), "password": user.password()}
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        _ = queryResult.result
+
+    @debugLogger
     def userByEmail(self, email: str) -> User:
         logger.debug(f'[{UserRepositoryImpl.userByEmail.__qualname__}] - with email = {email}')
         aql = '''
