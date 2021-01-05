@@ -7,6 +7,7 @@
      {"name": "command_id", "type": "string", "doc": "The identity of the command that this response belong"},
      {"name": "command_name", "type": "string", "doc": "The name of the command that this response belong"},
      {"name": "metadata",  "type": "string", "default": "", "doc": "Info about data"},
+     {"name": "version",  "type": "string", "default": "1", "doc": "The version of this message"},
      {"name": "data",  "type": "string", "default": "", "doc": "Response data"},
      {"name": "creator_service_name",  "type": "string", "default": "", "doc": "Who created this response"},
      {"name": "success",  "type": "boolean", "default": false, "doc": "If the response has succeeded"},
