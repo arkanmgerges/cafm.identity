@@ -9,10 +9,13 @@ import src.port_adapter.AppDi as AppDi
 from src.application.CountryApplicationService import CountryApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.token.TokenService import TokenService
+from src.domain_model.resource.exception.CountryDoesNotExistException import CountryDoesNotExistException
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
+from src.domain_model.country.Country import Country
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.identity.country_app_service_pb2 import CountryAppService_countriesResponse
+from src.resource.proto._generated.identity.country_app_service_pb2 import CountryAppService_countriesResponse, \
+    CountryAppService_countryByIdResponse
 from src.resource.proto._generated.identity.country_app_service_pb2_grpc import CountryAppServiceServicer
 
 
@@ -68,4 +71,26 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         return ''
 
     def countryById(self, request, context):
-        return super().countryById(request, context)
+        try:
+            token = self._token(context)
+            countryAppService: CountryApplicationService = AppDi.instance.get(CountryApplicationService)
+            country: Country = countryAppService.countryById(id=request.id, token=token)
+            logger.debug(f'[{CountryAppServiceListener.countryById.__qualname__}] - response: {country}')
+            response = CountryAppService_countryByIdResponse()
+            response.country.id = country.id()
+            response.country.geoNameId = country.geoNameId()
+            response.country.localeCode = country.localeCode()
+            response.country.continentCode = country.continentCode()
+            response.country.continentName = country.continentName()
+            response.country.countryIsoCode = country.countryIsoCode()
+            response.country.countryName = country.countryName()
+            response.country.isInEuropeanUnion = country.isInEuropeanUnion()
+            return response
+        except CountryDoesNotExistException:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details('country does not exist')
+            return CountryAppService_countryByIdResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return CountryAppService_countryByIdResponse()

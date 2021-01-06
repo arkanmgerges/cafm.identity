@@ -5,8 +5,10 @@ import os
 from typing import List
 
 from pyArango.connection import *
+from pyArango.query import AQLQuery
 
 import src.port_adapter.AppDi as AppDi
+from src.domain_model.resource.exception.CountryDoesNotExistException import CountryDoesNotExistException
 from src.domain_model.country.Country import Country
 from src.domain_model.country.CountryRepository import CountryRepository
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
@@ -52,7 +54,7 @@ class CountryRepositoryImpl(CountryRepository):
         else:
             aql = aql.replace('#sortData', '')
 
-        queryResult = self._db.AQLQuery(aql, rawResults=True)
+        queryResult: AQLQuery = self._db.AQLQuery(aql, rawResults=True)
         result = queryResult.result[0]
 
         if result is None or len(result['items']) == 0:
@@ -66,3 +68,23 @@ class CountryRepositoryImpl(CountryRepository):
                                              isInEuropeanUnion=x['is_in_european_union']) for x in
                           items],
                 "itemCount": itemCount}
+
+    @debugLogger
+    def countryById(self, id: str) -> Country:
+        aql = '''
+            FOR d IN country
+                FILTER d.id == @id
+                RETURN d
+        '''
+
+        bindVars = {"id": id}
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+        if len(result) == 0:
+            logger.debug(f'[{CountryRepositoryImpl.countryById.__qualname__}] country id: {id}')
+            raise CountryDoesNotExistException(f'country id: {id}')
+        return Country.createFrom(id=result[0]['id'], geoNameId=result[0]['geo_name_id'],
+                                  localeCode=result[0]['locale_code'], continentCode=result[0]['continent_code'],
+                                  continentName=result[0]['continent_name'],
+                                  countryIsoCode=result[0]['country_iso_code'], countryName=result[0]['country_name'],
+                                  isInEuropeanUnion=result[0]['is_in_european_union'])

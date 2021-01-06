@@ -23,3 +23,12 @@ class CountryApplicationService:
                                                  resultFrom=resultFrom,
                                                  resultSize=resultSize,
                                                  order=order)
+
+    @debugLogger
+    def countryById(self, id: str, token: str = ''):
+        resource = self._countryRepository.countryById(id=id)
+        # tokenData = TokenService.tokenDataFromToken(token=token)
+        # roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
+        # self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,
+        #                                 tokenData=tokenData)
+        return resource
