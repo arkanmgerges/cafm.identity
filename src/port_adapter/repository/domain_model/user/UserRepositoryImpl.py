@@ -106,10 +106,10 @@ class UserRepositoryImpl(UserRepository):
         aql = '''
             FOR d IN resource
                 FILTER d.id == @id AND d.type == 'user'
-                UPDATE d WITH {email: @email, password: @password} IN resource
+                UPDATE d WITH {email: @email} IN resource
         '''
 
-        bindVars = {"id": user.id(), "email": user.email(), "password": user.password()}
+        bindVars = {"id": user.id(), "email": user.email()}
         logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {user.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result

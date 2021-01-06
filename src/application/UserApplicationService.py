@@ -35,8 +35,7 @@ class UserApplicationService:
                                             objectOnly=objectOnly, tokenData=tokenData)
 
     @debugLogger
-    def updateUser(self, id: str, email: str, firstName='', lastName='',
-                   addressOne='', addressTwo='', postalCode='', avatarImage='', token: str = ''):
+    def updateUser(self, id: str, email: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -48,10 +47,7 @@ class UserApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
         self._userService.updateUser(oldObject=resource,
-                                     newObject=User.createFrom(id=id, email=email, firstName=firstName,
-                                                               lastName=lastName,
-                                                               addressOne=addressOne, addressTwo=addressTwo,
-                                                               postalCode=postalCode, avatarImage=avatarImage),
+                                     newObject=User.createFrom(id=id, email=email),
                                      tokenData=tokenData)
 
     @debugLogger

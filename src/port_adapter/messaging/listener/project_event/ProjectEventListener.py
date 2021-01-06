@@ -154,6 +154,8 @@ class ProjectEventListener:
                 self.targetsOnSuccess = handler.targetsOnSuccess()
                 self.targetsOnException = handler.targetsOnException()
                 result = handler.handleCommand(messageData=messageData)
+                if result == {}:
+                    return None
                 return {"data": "", "metadata": messageData['metadata']} if result is None else result
         return None
 
