@@ -162,7 +162,7 @@ def init_geo_data():
 
         # Create countries from csv file
         click.echo(click.style("Importing countries", fg='green'))
-        with open('../maxmind/GeoLite2-Country-Locations-en.csv', newline='') as csvfile:
+        with open('src/resource/maxmind/GeoLite2-Country-Locations-en.csv', newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             cnt = 0
             for row in reader:
@@ -176,7 +176,7 @@ def init_geo_data():
                               isInEuropeanUnion=row['is_in_european_union'] == '1')
         # Create cities from csv file
         click.echo(click.style("Importing cities", fg='green'))
-        with open('../maxmind/GeoLite2-City-Locations-en.csv', newline='') as csvfile:
+        with open('src/resource/maxmind/GeoLite2-City-Locations-en.csv', newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 metroCode = row['metro_code']

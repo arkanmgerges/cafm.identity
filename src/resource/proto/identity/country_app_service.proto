@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package cafm.identity.country;
+
+import "identity/country.proto";
+import "order.proto";
+
+message CountryAppService_countryByIdRequest {
+  string id = 1;
+}
+
+message CountryAppService_countryByIdResponse {
+  Country country = 1;
+}
+
+message CountryAppService_countriesRequest {
+  int32 resultFrom = 1;
+  int32 resultSize = 2;
+  repeated cafm.common.order.Order order = 3;
+}
+
+message CountryAppService_countriesResponse {
+  repeated Country countries = 1;
+  int32 itemCount = 2;
+}
+
+service CountryAppService {
+  rpc countryById (CountryAppService_countryByIdRequest) returns (CountryAppService_countryByIdResponse) {}
+  rpc countries (CountryAppService_countriesRequest) returns (CountryAppService_countriesResponse) {}
+}

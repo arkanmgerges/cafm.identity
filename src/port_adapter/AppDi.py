@@ -12,6 +12,7 @@ from src.application.ProjectApplicationService import ProjectApplicationService
 from src.application.RealmApplicationService import RealmApplicationService
 from src.application.RoleApplicationService import RoleApplicationService
 from src.application.UserApplicationService import UserApplicationService
+from src.application.CountryApplicationService import CountryApplicationService
 from src.application.UserGroupApplicationService import UserGroupApplicationService
 from src.domain_model.authentication.AuthenticationRepository import AuthenticationRepository
 from src.domain_model.authentication.AuthenticationService import AuthenticationService
@@ -33,6 +34,7 @@ from src.domain_model.resource.ResourceRepository import ResourceRepository
 from src.domain_model.role.RoleRepository import RoleRepository
 from src.domain_model.role.RoleService import RoleService
 from src.domain_model.user.UserRepository import UserRepository
+from src.domain_model.country.CountryRepository import CountryRepository
 from src.domain_model.user.UserService import UserService
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
 from src.domain_model.user_group.UserGroupService import UserGroupService
@@ -60,6 +62,7 @@ from src.port_adapter.repository.domain_model.realm.RealmRepositoryImpl import R
 from src.port_adapter.repository.domain_model.resource.ResourceRepositoryImpl import ResourceRepositoryImpl
 from src.port_adapter.repository.domain_model.role.RoleRepositoryImpl import RoleRepositoryImpl
 from src.port_adapter.repository.domain_model.user.UserRepositoryImpl import UserRepositoryImpl
+from src.port_adapter.repository.domain_model.country.CountryRepositoryImpl import CountryRepositoryImpl
 from src.port_adapter.repository.domain_model.user_group.UserGroupRepositoryImpl import UserGroupRepositoryImpl
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 
@@ -71,6 +74,12 @@ class AppDi(Module):
     """
 
     # region Application service
+    @singleton
+    @provider
+    def provideCountryApplicationService(self) -> CountryApplicationService:
+        return CountryApplicationService(self.__injector__.get(CountryRepository),
+                                         self.__injector__.get(AuthorizationService))
+
     @singleton
     @provider
     def provideUserApplicationService(self) -> UserApplicationService:
@@ -146,6 +155,11 @@ class AppDi(Module):
     # endregion
 
     # region Repository
+    @singleton
+    @provider
+    def provideCountryRepository(self) -> CountryRepository:
+        return CountryRepositoryImpl()
+
     @singleton
     @provider
     def provideUserRepository(self) -> UserRepository:
@@ -311,6 +325,7 @@ class AppDi(Module):
     def provideSendGrid(self) -> Mailer:
         return SendGrid()
     # endregion
+
 
 class Builder:
     @classmethod
