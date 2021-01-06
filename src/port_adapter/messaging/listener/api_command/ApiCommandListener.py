@@ -96,7 +96,7 @@ class ApiCommandListener:
                         producer.produce(
                             obj=IdentityCommand(id=msgData['id'],
                                                 creatorServiceName=self._creatorServiceName,
-                                                name=msgData['name'],
+                                                name=handledResult['name'],
                                                 metadata=msgData['metadata'],
                                                 data=json.dumps(handledResult['data']),
                                                 createdOn=handledResult['created_on'],

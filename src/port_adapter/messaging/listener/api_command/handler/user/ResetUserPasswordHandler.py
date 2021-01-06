@@ -34,6 +34,6 @@ class ResetUserPasswordHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        return {'name': CommonCommandConstant.GENERATE_USER_ONE_TIME_PASSWORD, 'created_on': round(time.time() * 1000),
+        return {'name': CommonCommandConstant.GENERATE_USER_ONE_TIME_PASSWORD.value, 'created_on': round(time.time() * 1000),
                 'data': {'id': dataDict['id'], 'email': dataDict['email']},
                 'metadata': metadataDict}
