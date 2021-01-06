@@ -82,11 +82,11 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         except UserGroupDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No userGroups found')
-            return UserGroupAppService_userGroupByNameResponse()
+            return UserGroupAppService_userGroupsResponse()
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
-            return UserGroupAppService_userGroupByNameResponse()
+            return UserGroupAppService_userGroupsResponse()
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel

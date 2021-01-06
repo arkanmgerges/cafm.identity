@@ -84,11 +84,11 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         except RoleDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No roles found')
-            return RoleAppService_roleByNameResponse()
+            return RoleAppService_rolesResponse()
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
-            return RoleAppService_roleByNameResponse()
+            return RoleAppService_rolesResponse()
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel

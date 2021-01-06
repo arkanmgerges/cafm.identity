@@ -82,11 +82,11 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         except RealmDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No realms found')
-            return RealmAppService_realmByNameResponse()
+            return RealmAppService_realmsResponse()
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
-            return RealmAppService_realmByNameResponse()
+            return RealmAppService_realmsResponse()
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel

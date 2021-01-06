@@ -107,12 +107,6 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             response = UserAppService_userByIdResponse()
             response.user.id = user.id()
             response.user.email = user.email()
-            # response.user.firstName = user.firstName()
-            # response.user.lastName = user.lastName()
-            # response.user.addressOne = user.addressOne()
-            # response.user.addressTwo = user.addressTwo()
-            # response.user.postalCode = user.postalCode()
-            # response.user.avatarImage = user.avatarImage()
             return response
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

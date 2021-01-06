@@ -82,11 +82,11 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         except ProjectDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No projects found')
-            return ProjectAppService_projectByNameResponse()
+            return ProjectAppService_projectsResponse()
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
-            return ProjectAppService_projectByNameResponse()
+            return ProjectAppService_projectsResponse()
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel

@@ -67,11 +67,11 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         except PermissionContextDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details('No permissionContexts found')
-            return PermissionContextAppService_permissionContextByIdResponse()
+            return PermissionContextAppService_permissionContextsResponse()
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
-            return PermissionContextAppService_permissionContextByIdResponse()
+            return PermissionContextAppService_permissionContextsResponse()
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
