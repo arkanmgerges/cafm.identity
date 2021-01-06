@@ -68,10 +68,7 @@ class UserRepositoryImpl(UserRepository):
                 if (res.length == 0) {
                     p = params['resource']
                     res = db.resource.insert({id: p['id'], email: p['email'], password: p['password'], 
-                                              first_name: p['firstName'], last_name: p['lastName'],
-                                              address_one: p['addressOne'], address_two: p['addressTwo'],
-                                              postal_code: p['postalCode'],
-                                              avatar_image: p['avatarImage'], type: p['type']});
+                                              type: p['type']});
                     fromDocId = res['_id'];
                     p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
                     db._query(queryLink, p).execute();
@@ -89,10 +86,7 @@ class UserRepositoryImpl(UserRepository):
             }
         '''
         params = {
-            'resource': {"id": user.id(), "email": user.email(), "password": user.password(),
-                         "firstName": user.firstName(),
-                         "lastName": user.lastName(), "addressOne": user.addressOne(), "addressTwo": user.addressTwo(),
-                         "postalCode": user.postalCode(), "avatarImage": user.avatarImage(), "type": user.type()},
+            'resource': {"id": user.id(), "email": user.email(), "password": user.password(), "type": user.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
             'rolesDocIds': rolesDocIds,
             'toTypeRole': PermissionContextConstant.ROLE.value,
@@ -112,13 +106,10 @@ class UserRepositoryImpl(UserRepository):
         aql = '''
             FOR d IN resource
                 FILTER d.id == @id AND d.type == 'user'
-                UPDATE d WITH {email: @email, password: @password, first_name: @firstName, last_name: @lastName, 
-                               address_one: @addressOne, address_two: @addressTwo, postal_code: @postalCode, avatar_image: @avatarImage} IN resource
+                UPDATE d WITH {email: @email, password: @password} IN resource
         '''
 
-        bindVars = {"id": user.id(), "email": user.email(), "password": user.password(), "firstName": user.firstName(),
-                    "lastName": user.lastName(), "addressOne": user.addressOne(), "addressTwo": user.addressTwo(),
-                    "postalCode": user.postalCode(), "avatarImage": user.avatarImage()}
+        bindVars = {"id": user.id(), "email": user.email(), "password": user.password()}
         logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {user.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
@@ -250,13 +241,7 @@ class UserRepositoryImpl(UserRepository):
         return {
             'id': result['id'] if 'id' in result and result['id'] is not None else None,
             'email': result['email'] if 'email' in result else '',
-            'password': result['password'] if 'password' in result else '',
-            'firstName': result['first_name'] if 'first_name' in result else '',
-            'lastName': result['last_name'] if 'last_name' in result else '',
-            'addressOne': result['address_one'] if 'address_one' in result else '',
-            'addressTwo': result['address_two'] if 'address_two' in result else '',
-            'postalCode': result['postal_code'] if 'postal_code' in result else '',
-            'avatarImage': result['avatar_image'] if 'avatar_image' in result else ''
+            'password': result['password'] if 'password' in result else ''
         }
 
     @debugLogger
@@ -278,10 +263,5 @@ class UserRepositoryImpl(UserRepository):
         itemCount = len(items)
         items = items[resultFrom:resultSize]
         return {"items": [User.createFrom(id=x['id'], email=x['email'],
-                                          firstName=x['firstName'] if 'firstName' in x else '',
-                                          lastName=x['lastName'] if 'lastName' in x else '',
-                                          addressOne=x['addressOne'] if 'addressOne' in x else '',
-                                          addressTwo=x['addressTwo'] if 'addressTwo' in x else '',
-                                          postalCode=x['postalCode'] if 'postalCode' in x else '',
-                                          avatarImage=x['avatarImage'] if 'avatarImage' in x else '') for x in items],
+                                          password=x['password'] if 'password' in x else '',) for x in items],
                 "itemCount": itemCount}

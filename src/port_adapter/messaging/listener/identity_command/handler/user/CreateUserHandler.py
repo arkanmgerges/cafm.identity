@@ -36,14 +36,9 @@ class CreateUserHandler(Handler):
             raise UnAuthorizedException()
 
         obj: User = appService.createUser(id=dataDict['id'], email=dataDict['email'],
-                                          firstName=dataDict['first_name'], lastName=dataDict['last_name'],
-                                          addressOne=dataDict['address_one'], addressTwo=dataDict['address_two'],
-                                          postalCode=dataDict['postal_code'], avatarImage=dataDict['avatar_image'],
                                           token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
-                'data': {'id': obj.id(), 'email': obj.email(), 'first_name': obj.firstName(),
-                         'last_name': obj.lastName(), 'address_one': obj.addressOne(), 'address_two': obj.addressTwo(),
-                         'postal_code': obj.postalCode(), 'avatar_image': obj.avatarImage()},
+                'data': {'id': obj.id(), 'email': obj.email(), },
                 'metadata': metadataDict}
 
     def targetsOnSuccess(self):

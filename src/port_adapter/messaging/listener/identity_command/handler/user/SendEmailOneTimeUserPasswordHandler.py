@@ -37,9 +37,8 @@ class SendEmailOneTimeUserPasswordHandler(Handler):
             raise UnAuthorizedException()
 
         obj: User = appService.userById(id=dataDict['id'], token=metadataDict['token'])
-        firstName = obj.firstName()
         password = obj.stripOneTimePasswordTag()
-        content = f'Hi <strong>{firstName if firstName != "" else "user"}</strong>, this is your one time login password <strong>{password}</strong>, use it to login and to create new one'
+        content = f'Hi, this is your one time login password <strong>{password}</strong>, use it to login and to create new one'
 
         mailer: Mailer = AppDi.instance.get(Mailer)
         mailer.send(toEmail=obj.email(), subject='CAFM User Creation - One time login password', content=content)

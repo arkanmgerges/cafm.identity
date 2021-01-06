@@ -23,8 +23,7 @@ class UserApplicationService:
         self._userService = userService
 
     @debugLogger
-    def createUser(self, id: str = '', email: str = '', firstName='', lastName='',
-                   addressOne='', addressTwo='', postalCode='', avatarImage='', objectOnly: bool = False, token: str = ''):
+    def createUser(self, id: str = '', email: str = '', objectOnly: bool = False, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -33,8 +32,6 @@ class UserApplicationService:
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='user'),
                                         tokenData=tokenData)
         return self._userService.createUser(id=id, email=email,
-                                            firstName=firstName, lastName=lastName, addressOne=addressOne,
-                                            addressTwo=addressTwo, postalCode=postalCode, avatarImage=avatarImage,
                                             objectOnly=objectOnly, tokenData=tokenData)
 
     @debugLogger
@@ -51,9 +48,11 @@ class UserApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
         self._userService.updateUser(oldObject=resource,
-                                     newObject=User.createFrom(id=id, email=email, firstName=firstName, lastName=lastName,
+                                     newObject=User.createFrom(id=id, email=email, firstName=firstName,
+                                                               lastName=lastName,
                                                                addressOne=addressOne, addressTwo=addressTwo,
-                                                               postalCode=postalCode, avatarImage=avatarImage), tokenData=tokenData)
+                                                               postalCode=postalCode, avatarImage=avatarImage),
+                                     tokenData=tokenData)
 
     @debugLogger
     def deleteUser(self, id: str, token: str = ''):
@@ -120,4 +119,3 @@ class UserApplicationService:
         resource.generateOneTimePassword()
         self._userRepository.updateUser(resource, tokenData=tokenData)
         return resource
-
