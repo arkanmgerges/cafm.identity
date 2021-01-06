@@ -5,12 +5,11 @@ package cafm.project.user;
 import "project/user.proto";
 import "order.proto";
 
-message UserAppService_userByEmailAndPasswordRequest {
+message UserAppService_userByEmailRequest {
   string email = 1;
-  string password = 2;
 }
 
-message UserAppService_userByEmailAndPasswordResponse {
+message UserAppService_userByEmailResponse {
   User user = 1;
 }
 
@@ -35,7 +34,7 @@ message UserAppService_usersResponse {
 
 
 service UserAppService {
-  rpc userByEmailAndPassword (UserAppService_userByEmailAndPasswordRequest) returns (UserAppService_userByEmailAndPasswordResponse) {}
+  rpc userByEmail (UserAppService_userByEmailRequest) returns (UserAppService_userByEmailResponse) {}
   rpc userById (UserAppService_userByIdRequest) returns (UserAppService_userByIdResponse) {}
   rpc users (UserAppService_usersRequest) returns (UserAppService_usersResponse) {}
 }
