@@ -12,8 +12,7 @@ from src.domain_model.country.Country import Country
 class CountryRepository(ABC):
 
     @abstractmethod
-    def countries(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
-                  resultFrom: int = 0,
+    def countries(self, resultFrom: int = 0,
                   resultSize: int = 100,
                   order: List[dict] = None) -> dict:
         """Get list of users based on the owned roles that the user has
@@ -31,6 +30,23 @@ class CountryRepository(ABC):
 
     @abstractmethod
     def countryById(self, id: str) -> Country:
+        """Get user by id
+
+        Args:
+            id (str): The id of the user
+
+        Returns:
+            User: user object
+
+        :raises:
+            `UserDoesNotExistException <src.domain_model.resource.exception.UserDoesNotExistException>` Raise an exception if the user does not exist
+        """
+
+    @abstractmethod
+    def countryCities(self, id: str = '',
+                      resultFrom: int = 0,
+                      resultSize: int = 100,
+                      order: List[dict] = None) -> dict:
         """Get user by id
 
         Args:

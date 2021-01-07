@@ -3,6 +3,7 @@ syntax = "proto3";
 package cafm.identity.country;
 
 import "identity/country.proto";
+import "identity/city.proto";
 import "order.proto";
 
 message CountryAppService_countryByIdRequest {
@@ -24,7 +25,20 @@ message CountryAppService_countriesResponse {
   int32 itemCount = 2;
 }
 
+message CountryAppService_countryCitiesRequest {
+  string id = 1;
+  int32 resultFrom = 2;
+  int32 resultSize = 3;
+  repeated cafm.common.order.Order order = 4;
+}
+
+message CountryAppService_countryCitiesResponse {
+  repeated City cities = 1;
+  int32 itemCount = 2;
+}
+
 service CountryAppService {
   rpc countryById (CountryAppService_countryByIdRequest) returns (CountryAppService_countryByIdResponse) {}
   rpc countries (CountryAppService_countriesRequest) returns (CountryAppService_countriesResponse) {}
+  rpc countryCities (CountryAppService_countryCitiesRequest) returns (CountryAppService_countryCitiesResponse) {}
 }

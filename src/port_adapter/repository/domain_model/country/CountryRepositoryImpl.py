@@ -8,12 +8,11 @@ from pyArango.connection import *
 from pyArango.query import AQLQuery
 
 import src.port_adapter.AppDi as AppDi
-from src.domain_model.resource.exception.CountryDoesNotExistException import CountryDoesNotExistException
+from src.domain_model.country.City import City
 from src.domain_model.country.Country import Country
 from src.domain_model.country.CountryRepository import CountryRepository
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
-from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
-from src.domain_model.token.TokenData import TokenData
+from src.domain_model.resource.exception.CountryDoesNotExistException import CountryDoesNotExistException
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
@@ -35,10 +34,7 @@ class CountryRepositoryImpl(CountryRepository):
             raise Exception(f'Could not connect to the db, message: {e}')
 
     @debugLogger
-    def countries(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
-                  resultFrom: int = 0,
-                  resultSize: int = 100,
-                  order: List[dict] = None) -> dict:
+    def countries(self, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
             for item in order:
@@ -65,8 +61,7 @@ class CountryRepositoryImpl(CountryRepository):
         return {"items": [Country.createFrom(id=x['id'], geoNameId=x['geo_name_id'], localeCode=x['locale_code'],
                                              continentCode=x['continent_code'], continentName=x['continent_name'],
                                              countryIsoCode=x['country_iso_code'], countryName=x['country_name'],
-                                             isInEuropeanUnion=x['is_in_european_union']) for x in
-                          items],
+                                             isInEuropeanUnion=x['is_in_european_union']) for x in items],
                 "itemCount": itemCount}
 
     @debugLogger
@@ -88,3 +83,44 @@ class CountryRepositoryImpl(CountryRepository):
                                   continentName=result[0]['continent_name'],
                                   countryIsoCode=result[0]['country_iso_code'], countryName=result[0]['country_name'],
                                   isInEuropeanUnion=result[0]['is_in_european_union'])
+
+    def countryCities(self, id: str = '', resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
+        sortData = ''
+        if order is not None:
+            for item in order:
+                sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
+            sortData = sortData[2:]
+        aql = '''
+            LET ds = (FOR u IN country 
+                        FOR c IN city 
+                            FILTER u.country_iso_code == c.country_iso_code 
+                            FILTER u.id == @id 
+                            #sortData
+                            RETURN c)
+            RETURN {items: ds}
+        '''
+        if sortData != '':
+            aql = aql.replace('#sortData', f'SORT {sortData}')
+        else:
+            aql = aql.replace('#sortData', '')
+
+        bindVars = {"id": id}
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result[0]
+
+        if result is None or len(result['items']) == 0:
+            return {"items": [], "itemCount": 0}
+        items = result['items']
+        itemCount = len(items)
+        items = items[resultFrom:resultSize]
+
+        return {"items": [City.createFrom(id=x['id'], geoNameId=x['geo_name_id'], localeCode=x['locale_code'],
+                                          continentCode=x['continent_code'], continentName=x['continent_name'],
+                                          countryIsoCode=x['country_iso_code'], countryName=x['country_name'],
+                                          subdivisionOneIsoCode=x['subdivision_one_iso_code'],
+                                          subdivisionOneIsoName=x['subdivision_one_iso_name'],
+                                          subdivisionTwoIsoCode=x['subdivision_two_iso_code'],
+                                          subdivisionTwoIsoName=x['subdivision_two_iso_name'], cityName=x['city_name'],
+                                          metroCode=x['metro_code'], timeZone=x['time_zone'],
+                                          isInEuropeanUnion=x['is_in_european_union']) for x in items],
+                "itemCount": itemCount}

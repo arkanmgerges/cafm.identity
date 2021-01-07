@@ -12,6 +12,7 @@ _sym_db = _symbol_database.Default()
 
 
 from identity import country_pb2 as identity_dot_country__pb2
+from identity import city_pb2 as identity_dot_city__pb2
 import order_pb2 as order__pb2
 
 
@@ -21,9 +22,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\"identity/country_app_service.proto\x12\x15\x63\x61\x66m.identity.country\x1a\x16identity/country.proto\x1a\x0border.proto\"2\n$CountryAppService_countryByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"X\n%CountryAppService_countryByIdResponse\x12/\n\x07\x63ountry\x18\x01 \x01(\x0b\x32\x1e.cafm.identity.country.Country\"u\n\"CountryAppService_countriesRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\x12\'\n\x05order\x18\x03 \x03(\x0b\x32\x18.cafm.common.order.Order\"k\n#CountryAppService_countriesResponse\x12\x31\n\tcountries\x18\x01 \x03(\x0b\x32\x1e.cafm.identity.country.Country\x12\x11\n\titemCount\x18\x02 \x01(\x05\x32\xa7\x02\n\x11\x43ountryAppService\x12\x8a\x01\n\x0b\x63ountryById\x12;.cafm.identity.country.CountryAppService_countryByIdRequest\x1a<.cafm.identity.country.CountryAppService_countryByIdResponse\"\x00\x12\x84\x01\n\tcountries\x12\x39.cafm.identity.country.CountryAppService_countriesRequest\x1a:.cafm.identity.country.CountryAppService_countriesResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\"identity/country_app_service.proto\x12\x15\x63\x61\x66m.identity.country\x1a\x16identity/country.proto\x1a\x13identity/city.proto\x1a\x0border.proto\"2\n$CountryAppService_countryByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"X\n%CountryAppService_countryByIdResponse\x12/\n\x07\x63ountry\x18\x01 \x01(\x0b\x32\x1e.cafm.identity.country.Country\"u\n\"CountryAppService_countriesRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\x12\'\n\x05order\x18\x03 \x03(\x0b\x32\x18.cafm.common.order.Order\"k\n#CountryAppService_countriesResponse\x12\x31\n\tcountries\x18\x01 \x03(\x0b\x32\x1e.cafm.identity.country.Country\x12\x11\n\titemCount\x18\x02 \x01(\x05\"\x85\x01\n&CountryAppService_countryCitiesRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x12\n\nresultFrom\x18\x02 \x01(\x05\x12\x12\n\nresultSize\x18\x03 \x01(\x05\x12\'\n\x05order\x18\x04 \x03(\x0b\x32\x18.cafm.common.order.Order\"i\n\'CountryAppService_countryCitiesResponse\x12+\n\x06\x63ities\x18\x01 \x03(\x0b\x32\x1b.cafm.identity.country.City\x12\x11\n\titemCount\x18\x02 \x01(\x05\x32\xba\x03\n\x11\x43ountryAppService\x12\x8a\x01\n\x0b\x63ountryById\x12;.cafm.identity.country.CountryAppService_countryByIdRequest\x1a<.cafm.identity.country.CountryAppService_countryByIdResponse\"\x00\x12\x84\x01\n\tcountries\x12\x39.cafm.identity.country.CountryAppService_countriesRequest\x1a:.cafm.identity.country.CountryAppService_countriesResponse\"\x00\x12\x90\x01\n\rcountryCities\x12=.cafm.identity.country.CountryAppService_countryCitiesRequest\x1a>.cafm.identity.country.CountryAppService_countryCitiesResponse\"\x00\x62\x06proto3'
   ,
-  dependencies=[identity_dot_country__pb2.DESCRIPTOR,order__pb2.DESCRIPTOR,])
+  dependencies=[identity_dot_country__pb2.DESCRIPTOR,identity_dot_city__pb2.DESCRIPTOR,order__pb2.DESCRIPTOR,])
 
 
 
@@ -55,8 +56,8 @@ _COUNTRYAPPSERVICE_COUNTRYBYIDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=98,
-  serialized_end=148,
+  serialized_start=119,
+  serialized_end=169,
 )
 
 
@@ -87,8 +88,8 @@ _COUNTRYAPPSERVICE_COUNTRYBYIDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=150,
-  serialized_end=238,
+  serialized_start=171,
+  serialized_end=259,
 )
 
 
@@ -133,8 +134,8 @@ _COUNTRYAPPSERVICE_COUNTRIESREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=240,
-  serialized_end=357,
+  serialized_start=261,
+  serialized_end=378,
 )
 
 
@@ -172,17 +173,113 @@ _COUNTRYAPPSERVICE_COUNTRIESRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=359,
-  serialized_end=466,
+  serialized_start=380,
+  serialized_end=487,
+)
+
+
+_COUNTRYAPPSERVICE_COUNTRYCITIESREQUEST = _descriptor.Descriptor(
+  name='CountryAppService_countryCitiesRequest',
+  full_name='cafm.identity.country.CountryAppService_countryCitiesRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='id', full_name='cafm.identity.country.CountryAppService_countryCitiesRequest.id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='resultFrom', full_name='cafm.identity.country.CountryAppService_countryCitiesRequest.resultFrom', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='resultSize', full_name='cafm.identity.country.CountryAppService_countryCitiesRequest.resultSize', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='order', full_name='cafm.identity.country.CountryAppService_countryCitiesRequest.order', index=3,
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=490,
+  serialized_end=623,
+)
+
+
+_COUNTRYAPPSERVICE_COUNTRYCITIESRESPONSE = _descriptor.Descriptor(
+  name='CountryAppService_countryCitiesResponse',
+  full_name='cafm.identity.country.CountryAppService_countryCitiesResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cities', full_name='cafm.identity.country.CountryAppService_countryCitiesResponse.cities', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='itemCount', full_name='cafm.identity.country.CountryAppService_countryCitiesResponse.itemCount', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=625,
+  serialized_end=730,
 )
 
 _COUNTRYAPPSERVICE_COUNTRYBYIDRESPONSE.fields_by_name['country'].message_type = identity_dot_country__pb2._COUNTRY
 _COUNTRYAPPSERVICE_COUNTRIESREQUEST.fields_by_name['order'].message_type = order__pb2._ORDER
 _COUNTRYAPPSERVICE_COUNTRIESRESPONSE.fields_by_name['countries'].message_type = identity_dot_country__pb2._COUNTRY
+_COUNTRYAPPSERVICE_COUNTRYCITIESREQUEST.fields_by_name['order'].message_type = order__pb2._ORDER
+_COUNTRYAPPSERVICE_COUNTRYCITIESRESPONSE.fields_by_name['cities'].message_type = identity_dot_city__pb2._CITY
 DESCRIPTOR.message_types_by_name['CountryAppService_countryByIdRequest'] = _COUNTRYAPPSERVICE_COUNTRYBYIDREQUEST
 DESCRIPTOR.message_types_by_name['CountryAppService_countryByIdResponse'] = _COUNTRYAPPSERVICE_COUNTRYBYIDRESPONSE
 DESCRIPTOR.message_types_by_name['CountryAppService_countriesRequest'] = _COUNTRYAPPSERVICE_COUNTRIESREQUEST
 DESCRIPTOR.message_types_by_name['CountryAppService_countriesResponse'] = _COUNTRYAPPSERVICE_COUNTRIESRESPONSE
+DESCRIPTOR.message_types_by_name['CountryAppService_countryCitiesRequest'] = _COUNTRYAPPSERVICE_COUNTRYCITIESREQUEST
+DESCRIPTOR.message_types_by_name['CountryAppService_countryCitiesResponse'] = _COUNTRYAPPSERVICE_COUNTRYCITIESRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 CountryAppService_countryByIdRequest = _reflection.GeneratedProtocolMessageType('CountryAppService_countryByIdRequest', (_message.Message,), {
@@ -213,6 +310,20 @@ CountryAppService_countriesResponse = _reflection.GeneratedProtocolMessageType('
   })
 _sym_db.RegisterMessage(CountryAppService_countriesResponse)
 
+CountryAppService_countryCitiesRequest = _reflection.GeneratedProtocolMessageType('CountryAppService_countryCitiesRequest', (_message.Message,), {
+  'DESCRIPTOR' : _COUNTRYAPPSERVICE_COUNTRYCITIESREQUEST,
+  '__module__' : 'identity.country_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.country.CountryAppService_countryCitiesRequest)
+  })
+_sym_db.RegisterMessage(CountryAppService_countryCitiesRequest)
+
+CountryAppService_countryCitiesResponse = _reflection.GeneratedProtocolMessageType('CountryAppService_countryCitiesResponse', (_message.Message,), {
+  'DESCRIPTOR' : _COUNTRYAPPSERVICE_COUNTRYCITIESRESPONSE,
+  '__module__' : 'identity.country_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.country.CountryAppService_countryCitiesResponse)
+  })
+_sym_db.RegisterMessage(CountryAppService_countryCitiesResponse)
+
 
 
 _COUNTRYAPPSERVICE = _descriptor.ServiceDescriptor(
@@ -222,8 +333,8 @@ _COUNTRYAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=469,
-  serialized_end=764,
+  serialized_start=733,
+  serialized_end=1175,
   methods=[
   _descriptor.MethodDescriptor(
     name='countryById',
@@ -242,6 +353,16 @@ _COUNTRYAPPSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_COUNTRYAPPSERVICE_COUNTRIESREQUEST,
     output_type=_COUNTRYAPPSERVICE_COUNTRIESRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='countryCities',
+    full_name='cafm.identity.country.CountryAppService.countryCities',
+    index=2,
+    containing_service=None,
+    input_type=_COUNTRYAPPSERVICE_COUNTRYCITIESREQUEST,
+    output_type=_COUNTRYAPPSERVICE_COUNTRYCITIESRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

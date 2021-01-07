@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package cafm.identity.country;
+
+message City {
+  string id = 1;
+  string geoNameId = 2;
+  string localeCode = 3;
+  string continentCode = 4;
+  string continentName = 5;
+  string countryIsoCode = 6;
+  string countryName = 7;
+  string subdivisionOneIsoCode = 8;
+  string subdivisionOneIsoName = 9;
+  string subdivisionTwoIsoCode = 10;
+  string subdivisionTwoIsoName = 11;
+  string cityName = 12;
+  string metroCode = 13;
+  string timeZone = 14;
+  bool isInEuropeanUnion = 15;
+}
