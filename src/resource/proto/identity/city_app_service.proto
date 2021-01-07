@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package cafm.identity.country;
+
+import "identity/city.proto";
+import "order.proto";
+
+message CityAppService_cityByIdRequest {
+  string id = 1;
+}
+
+message CityAppService_cityByIdResponse {
+  City city = 1;
+}
+
+message CityAppService_citiesRequest {
+  int32 resultFrom = 1;
+  int32 resultSize = 2;
+  repeated cafm.common.order.Order order = 3;
+}
+
+message CityAppService_citiesResponse {
+  repeated City cities = 1;
+  int32 itemCount = 2;
+}
+
+service CityAppService {
+  rpc cityById (CityAppService_cityByIdRequest) returns (CityAppService_cityByIdResponse) {}
+  rpc cities (CityAppService_citiesRequest) returns (CityAppService_citiesResponse) {}
+}

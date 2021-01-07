@@ -4,6 +4,8 @@ from injector import ClassAssistedBuilder
 from injector import Module, Injector, singleton, provider
 
 from src.application.AuthenticationApplicationService import AuthenticationApplicationService
+from src.application.CityApplicationService import CityApplicationService
+from src.application.CountryApplicationService import CountryApplicationService
 from src.application.OuApplicationService import OuApplicationService
 from src.application.PermissionApplicationService import PermissionApplicationService
 from src.application.PermissionContextApplicationService import PermissionContextApplicationService
@@ -12,12 +14,13 @@ from src.application.ProjectApplicationService import ProjectApplicationService
 from src.application.RealmApplicationService import RealmApplicationService
 from src.application.RoleApplicationService import RoleApplicationService
 from src.application.UserApplicationService import UserApplicationService
-from src.application.CountryApplicationService import CountryApplicationService
 from src.application.UserGroupApplicationService import UserGroupApplicationService
 from src.domain_model.authentication.AuthenticationRepository import AuthenticationRepository
 from src.domain_model.authentication.AuthenticationService import AuthenticationService
 from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
+from src.domain_model.country.CityRepository import CityRepository
+from src.domain_model.country.CountryRepository import CountryRepository
 from src.domain_model.ou.OuRepository import OuRepository
 from src.domain_model.ou.OuService import OuService
 from src.domain_model.permission.PermissionRepository import PermissionRepository
@@ -34,7 +37,6 @@ from src.domain_model.resource.ResourceRepository import ResourceRepository
 from src.domain_model.role.RoleRepository import RoleRepository
 from src.domain_model.role.RoleService import RoleService
 from src.domain_model.user.UserRepository import UserRepository
-from src.domain_model.country.CountryRepository import CountryRepository
 from src.domain_model.user.UserService import UserService
 from src.domain_model.user_group.UserGroupRepository import UserGroupRepository
 from src.domain_model.user_group.UserGroupService import UserGroupService
@@ -50,6 +52,8 @@ from src.port_adapter.repository.domain_model.authentication.AuthenticationRepos
     AuthenticationRepositoryImpl
 from src.port_adapter.repository.domain_model.authorization.AuthorizationRepositoryImpl import \
     AuthorizationRepositoryImpl
+from src.port_adapter.repository.domain_model.country.CityRepositoryImpl import CityRepositoryImpl
+from src.port_adapter.repository.domain_model.country.CountryRepositoryImpl import CountryRepositoryImpl
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
 from src.port_adapter.repository.domain_model.helper.HelperRepositoryImpl import HelperRepositoryImpl
 from src.port_adapter.repository.domain_model.ou.OuRepositoryImpl import OuRepositoryImpl
@@ -62,7 +66,6 @@ from src.port_adapter.repository.domain_model.realm.RealmRepositoryImpl import R
 from src.port_adapter.repository.domain_model.resource.ResourceRepositoryImpl import ResourceRepositoryImpl
 from src.port_adapter.repository.domain_model.role.RoleRepositoryImpl import RoleRepositoryImpl
 from src.port_adapter.repository.domain_model.user.UserRepositoryImpl import UserRepositoryImpl
-from src.port_adapter.repository.domain_model.country.CountryRepositoryImpl import CountryRepositoryImpl
 from src.port_adapter.repository.domain_model.user_group.UserGroupRepositoryImpl import UserGroupRepositoryImpl
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 
@@ -79,6 +82,12 @@ class AppDi(Module):
     def provideCountryApplicationService(self) -> CountryApplicationService:
         return CountryApplicationService(self.__injector__.get(CountryRepository),
                                          self.__injector__.get(AuthorizationService))
+
+    @singleton
+    @provider
+    def provideCityApplicationService(self) -> CityApplicationService:
+        return CityApplicationService(self.__injector__.get(CityRepository),
+                                      self.__injector__.get(AuthorizationService))
 
     @singleton
     @provider
@@ -155,6 +164,11 @@ class AppDi(Module):
     # endregion
 
     # region Repository
+    @singleton
+    @provider
+    def provideCityRepository(self) -> CityRepository:
+        return CityRepositoryImpl()
+
     @singleton
     @provider
     def provideCountryRepository(self) -> CountryRepository:

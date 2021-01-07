@@ -4,10 +4,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
-from src.domain_model.token.TokenData import TokenData
-from src.domain_model.country.Country import Country
 from src.domain_model.country.City import City
+from src.domain_model.country.Country import Country
 
 
 class CountryRepository(ABC):
@@ -16,11 +14,9 @@ class CountryRepository(ABC):
     def countries(self, resultFrom: int = 0,
                   resultSize: int = 100,
                   order: List[dict] = None) -> dict:
-        """Get list of users based on the owned roles that the user has
+        """Get list of countries
 
         Args:
-            tokenData (TokenData): A token data object
-            roleAccessPermissionData (List[RoleAccessPermissionData]): List of role access permissions
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
             order (List[dict]): A list of order e.g. [{'orderBy': 'name', 'direction': 'asc'}, {'orderBy': 'age', 'direction': 'desc'}]
@@ -31,16 +27,16 @@ class CountryRepository(ABC):
 
     @abstractmethod
     def countryById(self, id: str) -> Country:
-        """Get user by id
+        """Get country by id
 
         Args:
-            id (str): The id of the user
+            id (str): The id of the country
 
         Returns:
-            User: user object
+            Country: country object
 
         :raises:
-            `UserDoesNotExistException <src.domain_model.resource.exception.UserDoesNotExistException>` Raise an exception if the user does not exist
+            `CountryDoesNotExistException <src.domain_model.resource.exception.CountryDoesNotExistException>` Raise an exception if the country does not exist
         """
 
     @abstractmethod
@@ -48,28 +44,29 @@ class CountryRepository(ABC):
                       resultFrom: int = 0,
                       resultSize: int = 100,
                       order: List[dict] = None) -> dict:
-        """Get user by id
+        """Get a country cities by country id
 
         Args:
-            id (str): The id of the user
+            id (str): The id of the country
+            resultFrom (int): The start offset of the result item
+            resultSize (int): The size of the items in the result
+            order (List[dict]): A list of order e.g. [{'orderBy': 'name', 'direction': 'asc'}, {'orderBy': 'age', 'direction': 'desc'}]
 
         Returns:
-            User: user object
-
-        :raises:
-            `UserDoesNotExistException <src.domain_model.resource.exception.UserDoesNotExistException>` Raise an exception if the user does not exist
+            dict: A dict that has {"items": [], "itemCount": 0}
         """
 
     @abstractmethod
     def countryCity(self, countryId: str = '', cityId: str = '') -> City:
-        """Get user by id
+        """Get city by country id and city id
 
         Args:
-            id (str): The id of the user
+            countryId (str): The id of the country
+            cityId (str): The id of the city
 
         Returns:
-            User: user object
+            City: city object
 
         :raises:
-            `UserDoesNotExistException <src.domain_model.resource.exception.UserDoesNotExistException>` Raise an exception if the user does not exist
+            `CountryDoesNotExistException <src.domain_model.resource.exception.CountryDoesNotExistException>` Raise an exception if the city does not exist
         """
