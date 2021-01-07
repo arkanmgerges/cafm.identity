@@ -25,3 +25,6 @@ class CountryApplicationService:
 
     def countryCities(self, id: str, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
         return self._countryRepository.countryCities(id=id, resultFrom=resultFrom, resultSize=resultSize, order=order)
+
+    def countryCity(self, countryId: str, cityId: str):
+        return self._countryRepository.countryCity(countryId=countryId, cityId=cityId)

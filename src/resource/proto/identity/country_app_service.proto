@@ -37,8 +37,18 @@ message CountryAppService_countryCitiesResponse {
   int32 itemCount = 2;
 }
 
+message CountryAppService_countryCityRequest {
+  string countryId = 1;
+  string cityId = 2;
+}
+
+message CountryAppService_countryCityResponse {
+  City city = 1;
+}
+
 service CountryAppService {
   rpc countryById (CountryAppService_countryByIdRequest) returns (CountryAppService_countryByIdResponse) {}
   rpc countries (CountryAppService_countriesRequest) returns (CountryAppService_countriesResponse) {}
   rpc countryCities (CountryAppService_countryCitiesRequest) returns (CountryAppService_countryCitiesResponse) {}
+  rpc countryCity (CountryAppService_countryCityRequest) returns (CountryAppService_countryCityResponse) {}
 }

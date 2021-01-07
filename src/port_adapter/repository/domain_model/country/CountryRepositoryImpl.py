@@ -124,3 +124,33 @@ class CountryRepositoryImpl(CountryRepository):
                                           metroCode=x['metro_code'], timeZone=x['time_zone'],
                                           isInEuropeanUnion=x['is_in_european_union']) for x in items],
                 "itemCount": itemCount}
+
+    def countryCity(self, countryId: str = '', cityId: str = '') -> City:
+        aql = '''
+            FOR u IN country 
+                FOR c IN city 
+                    FILTER u.country_iso_code == c.country_iso_code 
+                    FILTER u.id == @countryID
+                    FILTER c.id == @cityID 
+                    RETURN c
+                    
+        '''
+
+        bindVars = {"countryID": countryId, "cityID": cityId}
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result
+        if len(result) == 0:
+            logger.debug(
+                f'[{CountryRepositoryImpl.countryCity.__qualname__}] country id: {countryId}, city id: {cityId}')
+            raise CountryDoesNotExistException(f'country id: {countryId}, city id: {cityId}')
+
+        return City.createFrom(id=result[0]['id'], geoNameId=result[0]['geo_name_id'],
+                               localeCode=result[0]['locale_code'], continentCode=result[0]['continent_code'],
+                               continentName=result[0]['continent_name'], countryIsoCode=result[0]['country_iso_code'],
+                               countryName=result[0]['country_name'],
+                               subdivisionOneIsoCode=result[0]['subdivision_one_iso_code'],
+                               subdivisionOneIsoName=result[0]['subdivision_one_iso_name'],
+                               subdivisionTwoIsoCode=result[0]['subdivision_two_iso_code'],
+                               subdivisionTwoIsoName=result[0]['subdivision_two_iso_name'],
+                               cityName=result[0]['city_name'], metroCode=result[0]['metro_code'],
+                               timeZone=result[0]['time_zone'], isInEuropeanUnion=result[0]['is_in_european_union'])

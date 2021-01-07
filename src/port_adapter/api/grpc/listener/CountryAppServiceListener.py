@@ -13,9 +13,12 @@ from src.domain_model.resource.exception.CountryDoesNotExistException import Cou
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.domain_model.country.Country import Country
+from src.domain_model.country.City import City
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.identity.country_app_service_pb2 import CountryAppService_countriesResponse, \
-    CountryAppService_countryByIdResponse, CountryAppService_countryCitiesResponse
+from src.resource.proto._generated.identity.country_app_service_pb2 import (CountryAppService_countriesResponse,
+                                                                            CountryAppService_countryByIdResponse,
+                                                                            CountryAppService_countryCitiesResponse,
+                                                                            CountryAppService_countryCityResponse)
 from src.resource.proto._generated.identity.country_app_service_pb2_grpc import CountryAppServiceServicer
 
 
@@ -117,3 +120,40 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
             return CountryAppService_countryCitiesResponse()
+
+    def countryCity(self, request, context):
+        try:
+            metadata = context.invocation_metadata()
+            logger.debug(
+                f'[{CountryAppServiceListener.countryCity.__qualname__}] - metadata: {metadata}\n\t \ '
+                f'country id: {request.countryId},city id: {request.cityId}')
+            countryAppService: CountryApplicationService = AppDi.instance.get(CountryApplicationService)
+
+            city: City = countryAppService.countryCity(countryId=request.countryId, cityId=request.cityId)
+            metroCode = ''
+            if city.metroCode() is not None:
+                metroCode = city.metroCode()
+
+            response = CountryAppService_countryCityResponse()
+            response.city.id = city.id()
+            response.city.geoNameId = city.geoNameId()
+            response.city.localeCode = city.localeCode()
+            response.city.continentCode = city.continentCode()
+            response.city.continentName = city.continentName()
+            response.city.countryIsoCode = city.countryIsoCode()
+            response.city.countryName = city.countryName()
+            response.city.subdivisionOneIsoCode = city.subdivisionOneIsoCode()
+            response.city.subdivisionOneIsoName = city.subdivisionOneIsoName()
+            response.city.subdivisionTwoIsoCode = city.subdivisionTwoIsoCode()
+            response.city.subdivisionTwoIsoName = city.subdivisionTwoIsoName()
+            response.city.cityName = city.cityName()
+            response.city.metroCode = metroCode
+            response.city.timeZone = city.timeZone()
+            response.city.isInEuropeanUnion = city.isInEuropeanUnion()
+
+            logger.debug(f'[{CountryApplicationService.countryCity.__qualname__}] - response: {response}')
+            return response
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return CountryAppService_countryCityResponse()
