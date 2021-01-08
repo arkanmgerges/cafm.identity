@@ -202,7 +202,7 @@ class RealmRepositoryImpl(RealmRepository):
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
-        items = items[resultFrom:resultSize]
+        items = items[resultFrom:resultFrom + resultSize]
         return {"items": [Realm.createFrom(id=x['id'], name=x['name']) for x in items],
                 "itemCount": itemCount}
 

@@ -64,7 +64,7 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
         try:
             metadata = context.invocation_metadata()
             token = self._token(context)
-            resultSize = request.resultSize if request.resultSize > 0 else 10
+            resultSize = request.resultSize if request.resultSize >= 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
             logger.debug(
                 f'[{PermissionAppServiceListener.permissions.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \

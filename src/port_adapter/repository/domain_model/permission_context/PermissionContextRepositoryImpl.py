@@ -153,7 +153,7 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
-        items = items[resultFrom:resultSize]
+        items = items[resultFrom:resultFrom + resultSize]
 
         return {"items": [PermissionContext.createFrom(id=x['id'], type=x['type'], data=x['data']) for x in items],
                 "itemCount": itemCount}

@@ -55,7 +55,7 @@ class OuAppServiceListener(OuAppServiceServicer):
     def ous(self, request, context):
         try:
             metadata = context.invocation_metadata()
-            resultSize = request.resultSize if request.resultSize > 0 else 10
+            resultSize = request.resultSize if request.resultSize >= 0 else 10
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
             token = self._token(context)
             logger.debug(

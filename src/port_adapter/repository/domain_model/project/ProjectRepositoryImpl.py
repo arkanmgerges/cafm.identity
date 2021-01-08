@@ -204,7 +204,7 @@ class ProjectRepositoryImpl(ProjectRepository):
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
-        items = items[resultFrom:resultSize]
+        items = items[resultFrom:resultFrom + resultSize]
         return {"items": [Project.createFrom(id=x['id'], name=x['name']) for x in items],
                 "itemCount": itemCount}
 

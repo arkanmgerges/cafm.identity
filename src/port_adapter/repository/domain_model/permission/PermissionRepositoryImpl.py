@@ -173,7 +173,7 @@ class PermissionRepositoryImpl(PermissionRepository):
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
-        items = items[resultFrom:resultSize]
+        items = items[resultFrom:resultFrom + resultSize]
         objectItems = []
         for x in items:
             allowedActions = x['allowed_actions'] if 'allowed_actions' in x else []

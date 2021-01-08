@@ -261,7 +261,7 @@ class UserRepositoryImpl(UserRepository):
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
-        items = items[resultFrom:resultSize]
+        items = items[resultFrom:resultFrom + resultSize]
         return {"items": [User.createFrom(id=x['id'], email=x['email'],
                                           password=x['password'] if 'password' in x else '',) for x in items],
                 "itemCount": itemCount}
