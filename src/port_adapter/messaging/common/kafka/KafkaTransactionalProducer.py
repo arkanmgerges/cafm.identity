@@ -53,7 +53,7 @@ class KafkaTransactionalProducer(TransactionalProducer):
         if not res:
             raise Exception(f'Schema is not compatible {schema}')
 
-        keyId = obj.msgId()
+        keyId = obj.msgKey()
         logger.info(f'produce for id {keyId}')
         self._producer.poll(0.0)
         self._producer.produce(topic=obj.topic(), key=keyId, value=obj.toMap(),

@@ -33,7 +33,7 @@ class KafkaSimpleProducer(SimpleProducer):
                         'value.serializer': lambda v, ctx: json.dumps(v).encode('utf-8')}
         producer = SerializingProducer(producerConf)
         producer.poll(0.0)
-        producer.produce(topic=obj.topic(), key=obj.msgId(), value=obj.toMap(),
+        producer.produce(topic=obj.topic(), key=obj.msgKey(), value=obj.toMap(),
                          on_delivery=self._deliveryReport)
         producer.flush()
 

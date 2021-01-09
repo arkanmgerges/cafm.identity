@@ -34,3 +34,9 @@ class MessageBase(ABC, object):
 
         """
         pass
+
+    @abstractmethod
+    def msgKey(self) -> str:
+        """Retrieve message key
+
+        """
