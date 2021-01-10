@@ -30,6 +30,12 @@ class Role(Resource):
             DomainPublishedEvents.addEventForPublishing(RoleCreated(role))
         return role
 
+    @classmethod
+    def createFromObject(cls, obj: 'Role', publishEvent: bool = False, generateNewId: bool = False):
+        logger.debug(f'[{Role.createFromObject.__qualname__}]')
+        id = None if generateNewId else obj.id()
+        return cls.createFrom(id=id, name=obj.name(), publishEvent=publishEvent)
+
     def name(self) -> str:
         return self._name
 

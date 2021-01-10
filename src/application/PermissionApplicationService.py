@@ -25,6 +25,8 @@ class PermissionApplicationService:
     @debugLogger
     def createPermission(self, id: str = '', name: str = '', allowedActions: List[str] = None,
                          deniedActions: List[str] = None, objectOnly: bool = False, token: str = ''):
+        obj: Permission = self.constructObject(id=id, name=name, allowedActions=allowedActions,
+                                               deniedActions=deniedActions)
         tokenData = TokenService.tokenDataFromToken(token=token)
         permissionAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -33,18 +35,19 @@ class PermissionApplicationService:
                                         requestedContextData=PermissionContextDataRequest(
                                             type=PermissionContextConstant.PERMISSION.value),
                                         tokenData=tokenData)
-        return self._permissionService.createPermission(id=id, name=name, allowedActions=allowedActions,
-                                                        deniedActions=deniedActions, objectOnly=objectOnly,
+        return self._permissionService.createPermission(obj=obj, objectOnly=objectOnly,
                                                         tokenData=tokenData)
 
     @debugLogger
     def updatePermission(self, id: str, name: str, token: str = '', allowedActions: List[str] = None,
                          deniedActions: List[str] = None, ):
+        obj: Permission = self.constructObject(id=id, name=name, allowedActions=allowedActions,
+                                               deniedActions=deniedActions)
         tokenData = TokenService.tokenDataFromToken(token=token)
         permissionAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
 
-        permission = self._permissionRepository.permissionById(id=id)
+        permission = self._permissionRepository.permissionById(id=obj.id())
         self._authzService.verifyAccess(roleAccessPermissionsData=permissionAccessList,
                                         requestedPermissionAction=PermissionAction.UPDATE,
                                         requestedContextData=PermissionContextDataRequest(
@@ -53,9 +56,7 @@ class PermissionApplicationService:
                                             objType=RequestedAuthzObjectEnum.PERMISSION, obj=permission),
                                         tokenData=tokenData)
         self._permissionService.updatePermission(oldObject=permission,
-                                                 newObject=Permission.createFrom(id=id, name=name,
-                                                                                 allowedActions=allowedActions,
-                                                                                 deniedActions=deniedActions),
+                                                 newObject=obj,
                                                  tokenData=tokenData)
 
     @debugLogger
@@ -110,3 +111,8 @@ class PermissionApplicationService:
                                                       resultFrom=resultFrom,
                                                       resultSize=resultSize,
                                                       order=order)
+
+    @debugLogger
+    def constructObject(self, id: str = None, name: str = '', allowedActions: List[str] = None,
+                        deniedActions: List[str] = None) -> Permission:
+        return Permission.createFrom(id=id, name=name, allowedActions=allowedActions, deniedActions=deniedActions)

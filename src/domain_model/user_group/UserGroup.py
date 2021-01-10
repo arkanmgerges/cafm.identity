@@ -6,11 +6,12 @@ from uuid import uuid4
 
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
+from src.resource.logging.logger import logger
 
 
 class UserGroup(Resource):
     def __init__(self, id: str = None, name=''):
-        anId = str(uuid4()) if id is None or id == '' else id
+        anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type='user_group')
         self._name = name
 
@@ -20,8 +21,16 @@ class UserGroup(Resource):
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
             from src.domain_model.user_group.UserGroupCreated import UserGroupCreated
+            logger.debug(f'[{UserGroup.createFrom.__qualname__}] - Create UserGroup with name = {name} and id = {id}')
             DomainPublishedEvents.addEventForPublishing(UserGroupCreated(userGroup))
         return userGroup
+
+    @classmethod
+    def createFromObject(cls, obj: 'UserGroup', publishEvent: bool = False, generateNewId: bool = False):
+        logger.debug(f'[{UserGroup.createFromObject.__qualname__}]')
+        id = None if generateNewId else obj.id()
+        return cls.createFrom(id=id, name=obj.name(), publishEvent=publishEvent)
+
 
     def name(self) -> str:
         return self._name

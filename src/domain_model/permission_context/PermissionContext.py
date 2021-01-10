@@ -34,7 +34,7 @@ class PermissionContextConstant(Enum):
 
 class PermissionContext:
     def __init__(self, id: str = None, type: str = 'permission_context', data: dict = None):
-        self._id = str(uuid4()) if id is None or id == '' else id
+        self._id = str(uuid4()) if id is None else id
         self._type = type
         self._data = data if data is not None else {}
 
@@ -54,6 +54,12 @@ class PermissionContext:
                 f'[{PermissionContext.createFrom.__qualname__}] - Create permission context with id = {id} and data = {data}')
             DomainPublishedEvents.addEventForPublishing(PermissionContextCreated(permissionContext))
         return permissionContext
+
+    @classmethod
+    def createFromObject(cls, obj: 'PermissionContext', publishEvent: bool = False, generateNewId: bool = False):
+        logger.debug(f'[{PermissionContext.createFromObject.__qualname__}]')
+        id = None if generateNewId else obj.id()
+        return cls.createFrom(id=id, type=obj.type(), data=obj.data(), publishEvent=publishEvent)
 
     def update(self, data: dict):
         updated = False

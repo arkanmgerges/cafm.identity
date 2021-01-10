@@ -24,6 +24,7 @@ class RoleApplicationService:
 
     @debugLogger
     def createRole(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
+        obj: Role = self.constructObject(id=id, name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -31,22 +32,23 @@ class RoleApplicationService:
                                         requestedPermissionAction=PermissionAction.CREATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='role'),
                                         tokenData=tokenData)
-        return self._roleService.createRole(id=id, name=name, objectOnly=objectOnly, tokenData=tokenData)
+        return self._roleService.createRole(obj=obj, objectOnly=objectOnly, tokenData=tokenData)
 
     @debugLogger
     def updateRole(self, id: str, name: str, token: str = ''):
+        obj: Role = self.constructObject(id=id, name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
 
-        role = self._roleRepository.roleById(id=id)
+        role = self._roleRepository.roleById(id=obj.id())
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.UPDATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='role'),
                                         requestedObject=RequestedAuthzObject(obj=role),
                                         tokenData=tokenData)
 
-        self._roleService.updateRole(oldObject=role, newObject=Role.createFrom(id=id, name=name), tokenData=tokenData)
+        self._roleService.updateRole(oldObject=role, newObject=obj, tokenData=tokenData)
 
     @debugLogger
     def deleteRole(self, id: str, token: str = ''):
@@ -103,10 +105,16 @@ class RoleApplicationService:
     def rolesTrees(self, token: str = '') -> List[RoleAccessPermissionData]:
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessPermissionDataList = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
-        return self._roleRepository.rolesTrees(tokenData=tokenData, roleAccessPermissionDataList=roleAccessPermissionDataList)
+        return self._roleRepository.rolesTrees(tokenData=tokenData,
+                                               roleAccessPermissionDataList=roleAccessPermissionDataList)
 
     @debugLogger
     def roleTree(self, roleId: str = '', token: str = '') -> RoleAccessPermissionData:
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
-        return self._roleRepository.roleTree(tokenData=tokenData, roleId=roleId, roleAccessPermissionData=roleAccessPermissionData)
+        return self._roleRepository.roleTree(tokenData=tokenData, roleId=roleId,
+                                             roleAccessPermissionData=roleAccessPermissionData)
+
+    @debugLogger
+    def constructObject(self, id: str = None, name: str = '') -> Role:
+        return Role.createFrom(id=id, name=name)

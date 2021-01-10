@@ -15,13 +15,13 @@ from uuid import uuid4
 
 class Realm(Resource):
     def __init__(self, id: str = None, name: str = '', realmType: str = ''):
-        anId = str(uuid4()) if id is None or id == '' else id
+        anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type='realm')
         self._name = name
         self._realmType = realmType
 
     @classmethod
-    def createFrom(cls, id: str = None, name='', realmType="", publishEvent: bool = False):
+    def createFrom(cls, id: str = None, name: str = '', realmType: str = '', publishEvent: bool = False):
         logger.debug(f'[{Realm.createFrom.__qualname__}] - Create Realm with name: {name} and id: {id}')
         realm = Realm(id=id, name=name, realmType=realmType)
         if publishEvent:
@@ -30,6 +30,12 @@ class Realm(Resource):
             logger.debug(f'[{Realm.createFrom.__qualname__}] - Publish event for realm with name: {name} and id: {id}')
             DomainPublishedEvents.addEventForPublishing(RealmCreated(realm))
         return realm
+
+    @classmethod
+    def createFromObject(cls, obj: 'Realm', publishEvent: bool = False, generateNewId: bool = False):
+        logger.debug(f'[{Realm.createFromObject.__qualname__}]')
+        id = None if generateNewId else obj.id()
+        return cls.createFrom(id=id, name=obj.name(), realmType=obj.realmType(), publishEvent=publishEvent)
 
     def name(self) -> str:
         return self._name

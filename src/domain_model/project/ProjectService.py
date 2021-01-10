@@ -16,17 +16,17 @@ class ProjectService:
         self._policyRepo = policyRepo
 
     @debugLogger
-    def createProject(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
+    def createProject(self, obj: Project, objectOnly: bool = False, tokenData: TokenData = None):
         try:
-            if id == '':
+            if obj.id() == '':
                 raise ProjectDoesNotExistException()
-            self._repo.projectByName(name=name)
-            raise ProjectAlreadyExistException(name)
+            self._repo.projectByName(name=obj.name())
+            raise ProjectAlreadyExistException(obj.name())
         except ProjectDoesNotExistException:
             if objectOnly:
-                return Project.createFrom(name=name)
+                return Project.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
             else:
-                project = Project.createFrom(id=id, name=name, publishEvent=True)
+                project = Project.createFromObject(obj=obj, publishEvent=True)
                 self._repo.createProject(project=project, tokenData=tokenData)
                 return project
 

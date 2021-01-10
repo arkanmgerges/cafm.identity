@@ -16,17 +16,17 @@ class UserService:
         self._policyRepo = policyRepo
 
     @debugLogger
-    def createUser(self, id: str = '', email: str = '', objectOnly: bool = False, tokenData: TokenData = None):
+    def createUser(self, obj: User, objectOnly: bool = False, tokenData: TokenData = None):
         try:
-            if id == '':
+            if obj.id() == '':
                 raise UserDoesNotExistException()
-            self._repo.userByEmail(email=email)
-            raise UserAlreadyExistException(email)
+            self._repo.userByEmail(email=obj.email())
+            raise UserAlreadyExistException(obj.email())
         except UserDoesNotExistException:
             if objectOnly:
-                return User.createFrom(email=email)
+                return User.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
             else:
-                user = User.createFrom(id=id, email=email, publishEvent=True)
+                user = User.createFromObject(obj=obj, publishEvent=True)
                 self._repo.createUser(user=user, tokenData=tokenData)
                 return user
 

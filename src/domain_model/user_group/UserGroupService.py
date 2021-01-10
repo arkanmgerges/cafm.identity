@@ -16,17 +16,17 @@ class UserGroupService:
         self._policyRepo = policyRepo
 
     @debugLogger
-    def createUserGroup(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
+    def createUserGroup(self, obj: UserGroup, objectOnly: bool = False, tokenData: TokenData = None):
         try:
-            if id == '':
+            if obj.id() == '':
                 raise UserGroupDoesNotExistException()
-            self._repo.userGroupByName(name=name)
-            raise UserGroupAlreadyExistException(name)
+            self._repo.userGroupByName(name=obj.name())
+            raise UserGroupAlreadyExistException(obj.name())
         except UserGroupDoesNotExistException:
             if objectOnly:
-                return UserGroup.createFrom(name=name)
+                return UserGroup.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
             else:
-                userGroup = UserGroup.createFrom(id=id, name=name, publishEvent=True)
+                userGroup = UserGroup.createFromObject(obj=obj, publishEvent=True)
                 self._repo.createUserGroup(userGroup=userGroup, tokenData=tokenData)
                 return userGroup
 

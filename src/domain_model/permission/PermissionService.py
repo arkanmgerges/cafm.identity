@@ -18,18 +18,17 @@ class PermissionService:
         self._policyRepo = policyRepo
 
     @debugLogger
-    def createPermission(self, id: str = '', name: str = '', allowedActions: List[str] = None,
-                         deniedActions: List[str] = None, objectOnly: bool = False, tokenData: TokenData = None):
+    def createPermission(self, obj: Permission, objectOnly: bool = False, tokenData: TokenData = None):
         try:
-            if id == '':
+            if obj.id() == '':
                 raise PermissionDoesNotExistException()
-            self._repo.permissionByName(name=name)
-            raise PermissionAlreadyExistException(name)
+            self._repo.permissionByName(name=obj.name())
+            raise PermissionAlreadyExistException(obj.name())
         except PermissionDoesNotExistException:
             if objectOnly:
-                return Permission.createFrom(name=name, allowedActions=allowedActions, deniedActions=deniedActions)
+                return Permission.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
             else:
-                permission = Permission.createFrom(id=id, name=name, allowedActions=allowedActions, deniedActions=deniedActions, publishEvent=True)
+                permission = Permission.createFromObject(obj=obj, publishEvent=True)
                 self._repo.createPermission(permission=permission, tokenData=tokenData)
                 return permission
 

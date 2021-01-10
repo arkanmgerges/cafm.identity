@@ -18,17 +18,17 @@ class RoleService:
         self._policyRepo = policyRepo
 
     @debugLogger
-    def createRole(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
+    def createRole(self, obj: Role, objectOnly: bool = False, tokenData: TokenData = None):
         try:
-            if id == '':
+            if obj.id() == '':
                 raise RoleDoesNotExistException()
-            self._repo.roleByName(name=name)
-            raise RoleAlreadyExistException(name)
+            self._repo.roleByName(name=obj.name())
+            raise RoleAlreadyExistException(obj.name())
         except RoleDoesNotExistException:
             if objectOnly:
-                return Role.createFrom(name=name)
+                return Role.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
             else:
-                role = Role.createFrom(id=id, name=name, publishEvent=True)
+                role = Role.createFromObject(obj=obj, publishEvent=True)
                 self._repo.createRole(role=role, tokenData=tokenData)
                 return role
 

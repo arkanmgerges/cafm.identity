@@ -15,7 +15,7 @@ class User(Resource):
     ONE_TIME_PASSWORD_TAG = '###ABC_ZYX_1_TIME_PASS'
 
     def __init__(self, id: str = None, email: str = '', password: str = ''):
-        anId = str(uuid4()) if id is None or id == '' else id
+        anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type='user')
 
         self._validateEmail(email)
@@ -33,6 +33,13 @@ class User(Resource):
             from src.domain_model.user.UserCreated import UserCreated
             DomainPublishedEvents.addEventForPublishing(UserCreated(user))
         return user
+
+    @classmethod
+    def createFromObject(cls, obj: 'User', publishEvent: bool = False, generateNewId: bool = False):
+        logger.debug(f'[{User.createFromObject.__qualname__}]')
+        id = None if generateNewId else obj.id()
+        return cls.createFrom(id=id, email=obj.email(), password=obj.password(), publishEvent=publishEvent)
+
 
     def _validateEmail(self, email):
         regex = r'^[a-zA-Z0-9]+[a-zA-Z0-9\._]+[@]\w+[.]\w{2,6}$'

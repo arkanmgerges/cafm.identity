@@ -24,6 +24,7 @@ class UserApplicationService:
 
     @debugLogger
     def createUser(self, id: str = '', email: str = '', objectOnly: bool = False, token: str = ''):
+        obj: User = self.constructObject(id=id, email=email)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -31,23 +32,24 @@ class UserApplicationService:
                                         requestedPermissionAction=PermissionAction.CREATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='user'),
                                         tokenData=tokenData)
-        return self._userService.createUser(id=id, email=email,
+        return self._userService.createUser(obj=obj,
                                             objectOnly=objectOnly, tokenData=tokenData)
 
     @debugLogger
     def updateUser(self, id: str, email: str, token: str = ''):
+        obj: User = self.constructObject(id=id, email=email)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
 
-        resource = self._userRepository.userById(id=id)
+        resource = self._userRepository.userById(id=obj.id())
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessList,
                                         requestedPermissionAction=PermissionAction.UPDATE,
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='user'),
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
         self._userService.updateUser(oldObject=resource,
-                                     newObject=User.createFrom(id=id, email=email),
+                                     newObject=obj,
                                      tokenData=tokenData)
 
     @debugLogger
@@ -115,3 +117,7 @@ class UserApplicationService:
         resource.generateOneTimePassword()
         self._userRepository.updateUser(resource, tokenData=tokenData)
         return resource
+
+    @debugLogger
+    def constructObject(self, id: str = None, email: str = '', password: str = '') -> User:
+        return User.createFrom(id=id, email=email, password=password)

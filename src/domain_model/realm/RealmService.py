@@ -16,17 +16,17 @@ class RealmService:
         self._policyRepo = policyRepo
 
     @debugLogger
-    def createRealm(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
+    def createRealm(self, obj: Realm, objectOnly: bool = False, tokenData: TokenData = None):
         try:
-            if id == '':
+            if obj.id() == '':
                 raise RealmDoesNotExistException()
-            self._repo.realmByName(name=name)
-            raise RealmAlreadyExistException(name)
+            self._repo.realmByName(name=obj.name())
+            raise RealmAlreadyExistException(obj.name())
         except RealmDoesNotExistException:
             if objectOnly:
-                return Realm.createFrom(name=name)
+                return Realm.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
             else:
-                realm = Realm.createFrom(id=id, name=name, publishEvent=True)
+                realm = Realm.createFromObject(obj=obj, publishEvent=True)
                 self._repo.createRealm(realm=realm, tokenData=tokenData)
                 return realm
 

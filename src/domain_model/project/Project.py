@@ -15,7 +15,7 @@ from uuid import uuid4
 
 class Project(Resource):
     def __init__(self, id: str = None, name=''):
-        anId = str(uuid4()) if id is None or id == '' else id
+        anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type='project')
         self._name = name
 
@@ -28,6 +28,12 @@ class Project(Resource):
             logger.debug(f'[{Project.createFrom.__qualname__}] - Create Project with name = {name} and id = {id}')
             DomainPublishedEvents.addEventForPublishing(ProjectCreated(project))
         return project
+
+    @classmethod
+    def createFromObject(cls, obj: 'Project', publishEvent: bool = False, generateNewId: bool = False):
+        logger.debug(f'[{Project.createFromObject.__qualname__}]')
+        id = None if generateNewId else obj.id()
+        return cls.createFrom(id=id, name=obj.name(), publishEvent=publishEvent)
 
     def name(self) -> str:
         return self._name

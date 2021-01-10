@@ -20,23 +20,18 @@ class OuService:
         self._policyRepo = policyRepo
 
     @debugLogger
-    def createOu(self, id: str = '', name: str = '', objectOnly: bool = False, tokenData: TokenData = None):
+    def createOu(self, obj: Ou, objectOnly: bool = False, tokenData: TokenData = None):
         try:
-            if id == '':
+            if obj.id() == '':
                 raise OuDoesNotExistException()
-            self._repo.ouByName(name=name)
-            raise OuAlreadyExistException(name)
+            self._repo.ouByName(name=obj.name())
+            raise OuAlreadyExistException(obj.name())
         except OuDoesNotExistException:
             if objectOnly:
-                return Ou.createFrom(name=name)
+                return Ou.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
             else:
-                ou = Ou.createFrom(id=id, name=name, publishEvent=True)
+                ou = Ou.createFromObject(obj=obj, publishEvent=True)
                 self._repo.createOu(ou=ou, tokenData=tokenData)
-                # self._policyRepo.connectResourceToOwner(
-                #     resource=Resource(
-                #         id=ou.id(),
-                #         type=PermissionContextConstant.OU.value),
-                #     tokenData=tokenData)
                 return ou
 
     @debugLogger
