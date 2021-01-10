@@ -67,7 +67,7 @@ class RealmRepositoryImpl(RealmRepository):
                 let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                 if (res.length == 0) {
                     p = params['resource']
-                    res = db.resource.insert({id: p['id'], name: p['name'], type: p['type']});
+                    res = db.resource.insert({id: p['id'], name: p['name'], realm_type: p['realmType'], type: p['type']});
                     fromDocId = res['_id'];
                     p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
                     db._query(queryLink, p).execute();
@@ -85,7 +85,7 @@ class RealmRepositoryImpl(RealmRepository):
             }
         '''
         params = {
-            'resource': {"id": realm.id(), "name": realm.name(), "type": realm.type()},
+            'resource': {"id": realm.id(), "name": realm.name(), "type": realm.type(), "realmType": realm.realmType()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
             'rolesDocIds': rolesDocIds,
             'toTypeRole': PermissionContextConstant.ROLE.value,
@@ -104,10 +104,10 @@ class RealmRepositoryImpl(RealmRepository):
         aql = '''
             FOR d IN resource
                 FILTER d.id == @id AND d.type == 'realm'
-                UPDATE d WITH {name: @name} IN resource
+                UPDATE d WITH {name: @name, realm_type: @realmType} IN resource
         '''
 
-        bindVars = {"id": realm.id(), "name": realm.name()}
+        bindVars = {"id": realm.id(), "name": realm.name(), "realmType": realm.realmType()}
         logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] - Update realm with id: {realm.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
