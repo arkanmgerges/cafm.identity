@@ -115,7 +115,7 @@ class UserApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
         resource.generateOneTimePassword()
-        self._userRepository.updateUser(resource, tokenData=tokenData)
+        self._userRepository.setUserPassword(resource, tokenData=tokenData)
         return resource
 
     @debugLogger

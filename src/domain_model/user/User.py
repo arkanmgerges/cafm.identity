@@ -40,7 +40,6 @@ class User(Resource):
         id = None if generateNewId else obj.id()
         return cls.createFrom(id=id, email=obj.email(), password=obj.password(), publishEvent=publishEvent)
 
-
     def _validateEmail(self, email):
         regex = r'^[a-zA-Z0-9]+[a-zA-Z0-9\._]+[@]\w+[.]\w{2,6}$'
         if not (re.search(regex, email)):
@@ -100,5 +99,4 @@ class User(Resource):
     def __eq__(self, other):
         if not isinstance(other, User):
             raise NotImplementedError(f'other: {other} can not be compared with User class')
-        return self.id() == other.id() and self.email() == other.email() and \
-               self.password() == other.password()
+        return self.id() == other.id() and self.email() == other.email() and self.password() == other.password()
