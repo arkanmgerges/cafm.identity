@@ -23,8 +23,10 @@ class CountryApplicationService:
         resource = self._countryRepository.countryById(id=id)
         return resource
 
-    def countryCities(self, id: str, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
-        return self._countryRepository.countryCities(id=id, resultFrom=resultFrom, resultSize=resultSize, order=order)
+    @debugLogger
+    def citiesByCountryId(self, id: str, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
+        return self._countryRepository.citiesByCountryId(id=id, resultFrom=resultFrom, resultSize=resultSize, order=order)
 
-    def countryCity(self, countryId: str, cityId: str):
-        return self._countryRepository.countryCity(countryId=countryId, cityId=cityId)
+    @debugLogger
+    def cityByCountryId(self, countryId: str, cityId: str):
+        return self._countryRepository.cityByCountryId(countryId=countryId, cityId=cityId)

@@ -57,7 +57,7 @@ class CountryRepositoryImpl(CountryRepository):
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
-        items = items[resultFrom:resultSize]
+        items = items[resultFrom:resultFrom + resultSize]
         return {"items": [Country.createFrom(id=x['id'], geoNameId=x['geo_name_id'], localeCode=x['locale_code'],
                                              continentCode=x['continent_code'], continentName=x['continent_name'],
                                              countryIsoCode=x['country_iso_code'], countryName=x['country_name'],
@@ -84,7 +84,9 @@ class CountryRepositoryImpl(CountryRepository):
                                   countryIsoCode=result[0]['country_iso_code'], countryName=result[0]['country_name'],
                                   isInEuropeanUnion=result[0]['is_in_european_union'])
 
-    def countryCities(self, id: str = '', resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
+    @debugLogger
+    def citiesByCountryId(self, id: str = '', resultFrom: int = 0, resultSize: int = 100,
+                          order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
             for item in order:
@@ -112,7 +114,7 @@ class CountryRepositoryImpl(CountryRepository):
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
-        items = items[resultFrom:resultSize]
+        items = items[resultFrom:resultFrom + resultSize]
 
         return {"items": [City.createFrom(id=x['id'], geoNameId=x['geo_name_id'], localeCode=x['locale_code'],
                                           continentCode=x['continent_code'], continentName=x['continent_name'],
@@ -125,7 +127,8 @@ class CountryRepositoryImpl(CountryRepository):
                                           isInEuropeanUnion=x['is_in_european_union']) for x in items],
                 "itemCount": itemCount}
 
-    def countryCity(self, countryId: str = '', cityId: str = '') -> City:
+    @debugLogger
+    def cityByCountryId(self, countryId: str = '', cityId: str = '') -> City:
         aql = '''
             FOR u IN country 
                 FOR c IN city 
@@ -141,7 +144,7 @@ class CountryRepositoryImpl(CountryRepository):
         result = queryResult.result
         if len(result) == 0:
             logger.debug(
-                f'[{CountryRepositoryImpl.countryCity.__qualname__}] country id: {countryId}, city id: {cityId}')
+                f'[{CountryRepositoryImpl.cityByCountryId.__qualname__}] country id: {countryId}, city id: {cityId}')
             raise CountryDoesNotExistException(f'country id: {countryId}, city id: {cityId}')
 
         return City.createFrom(id=result[0]['id'], geoNameId=result[0]['geo_name_id'],

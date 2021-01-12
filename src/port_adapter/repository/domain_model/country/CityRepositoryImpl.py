@@ -56,7 +56,7 @@ class CityRepositoryImpl(CityRepository):
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
-        items = items[resultFrom:resultSize]
+        items = items[resultFrom:resultFrom + resultSize]
         return {"items": [City.createFrom(id=x['id'], geoNameId=x['geo_name_id'], localeCode=x['locale_code'],
                                           continentCode=x['continent_code'], continentName=x['continent_name'],
                                           countryIsoCode=x['country_iso_code'], countryName=x['country_name'],

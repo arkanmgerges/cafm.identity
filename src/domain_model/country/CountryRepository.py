@@ -40,7 +40,7 @@ class CountryRepository(ABC):
         """
 
     @abstractmethod
-    def countryCities(self, id: str = '',
+    def citiesByCountryId(self, id: str = '',
                       resultFrom: int = 0,
                       resultSize: int = 100,
                       order: List[dict] = None) -> dict:
@@ -57,7 +57,7 @@ class CountryRepository(ABC):
         """
 
     @abstractmethod
-    def countryCity(self, countryId: str = '', cityId: str = '') -> City:
+    def cityByCountryId(self, countryId: str = '', cityId: str = '') -> City:
         """Get city by country id and city id
 
         Args:

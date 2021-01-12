@@ -76,7 +76,7 @@ class CityAppServiceListener(CityAppServiceServicer):
     def cities(self, request, context):
         try:
             metadata = context.invocation_metadata()
-            resultSize = request.resultSize if request.resultSize > 0 else 10
+            resultSize = request.resultSize if request.resultSize >= 0 else 10
             logger.debug(
                 f'[{CityAppServiceListener.cities.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             cityAppService: CityApplicationService = AppDi.instance.get(CityApplicationService)

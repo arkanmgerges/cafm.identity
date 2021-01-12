@@ -25,30 +25,30 @@ message CountryAppService_countriesResponse {
   int32 itemCount = 2;
 }
 
-message CountryAppService_countryCitiesRequest {
+message CountryAppService_citiesByCountryIdRequest {
   string id = 1;
   int32 resultFrom = 2;
   int32 resultSize = 3;
   repeated cafm.common.order.Order order = 4;
 }
 
-message CountryAppService_countryCitiesResponse {
+message CountryAppService_citiesByCountryIdResponse {
   repeated City cities = 1;
   int32 itemCount = 2;
 }
 
-message CountryAppService_countryCityRequest {
+message CountryAppService_cityByCountryIdRequest {
   string countryId = 1;
   string cityId = 2;
 }
 
-message CountryAppService_countryCityResponse {
+message CountryAppService_cityByCountryIdResponse {
   City city = 1;
 }
 
 service CountryAppService {
   rpc countryById (CountryAppService_countryByIdRequest) returns (CountryAppService_countryByIdResponse) {}
   rpc countries (CountryAppService_countriesRequest) returns (CountryAppService_countriesResponse) {}
-  rpc countryCities (CountryAppService_countryCitiesRequest) returns (CountryAppService_countryCitiesResponse) {}
-  rpc countryCity (CountryAppService_countryCityRequest) returns (CountryAppService_countryCityResponse) {}
+  rpc citiesByCountryId (CountryAppService_citiesByCountryIdRequest) returns (CountryAppService_citiesByCountryIdResponse) {}
+  rpc cityByCountryId (CountryAppService_cityByCountryIdRequest) returns (CountryAppService_cityByCountryIdResponse) {}
 }

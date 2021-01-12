@@ -17,8 +17,8 @@ from src.domain_model.country.City import City
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.country_app_service_pb2 import (CountryAppService_countriesResponse,
                                                                             CountryAppService_countryByIdResponse,
-                                                                            CountryAppService_countryCitiesResponse,
-                                                                            CountryAppService_countryCityResponse)
+                                                                            CountryAppService_cityByCountryIdResponse,
+                                                                            CountryAppService_citiesByCountryIdResponse)
 from src.resource.proto._generated.identity.country_app_service_pb2_grpc import CountryAppServiceServicer
 
 
@@ -38,7 +38,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     def countries(self, request, context):
         try:
             metadata = context.invocation_metadata()
-            resultSize = request.resultSize if request.resultSize > 0 else 10
+            resultSize = request.resultSize if request.resultSize >= 0 else 10
             logger.debug(
                 f'[{CountryAppServiceListener.countries.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             countryAppService: CountryApplicationService = AppDi.instance.get(CountryApplicationService)
@@ -62,6 +62,8 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             context.set_details('Un Authorized')
             return CountryAppService_countriesResponse()
 
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def countryById(self, request, context):
         try:
             metadata = context.invocation_metadata()
@@ -90,19 +92,21 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             context.set_details('Un Authorized')
             return CountryAppService_countryByIdResponse()
 
-    def countryCities(self, request, context):
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def citiesByCountryId(self, request, context):
         try:
             metadata = context.invocation_metadata()
-            resultSize = request.resultSize if request.resultSize > 0 else 10
+            resultSize = request.resultSize if request.resultSize >= 0 else 10
             logger.debug(
-                f'[{CountryAppServiceListener.countryCities.__qualname__}] - metadata: {metadata}\n\t \ '
+                f'[{CountryAppServiceListener.citiesByCountryId.__qualname__}] - metadata: {metadata}\n\t \ '
                 f'id: {request.id},resultFrom: {request.resultFrom}, resultSize: {resultSize}')
             countryAppService: CountryApplicationService = AppDi.instance.get(CountryApplicationService)
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
-            result: dict = countryAppService.countryCities(id=request.id, resultFrom=request.resultFrom,
-                                                           resultSize=resultSize, order=orderData)
-            response = CountryAppService_countryCitiesResponse()
+            result: dict = countryAppService.citiesByCountryId(id=request.id, resultFrom=request.resultFrom,
+                                                               resultSize=resultSize, order=orderData)
+            response = CountryAppService_citiesByCountryIdResponse()
             response.itemCount = result['itemCount']
             for city in result['items']:
                 response.cities.add(id=city.id(), geoNameId=city.geoNameId(), localeCode=city.localeCode(),
@@ -114,27 +118,29 @@ class CountryAppServiceListener(CountryAppServiceServicer):
                                     subdivisionTwoIsoName=city.subdivisionTwoIsoName(), cityName=city.cityName(),
                                     metroCode=city.metroCode(), timeZone=city.timeZone(),
                                     isInEuropeanUnion=city.isInEuropeanUnion())
-            logger.debug(f'[{CountryApplicationService.countryCities.__qualname__}] - response: {response}')
+            logger.debug(f'[{CountryApplicationService.citiesByCountryId.__qualname__}] - response: {response}')
             return response
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
-            return CountryAppService_countryCitiesResponse()
+            return CountryAppService_citiesByCountryIdResponse()
 
-    def countryCity(self, request, context):
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def cityByCountryId(self, request, context):
         try:
             metadata = context.invocation_metadata()
             logger.debug(
-                f'[{CountryAppServiceListener.countryCity.__qualname__}] - metadata: {metadata}\n\t \ '
+                f'[{CountryAppServiceListener.cityByCountryId.__qualname__}] - metadata: {metadata}\n\t \ '
                 f'country id: {request.countryId},city id: {request.cityId}')
             countryAppService: CountryApplicationService = AppDi.instance.get(CountryApplicationService)
 
-            city: City = countryAppService.countryCity(countryId=request.countryId, cityId=request.cityId)
+            city: City = countryAppService.cityByCountryId(countryId=request.countryId, cityId=request.cityId)
             metroCode = ''
             if city.metroCode() is not None:
                 metroCode = city.metroCode()
 
-            response = CountryAppService_countryCityResponse()
+            response = CountryAppService_cityByCountryIdResponse()
             response.city.id = city.id()
             response.city.geoNameId = city.geoNameId()
             response.city.localeCode = city.localeCode()
@@ -151,9 +157,9 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             response.city.timeZone = city.timeZone()
             response.city.isInEuropeanUnion = city.isInEuropeanUnion()
 
-            logger.debug(f'[{CountryApplicationService.countryCity.__qualname__}] - response: {response}')
+            logger.debug(f'[{CountryApplicationService.cityByCountryId.__qualname__}] - response: {response}')
             return response
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
-            return CountryAppService_countryCityResponse()
+            return CountryAppService_cityByCountryIdResponse()
