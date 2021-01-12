@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
+from typing import Any
 
 import grpc
 
@@ -14,7 +15,8 @@ from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.identity.ou_app_service_pb2 import OuAppService_ouByNameResponse, OuAppService_ousResponse, \
+from src.resource.proto._generated.identity.ou_app_service_pb2 import OuAppService_ouByNameResponse, \
+    OuAppService_ousResponse, \
     OuAppService_ouByIdResponse
 from src.resource.proto._generated.identity.ou_app_service_pb2_grpc import OuAppServiceServicer
 
@@ -38,8 +40,7 @@ class OuAppServiceListener(OuAppServiceServicer):
             token = self._token(context)
             ou: Ou = ouAppService.ouByName(name=request.name, token=token)
             response = OuAppService_ouByNameResponse()
-            response.ou.id = ou.id()
-            response.ou.name = ou.name()
+            self._addObjectToResponse(obj=ou, response=response)
             return response
         except OuDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -92,8 +93,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             ou: Ou = ouAppService.ouById(id=request.id, token=token)
             logger.debug(f'[{OuAppServiceListener.ouById.__qualname__}] - response: {ou}')
             response = OuAppService_ouByIdResponse()
-            response.ou.id = ou.id()
-            response.ou.name = ou.name()
+            self._addObjectToResponse(obj=ou, response=response)
             return response
         except OuDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -103,6 +103,11 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
             return OuAppService_ouByIdResponse()
+
+    @debugLogger
+    def _addObjectToResponse(self, obj: Ou, response: Any):
+        response.ou.id = obj.id()
+        response.ou.name = obj.name()
 
     @debugLogger
     def _token(self, context) -> str:

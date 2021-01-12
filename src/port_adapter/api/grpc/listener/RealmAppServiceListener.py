@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
+from typing import Any
 
 import grpc
 
@@ -38,8 +39,7 @@ class RealmAppServiceListener(RealmAppServiceServicer):
             realmAppService: RealmApplicationService = AppDi.instance.get(RealmApplicationService)
             realm: Realm = realmAppService.realmByName(name=request.name, token=token)
             response = RealmAppService_realmByNameResponse()
-            response.realm.id = realm.id()
-            response.realm.name = realm.name()
+            self._addObjectToResponse(obj=realm, response=response)
             return response
         except RealmDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -69,13 +69,13 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
             result: dict = realmAppService.realms(
-                                                  resultFrom=request.resultFrom,
-                                                  resultSize=resultSize,
-                                                  token=token,
-                                                  order=orderData)
+                resultFrom=request.resultFrom,
+                resultSize=resultSize,
+                token=token,
+                order=orderData)
             response = RealmAppService_realmsResponse()
             for realm in result['items']:
-                response.realms.add(id=realm.id(), name=realm.name())
+                response.realms.add(id=realm.id(), name=realm.name(), realmType=realm.realmType())
             response.itemCount = result['itemCount']
             logger.debug(f'[{RealmAppServiceListener.realms.__qualname__}] - response: {response}')
             return RealmAppService_realmsResponse(realms=response.realms, itemCount=response.itemCount)
@@ -97,8 +97,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             realm: Realm = realmAppService.realmById(id=request.id, token=token)
             logger.debug(f'[{RealmAppServiceListener.realmById.__qualname__}] - response: {realm}')
             response = RealmAppService_realmByIdResponse()
-            response.realm.id = realm.id()
-            response.realm.name = realm.name()
+            self._addObjectToResponse(obj=realm, response=response)
             return response
         except RealmDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -108,6 +107,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
             return RealmAppService_realmByIdResponse()
+
+    @debugLogger
+    def _addObjectToResponse(self, obj: Realm, response: Any):
+        response.realm.id = obj.id()
+        response.realm.name = obj.name()
+        response.realm.realmType = obj.realmType()
 
     @debugLogger
     def _token(self, context) -> str:

@@ -104,10 +104,10 @@ class RealmRepositoryImpl(RealmRepository):
         aql = '''
             FOR d IN resource
                 FILTER d.id == @id AND d.type == 'realm'
-                UPDATE d WITH {name: @name, realm_type: @realmType} IN resource
+                UPDATE d WITH {name: @name} IN resource
         '''
 
-        bindVars = {"id": realm.id(), "name": realm.name(), "realmType": realm.realmType()}
+        bindVars = {"id": realm.id(), "name": realm.name()}
         logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] - Update realm with id: {realm.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result

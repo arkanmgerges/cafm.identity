@@ -2,19 +2,21 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
+from typing import Any
 
 import grpc
 
 import src.port_adapter.AppDi as AppDi
 from src.application.UserGroupApplicationService import UserGroupApplicationService
-from src.domain_model.token.TokenService import TokenService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.domain_model.resource.exception.UserGroupDoesNotExistException import UserGroupDoesNotExistException
+from src.domain_model.token.TokenService import TokenService
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.identity.user_group_app_service_pb2 import UserGroupAppService_userGroupByNameResponse, \
+from src.resource.proto._generated.identity.user_group_app_service_pb2 import \
+    UserGroupAppService_userGroupByNameResponse, \
     UserGroupAppService_userGroupsResponse, UserGroupAppService_userGroupByIdResponse
 from src.resource.proto._generated.identity.user_group_app_service_pb2_grpc import UserGroupAppServiceServicer
 
@@ -38,8 +40,7 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
             userGroupAppService: UserGroupApplicationService = AppDi.instance.get(UserGroupApplicationService)
             userGroup: UserGroup = userGroupAppService.userGroupByName(name=request.name, token=token)
             response = UserGroupAppService_userGroupByNameResponse()
-            response.userGroup.id = userGroup.id()
-            response.userGroup.name = userGroup.name()
+            self._addObjectToResponse(obj=userGroup, response=response)
             return response
         except UserGroupDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -69,10 +70,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
             result: dict = userGroupAppService.userGroups(
-                                                          resultFrom=request.resultFrom,
-                                                          resultSize=resultSize,
-                                                          token=token,
-                                                          order=orderData)
+                resultFrom=request.resultFrom,
+                resultSize=resultSize,
+                token=token,
+                order=orderData)
             response = UserGroupAppService_userGroupsResponse()
             for userGroup in result['items']:
                 response.userGroups.add(id=userGroup.id(), name=userGroup.name())
@@ -97,8 +98,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             userGroup: UserGroup = userGroupAppService.userGroupById(id=request.id, token=token)
             logger.debug(f'[{UserGroupAppServiceListener.userGroupById.__qualname__}] - response: {userGroup}')
             response = UserGroupAppService_userGroupByIdResponse()
-            response.userGroup.id = userGroup.id()
-            response.userGroup.name = userGroup.name()
+            self._addObjectToResponse(obj=userGroup, response=response)
             return response
         except UserGroupDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -108,6 +108,11 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
             return UserGroupAppService_userGroupByIdResponse()
+
+    @debugLogger
+    def _addObjectToResponse(self, obj: UserGroup, response: Any):
+        response.userGroup.id = obj.id()
+        response.userGroup.name = obj.name()
 
     @debugLogger
     def _token(self, context) -> str:

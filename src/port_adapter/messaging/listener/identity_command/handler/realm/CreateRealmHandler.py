@@ -34,9 +34,11 @@ class CreateRealmHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        obj = appService.createRealm(id=dataDict['id'], name=dataDict['name'], token=metadataDict['token'])
+        obj = appService.createRealm(id=dataDict['id'], name=dataDict['name'],
+                                     realmType=dataDict['realm_type'],
+                                     token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
-                'data': {'id': obj.id(), 'name': obj.name()},
+                'data': {'id': obj.id(), 'name': obj.name(), 'realm_type': obj.realmType()},
                 'metadata': metadataDict}
 
     def targetsOnSuccess(self):

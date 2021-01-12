@@ -1,8 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-import json
 import time
+from typing import Any
 
 import grpc
 
@@ -39,14 +39,7 @@ class UserAppServiceListener(UserAppServiceServicer):
             user: User = userAppService.userByEmailAndPassword(email=request.email,
                                                                password=request.password)
             response = UserAppService_userByEmailAndPasswordResponse()
-            response.user.id = user.id()
-            response.user.email = user.email()
-            # response.user.firstName = user.firstName()
-            # response.user.lastName = user.lastName()
-            # response.user.addressOne = user.addressOne()
-            # response.user.addressTwo = user.addressTwo()
-            # response.user.postalCode = user.postalCode()
-            # response.user.avatarImage = user.avatarImage()
+            self._addObjectToResponse(obj=user, response=response)
             return response
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -105,8 +98,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             user: User = userAppService.userById(id=request.id, token=token)
             logger.debug(f'[{UserAppServiceListener.userById.__qualname__}] - response: {user}')
             response = UserAppService_userByIdResponse()
-            response.user.id = user.id()
-            response.user.email = user.email()
+            self._addObjectToResponse(obj=user, response=response)
             return response
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -116,6 +108,11 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
             return UserAppService_userByIdResponse()
+
+    @debugLogger
+    def _addObjectToResponse(self, obj: User, response: Any):
+        response.user.id = obj.id()
+        response.user.email = obj.email()
 
     @debugLogger
     def _token(self, context) -> str:

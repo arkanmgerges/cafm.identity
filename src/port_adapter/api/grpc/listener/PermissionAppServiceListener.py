@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import time
+from typing import Any
 
 import grpc
 
@@ -14,7 +15,8 @@ from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.identity.permission_app_service_pb2 import PermissionAppService_permissionByNameResponse, \
+from src.resource.proto._generated.identity.permission_app_service_pb2 import \
+    PermissionAppService_permissionByNameResponse, \
     PermissionAppService_permissionsResponse, PermissionAppService_permissionByIdResponse
 from src.resource.proto._generated.identity.permission_app_service_pb2_grpc import PermissionAppServiceServicer
 
@@ -38,12 +40,7 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
             permissionAppService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
             permission: Permission = permissionAppService.permissionByName(name=request.name, token=token)
             response = PermissionAppService_permissionByNameResponse()
-            response.permission.id = permission.id()
-            response.permission.name = permission.name()
-            for allowedAction in permission.allowedActions():
-                response.allowedActions.append(allowedAction)
-            for deniedAction in permission.deniedActions():
-                response.deniedActions.append(deniedAction)
+            self._addObjectToResponse(obj=permission, response=response)
             return response
         except PermissionDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -73,10 +70,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
 
             orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
             result: dict = permissionAppService.permissions(
-                                                            resultFrom=request.resultFrom,
-                                                            resultSize=resultSize,
-                                                            token=token,
-                                                            order=orderData)
+                resultFrom=request.resultFrom,
+                resultSize=resultSize,
+                token=token,
+                order=orderData)
             response = PermissionAppService_permissionsResponse()
             for permission in result['items']:
                 p = response.permissions.add()
@@ -108,12 +105,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             permission: Permission = permissionAppService.permissionById(id=request.id, token=token)
             logger.debug(f'[{PermissionAppServiceListener.permissionById.__qualname__}] - response: {permission}')
             response = PermissionAppService_permissionByIdResponse()
-            response.permission.id = permission.id()
-            response.permission.name = permission.name()
-            for allowedAction in permission.allowedActions():
-                response.allowedActions.append(allowedAction)
-            for deniedAction in permission.deniedActions():
-                response.deniedActions.append(deniedAction)
+            self._addObjectToResponse(obj=permission, response=response)
             return response
         except PermissionDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -123,6 +115,15 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
             return PermissionAppService_permissionByIdResponse()
+
+    @debugLogger
+    def _addObjectToResponse(self, obj: Permission, response: Any):
+        response.permission.id = obj.id()
+        response.permission.name = obj.name()
+        for allowedAction in obj.allowedActions():
+            response.allowedActions.append(allowedAction)
+        for deniedAction in obj.deniedActions():
+            response.deniedActions.append(deniedAction)
 
     @debugLogger
     def _token(self, context) -> str:

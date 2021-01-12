@@ -3,7 +3,7 @@
 """
 import json
 import time
-from typing import List
+from typing import List, Any
 
 import grpc
 
@@ -42,9 +42,7 @@ class RoleAppServiceListener(RoleAppServiceServicer):
             roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
             role: Role = roleAppService.roleByName(name=request.name, token=token)
             response = RoleAppService_roleByNameResponse()
-            response.role.id = role.id()
-            response.role.type = role.type()
-            response.role.name = role.name()
+            self._addObjectToResponse(obj=role, response=response)
             return response
         except RoleDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -99,9 +97,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             role: Role = roleAppService.roleById(id=request.id, token=token)
             logger.debug(f'[{RoleAppServiceListener.roleById.__qualname__}] - response: {role}')
             response = RoleAppService_roleByIdResponse()
-            response.role.id = role.id()
-            response.role.type = role.type()
-            response.role.name = role.name()
+            self._addObjectToResponse(obj=role, response=response)
             return response
         except RoleDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -120,16 +116,15 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             logger.debug(f'request: {request}')
             roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
 
-            roleAccessPermissionItem: RoleAccessPermissionData = roleAppService.roleTree(roleId=request.roleId, token=token)
+            roleAccessPermissionItem: RoleAccessPermissionData = roleAppService.roleTree(roleId=request.roleId,
+                                                                                         token=token)
 
             response = RoleAppService_rolesTreesResponse()
             # Create a response item
             roleAccessPermissionResponse = response.roleAccessPermission.add()
 
             # role
-            roleAccessPermissionResponse.role.id = roleAccessPermissionItem.role.id()
-            roleAccessPermissionResponse.role.type = roleAccessPermissionItem.role.type()
-            roleAccessPermissionResponse.role.name = roleAccessPermissionItem.role.name()
+            self._addObjectToResponse(obj=roleAccessPermissionItem.role, response=roleAccessPermissionResponse)
 
             # owned by
             if roleAccessPermissionItem.ownedBy is not None:
@@ -183,9 +178,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
                 roleAccessPermissionResponse = response.roleAccessPermission.add()
 
                 # role
-                roleAccessPermissionResponse.role.id = roleAccessPermissionItem.role.id()
-                roleAccessPermissionResponse.role.type = roleAccessPermissionItem.role.type()
-                roleAccessPermissionResponse.role.name = roleAccessPermissionItem.role.name()
+                self._addObjectToResponse(obj=roleAccessPermissionItem.role, response=roleAccessPermissionResponse)
 
                 # owned by
                 if roleAccessPermissionItem.ownedBy is not None:
@@ -254,6 +247,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         protoBuf.id = permissionContext.id()
         protoBuf.type = permissionContext.type()
         protoBuf.data = json.dumps(permissionContext.data())
+
+    @debugLogger
+    def _addObjectToResponse(self, obj: Role, response: Any):
+        response.role.id = obj.id()
+        response.role.type = obj.type()
+        response.role.name = obj.name()
 
     @debugLogger
     def _token(self, context) -> str:

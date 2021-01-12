@@ -3,6 +3,7 @@
 """
 import json
 import time
+from typing import Any
 
 import grpc
 
@@ -19,7 +20,8 @@ from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.permission_context_app_service_pb2 import \
     PermissionContextAppService_permissionContextsResponse, \
     PermissionContextAppService_permissionContextByIdResponse
-from src.resource.proto._generated.identity.permission_context_app_service_pb2_grpc import PermissionContextAppServiceServicer
+from src.resource.proto._generated.identity.permission_context_app_service_pb2_grpc import \
+    PermissionContextAppServiceServicer
 
 
 class PermissionContextAppServiceListener(PermissionContextAppServiceServicer):
@@ -43,8 +45,8 @@ class PermissionContextAppServiceListener(PermissionContextAppServiceServicer):
             claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
 
             logger.debug(
-                f'[{PermissionContextAppServiceListener.permissionContexts.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
+                f'[{PermissionContextAppServiceListener.permissionContexts.__qualname__}] - metadata: {metadata}\n\t \
+                claims: {claims}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             permissionContextAppService: PermissionContextApplicationService = AppDi.instance.get(
                 PermissionContextApplicationService)
 
@@ -83,11 +85,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             permissionContext: PermissionContext = permissionContextAppService.permissionContextById(id=request.id,
                                                                                                      token=token)
             logger.debug(
-                f'[{PermissionContextAppServiceListener.permissionContextById.__qualname__}] - response: {permissionContext}')
+                f'[{PermissionContextAppServiceListener.permissionContextById.__qualname__}] - response: \
+                    {permissionContext}')
             response = PermissionContextAppService_permissionContextByIdResponse()
-            response.permissionContext.id = permissionContext.id()
-            response.permissionContext.type = permissionContext.type()
-            response.permissionContext.data = json.dumps(permissionContext.data())
+            self._addObjectResponse(obj=permissionContext, response=response)
             return response
         except PermissionContextDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -97,6 +98,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
             return PermissionContextAppService_permissionContextByIdResponse()
+
+    @debugLogger
+    def _addObjectResponse(self, obj: PermissionContext, response: Any):
+        response.permissionContext.id = obj.id()
+        response.permissionContext.type = obj.type()
+        response.permissionContext.data = json.dumps(obj.data())
 
     @debugLogger
     def _token(self, context) -> str:
