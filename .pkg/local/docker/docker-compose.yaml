@@ -64,6 +64,7 @@ services:
     command: >
       bash -c "python -m src.resource.script.admin_script init-kafka-topics-and-schemas
       && python -m src.resource.script.admin_script init-db
+      && python -m src.resource.script.admin_script init-geo-data
       && python -m src.resource.script.admin_script create-user ${EMAIL:-admin@local.me} ${PASSWORD:-1234} ${DB_NAME:-cafm-identity}
       && python -m src.resource.script.admin_script assign-user-super-admin-role ${USERNAME:-admin@local.me} ${PASSWORD:-1234} ${DB_NAME:-cafm-identity}
       && python -m src.resource.script.admin_script build-resource-tree-from-file ${TREE_FILE:-src/resource/script/__test_tree.yaml.sample}"
