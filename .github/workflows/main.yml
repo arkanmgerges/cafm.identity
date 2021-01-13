@@ -41,9 +41,10 @@ jobs:
         command: |
           ssh-add -D
           ssh-add ~/.ssh/id_rsa_identity
-          docker-compose -f ~/cafm.identity/.pkg/local/docker/docker-compose.yaml -p cafm-identity down --rmi all --remove-orphans
+          docker-compose -f ~/cafm.identity/.pkg/local/docker/docker-compose.yaml -p cafm-identity down --rmi local --remove-orphans
           git -C ~/cafm.identity pull
-          docker-compose -f ~/cafm.identity/.pkg/local/docker/docker-compose.yaml -p cafm-identity up --build -d
+          cd ~/cafm.identity
+          docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-identity up --build -d
           ssh-add -D
         host: ${{ secrets.SSH_HOSTNAME }}
         port: ${{ secrets.SSH_PORT }}
