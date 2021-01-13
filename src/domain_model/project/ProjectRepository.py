@@ -11,21 +11,21 @@ from src.domain_model.token.TokenData import TokenData
 
 class ProjectRepository(ABC):
     @abstractmethod
-    def createProject(self, project: Project, tokenData: TokenData):
+    def createProject(self, obj: Project, tokenData: TokenData):
         """Create project
 
         Args:
-            project (Project): The project that needs to be created
+            obj (Project): The project that needs to be created
             tokenData (TokenData): Token data that has info about the token
 
         """
 
     @abstractmethod
-    def deleteProject(self, project: Project, tokenData: TokenData) -> None:
+    def deleteProject(self, obj: Project, tokenData: TokenData) -> None:
         """Delete a project
 
         Args:
-            project (Project): The project that needs to be deleted
+            obj (Project): The project that needs to be deleted
             tokenData (TokenData): Token data used for deleting the resource
 
         :raises:
@@ -33,11 +33,11 @@ class ProjectRepository(ABC):
         """
 
     @abstractmethod
-    def updateProject(self, project: Project, tokenData: TokenData) -> None:
+    def updateProject(self, obj: Project, tokenData: TokenData) -> None:
         """Update a project
 
         Args:
-            project (Project): The project that needs to be updated
+            obj (Project): The project that needs to be updated
             tokenData (TokenData): Token data used for updating the resource
 
         :raises:

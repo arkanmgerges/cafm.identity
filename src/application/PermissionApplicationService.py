@@ -73,7 +73,7 @@ class PermissionApplicationService:
                                         requestedObject=RequestedAuthzObject(
                                             objType=RequestedAuthzObjectEnum.PERMISSION, obj=permission),
                                         tokenData=tokenData)
-        self._permissionService.deletePermission(permission=permission, tokenData=tokenData)
+        self._permissionService.deletePermission(obj=permission, tokenData=tokenData)
 
     @debugLogger
     def permissionByName(self, name: str, token: str = ''):

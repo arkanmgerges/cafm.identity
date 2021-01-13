@@ -8,7 +8,7 @@ from pyArango.connection import *
 from pyArango.query import AQLQuery
 
 import src.port_adapter.AppDi as AppDi
-from src.domain_model.permission_context.PermissionContext import PermissionContext, PermissionContextConstant
+from src.domain_model.permission_context.PermissionContext import PermissionContext
 from src.domain_model.permission_context.PermissionContextRepository import PermissionContextRepository
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
@@ -42,7 +42,7 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
                 f'Could not connect to the db, message: {e}')
 
     @debugLogger
-    def createPermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData):
+    def createPermissionContext(self, obj: PermissionContext, tokenData: TokenData):
         actionFunction = '''
             function (params) {                                            
                 let db = require('@arangodb').db;
@@ -58,18 +58,18 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
             }
         '''
         params = {
-            'permission_context': {"id": permissionContext.id(), "data": permissionContext.data(),
-                         "type": permissionContext.type()},
+            'permission_context': {"id": obj.id(), "data": obj.data(),
+                                   "type": obj.type()},
             'OBJECT_ALREADY_EXIST_CODE': CodeExceptionConstant.OBJECT_ALREADY_EXIST.value
         }
         self._db.transaction(collections={'write': ['permission_context']}, action=actionFunction, params=params)
 
     @debugLogger
-    def updatePermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData) -> None:
-        oldObject = self.permissionContextById(permissionContext.id())
-        if oldObject == permissionContext:
+    def updatePermissionContext(self, obj: PermissionContext, tokenData: TokenData) -> None:
+        repoObj = self.permissionContextById(obj.id())
+        if repoObj == obj:
             logger.debug(
-                f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] Object identical exception for old permission context: {oldObject}\npermission context: {permissionContext}')
+                f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] Object identical exception for old permission context: {repoObj}\npermission context: {obj}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -78,21 +78,21 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
                 UPDATE d WITH {data: @data, type: @type} IN permission_context
         '''
 
-        bindVars = {"id": permissionContext.id(), "data": permissionContext.data(), "type": permissionContext.type()}
+        bindVars = {"id": obj.id(), "data": obj.data(), "type": obj.type()}
         logger.debug(
-            f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] - Update permission context with id: {permissionContext.id()}')
+            f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] - Update permission context with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is updated
-        anObject = self.permissionContextById(permissionContext.id())
-        if anObject != permissionContext:
+        repoObj = self.permissionContextById(obj.id())
+        if repoObj != obj:
             logger.warn(
-                f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] The object permission context: {permissionContext} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'permission context: {permissionContext}')
+                f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] The object permission context: {obj} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'permission context: {obj}')
 
     @debugLogger
-    def deletePermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData):
+    def deletePermissionContext(self, obj: PermissionContext, tokenData: TokenData):
         try:
             actionFunction = '''
                 function (params) {                                            
@@ -109,17 +109,18 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
                 }
             '''
             params = {
-                'permission_context': {"id": permissionContext.id(), "data": permissionContext.data(),
-                             "type": permissionContext.type()},
+                'permission_context': {"id": obj.id(), "data": obj.data(),
+                                       "type": obj.type()},
                 'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
             }
-            self._db.transaction(collections={'write': ['permission_context', 'owned_by']}, action=actionFunction, params=params)
+            self._db.transaction(collections={'write': ['permission_context', 'owned_by']}, action=actionFunction,
+                                 params=params)
         except Exception as e:
             print(e)
-            self.permissionContextById(permissionContext.id())
+            self.permissionContextById(obj.id())
             logger.debug(
-                f'[{PermissionContextRepositoryImpl.deletePermissionContext.__qualname__}] Object could not be found exception for permission context id: {permissionContext.id()}')
-            raise ObjectCouldNotBeDeletedException(f'permission context id: {permissionContext.id()}')
+                f'[{PermissionContextRepositoryImpl.deletePermissionContext.__qualname__}] Object could not be found exception for permission context id: {obj.id()}')
+            raise ObjectCouldNotBeDeletedException(f'permission context id: {obj.id()}')
 
     @debugLogger
     def permissionContextById(self, id: str) -> PermissionContext:
@@ -140,8 +141,9 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
         return PermissionContext.createFrom(id=result[0]['id'], type=result[0]['type'], data=result[0]['data'])
 
     @debugLogger
-    def permissionContexts(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
-                        order: List[dict] = None) -> dict:
+    def permissionContexts(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
+                           resultFrom: int = 0, resultSize: int = 100,
+                           order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
             for item in order:

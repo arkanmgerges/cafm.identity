@@ -64,18 +64,18 @@ class UserApplicationService:
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='user'),
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
-        self._userService.deleteUser(user=resource, tokenData=tokenData)
+        self._userService.deleteUser(obj=resource, tokenData=tokenData)
 
     def deleteUserOneTimePassword(self, id: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         resource = self._userRepository.userById(id=id)
-        self._userRepository.deleteUserOneTimePassword(user=resource, tokenData=tokenData)
+        self._userRepository.deleteUserOneTimePassword(obj=resource, tokenData=tokenData)
 
     def setUserPassword(self, id: str, password: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         resource: User = self._userRepository.userById(id=id)
         resource.setPassword(password=password)
-        self._userRepository.setUserPassword(user=resource, tokenData=tokenData)
+        self._userRepository.setUserPassword(obj=resource, tokenData=tokenData)
 
     @debugLogger
     def userByEmailAndPassword(self, email: str, password: str):

@@ -11,21 +11,21 @@ from src.domain_model.token.TokenData import TokenData
 
 class OuRepository(ABC):
     @abstractmethod
-    def createOu(self, ou: Ou, tokenData: TokenData):
+    def createOu(self, obj: Ou, tokenData: TokenData):
         """Create ou
 
         Args:
-            ou (Ou): The ou that needs to be created
+            obj (Ou): The ou that needs to be created
             tokenData (TokenData): Token data that has info about the token
 
         """
 
     @abstractmethod
-    def deleteOu(self, ou: Ou, tokenData: TokenData) -> None:
+    def deleteOu(self, obj: Ou, tokenData: TokenData) -> None:
         """Delete a ou
 
         Args:
-            ou (Ou): The ou that needs to be deleted
+            obj (Ou): The ou that needs to be deleted
             tokenData (TokenData): Token data used for deleting the resource
 
         :raises:
@@ -33,11 +33,11 @@ class OuRepository(ABC):
         """
 
     @abstractmethod
-    def updateOu(self, ou: Ou, tokenData: TokenData) -> None:
+    def updateOu(self, obj: Ou, tokenData: TokenData) -> None:
         """Update a ou
 
         Args:
-            ou (Ou): The ou that needs to be updated
+            obj (Ou): The ou that needs to be updated
             tokenData (TokenData): Token data used for updating the resource
 
         :raises:

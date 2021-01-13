@@ -11,21 +11,21 @@ from src.domain_model.token.TokenData import TokenData
 
 class RealmRepository(ABC):
     @abstractmethod
-    def createRealm(self, realm: Realm, tokenData: TokenData):
+    def createRealm(self, obj: Realm, tokenData: TokenData):
         """Create realm
 
         Args:
-            realm (Realm): The realm that needs to be created
+            obj (Realm): The realm that needs to be created
             tokenData (TokenData): Token data that has info about the token
 
         """
 
     @abstractmethod
-    def deleteRealm(self, realm: Realm, tokenData: TokenData) -> None:
+    def deleteRealm(self, obj: Realm, tokenData: TokenData) -> None:
         """Delete a realm
 
         Args:
-            realm (Realm): The realm that needs to be deleted
+            obj (Realm): The realm that needs to be deleted
             tokenData (TokenData): Token data used for deleting the resource
 
         :raises:
@@ -33,11 +33,11 @@ class RealmRepository(ABC):
         """
 
     @abstractmethod
-    def updateRealm(self, realm: Realm, tokenData: TokenData) -> None:
+    def updateRealm(self, obj: Realm, tokenData: TokenData) -> None:
         """Update a realm
 
         Args:
-            realm (Realm): The realm that needs to be updated
+            obj (Realm): The realm that needs to be updated
             tokenData (TokenData): Token data used for updating the resource
 
         :raises:

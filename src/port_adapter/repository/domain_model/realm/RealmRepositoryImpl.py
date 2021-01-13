@@ -40,7 +40,7 @@ class RealmRepositoryImpl(RealmRepository):
             raise Exception(f'Could not connect to the db, message: {e}')
 
     @debugLogger
-    def createRealm(self, realm: Realm, tokenData: TokenData):
+    def createRealm(self, obj: Realm, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
         roles = tokenData.roles()
@@ -85,7 +85,7 @@ class RealmRepositoryImpl(RealmRepository):
             }
         '''
         params = {
-            'resource': {"id": realm.id(), "name": realm.name(), "type": realm.type(), "realmType": realm.realmType()},
+            'resource': {"id": obj.id(), "name": obj.name(), "type": obj.type(), "realmType": obj.realmType()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
             'rolesDocIds': rolesDocIds,
             'toTypeRole': PermissionContextConstant.ROLE.value,
@@ -94,11 +94,11 @@ class RealmRepositoryImpl(RealmRepository):
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
     @debugLogger
-    def updateRealm(self, realm: Realm, tokenData: TokenData) -> None:
-        oldObject = self.realmById(realm.id())
-        if oldObject == realm:
+    def updateRealm(self, obj: Realm, tokenData: TokenData) -> None:
+        repoObj = self.realmById(obj.id())
+        if repoObj == obj:
             logger.debug(
-                f'[{RealmRepositoryImpl.updateRealm.__qualname__}] Object identical exception for old realm: {oldObject}\nrealm: {realm}')
+                f'[{RealmRepositoryImpl.updateRealm.__qualname__}] Object identical exception for old realm: {repoObj}\nrealm: {obj}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -107,20 +107,20 @@ class RealmRepositoryImpl(RealmRepository):
                 UPDATE d WITH {name: @name} IN resource
         '''
 
-        bindVars = {"id": realm.id(), "name": realm.name()}
-        logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] - Update realm with id: {realm.id()}')
+        bindVars = {"id": obj.id(), "name": obj.name()}
+        logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] - Update realm with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is updated
-        anObject = self.realmById(realm.id())
-        if anObject != realm:
+        repoObj = self.realmById(obj.id())
+        if repoObj != obj:
             logger.warn(
-                f'[{RealmRepositoryImpl.updateRealm.__qualname__}] The object realm: {realm} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'realm: {realm}')
+                f'[{RealmRepositoryImpl.updateRealm.__qualname__}] The object realm: {obj} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'realm: {obj}')
 
     @debugLogger
-    def deleteRealm(self, realm: Realm, tokenData: TokenData):
+    def deleteRealm(self, obj: Realm, tokenData: TokenData):
         try:
             actionFunction = '''
                 function (params) {                                            
@@ -142,16 +142,16 @@ class RealmRepositoryImpl(RealmRepository):
                 }
             '''
             params = {
-                'resource': {"id": realm.id(), "name": realm.name(), "type": realm.type()},
+                'resource': {"id": obj.id(), "name": obj.name(), "type": obj.type()},
                 'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
             }
             self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
         except Exception as e:
             print(e)
-            self.realmById(realm.id())
+            self.realmById(obj.id())
             logger.debug(
-                f'[{RealmRepositoryImpl.deleteRealm.__qualname__}] Object could not be found exception for realm id: {realm.id()}')
-            raise ObjectCouldNotBeDeletedException(f'realm id: {realm.id()}')
+                f'[{RealmRepositoryImpl.deleteRealm.__qualname__}] Object could not be found exception for realm id: {obj.id()}')
+            raise ObjectCouldNotBeDeletedException(f'realm id: {obj.id()}')
 
     @debugLogger
     def realmByName(self, name: str) -> Realm:

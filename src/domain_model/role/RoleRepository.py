@@ -11,21 +11,21 @@ from src.domain_model.token.TokenData import TokenData
 
 class RoleRepository(ABC):
     @abstractmethod
-    def createRole(self, role: Role, tokenData: TokenData):
+    def createRole(self, obj: Role, tokenData: TokenData):
         """Create role
 
         Args:
-            role (Role): The role that needs to be created
+            obj (Role): The role that needs to be created
             tokenData (TokenData): Token data that has info about the token
 
         """
 
     @abstractmethod
-    def deleteRole(self, role: Role, tokenData: TokenData) -> None:
+    def deleteRole(self, obj: Role, tokenData: TokenData) -> None:
         """Delete a role
 
         Args:
-            role (Role): The role that needs to be deleted
+            obj (Role): The role that needs to be deleted
             tokenData (TokenData): Token data used for deleting the resource
 
         :raises:
@@ -33,11 +33,11 @@ class RoleRepository(ABC):
         """
 
     @abstractmethod
-    def updateRole(self, role: Role, tokenData: TokenData) -> None:
+    def updateRole(self, obj: Role, tokenData: TokenData) -> None:
         """Update a role
 
         Args:
-            role (Role): The role that needs to be updated
+            obj (Role): The role that needs to be updated
             tokenData (TokenData): Token data used for updating the resource
 
         :raises:

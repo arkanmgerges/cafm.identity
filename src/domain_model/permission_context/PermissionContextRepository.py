@@ -11,21 +11,21 @@ from src.domain_model.token.TokenData import TokenData
 
 class PermissionContextRepository(ABC):
     @abstractmethod
-    def createPermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData):
+    def createPermissionContext(self, obj: PermissionContext, tokenData: TokenData):
         """Create permission context
 
         Args:
-            permissionContext (PermissionContext): The permission context that needs to be created
+            obj (PermissionContext): The permission context that needs to be created
             tokenData (TokenData): Token data that has info about the token
 
         """
 
     @abstractmethod
-    def deletePermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData) -> None:
+    def deletePermissionContext(self, obj: PermissionContext, tokenData: TokenData) -> None:
         """Delete a permission context
 
         Args:
-            permissionContext (PermissionContext): The permission context that needs to be deleted
+            obj (PermissionContext): The permission context that needs to be deleted
             tokenData (TokenData): Token data used for deleting the resource
 
         :raises:
@@ -33,11 +33,11 @@ class PermissionContextRepository(ABC):
         """
 
     @abstractmethod
-    def updatePermissionContext(self, permissionContext: PermissionContext, tokenData: TokenData) -> None:
+    def updatePermissionContext(self, obj: PermissionContext, tokenData: TokenData) -> None:
         """Update a permission context
 
         Args:
-            permissionContext (PermissionContext): The permission context that needs to be updated
+            obj (PermissionContext): The permission context that needs to be updated
             tokenData (TokenData): Token data used for updating the resource
 
         :raises:

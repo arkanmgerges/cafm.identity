@@ -40,7 +40,7 @@ class OuRepositoryImpl(OuRepository):
             raise Exception(f'Could not connect to the db, message: {e}')
 
     @debugLogger
-    def createOu(self, ou: Ou, tokenData: TokenData):
+    def createOu(self, obj: Ou, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
         roles = tokenData.roles()
@@ -85,7 +85,7 @@ class OuRepositoryImpl(OuRepository):
             }
         '''
         params = {
-            'resource': {"id": ou.id(), "name": ou.name(), "type": ou.type()},
+            'resource': {"id": obj.id(), "name": obj.name(), "type": obj.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
             'rolesDocIds': rolesDocIds,
             'toTypeRole': PermissionContextConstant.ROLE.value,
@@ -94,7 +94,7 @@ class OuRepositoryImpl(OuRepository):
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
     @debugLogger
-    def deleteOu(self, ou: Ou, tokenData: TokenData):
+    def deleteOu(self, obj: Ou, tokenData: TokenData):
         try:
             actionFunction = '''
                 function (params) {                                            
@@ -116,23 +116,23 @@ class OuRepositoryImpl(OuRepository):
                 }
             '''
             params = {
-                'resource': {"id": ou.id(), "name": ou.name(), "type": ou.type()},
+                'resource': {"id": obj.id(), "name": obj.name(), "type": obj.type()},
                 'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
             }
             self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
         except Exception as e:
             print(e)
-            self.ouById(ou.id())
+            self.ouById(obj.id())
             logger.debug(
-                f'[{OuRepositoryImpl.deleteOu.__qualname__}] Object could not be found exception for ou id: {ou.id()}')
-            raise ObjectCouldNotBeDeletedException(f'ou id: {ou.id()}')
+                f'[{OuRepositoryImpl.deleteOu.__qualname__}] Object could not be found exception for ou id: {obj.id()}')
+            raise ObjectCouldNotBeDeletedException(f'ou id: {obj.id()}')
 
     @debugLogger
-    def updateOu(self, ou: Ou, tokenData: TokenData) -> None:
-        oldOu = self.ouById(ou.id())
-        if oldOu == ou:
+    def updateOu(self, obj: Ou, tokenData: TokenData) -> None:
+        repoObj = self.ouById(obj.id())
+        if repoObj == obj:
             logger.debug(
-                f'[{OuRepositoryImpl.updateOu.__qualname__}] Object identical exception for old ou: {oldOu}\nou: {ou}')
+                f'[{OuRepositoryImpl.updateOu.__qualname__}] Object identical exception for old ou: {repoObj}\nou: {obj}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -141,17 +141,17 @@ class OuRepositoryImpl(OuRepository):
                 UPDATE d WITH {name: @name} IN resource
         '''
 
-        bindVars = {"id": ou.id(), "name": ou.name()}
-        logger.debug(f'[{OuRepositoryImpl.updateOu.__qualname__}] - Update ou with id: {ou.id()}')
+        bindVars = {"id": obj.id(), "name": obj.name()}
+        logger.debug(f'[{OuRepositoryImpl.updateOu.__qualname__}] - Update ou with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is updated
-        aOu = self.ouById(ou.id())
-        if aOu != ou:
+        repoObj = self.ouById(obj.id())
+        if repoObj != obj:
             logger.warn(
-                f'[{OuRepositoryImpl.updateOu.__qualname__}] The object ou: {ou} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'ou: {ou}')
+                f'[{OuRepositoryImpl.updateOu.__qualname__}] The object ou: {obj} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'ou: {obj}')
 
     @debugLogger
     def ouByName(self, name: str) -> Ou:

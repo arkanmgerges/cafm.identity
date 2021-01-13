@@ -40,7 +40,7 @@ class RoleRepositoryImpl(RoleRepository):
             raise Exception(f'Could not connect to the db, message: {e}')
 
     @debugLogger
-    def createRole(self, role: Role, tokenData: TokenData):
+    def createRole(self, obj: Role, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
         roles = tokenData.roles()
@@ -85,7 +85,7 @@ class RoleRepositoryImpl(RoleRepository):
             }
         '''
         params = {
-            'resource': {"id": role.id(), "name": role.name(), "type": role.type()},
+            'resource': {"id": obj.id(), "name": obj.name(), "type": obj.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
             'rolesDocIds': rolesDocIds,
             'toTypeRole': PermissionContextConstant.ROLE.value,
@@ -94,11 +94,11 @@ class RoleRepositoryImpl(RoleRepository):
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
     @debugLogger
-    def updateRole(self, role: Role, tokenData: TokenData) -> None:
-        oldObject = self.roleById(role.id())
-        if oldObject == role:
+    def updateRole(self, obj: Role, tokenData: TokenData) -> None:
+        repoObj = self.roleById(obj.id())
+        if repoObj == obj:
             logger.debug(
-                f'[{RoleRepositoryImpl.updateRole.__qualname__}] Object identical exception for old role: {oldObject}\nrole: {role}')
+                f'[{RoleRepositoryImpl.updateRole.__qualname__}] Object identical exception for old role: {repoObj}\nrole: {obj}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -107,20 +107,20 @@ class RoleRepositoryImpl(RoleRepository):
                 UPDATE d WITH {name: @name} IN resource
         '''
 
-        bindVars = {"id": role.id(), "name": role.name()}
-        logger.debug(f'[{RoleRepositoryImpl.updateRole.__qualname__}] - Update role with id: {role.id()}')
+        bindVars = {"id": obj.id(), "name": obj.name()}
+        logger.debug(f'[{RoleRepositoryImpl.updateRole.__qualname__}] - Update role with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is updated
-        anObject = self.roleById(role.id())
-        if anObject != role:
+        repoObj = self.roleById(obj.id())
+        if repoObj != obj:
             logger.warn(
-                f'[{RoleRepositoryImpl.updateRole.__qualname__}] The object role: {role} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'role: {role}')
+                f'[{RoleRepositoryImpl.updateRole.__qualname__}] The object role: {obj} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'role: {obj}')
 
     @debugLogger
-    def deleteRole(self, role: Role, tokenData: TokenData):
+    def deleteRole(self, obj: Role, tokenData: TokenData):
         try:
             actionFunction = '''
                 function (params) {                                            
@@ -142,16 +142,16 @@ class RoleRepositoryImpl(RoleRepository):
                 }
             '''
             params = {
-                'resource': {"id": role.id(), "name": role.name(), "type": role.type()},
+                'resource': {"id": obj.id(), "name": obj.name(), "type": obj.type()},
                 'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
             }
             self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
         except Exception as e:
             print(e)
-            self.roleById(role.id())
+            self.roleById(obj.id())
             logger.debug(
-                f'[{RoleRepositoryImpl.deleteRole.__qualname__}] Object could not be found exception for role id: {role.id()}')
-            raise ObjectCouldNotBeDeletedException(f'role id: {role.id()}')
+                f'[{RoleRepositoryImpl.deleteRole.__qualname__}] Object could not be found exception for role id: {obj.id()}')
+            raise ObjectCouldNotBeDeletedException(f'role id: {obj.id()}')
 
     @debugLogger
     def roleByName(self, name: str) -> Role:

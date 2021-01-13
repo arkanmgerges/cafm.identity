@@ -30,16 +30,16 @@ class OuService:
             if objectOnly:
                 return Ou.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
             else:
-                ou = Ou.createFromObject(obj=obj, publishEvent=True)
-                self._repo.createOu(ou=ou, tokenData=tokenData)
-                return ou
+                obj = Ou.createFromObject(obj=obj, publishEvent=True)
+                self._repo.createOu(obj=obj, tokenData=tokenData)
+                return obj
 
     @debugLogger
-    def deleteOu(self, ou:Ou, tokenData: TokenData = None):
-        self._repo.deleteOu(ou, tokenData=tokenData)
-        ou.publishDelete()
+    def deleteOu(self, obj:Ou, tokenData: TokenData = None):
+        self._repo.deleteOu(obj=obj, tokenData=tokenData)
+        obj.publishDelete()
 
     @debugLogger
     def updateOu(self, oldObject:Ou, newObject: Ou, tokenData: TokenData = None):
-        self._repo.updateOu(newObject, tokenData=tokenData)
+        self._repo.updateOu(obj=newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)

@@ -10,7 +10,6 @@ from pyArango.query import AQLQuery
 import src.port_adapter.AppDi as AppDi
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.permission.PermissionRepository import PermissionRepository
-from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.resource.exception.CodeExceptionConstant import CodeExceptionConstant
@@ -41,7 +40,7 @@ class PermissionRepositoryImpl(PermissionRepository):
                 f'Could not connect to the db, message: {e}')
 
     @debugLogger
-    def createPermission(self, permission: Permission, tokenData: TokenData):
+    def createPermission(self, obj: Permission, tokenData: TokenData):
         actionFunction = '''
             function (params) {                                            
                 let db = require('@arangodb').db;
@@ -57,19 +56,19 @@ class PermissionRepositoryImpl(PermissionRepository):
             }
         '''
         params = {
-            'permission': {"id": permission.id(), "name": permission.name(),
-                           "allowed_actions": permission.allowedActions(),
-                           "denied_actions": permission.deniedActions()},
+            'permission': {"id": obj.id(), "name": obj.name(),
+                           "allowed_actions": obj.allowedActions(),
+                           "denied_actions": obj.deniedActions()},
             'OBJECT_ALREADY_EXIST_CODE': CodeExceptionConstant.OBJECT_ALREADY_EXIST.value
         }
         self._db.transaction(collections={'write': ['permission', 'owned_by']}, action=actionFunction, params=params)
 
     @debugLogger
-    def updatePermission(self, permission: Permission, tokenData: TokenData) -> None:
-        oldObject = self.permissionById(permission.id())
-        if oldObject == permission:
+    def updatePermission(self, obj: Permission, tokenData: TokenData) -> None:
+        repoObj = self.permissionById(obj.id())
+        if repoObj == obj:
             logger.debug(
-                f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] Object identical exception for old permission: {oldObject}\npermission: {permission}')
+                f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] Object identical exception for old permission: {repoObj}\npermission: {obj}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -78,22 +77,22 @@ class PermissionRepositoryImpl(PermissionRepository):
                 UPDATE d WITH {name: @name, allowed_actions: @allowed_actions, denied_actions: @denied_actions} IN permission
         '''
 
-        bindVars = {"id": permission.id(), "name": permission.name(), "allowed_actions": permission.allowedActions(),
-                    "denied_actions": permission.deniedActions()}
+        bindVars = {"id": obj.id(), "name": obj.name(), "allowed_actions": obj.allowedActions(),
+                    "denied_actions": obj.deniedActions()}
         logger.debug(
-            f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] - Update permission with id: {permission.id()}')
+            f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] - Update permission with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is updated
-        anObject = self.permissionById(permission.id())
-        if anObject != permission:
+        repoObj = self.permissionById(obj.id())
+        if repoObj != obj:
             logger.warn(
-                f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] The object permission: {permission} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'permission: {permission}')
+                f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] The object permission: {obj} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'permission: {obj}')
 
     @debugLogger
-    def deletePermission(self, permission: Permission, tokenData: TokenData):
+    def deletePermission(self, obj: Permission, tokenData: TokenData):
         try:
             actionFunction = '''
                 function (params) {                                            
@@ -110,16 +109,17 @@ class PermissionRepositoryImpl(PermissionRepository):
                 }
             '''
             params = {
-                'permission': {"id": permission.id(), "name": permission.name()},
+                'permission': {"id": obj.id(), "name": obj.name()},
                 'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
             }
-            self._db.transaction(collections={'write': ['permission', 'owned_by']}, action=actionFunction, params=params)
+            self._db.transaction(collections={'write': ['permission', 'owned_by']}, action=actionFunction,
+                                 params=params)
         except Exception as e:
             print(e)
-            self.permissionById(permission.id())
+            self.permissionById(obj.id())
             logger.debug(
-                f'[{PermissionRepositoryImpl.deletePermission.__qualname__}] Object could not be found exception for permission id: {permission.id()}')
-            raise ObjectCouldNotBeDeletedException(f'permission id: {permission.id()}')
+                f'[{PermissionRepositoryImpl.deletePermission.__qualname__}] Object could not be found exception for permission id: {obj.id()}')
+            raise ObjectCouldNotBeDeletedException(f'permission id: {obj.id()}')
 
     @debugLogger
     def permissionByName(self, name: str) -> Permission:
@@ -159,8 +159,9 @@ class PermissionRepositoryImpl(PermissionRepository):
                                      allowedActions=result[0]['allowed_actions'])
 
     @debugLogger
-    def permissions(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
-                        order: List[dict] = None) -> dict:
+    def permissions(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
+                    resultFrom: int = 0, resultSize: int = 100,
+                    order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
             for item in order:
@@ -178,6 +179,6 @@ class PermissionRepositoryImpl(PermissionRepository):
         for x in items:
             allowedActions = x['allowed_actions'] if 'allowed_actions' in x else []
             deniedActions = x['denied_actions'] if 'denied_actions' in x else []
-            objectItems.append(Permission.createFrom(id=x['id'], name=x['name'], allowedActions=allowedActions, deniedActions=deniedActions))
+            objectItems.append(Permission.createFrom(id=x['id'], name=x['name'], allowedActions=allowedActions,
+                                                     deniedActions=deniedActions))
         return {"items": objectItems, "itemCount": itemCount}
-

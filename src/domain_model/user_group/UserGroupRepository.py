@@ -11,21 +11,21 @@ from src.domain_model.user_group.UserGroup import UserGroup
 
 class UserGroupRepository(ABC):
     @abstractmethod
-    def createUserGroup(self, userGroup: UserGroup, tokenData: TokenData):
+    def createUserGroup(self, obj: UserGroup, tokenData: TokenData):
         """Create user group
 
         Args:
-            userGroup (UserGroup): The user group that needs to be created
+            obj (UserGroup): The user group that needs to be created
             tokenData (TokenData): Token data that has info about the token
 
         """
 
     @abstractmethod
-    def deleteUserGroup(self, userGroup: UserGroup, tokenData: TokenData) -> None:
+    def deleteUserGroup(self, obj: UserGroup, tokenData: TokenData) -> None:
         """Delete a user group
 
         Args:
-            userGroup (UserGroup): The user group that needs to be deleted
+            obj (UserGroup): The user group that needs to be deleted
             tokenData (TokenData): Token data used for deleting the resource
 
         :raises:
@@ -33,11 +33,11 @@ class UserGroupRepository(ABC):
         """
 
     @abstractmethod
-    def updateUserGroup(self, userGroup: UserGroup, tokenData: TokenData) -> None:
+    def updateUserGroup(self, obj: UserGroup, tokenData: TokenData) -> None:
         """Update a user group
 
         Args:
-            userGroup (UserGroup): The user group that needs to be updated
+            obj (UserGroup): The user group that needs to be updated
             tokenData (TokenData): Token data used for updating the resource
 
         :raises:

@@ -63,7 +63,7 @@ class RealmApplicationService:
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='realm'),
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
-        self._realmService.deleteRealm(realm=resource, tokenData=tokenData)
+        self._realmService.deleteRealm(obj=resource, tokenData=tokenData)
 
     @debugLogger
     def realmByName(self, name: str, token: str = ''):

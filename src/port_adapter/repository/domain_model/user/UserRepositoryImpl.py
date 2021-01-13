@@ -40,7 +40,7 @@ class UserRepositoryImpl(UserRepository):
             raise Exception(f'Could not connect to the db, message: {e}')
 
     @debugLogger
-    def createUser(self, user: User, tokenData: TokenData):
+    def createUser(self, obj: User, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
         roles = tokenData.roles()
@@ -86,7 +86,7 @@ class UserRepositoryImpl(UserRepository):
             }
         '''
         params = {
-            'resource': {"id": user.id(), "email": user.email(), "password": user.password(), "type": user.type()},
+            'resource': {"id": obj.id(), "email": obj.email(), "password": obj.password(), "type": obj.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
             'rolesDocIds': rolesDocIds,
             'toTypeRole': PermissionContextConstant.ROLE.value,
@@ -96,11 +96,11 @@ class UserRepositoryImpl(UserRepository):
                              waitForSync=True)
 
     @debugLogger
-    def updateUser(self, user: User, tokenData: TokenData) -> None:
-        oldObject = self.userById(user.id())
-        if oldObject == user:
+    def updateUser(self, obj: User, tokenData: TokenData) -> None:
+        repoObj = self.userById(obj.id())
+        if repoObj == obj:
             logger.debug(
-                f'[{UserRepositoryImpl.updateUser.__qualname__}] Object identical exception for old user: {oldObject}\nuser: {user}')
+                f'[{UserRepositoryImpl.updateUser.__qualname__}] Object identical exception for old user: {repoObj}\nuser: {obj}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -109,20 +109,20 @@ class UserRepositoryImpl(UserRepository):
                 UPDATE d WITH {email: @email} IN resource
         '''
 
-        bindVars = {"id": user.id(), "email": user.email()}
-        logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {user.id()}')
+        bindVars = {"id": obj.id(), "email": obj.email()}
+        logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is updated
-        anObject = self.userById(user.id())
-        if anObject != user:
+        repoObj = self.userById(obj.id())
+        if repoObj != obj:
             logger.warn(
-                f'[{UserRepositoryImpl.updateUser.__qualname__}] The object user: {user} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'user: {user.toMap()}')
+                f'[{UserRepositoryImpl.updateUser.__qualname__}] The object user: {obj} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'user: {obj.toMap()}')
 
     @debugLogger
-    def deleteUser(self, user: User, tokenData: TokenData):
+    def deleteUser(self, obj: User, tokenData: TokenData):
         try:
             actionFunction = '''
                 function (params) {                                            
@@ -144,20 +144,20 @@ class UserRepositoryImpl(UserRepository):
                 }
             '''
             params = {
-                'resource': {"id": user.id(), "email": user.email(), "type": user.type()},
+                'resource': {"id": obj.id(), "email": obj.email(), "type": obj.type()},
                 'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
             }
             self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
         except Exception as e:
             print(e)
-            self.userById(user.id())
+            self.userById(obj.id())
             logger.debug(
-                f'[{UserRepositoryImpl.deleteUser.__qualname__}] Object could not be found exception for user id: {user.id()}')
-            raise ObjectCouldNotBeDeletedException(f'user id: {user.id()}')
+                f'[{UserRepositoryImpl.deleteUser.__qualname__}] Object could not be found exception for user id: {obj.id()}')
+            raise ObjectCouldNotBeDeletedException(f'user id: {obj.id()}')
 
     @debugLogger
-    def deleteUserOneTimePassword(self, user: User, tokenData: TokenData):
-        oldObject = self.userById(user.id())
+    def deleteUserOneTimePassword(self, obj: User, tokenData: TokenData):
+        oldObject = self.userById(obj.id())
         if oldObject.isPasswordOneTimePassword():
             aql = '''
                         FOR d IN resource
@@ -165,21 +165,21 @@ class UserRepositoryImpl(UserRepository):
                             UPDATE d WITH {password: ""} IN resource
                     '''
 
-            logger.debug(f'[{UserRepositoryImpl.deleteUserOneTimePassword.__qualname__}] - Delete user password with user id: {user.id()}')
-            bindVars = {"id": user.id()}
+            logger.debug(f'[{UserRepositoryImpl.deleteUserOneTimePassword.__qualname__}] - Delete user password with user id: {obj.id()}')
+            bindVars = {"id": obj.id()}
             queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
             _ = queryResult.result
 
     @debugLogger
-    def setUserPassword(self, user: User, tokenData: TokenData):
+    def setUserPassword(self, obj: User, tokenData: TokenData):
         aql = '''
                     FOR d IN resource
                         FILTER d.id == @id AND d.type == 'user'
                         UPDATE d WITH {password: @password} IN resource
                 '''
 
-        logger.debug(f'[{UserRepositoryImpl.setUserPassword.__qualname__}] - Set user password with user id: {user.id()}')
-        bindVars = {"id": user.id(), "password": user.password()}
+        logger.debug(f'[{UserRepositoryImpl.setUserPassword.__qualname__}] - Set user password with user id: {obj.id()}')
+        bindVars = {"id": obj.id(), "password": obj.password()}
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 

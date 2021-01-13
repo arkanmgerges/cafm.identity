@@ -28,16 +28,16 @@ class PermissionService:
             if objectOnly:
                 return Permission.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
             else:
-                permission = Permission.createFromObject(obj=obj, publishEvent=True)
-                self._repo.createPermission(permission=permission, tokenData=tokenData)
-                return permission
+                obj = Permission.createFromObject(obj=obj, publishEvent=True)
+                self._repo.createPermission(obj=obj, tokenData=tokenData)
+                return obj
 
     @debugLogger
-    def deletePermission(self, permission: Permission, tokenData: TokenData = None):
-        self._repo.deletePermission(permission, tokenData=tokenData)
-        permission.publishDelete()
+    def deletePermission(self, obj: Permission, tokenData: TokenData = None):
+        self._repo.deletePermission(obj=obj, tokenData=tokenData)
+        obj.publishDelete()
 
     @debugLogger
     def updatePermission(self, oldObject: Permission, newObject: Permission, tokenData: TokenData = None):
-        self._repo.updatePermission(newObject, tokenData=tokenData)
+        self._repo.updatePermission(obj=newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)

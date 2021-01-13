@@ -63,7 +63,7 @@ class ProjectApplicationService:
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='project'),
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
-        self._projectService.deleteProject(project=resource, tokenData=tokenData)
+        self._projectService.deleteProject(obj=resource, tokenData=tokenData)
 
     @debugLogger
     def projectByName(self, name: str, token: str = ''):

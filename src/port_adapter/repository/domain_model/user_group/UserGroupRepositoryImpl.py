@@ -40,7 +40,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
             raise Exception(f'Could not connect to the db, message: {e}')
 
     @debugLogger
-    def createUserGroup(self, userGroup: UserGroup, tokenData: TokenData):
+    def createUserGroup(self, obj: UserGroup, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
         roles = tokenData.roles()
@@ -76,7 +76,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
             }
         '''
         params = {
-            'resource': {"id": userGroup.id(), "name": userGroup.name(), "type": userGroup.type()},
+            'resource': {"id": obj.id(), "name": obj.name(), "type": obj.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
             'rolesDocIds': rolesDocIds,
             'toTypeRole': PermissionContextConstant.ROLE.value,
@@ -85,11 +85,11 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
     @debugLogger
-    def updateUserGroup(self, userGroup: UserGroup, tokenData: TokenData) -> None:
-        oldObject = self.userGroupById(userGroup.id())
-        if oldObject == userGroup:
+    def updateUserGroup(self, obj: UserGroup, tokenData: TokenData) -> None:
+        repoObj = self.userGroupById(obj.id())
+        if repoObj == obj:
             logger.debug(
-                f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] Object identical exception for old user group: {oldObject}\nuser group: {userGroup}')
+                f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] Object identical exception for old user group: {repoObj}\nuser group: {obj}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -98,21 +98,21 @@ class UserGroupRepositoryImpl(UserGroupRepository):
                 UPDATE d WITH {name: @name} IN resource
         '''
 
-        bindVars = {"id": userGroup.id(), "name": userGroup.name()}
+        bindVars = {"id": obj.id(), "name": obj.name()}
         logger.debug(
-            f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] - Update user group with id: {userGroup.id()}')
+            f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] - Update user group with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is updated
-        anObject = self.userGroupById(userGroup.id())
-        if anObject != userGroup:
+        repoObj = self.userGroupById(obj.id())
+        if repoObj != obj:
             logger.warn(
-                f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] The object user group: {userGroup} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'user group: {userGroup}')
+                f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] The object user group: {obj} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'user group: {obj}')
 
     @debugLogger
-    def deleteUserGroup(self, userGroup: UserGroup, tokenData: TokenData):
+    def deleteUserGroup(self, obj: UserGroup, tokenData: TokenData):
         try:
             actionFunction = '''
                 function (params) {                                            
@@ -134,16 +134,16 @@ class UserGroupRepositoryImpl(UserGroupRepository):
                 }
             '''
             params = {
-                'resource': {"id": userGroup.id(), "name": userGroup.name(), "type": userGroup.type()},
+                'resource': {"id": obj.id(), "name": obj.name(), "type": obj.type()},
                 'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
             }
             self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
         except Exception as e:
             print(e)
-            self.userGroupById(userGroup.id())
+            self.userGroupById(obj.id())
             logger.debug(
-                f'[{UserGroupRepositoryImpl.deleteUserGroup.__qualname__}] Object could not be found exception for user group id: {userGroup.id()}')
-            raise ObjectCouldNotBeDeletedException(f'user group id: {userGroup.id()}')
+                f'[{UserGroupRepositoryImpl.deleteUserGroup.__qualname__}] Object could not be found exception for user group id: {obj.id()}')
+            raise ObjectCouldNotBeDeletedException(f'user group id: {obj.id()}')
 
     @debugLogger
     def userGroupByName(self, name: str) -> UserGroup:

@@ -26,16 +26,16 @@ class UserGroupService:
             if objectOnly:
                 return UserGroup.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
             else:
-                userGroup = UserGroup.createFromObject(obj=obj, publishEvent=True)
-                self._repo.createUserGroup(userGroup=userGroup, tokenData=tokenData)
-                return userGroup
+                obj = UserGroup.createFromObject(obj=obj, publishEvent=True)
+                self._repo.createUserGroup(obj=obj, tokenData=tokenData)
+                return obj
 
     @debugLogger
-    def deleteUserGroup(self, userGroup: UserGroup, tokenData: TokenData = None):
-        self._repo.deleteUserGroup(userGroup, tokenData=tokenData)
-        userGroup.publishDelete()
+    def deleteUserGroup(self, obj: UserGroup, tokenData: TokenData = None):
+        self._repo.deleteUserGroup(obj=obj, tokenData=tokenData)
+        obj.publishDelete()
 
     @debugLogger
     def updateUserGroup(self, oldObject: UserGroup, newObject: UserGroup, tokenData: TokenData = None):
-        self._repo.updateUserGroup(newObject, tokenData=tokenData)
+        self._repo.updateUserGroup(obj=newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)

@@ -63,7 +63,7 @@ class RoleApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=role),
                                         tokenData=tokenData)
 
-        self._roleService.deleteRole(role=role, tokenData=tokenData)
+        self._roleService.deleteRole(obj=role, tokenData=tokenData)
 
     @debugLogger
     def roleByName(self, name: str, token: str = ''):

@@ -73,7 +73,7 @@ class PermissionContextApplicationService:
                                         requestedObject=RequestedAuthzObject(
                                             objType=RequestedAuthzObjectEnum.PERMISSION_CONTEXT, obj=resource),
                                         tokenData=tokenData)
-        self._permissionContextService.deletePermissionContext(permissionContext=resource, tokenData=tokenData)
+        self._permissionContextService.deletePermissionContext(obj=resource, tokenData=tokenData)
 
     @debugLogger
     def permissionContextById(self, id: str, token: str = ''):

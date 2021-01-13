@@ -26,16 +26,16 @@ class UserService:
             if objectOnly:
                 return User.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
             else:
-                user = User.createFromObject(obj=obj, publishEvent=True)
-                self._repo.createUser(user=user, tokenData=tokenData)
-                return user
+                obj = User.createFromObject(obj=obj, publishEvent=True)
+                self._repo.createUser(obj=obj, tokenData=tokenData)
+                return obj
 
     @debugLogger
-    def deleteUser(self, user: User, tokenData: TokenData = None):
-        self._repo.deleteUser(user, tokenData=tokenData)
-        user.publishDelete()
+    def deleteUser(self, obj: User, tokenData: TokenData = None):
+        self._repo.deleteUser(obj, tokenData=tokenData)
+        obj.publishDelete()
 
     @debugLogger
     def updateUser(self, oldObject: User, newObject: User, tokenData: TokenData = None):
-        self._repo.updateUser(newObject, tokenData=tokenData)
+        self._repo.updateUser(obj=newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)

@@ -41,7 +41,7 @@ class ProjectRepositoryImpl(ProjectRepository):
                 f'Could not connect to the db, message: {e}')
 
     @debugLogger
-    def createProject(self, project: Project, tokenData: TokenData):
+    def createProject(self, obj: Project, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
         roles = tokenData.roles()
@@ -86,7 +86,7 @@ class ProjectRepositoryImpl(ProjectRepository):
             }
         '''
         params = {
-            'resource': {"id": project.id(), "name": project.name(), "type": project.type()},
+            'resource': {"id": obj.id(), "name": obj.name(), "type": obj.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
             'rolesDocIds': rolesDocIds,
             'toTypeRole': PermissionContextConstant.ROLE.value,
@@ -95,11 +95,11 @@ class ProjectRepositoryImpl(ProjectRepository):
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
     @debugLogger
-    def updateProject(self, project: Project, tokenData: TokenData) -> None:
-        oldObject = self.projectById(project.id())
-        if oldObject == project:
+    def updateProject(self, obj: Project, tokenData: TokenData) -> None:
+        repoObj = self.projectById(obj.id())
+        if repoObj == obj:
             logger.debug(
-                f'[{ProjectRepositoryImpl.updateProject.__qualname__}] Object identical exception for old project: {oldObject}\nproject: {project}')
+                f'[{ProjectRepositoryImpl.updateProject.__qualname__}] Object identical exception for old project: {repoObj}\nproject: {obj}')
             raise ObjectIdenticalException()
 
         aql = '''
@@ -108,20 +108,20 @@ class ProjectRepositoryImpl(ProjectRepository):
                 UPDATE d WITH {name: @name} IN resource
         '''
 
-        bindVars = {"id": project.id(), "name": project.name()}
-        logger.debug(f'[{ProjectRepositoryImpl.updateProject.__qualname__}] - Update project with id: {project.id()}')
+        bindVars = {"id": obj.id(), "name": obj.name()}
+        logger.debug(f'[{ProjectRepositoryImpl.updateProject.__qualname__}] - Update project with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
 
         # Check if it is updated
-        anObject = self.projectById(project.id())
-        if anObject != project:
+        repoObj = self.projectById(obj.id())
+        if repoObj != obj:
             logger.warn(
-                f'[{ProjectRepositoryImpl.updateProject.__qualname__}] The object project: {project} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'project: {project}')
+                f'[{ProjectRepositoryImpl.updateProject.__qualname__}] The object project: {obj} could not be updated in the database')
+            raise ObjectCouldNotBeUpdatedException(f'project: {obj}')
 
     @debugLogger
-    def deleteProject(self, project: Project, tokenData: TokenData):
+    def deleteProject(self, obj: Project, tokenData: TokenData):
         try:
             actionFunction = '''
                 function (params) {                                            
@@ -143,16 +143,16 @@ class ProjectRepositoryImpl(ProjectRepository):
                 }
             '''
             params = {
-                'resource': {"id": project.id(), "name": project.name(), "type": project.type()},
+                'resource': {"id": obj.id(), "name": obj.name(), "type": obj.type()},
                 'OBJECT_DOES_NOT_EXIST_CODE': CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value
             }
             self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
         except Exception as e:
             print(e)
-            self.projectById(project.id())
+            self.projectById(obj.id())
             logger.debug(
-                f'[{ProjectRepositoryImpl.deleteProject.__qualname__}] Object could not be found exception for project id: {project.id()}')
-            raise ObjectCouldNotBeDeletedException(f'project id: {project.id()}')
+                f'[{ProjectRepositoryImpl.deleteProject.__qualname__}] Object could not be found exception for project id: {obj.id()}')
+            raise ObjectCouldNotBeDeletedException(f'project id: {obj.id()}')
 
     @debugLogger
     def projectByName(self, name: str) -> Project:

@@ -65,7 +65,7 @@ class OuApplicationService:
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
 
-        self._ouService.deleteOu(ou=resource, tokenData=tokenData)
+        self._ouService.deleteOu(obj=resource, tokenData=tokenData)
 
     @debugLogger
     def ouByName(self, name: str, token: str = ''):

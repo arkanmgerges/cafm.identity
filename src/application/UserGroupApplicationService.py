@@ -63,7 +63,7 @@ class UserGroupApplicationService:
                                         requestedContextData=ResourceTypeContextDataRequest(resourceType='userGroup'),
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
-        self._userGroupService.deleteUserGroup(userGroup=resource, tokenData=tokenData)
+        self._userGroupService.deleteUserGroup(obj=resource, tokenData=tokenData)
 
     @debugLogger
     def userGroupByName(self, name: str, token: str = ''):
