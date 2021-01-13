@@ -75,6 +75,17 @@ services:
     depends_on:
       - cafm-identity-server
 
+  cafm-identity-import-data-script:
+    image: arangodb/arangodb:3.7.2.1
+    command: sh src/resource/script/import_maxmind_data.sh
+    working_dir: /app
+    networks:
+      - cafm-infra_default
+    volumes:
+      - ../../..:/app
+    environment:
+      CAFM_IDENTITY_ARANGODB_PASSWORD: ${CAFM_IDENTITY_ARANGODB_PASSWORD}
+
 networks:
   cafm-infra_default:
     external: true
