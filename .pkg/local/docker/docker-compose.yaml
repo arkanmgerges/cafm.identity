@@ -75,7 +75,7 @@ services:
     depends_on:
       - cafm-identity-server
 
-  cafm-identity-import-data-script:
+  cafm-identity-import-maxmind-data-script:
     image: arangodb/arangodb:3.7.2.1
     command: sh src/resource/script/import_maxmind_data.sh
     working_dir: /app
