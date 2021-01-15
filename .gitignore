@@ -130,3 +130,5 @@ dmypy.json
 
 # user files
 __test_*
+src/resource/graph_data/*.dot
+src/resource/graph_data/*.mmd

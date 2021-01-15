@@ -4,8 +4,6 @@
 import json
 import time
 
-import src.port_adapter.AppDi as AppDi
-from src.application.UserApplicationService import UserApplicationService
 from src.domain_model.event.EventConstant import CommonEventConstant
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
