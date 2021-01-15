@@ -58,17 +58,17 @@ class CountryRepositoryImpl(CountryRepository):
         items = result['items']
         itemCount = len(items)
         items = items[resultFrom:resultFrom + resultSize]
-        return {"items": [Country.createFrom(id=x['id'], geoNameId=x['geo_name_id'], localeCode=x['locale_code'],
+        return {"items": [Country.createFrom(geoNameId=x['geoname_id'], localeCode=x['locale_code'],
                                              continentCode=x['continent_code'], continentName=x['continent_name'],
                                              countryIsoCode=x['country_iso_code'], countryName=x['country_name'],
                                              isInEuropeanUnion=x['is_in_european_union']) for x in items],
                 "itemCount": itemCount}
 
     @debugLogger
-    def countryById(self, id: str) -> Country:
+    def countryById(self, id: int) -> Country:
         aql = '''
             FOR d IN country
-                FILTER d.id == @id
+                FILTER d.geoname_id == @id
                 RETURN d
         '''
 
@@ -78,14 +78,14 @@ class CountryRepositoryImpl(CountryRepository):
         if len(result) == 0:
             logger.debug(f'[{CountryRepositoryImpl.countryById.__qualname__}] country id: {id}')
             raise CountryDoesNotExistException(f'country id: {id}')
-        return Country.createFrom(id=result[0]['id'], geoNameId=result[0]['geo_name_id'],
+        return Country.createFrom(geoNameId=result[0]['geoname_id'],
                                   localeCode=result[0]['locale_code'], continentCode=result[0]['continent_code'],
                                   continentName=result[0]['continent_name'],
                                   countryIsoCode=result[0]['country_iso_code'], countryName=result[0]['country_name'],
                                   isInEuropeanUnion=result[0]['is_in_european_union'])
 
     @debugLogger
-    def citiesByCountryId(self, id: str = '', resultFrom: int = 0, resultSize: int = 100,
+    def citiesByCountryId(self, id: int = '', resultFrom: int = 0, resultSize: int = 100,
                           order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
@@ -96,7 +96,7 @@ class CountryRepositoryImpl(CountryRepository):
             LET ds = (FOR u IN country 
                         FOR c IN city 
                             FILTER u.country_iso_code == c.country_iso_code 
-                            FILTER u.id == @id 
+                            FILTER u.geoname_id == @id 
                             #sortData
                             RETURN c)
             RETURN {items: ds}
@@ -116,25 +116,23 @@ class CountryRepositoryImpl(CountryRepository):
         itemCount = len(items)
         items = items[resultFrom:resultFrom + resultSize]
 
-        return {"items": [City.createFrom(id=x['id'], geoNameId=x['geo_name_id'], localeCode=x['locale_code'],
+        return {"items": [City.createFrom(geoNameId=x['geoname_id'], localeCode=x['locale_code'],
                                           continentCode=x['continent_code'], continentName=x['continent_name'],
                                           countryIsoCode=x['country_iso_code'], countryName=x['country_name'],
-                                          subdivisionOneIsoCode=x['subdivision_one_iso_code'],
-                                          subdivisionOneIsoName=x['subdivision_one_iso_name'],
-                                          subdivisionTwoIsoCode=x['subdivision_two_iso_code'],
-                                          subdivisionTwoIsoName=x['subdivision_two_iso_name'], cityName=x['city_name'],
-                                          metroCode=x['metro_code'], timeZone=x['time_zone'],
-                                          isInEuropeanUnion=x['is_in_european_union']) for x in items],
+                                          subdivisionOneIsoCode=x['subdivision_1_iso_code'],
+                                          subdivisionOneIsoName=x['subdivision_1_name'], cityName=x['city_name'],
+                                          timeZone=x['time_zone'], isInEuropeanUnion=x['is_in_european_union']) for x in
+                          items],
                 "itemCount": itemCount}
 
     @debugLogger
-    def cityByCountryId(self, countryId: str = '', cityId: str = '') -> City:
+    def cityByCountryId(self, countryId: int = '', cityId: int = '') -> City:
         aql = '''
             FOR u IN country 
                 FOR c IN city 
                     FILTER u.country_iso_code == c.country_iso_code 
-                    FILTER u.id == @countryID
-                    FILTER c.id == @cityID 
+                    FILTER u.geoname_id == @countryID
+                    FILTER c.geoname_id == @cityID 
                     RETURN c
                     
         '''
@@ -142,18 +140,16 @@ class CountryRepositoryImpl(CountryRepository):
         bindVars = {"countryID": countryId, "cityID": cityId}
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
+
         if len(result) == 0:
             logger.debug(
                 f'[{CountryRepositoryImpl.cityByCountryId.__qualname__}] country id: {countryId}, city id: {cityId}')
             raise CountryDoesNotExistException(f'country id: {countryId}, city id: {cityId}')
 
-        return City.createFrom(id=result[0]['id'], geoNameId=result[0]['geo_name_id'],
-                               localeCode=result[0]['locale_code'], continentCode=result[0]['continent_code'],
-                               continentName=result[0]['continent_name'], countryIsoCode=result[0]['country_iso_code'],
-                               countryName=result[0]['country_name'],
-                               subdivisionOneIsoCode=result[0]['subdivision_one_iso_code'],
-                               subdivisionOneIsoName=result[0]['subdivision_one_iso_name'],
-                               subdivisionTwoIsoCode=result[0]['subdivision_two_iso_code'],
-                               subdivisionTwoIsoName=result[0]['subdivision_two_iso_name'],
-                               cityName=result[0]['city_name'], metroCode=result[0]['metro_code'],
-                               timeZone=result[0]['time_zone'], isInEuropeanUnion=result[0]['is_in_european_union'])
+        return City.createFrom(geoNameId=result[0]['geoname_id'], localeCode=result[0]['locale_code'],
+                               continentCode=result[0]['continent_code'], continentName=result[0]['continent_name'],
+                               countryIsoCode=result[0]['country_iso_code'], countryName=result[0]['country_name'],
+                               subdivisionOneIsoCode=result[0]['subdivision_1_iso_code'],
+                               subdivisionOneIsoName=result[0]['subdivision_1_name'],
+                               cityName=result[0]['city_name'], timeZone=result[0]['time_zone'],
+                               isInEuropeanUnion=result[0]['is_in_european_union'])

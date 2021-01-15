@@ -24,9 +24,9 @@ class CountryApplicationService:
         return resource
 
     @debugLogger
-    def citiesByCountryId(self, id: str, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
+    def citiesByCountryId(self, id: int, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
         return self._countryRepository.citiesByCountryId(id=id, resultFrom=resultFrom, resultSize=resultSize, order=order)
 
     @debugLogger
-    def cityByCountryId(self, countryId: str, cityId: str):
+    def cityByCountryId(self, countryId: int, cityId: int):
         return self._countryRepository.cityByCountryId(countryId=countryId, cityId=cityId)

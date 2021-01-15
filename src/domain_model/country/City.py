@@ -9,12 +9,11 @@ from src.resource.logging.logger import logger
 
 
 class City(Resource):
-    def __init__(self, id: str = None, geoNameId: str = '', localeCode: str = '', continentCode: str = '',
-                 continentName: str = '', countryIsoCode: str = '', countryName: str = '',
-                 subdivisionOneIsoCode: str = '', subdivisionOneIsoName: str = '', subdivisionTwoIsoCode: str = '',
-                 subdivisionTwoIsoName: str = '', cityName: str = '', metroCode: str = '', timeZone: str = '',
+    def __init__(self, geoNameId: int, localeCode: str = '', continentCode: str = '', continentName: str = '',
+                 countryIsoCode: str = '', countryName: str = '', subdivisionOneIsoCode: str = '',
+                 subdivisionOneIsoName: str = '', cityName: str = '', timeZone: str = '',
                  isInEuropeanUnion: bool = False):
-        anId = str(uuid4()) if id is None or id == '' else id
+        anId = str(uuid4())
         super().__init__(id=anId)
 
         self._geoNameId = geoNameId
@@ -25,29 +24,25 @@ class City(Resource):
         self._countryName = countryName
         self._subdivisionOneIsoCode = subdivisionOneIsoCode
         self._subdivisionOneIsoName = subdivisionOneIsoName
-        self._subdivisionTwoIsoCode = subdivisionTwoIsoCode
-        self._subdivisionTwoIsoName = subdivisionTwoIsoName
         self._cityName = cityName
-        self._metroCode = metroCode
         self._timeZone = timeZone
         self._isInEuropeanUnion = isInEuropeanUnion
 
     @classmethod
-    def createFrom(self, id: str = None, geoNameId: str = '', localeCode: str = '', continentCode: str = '',
+    def createFrom(self, geoNameId: int, localeCode: str = '', continentCode: str = '',
                    continentName: str = '', countryIsoCode: str = '', countryName: str = '',
-                   subdivisionOneIsoCode: str = '', subdivisionOneIsoName: str = '', subdivisionTwoIsoCode: str = '',
-                   subdivisionTwoIsoName: str = '', cityName: str = '', metroCode: str = '', timeZone: str = '',
+                   subdivisionOneIsoCode: str = '', subdivisionOneIsoName: str = '',
+                   cityName: str = '', timeZone: str = '',
                    isInEuropeanUnion: bool = False):
-        logger.debug(f'[{City.createFrom.__qualname__}] - with id {id}')
+        logger.debug(f'[{City.createFrom.__qualname__}] - with id {geoNameId}')
 
-        city = City(id=id, geoNameId=geoNameId, localeCode=localeCode, continentCode=continentCode,
+        city = City(geoNameId=geoNameId, localeCode=localeCode, continentCode=continentCode,
                     continentName=continentName, countryIsoCode=countryIsoCode, countryName=countryName,
                     subdivisionOneIsoCode=subdivisionOneIsoCode, subdivisionOneIsoName=subdivisionOneIsoName,
-                    subdivisionTwoIsoCode=subdivisionTwoIsoCode, subdivisionTwoIsoName=subdivisionTwoIsoName,
-                    cityName=cityName, metroCode=metroCode, timeZone=timeZone, isInEuropeanUnion=isInEuropeanUnion)
+                    cityName=cityName, timeZone=timeZone, isInEuropeanUnion=isInEuropeanUnion)
         return city
 
-    def geoNameId(self) -> str:
+    def geoNameId(self) -> int:
         return self._geoNameId
 
     def localeCode(self) -> str:
@@ -66,22 +61,13 @@ class City(Resource):
         return self._countryName
 
     def subdivisionOneIsoCode(self) -> str:
-        return self._subdivisionOneIsoCode
+        return str(self._subdivisionOneIsoCode)
 
     def subdivisionOneIsoName(self) -> str:
         return self._subdivisionOneIsoName
 
-    def subdivisionTwoIsoCode(self) -> str:
-        return self._subdivisionTwoIsoCode
-
-    def subdivisionTwoIsoName(self) -> str:
-        return self._subdivisionTwoIsoName
-
     def cityName(self) -> str:
         return self._cityName
-
-    def metroCode(self) -> str:
-        return self._metroCode
 
     def timeZone(self) -> str:
         return self._timeZone
@@ -90,7 +76,7 @@ class City(Resource):
         return self._isInEuropeanUnion
 
     def toMap(self) -> dict:
-        return {"id": self.id()}
+        return {"geoNameId": self.geoNameId()}
 
     def __repr__(self):
         return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
@@ -101,4 +87,4 @@ class City(Resource):
     def __eq__(self, other):
         if not isinstance(other, City):
             raise NotImplementedError(f'other: {other} can not be compared with City class')
-        return self.id() == other.id()
+        return self.geoNameId() == other.geoNameId()

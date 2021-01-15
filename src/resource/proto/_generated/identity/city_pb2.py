@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13identity/city.proto\x12\x15\x63\x61\x66m.identity.country\"\xe2\x02\n\x04\x43ity\x12\n\n\x02id\x18\x01 \x01(\t\x12\x11\n\tgeoNameId\x18\x02 \x01(\t\x12\x12\n\nlocaleCode\x18\x03 \x01(\t\x12\x15\n\rcontinentCode\x18\x04 \x01(\t\x12\x15\n\rcontinentName\x18\x05 \x01(\t\x12\x16\n\x0e\x63ountryIsoCode\x18\x06 \x01(\t\x12\x13\n\x0b\x63ountryName\x18\x07 \x01(\t\x12\x1d\n\x15subdivisionOneIsoCode\x18\x08 \x01(\t\x12\x1d\n\x15subdivisionOneIsoName\x18\t \x01(\t\x12\x1d\n\x15subdivisionTwoIsoCode\x18\n \x01(\t\x12\x1d\n\x15subdivisionTwoIsoName\x18\x0b \x01(\t\x12\x10\n\x08\x63ityName\x18\x0c \x01(\t\x12\x11\n\tmetroCode\x18\r \x01(\t\x12\x10\n\x08timeZone\x18\x0e \x01(\t\x12\x19\n\x11isInEuropeanUnion\x18\x0f \x01(\x08\x62\x06proto3'
+  serialized_pb=b'\n\x13identity/city.proto\x12\x15\x63\x61\x66m.identity.country\"\x85\x02\n\x04\x43ity\x12\x11\n\tgeoNameId\x18\x01 \x01(\x05\x12\x12\n\nlocaleCode\x18\x02 \x01(\t\x12\x15\n\rcontinentCode\x18\x03 \x01(\t\x12\x15\n\rcontinentName\x18\x04 \x01(\t\x12\x16\n\x0e\x63ountryIsoCode\x18\x05 \x01(\t\x12\x13\n\x0b\x63ountryName\x18\x06 \x01(\t\x12\x1d\n\x15subdivisionOneIsoCode\x18\x07 \x01(\t\x12\x1d\n\x15subdivisionOneIsoName\x18\x08 \x01(\t\x12\x10\n\x08\x63ityName\x18\t \x01(\t\x12\x10\n\x08timeZone\x18\n \x01(\t\x12\x19\n\x11isInEuropeanUnion\x18\x0b \x01(\x08\x62\x06proto3'
 )
 
 
@@ -34,106 +34,78 @@ _CITY = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='cafm.identity.country.City.id', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='geoNameId', full_name='cafm.identity.country.City.geoNameId', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='geoNameId', full_name='cafm.identity.country.City.geoNameId', index=1,
+      name='localeCode', full_name='cafm.identity.country.City.localeCode', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='localeCode', full_name='cafm.identity.country.City.localeCode', index=2,
+      name='continentCode', full_name='cafm.identity.country.City.continentCode', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='continentCode', full_name='cafm.identity.country.City.continentCode', index=3,
+      name='continentName', full_name='cafm.identity.country.City.continentName', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='continentName', full_name='cafm.identity.country.City.continentName', index=4,
+      name='countryIsoCode', full_name='cafm.identity.country.City.countryIsoCode', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='countryIsoCode', full_name='cafm.identity.country.City.countryIsoCode', index=5,
+      name='countryName', full_name='cafm.identity.country.City.countryName', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='countryName', full_name='cafm.identity.country.City.countryName', index=6,
+      name='subdivisionOneIsoCode', full_name='cafm.identity.country.City.subdivisionOneIsoCode', index=6,
       number=7, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='subdivisionOneIsoCode', full_name='cafm.identity.country.City.subdivisionOneIsoCode', index=7,
+      name='subdivisionOneIsoName', full_name='cafm.identity.country.City.subdivisionOneIsoName', index=7,
       number=8, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='subdivisionOneIsoName', full_name='cafm.identity.country.City.subdivisionOneIsoName', index=8,
+      name='cityName', full_name='cafm.identity.country.City.cityName', index=8,
       number=9, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='subdivisionTwoIsoCode', full_name='cafm.identity.country.City.subdivisionTwoIsoCode', index=9,
+      name='timeZone', full_name='cafm.identity.country.City.timeZone', index=9,
       number=10, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='subdivisionTwoIsoName', full_name='cafm.identity.country.City.subdivisionTwoIsoName', index=10,
-      number=11, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='cityName', full_name='cafm.identity.country.City.cityName', index=11,
-      number=12, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='metroCode', full_name='cafm.identity.country.City.metroCode', index=12,
-      number=13, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='timeZone', full_name='cafm.identity.country.City.timeZone', index=13,
-      number=14, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='isInEuropeanUnion', full_name='cafm.identity.country.City.isInEuropeanUnion', index=14,
-      number=15, type=8, cpp_type=7, label=1,
+      name='isInEuropeanUnion', full_name='cafm.identity.country.City.isInEuropeanUnion', index=10,
+      number=11, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -151,7 +123,7 @@ _CITY = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=47,
-  serialized_end=401,
+  serialized_end=308,
 )
 
 DESCRIPTOR.message_types_by_name['City'] = _CITY

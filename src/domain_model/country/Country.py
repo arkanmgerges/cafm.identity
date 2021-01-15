@@ -8,10 +8,10 @@ from src.resource.logging.logger import logger
 
 
 class Country(Resource):
-    def __init__(self, id: str = None, geoNameId: str = '', localeCode: str = '', continentCode: str = '',
+    def __init__(self, geoNameId: str = '', localeCode: str = '', continentCode: str = '',
                  continentName: str = '', countryIsoCode: str = '', countryName: str = '',
                  isInEuropeanUnion: bool = False):
-        anId = str(uuid4()) if id is None or id == '' else id
+        anId = str(uuid4())
         super().__init__(id=anId, type='user')
 
         self._geoNameId = geoNameId
@@ -23,11 +23,11 @@ class Country(Resource):
         self._isInEuropeanUnion = isInEuropeanUnion
 
     @classmethod
-    def createFrom(self, id: str = None, geoNameId: str = '', localeCode: str = '', continentCode: str = '',
+    def createFrom(self, geoNameId: str = '', localeCode: str = '', continentCode: str = '',
                    continentName: str = '', countryIsoCode: str = '', countryName: str = '',
                    isInEuropeanUnion: bool = False):
         logger.debug(f'[{Country.createFrom.__qualname__}] - with id {id}')
-        country = Country(id=id, geoNameId=geoNameId, localeCode=localeCode, continentCode=continentCode,
+        country = Country(geoNameId=geoNameId, localeCode=localeCode, continentCode=continentCode,
                           continentName=continentName, countryIsoCode=countryIsoCode, countryName=countryName,
                           isInEuropeanUnion=isInEuropeanUnion)
         return country
@@ -54,7 +54,7 @@ class Country(Resource):
         return self._isInEuropeanUnion
 
     def toMap(self) -> dict:
-        return {"id": self.id()}
+        return {"geoNameId": self.geoNameId()}
 
     def __repr__(self):
         return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
@@ -65,4 +65,4 @@ class Country(Resource):
     def __eq__(self, other):
         if not isinstance(other, Country):
             raise NotImplementedError(f'other: {other} can not be compared with Country class')
-        return self.id() == other.id()
+        return self.geoNameId() == other.geoNameId()

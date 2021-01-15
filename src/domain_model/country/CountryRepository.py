@@ -40,14 +40,14 @@ class CountryRepository(ABC):
         """
 
     @abstractmethod
-    def citiesByCountryId(self, id: str = '',
+    def citiesByCountryId(self, id: int = '',
                       resultFrom: int = 0,
                       resultSize: int = 100,
                       order: List[dict] = None) -> dict:
         """Get a country cities by country id
 
         Args:
-            id (str): The id of the country
+            id (int): The id of the country
             resultFrom (int): The start offset of the result item
             resultSize (int): The size of the items in the result
             order (List[dict]): A list of order e.g. [{'orderBy': 'name', 'direction': 'asc'}, {'orderBy': 'age', 'direction': 'desc'}]
@@ -57,11 +57,11 @@ class CountryRepository(ABC):
         """
 
     @abstractmethod
-    def cityByCountryId(self, countryId: str = '', cityId: str = '') -> City:
+    def cityByCountryId(self, countryId: int = '', cityId: int = '') -> City:
         """Get city by country id and city id
 
         Args:
-            countryId (str): The id of the country
+            countryId (int): The id of the country
             cityId (str): The id of the city
 
         Returns:

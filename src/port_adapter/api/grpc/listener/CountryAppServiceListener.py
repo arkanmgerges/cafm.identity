@@ -51,7 +51,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             response = CountryAppService_countriesResponse()
             response.itemCount = result['itemCount']
             for country in result['items']:
-                response.countries.add(id=country.id(), geoNameId=country.geoNameId(), localeCode=country.localeCode(),
+                response.countries.add(geoNameId=country.geoNameId(), localeCode=country.localeCode(),
                                        continentCode=country.continentCode(), continentName=country.continentName(),
                                        countryIsoCode=country.countryIsoCode(), countryName=country.countryName(),
                                        isInEuropeanUnion=country.isInEuropeanUnion())
@@ -73,7 +73,6 @@ class CountryAppServiceListener(CountryAppServiceServicer):
 
             country: Country = countryAppService.countryById(id=request.id)
             response = CountryAppService_countryByIdResponse()
-            response.country.id = country.id()
             response.country.geoNameId = country.geoNameId()
             response.country.localeCode = country.localeCode()
             response.country.continentCode = country.continentCode()
@@ -109,15 +108,12 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             response = CountryAppService_citiesByCountryIdResponse()
             response.itemCount = result['itemCount']
             for city in result['items']:
-                response.cities.add(id=city.id(), geoNameId=city.geoNameId(), localeCode=city.localeCode(),
+                response.cities.add(geoNameId=city.geoNameId(), localeCode=city.localeCode(),
                                     continentCode=city.continentCode(), continentName=city.continentName(),
                                     countryIsoCode=city.countryIsoCode(), countryName=city.countryName(),
                                     subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
-                                    subdivisionOneIsoName=city.subdivisionOneIsoName(),
-                                    subdivisionTwoIsoCode=city.subdivisionTwoIsoCode(),
-                                    subdivisionTwoIsoName=city.subdivisionTwoIsoName(), cityName=city.cityName(),
-                                    metroCode=city.metroCode(), timeZone=city.timeZone(),
-                                    isInEuropeanUnion=city.isInEuropeanUnion())
+                                    subdivisionOneIsoName=city.subdivisionOneIsoName(), cityName=city.cityName(),
+                                    timeZone=city.timeZone(), isInEuropeanUnion=city.isInEuropeanUnion())
             logger.debug(f'[{CountryApplicationService.citiesByCountryId.__qualname__}] - response: {response}')
             return response
         except UnAuthorizedException:
@@ -136,12 +132,8 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             countryAppService: CountryApplicationService = AppDi.instance.get(CountryApplicationService)
 
             city: City = countryAppService.cityByCountryId(countryId=request.countryId, cityId=request.cityId)
-            metroCode = ''
-            if city.metroCode() is not None:
-                metroCode = city.metroCode()
 
             response = CountryAppService_cityByCountryIdResponse()
-            response.city.id = city.id()
             response.city.geoNameId = city.geoNameId()
             response.city.localeCode = city.localeCode()
             response.city.continentCode = city.continentCode()
@@ -150,10 +142,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             response.city.countryName = city.countryName()
             response.city.subdivisionOneIsoCode = city.subdivisionOneIsoCode()
             response.city.subdivisionOneIsoName = city.subdivisionOneIsoName()
-            response.city.subdivisionTwoIsoCode = city.subdivisionTwoIsoCode()
-            response.city.subdivisionTwoIsoName = city.subdivisionTwoIsoName()
             response.city.cityName = city.cityName()
-            response.city.metroCode = metroCode
             response.city.timeZone = city.timeZone()
             response.city.isInEuropeanUnion = city.isInEuropeanUnion()
 

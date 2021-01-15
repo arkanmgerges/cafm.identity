@@ -6,7 +6,7 @@ import "identity/city.proto";
 import "order.proto";
 
 message CityAppService_cityByIdRequest {
-  string id = 1;
+  int32 id = 1;
 }
 
 message CityAppService_cityByIdResponse {

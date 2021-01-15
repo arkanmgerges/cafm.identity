@@ -40,12 +40,8 @@ class CityAppServiceListener(CityAppServiceServicer):
             cityAppService: CityApplicationService = AppDi.instance.get(CityApplicationService)
 
             city: City = cityAppService.cityById(id=request.id)
-            metroCode = ''
-            if city.metroCode() is not None:
-                metroCode = city.metroCode()
 
             response = CityAppService_cityByIdResponse()
-            response.city.id = city.id()
             response.city.geoNameId = city.geoNameId()
             response.city.localeCode = city.localeCode()
             response.city.continentCode = city.continentCode()
@@ -54,10 +50,7 @@ class CityAppServiceListener(CityAppServiceServicer):
             response.city.countryName = city.countryName()
             response.city.subdivisionOneIsoCode = city.subdivisionOneIsoCode()
             response.city.subdivisionOneIsoName = city.subdivisionOneIsoName()
-            response.city.subdivisionTwoIsoCode = city.subdivisionTwoIsoCode()
-            response.city.subdivisionTwoIsoName = city.subdivisionTwoIsoName()
             response.city.cityName = city.cityName()
-            response.city.metroCode = metroCode
             response.city.timeZone = city.timeZone()
             response.city.isInEuropeanUnion = city.isInEuropeanUnion()
             logger.debug(f'[{CityAppServiceListener.cityById.__qualname__}] - response: {response}')
@@ -86,15 +79,12 @@ class CityAppServiceListener(CityAppServiceServicer):
             response = CityAppService_citiesResponse()
             response.itemCount = result['itemCount']
             for city in result['items']:
-                response.cities.add(id=city.id(), geoNameId=city.geoNameId(), localeCode=city.localeCode(),
+                response.cities.add(geoNameId=city.geoNameId(), localeCode=city.localeCode(),
                                     continentCode=city.continentCode(), continentName=city.continentName(),
                                     countryIsoCode=city.countryIsoCode(), countryName=city.countryName(),
                                     subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
-                                    subdivisionOneIsoName=city.subdivisionOneIsoName(),
-                                    subdivisionTwoIsoCode=city.subdivisionTwoIsoCode(),
-                                    subdivisionTwoIsoName=city.subdivisionTwoIsoName(), cityName=city.cityName(),
-                                    metroCode=city.metroCode(), timeZone=city.timeZone(),
-                                    isInEuropeanUnion=city.isInEuropeanUnion())
+                                    subdivisionOneIsoName=city.subdivisionOneIsoName(), cityName=city.cityName(),
+                                    timeZone=city.timeZone(), isInEuropeanUnion=city.isInEuropeanUnion())
             logger.debug(f'[{CityApplicationService.cities.__qualname__}] - response: {response}')
             return response
         except UnAuthorizedException:

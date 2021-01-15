@@ -3,12 +3,11 @@ syntax = "proto3";
 package cafm.identity.country;
 
 message Country {
-  string id = 1;
-  string geoNameId = 2;
-  string localeCode = 3;
-  string continentCode = 4;
-  string continentName = 5;
-  string countryIsoCode = 6;
-  string countryName = 7;
-  bool isInEuropeanUnion = 8;
+  int32 geoNameId = 1;
+  string localeCode = 2;
+  string continentCode = 3;
+  string continentName = 4;
+  string countryIsoCode = 5;
+  string countryName = 6;
+  bool isInEuropeanUnion = 7;
 }

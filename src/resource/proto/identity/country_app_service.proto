@@ -7,7 +7,7 @@ import "identity/city.proto";
 import "order.proto";
 
 message CountryAppService_countryByIdRequest {
-  string id = 1;
+  int32 id = 1;
 }
 
 message CountryAppService_countryByIdResponse {
@@ -26,7 +26,7 @@ message CountryAppService_countriesResponse {
 }
 
 message CountryAppService_citiesByCountryIdRequest {
-  string id = 1;
+  int32 id = 1;
   int32 resultFrom = 2;
   int32 resultSize = 3;
   repeated cafm.common.order.Order order = 4;
@@ -38,8 +38,8 @@ message CountryAppService_citiesByCountryIdResponse {
 }
 
 message CountryAppService_cityByCountryIdRequest {
-  string countryId = 1;
-  string cityId = 2;
+  int32 countryId = 1;
+  int32 cityId = 2;
 }
 
 message CountryAppService_cityByCountryIdResponse {
