@@ -1,6 +1,7 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+import csv
 import sys
 
 sys.path.append("../../../")
@@ -48,7 +49,7 @@ def init_db():
 
         dbConnection = connection[dbName]
         click.echo(click.style(f'Create collections:', fg='green'))
-        collections = ['resource', 'permission', 'permission_context']
+        collections = ['resource', 'permission', 'permission_context', 'country', 'city']
         for colName in collections:
             if not dbConnection.hasCollection(colName):
                 dbConnection.createCollection(name=colName, keyOptions={"type": "autoincrement"})

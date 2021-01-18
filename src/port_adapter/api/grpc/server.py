@@ -15,19 +15,25 @@ from src.port_adapter.api.grpc.listener.ProjectAppServiceListener import Project
 from src.port_adapter.api.grpc.listener.RealmAppServiceListener import RealmAppServiceListener
 from src.port_adapter.api.grpc.listener.RoleAppServiceListener import RoleAppServiceListener
 from src.port_adapter.api.grpc.listener.UserAppServiceListener import UserAppServiceListener
+from src.port_adapter.api.grpc.listener.CountryAppServiceListener import CountryAppServiceListener
+from src.port_adapter.api.grpc.listener.CityAppServiceListener import CityAppServiceListener
 from src.port_adapter.api.grpc.listener.UserGroupAppServiceListener import UserGroupAppServiceListener
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.auth_app_service_pb2_grpc import add_AuthAppServiceServicer_to_server
 from src.resource.proto._generated.identity.ou_app_service_pb2_grpc import add_OuAppServiceServicer_to_server
-from src.resource.proto._generated.identity.permission_app_service_pb2_grpc import add_PermissionAppServiceServicer_to_server
+from src.resource.proto._generated.identity.permission_app_service_pb2_grpc import \
+    add_PermissionAppServiceServicer_to_server
 from src.resource.proto._generated.identity.permission_context_app_service_pb2_grpc import \
     add_PermissionContextAppServiceServicer_to_server
 from src.resource.proto._generated.identity.project_app_service_pb2_grpc import add_ProjectAppServiceServicer_to_server
 from src.resource.proto._generated.identity.realm_app_service_pb2_grpc import add_RealmAppServiceServicer_to_server
 from src.resource.proto._generated.identity.role_app_service_pb2_grpc import add_RoleAppServiceServicer_to_server
 from src.resource.proto._generated.identity.user_app_service_pb2_grpc import add_UserAppServiceServicer_to_server
-from src.resource.proto._generated.identity.user_group_app_service_pb2_grpc import add_UserGroupAppServiceServicer_to_server
+from src.resource.proto._generated.identity.country_app_service_pb2_grpc import add_CountryAppServiceServicer_to_server
+from src.resource.proto._generated.identity.city_app_service_pb2_grpc import add_CityAppServiceServicer_to_server
+from src.resource.proto._generated.identity.user_group_app_service_pb2_grpc import \
+    add_UserGroupAppServiceServicer_to_server
 
 
 def serve():
@@ -38,6 +44,8 @@ def serve():
     add_UserAppServiceServicer_to_server(UserAppServiceListener(), server)
     add_RoleAppServiceServicer_to_server(RoleAppServiceListener(), server)
     add_UserGroupAppServiceServicer_to_server(UserGroupAppServiceListener(), server)
+    add_CountryAppServiceServicer_to_server(CountryAppServiceListener(), server)
+    add_CityAppServiceServicer_to_server(CityAppServiceListener(), server)
     add_PermissionContextAppServiceServicer_to_server(PermissionContextAppServiceListener(), server)
     add_ProjectAppServiceServicer_to_server(ProjectAppServiceListener(), server)
     add_RealmAppServiceServicer_to_server(RealmAppServiceListener(), server)

@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package cafm.identity.country;
+
+import "identity/country.proto";
+import "identity/city.proto";
+import "order.proto";
+
+message CountryAppService_countryByIdRequest {
+  int32 id = 1;
+}
+
+message CountryAppService_countryByIdResponse {
+  Country country = 1;
+}
+
+message CountryAppService_countriesRequest {
+  int32 resultFrom = 1;
+  int32 resultSize = 2;
+  repeated cafm.common.order.Order order = 3;
+}
+
+message CountryAppService_countriesResponse {
+  repeated Country countries = 1;
+  int32 itemCount = 2;
+}
+
+message CountryAppService_citiesByCountryIdRequest {
+  int32 id = 1;
+  int32 resultFrom = 2;
+  int32 resultSize = 3;
+  repeated cafm.common.order.Order order = 4;
+}
+
+message CountryAppService_citiesByCountryIdResponse {
+  repeated City cities = 1;
+  int32 itemCount = 2;
+}
+
+message CountryAppService_cityByCountryIdRequest {
+  int32 countryId = 1;
+  int32 cityId = 2;
+}
+
+message CountryAppService_cityByCountryIdResponse {
+  City city = 1;
+}
+
+service CountryAppService {
+  rpc countryById (CountryAppService_countryByIdRequest) returns (CountryAppService_countryByIdResponse) {}
+  rpc countries (CountryAppService_countriesRequest) returns (CountryAppService_countriesResponse) {}
+  rpc citiesByCountryId (CountryAppService_citiesByCountryIdRequest) returns (CountryAppService_citiesByCountryIdResponse) {}
+  rpc cityByCountryId (CountryAppService_cityByCountryIdRequest) returns (CountryAppService_cityByCountryIdResponse) {}
+}
