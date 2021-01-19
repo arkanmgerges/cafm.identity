@@ -10,6 +10,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import UnAuthoriz
 from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant, \
     CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
+from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
 
@@ -35,6 +36,6 @@ class CreateOuHandler(Handler):
             raise UnAuthorizedException()
 
         obj = appService.createOu(name=dataDict['name'], objectOnly=True, token=metadataDict['token'])
-        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
                 'data': {'id': obj.id(), 'name': obj.name()},
                 'metadata': metadataDict}

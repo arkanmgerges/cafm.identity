@@ -2,14 +2,11 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
-import time
 
-import src.port_adapter.AppDi as AppDi
-from src.application.UserApplicationService import UserApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant, \
-    CommonCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
+from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
 
@@ -35,8 +32,10 @@ class UpdateUserHandler(Handler):
             raise UnAuthorizedException()
 
         # Put the command into the messaging system, in order to be processed later
-        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
                 'data': {'id': dataDict['id'], 'name': dataDict['name'], 'password': dataDict['password'],
-                         'first_name': dataDict['first_name'], 'last_name': dataDict['last_name'], 'address_one': dataDict['address_one'],
-                         'address_two': dataDict['address_two'], 'postal_code': dataDict['postal_code'], 'avatar_image': dataDict['avatar_image']},
+                         'first_name': dataDict['first_name'], 'last_name': dataDict['last_name'],
+                         'address_one': dataDict['address_one'],
+                         'address_two': dataDict['address_two'], 'postal_code': dataDict['postal_code'],
+                         'avatar_image': dataDict['avatar_image']},
                 'metadata': metadataDict}

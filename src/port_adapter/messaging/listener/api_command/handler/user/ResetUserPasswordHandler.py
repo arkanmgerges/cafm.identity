@@ -10,6 +10,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import UnAuthoriz
 from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant, \
     CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
+from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
 
@@ -34,6 +35,6 @@ class ResetUserPasswordHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        return {'name': CommonCommandConstant.GENERATE_USER_ONE_TIME_PASSWORD.value, 'created_on': round(time.time() * 1000),
+        return {'name': CommonCommandConstant.GENERATE_USER_ONE_TIME_PASSWORD.value, 'created_on': DateTimeHelper.utcNow(),
                 'data': {'id': dataDict['id'], 'email': dataDict['email']},
                 'metadata': metadataDict}

@@ -9,6 +9,7 @@ from src.application.PolicyApplicationService import PolicyApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.port_adapter.messaging.listener.CommandConstant import IdentityCommandConstant, CommonCommandConstant
 from src.port_adapter.messaging.listener.identity_command.handler.Handler import Handler
+from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
 
@@ -35,7 +36,7 @@ class AssignRoleToUserGroupHandler(Handler):
             raise UnAuthorizedException()
 
         appService.assignRoleToUserGroup(roleId=dataDict['role_id'], userGroupId=dataDict['user_group_id'], token=metadataDict['token'])
-        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
                 'data': {'role_id': dataDict['role_id'], 'user_group_id': dataDict['user_group_id']},
                 'metadata': metadataDict}
 

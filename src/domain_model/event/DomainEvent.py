@@ -5,12 +5,14 @@ import time
 from abc import ABC
 from uuid import uuid4
 
+from src.resource.common.DateTimeHelper import DateTimeHelper
+
 
 class DomainEvent(ABC):
-    def __init__(self, id: str = str(uuid4()), name: str = '', occurredOn: int = round(time.time() * 1000)):
+    def __init__(self, id: str = str(uuid4()), name: str = '', occurredOn: int = None):
         self._id = id
         self._name = name
-        self._occurredOn = occurredOn
+        self._occurredOn = DateTimeHelper.utcNow() if occurredOn is None else occurredOn
         self._data = {}
 
     def id(self) -> str:
