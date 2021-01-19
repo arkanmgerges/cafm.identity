@@ -44,4 +44,6 @@ class CommonEventConstant(Enum):
     USER_GROUP_DELETED = 'user_group_deleted'
     USER_GROUP_UPDATED = 'user_group_updated'
     USER_PASSWORD_SET = 'user_password_set'
+    ROLE_TO_USER_ASSIGNED = 'role_to_user_assigned'
+    ROLE_TO_USER_REVOKED = 'role_to_user_revoked'
 

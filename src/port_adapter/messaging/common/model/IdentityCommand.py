@@ -21,7 +21,7 @@ class IdentityCommand(MessageBase):
                  createdOn=round(time.time() * 1000), external=None):
         super().__init__(
             {'id': id, 'creator_service_name': creatorServiceName, 'name': name, 'version': version,
-             'created_on': createdOn,'metadata': metadata, 'data': data, 'external': external})
+             'created_on': createdOn, 'metadata': metadata, 'data': data, 'external': external})
 
     def toMap(self, thisObjectForMapping=None, _ctx=None):
         return vars(self)['_value']

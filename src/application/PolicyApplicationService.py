@@ -10,6 +10,7 @@ from src.domain_model.permission_context.PermissionContext import PermissionCont
 from src.domain_model.permission_context.PermissionContextRepository import PermissionContextRepository
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.policy.PolicyRepository import PolicyRepository
+from src.domain_model.policy.PolicyService import PolicyService
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.policy.request_context_data.PermissionContextDataRequest import PermissionContextDataRequest
 from src.domain_model.resource.ResourceRepository import ResourceRepository
@@ -28,6 +29,7 @@ class PolicyApplicationService:
                  permissionRepository: PermissionRepository,
                  permissionContextRepository: PermissionContextRepository,
                  resourceRepository: ResourceRepository,
+                 policyService: PolicyService,
                  authzService: AuthorizationService):
         self._roleRepository = roleRepository
         self._userRepository = userRepository
@@ -38,6 +40,7 @@ class PolicyApplicationService:
         self._policyControllerService = policyControllerService
         self._resourceRepository = resourceRepository
         self._authzService: AuthorizationService = authzService
+        self._policyService: PolicyService = policyService
 
     @debugLogger
     def assignRoleToUser(self, roleId: str = '', userId: str = '', token: str = ''):
@@ -52,7 +55,7 @@ class PolicyApplicationService:
 
         role = self._roleRepository.roleById(id=roleId)
         user = self._userRepository.userById(id=userId)
-        self._policyRepository.assignRoleToUser(role, user)
+        self._policyService.assignRoleToUser(role=role, user=user)
 
     @debugLogger
     def revokeAssignmentRoleToUser(self, roleId: str = '', userId: str = '', token: str = ''):
@@ -66,7 +69,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         role = self._roleRepository.roleById(id=roleId)
         user = self._userRepository.userById(id=userId)
-        self._policyRepository.revokeRoleFromUser(role, user)
+        self._policyService.revokeRoleFromUser(role=role, user=user)
 
     @debugLogger
     def assignRoleToUserGroup(self, roleId: str = '', userGroupId: str = '', token: str = ''):

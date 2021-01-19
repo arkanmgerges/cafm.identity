@@ -29,6 +29,7 @@ from src.domain_model.permission_context.PermissionContextRepository import Perm
 from src.domain_model.permission_context.PermissionContextService import PermissionContextService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.policy.PolicyRepository import PolicyRepository
+from src.domain_model.policy.PolicyService import PolicyService
 from src.domain_model.project.ProjectRepository import ProjectRepository
 from src.domain_model.project.ProjectService import ProjectService
 from src.domain_model.realm.RealmRepository import RealmRepository
@@ -159,7 +160,9 @@ class AppDi(Module):
                                         policyRepository=self.__injector__.get(PolicyRepository),
                                         policyControllerService=self.__injector__.get(PolicyControllerService),
                                         resourceRepository=self.__injector__.get(ResourceRepository),
-                                        authzService=self.__injector__.get(AuthorizationService))
+                                        policyService=self.__injector__.get(PolicyService),
+                                        authzService=self.__injector__.get(AuthorizationService)
+                                        )
 
     # endregion
 
@@ -305,6 +308,10 @@ class AppDi(Module):
         return UserGroupService(userGroupRepo=self.__injector__.get(UserGroupRepository),
                                 policyRepo=self.__injector__.get(PolicyRepository))
 
+    @singleton
+    @provider
+    def providePolicyService(self) -> PolicyService:
+        return PolicyService(policyRepo=self.__injector__.get(PolicyRepository))
     # endregion
 
     # region Messaging
