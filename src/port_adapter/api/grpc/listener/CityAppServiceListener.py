@@ -42,7 +42,7 @@ class CityAppServiceListener(CityAppServiceServicer):
             city: City = cityAppService.cityById(id=request.id)
 
             response = CityAppService_cityByIdResponse()
-            response.city.geoNameId = city.geoNameId()
+            response.city.id = city.id()
             response.city.localeCode = city.localeCode()
             response.city.continentCode = city.continentCode()
             response.city.continentName = city.continentName()
@@ -79,7 +79,7 @@ class CityAppServiceListener(CityAppServiceServicer):
             response = CityAppService_citiesResponse()
             response.itemCount = result['itemCount']
             for city in result['items']:
-                response.cities.add(geoNameId=city.geoNameId(), localeCode=city.localeCode(),
+                response.cities.add(id=city.id(), localeCode=city.localeCode(),
                                     continentCode=city.continentCode(), continentName=city.continentName(),
                                     countryIsoCode=city.countryIsoCode(), countryName=city.countryName(),
                                     subdivisionOneIsoCode=city.subdivisionOneIsoCode(),

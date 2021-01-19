@@ -8,13 +8,11 @@ from src.resource.logging.logger import logger
 
 
 class Country(Resource):
-    def __init__(self, geoNameId: str = '', localeCode: str = '', continentCode: str = '',
+    def __init__(self, id: int = '', localeCode: str = '', continentCode: str = '',
                  continentName: str = '', countryIsoCode: str = '', countryName: str = '',
                  isInEuropeanUnion: bool = False):
-        anId = str(uuid4())
-        super().__init__(id=anId, type='user')
+        super().__init__(id=id, type='country')
 
-        self._geoNameId = geoNameId
         self._localeCode = localeCode
         self._continentCode = continentCode
         self._continentName = continentName
@@ -23,17 +21,14 @@ class Country(Resource):
         self._isInEuropeanUnion = isInEuropeanUnion
 
     @classmethod
-    def createFrom(self, geoNameId: str = '', localeCode: str = '', continentCode: str = '',
+    def createFrom(self, id: int = '', localeCode: str = '', continentCode: str = '',
                    continentName: str = '', countryIsoCode: str = '', countryName: str = '',
                    isInEuropeanUnion: bool = False):
         logger.debug(f'[{Country.createFrom.__qualname__}] - with id {id}')
-        country = Country(geoNameId=geoNameId, localeCode=localeCode, continentCode=continentCode,
+        country = Country(id=id, localeCode=localeCode, continentCode=continentCode,
                           continentName=continentName, countryIsoCode=countryIsoCode, countryName=countryName,
                           isInEuropeanUnion=isInEuropeanUnion)
         return country
-
-    def geoNameId(self) -> str:
-        return self._geoNameId
 
     def localeCode(self) -> str:
         return self._localeCode
@@ -54,7 +49,7 @@ class Country(Resource):
         return self._isInEuropeanUnion
 
     def toMap(self) -> dict:
-        return {"geoNameId": self.geoNameId()}
+        return {"id": self.id()}
 
     def __repr__(self):
         return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
@@ -65,4 +60,4 @@ class Country(Resource):
     def __eq__(self, other):
         if not isinstance(other, Country):
             raise NotImplementedError(f'other: {other} can not be compared with Country class')
-        return self.geoNameId() == other.geoNameId()
+        return self.id() == other.id()

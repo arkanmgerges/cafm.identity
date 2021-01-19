@@ -9,14 +9,12 @@ from src.resource.logging.logger import logger
 
 
 class City(Resource):
-    def __init__(self, geoNameId: int, localeCode: str = '', continentCode: str = '', continentName: str = '',
+    def __init__(self, id: int, localeCode: str = '', continentCode: str = '', continentName: str = '',
                  countryIsoCode: str = '', countryName: str = '', subdivisionOneIsoCode: str = '',
                  subdivisionOneIsoName: str = '', cityName: str = '', timeZone: str = '',
                  isInEuropeanUnion: bool = False):
-        anId = str(uuid4())
-        super().__init__(id=anId)
+        super().__init__(id=id, type='city')
 
-        self._geoNameId = geoNameId
         self._localeCode = localeCode
         self._continentCode = continentCode
         self._continentName = continentName
@@ -29,21 +27,18 @@ class City(Resource):
         self._isInEuropeanUnion = isInEuropeanUnion
 
     @classmethod
-    def createFrom(self, geoNameId: int, localeCode: str = '', continentCode: str = '',
+    def createFrom(self, id: int, localeCode: str = '', continentCode: str = '',
                    continentName: str = '', countryIsoCode: str = '', countryName: str = '',
                    subdivisionOneIsoCode: str = '', subdivisionOneIsoName: str = '',
                    cityName: str = '', timeZone: str = '',
                    isInEuropeanUnion: bool = False):
-        logger.debug(f'[{City.createFrom.__qualname__}] - with id {geoNameId}')
+        logger.debug(f'[{City.createFrom.__qualname__}] - with id {id}')
 
-        city = City(geoNameId=geoNameId, localeCode=localeCode, continentCode=continentCode,
+        city = City(id=id, localeCode=localeCode, continentCode=continentCode,
                     continentName=continentName, countryIsoCode=countryIsoCode, countryName=countryName,
                     subdivisionOneIsoCode=subdivisionOneIsoCode, subdivisionOneIsoName=subdivisionOneIsoName,
                     cityName=cityName, timeZone=timeZone, isInEuropeanUnion=isInEuropeanUnion)
         return city
-
-    def geoNameId(self) -> int:
-        return self._geoNameId
 
     def localeCode(self) -> str:
         return self._localeCode
@@ -76,7 +71,7 @@ class City(Resource):
         return self._isInEuropeanUnion
 
     def toMap(self) -> dict:
-        return {"geoNameId": self.geoNameId()}
+        return {"id": self.id()}
 
     def __repr__(self):
         return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
@@ -87,4 +82,4 @@ class City(Resource):
     def __eq__(self, other):
         if not isinstance(other, City):
             raise NotImplementedError(f'other: {other} can not be compared with City class')
-        return self.geoNameId() == other.geoNameId()
+        return self.id() == other.id()
