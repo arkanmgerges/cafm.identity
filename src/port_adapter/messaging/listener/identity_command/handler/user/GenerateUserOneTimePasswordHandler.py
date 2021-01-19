@@ -10,6 +10,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import UnAuthoriz
 from src.domain_model.user.User import User
 from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.identity_command.handler.Handler import Handler
+from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
 
@@ -36,7 +37,7 @@ class GenerateUserOneTimePasswordHandler(Handler):
             raise UnAuthorizedException()
 
         obj: User = appService.generateUserOneTimePassword(id=dataDict['id'], token=metadataDict['token'])
-        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
                 'data': {'id': obj.id(), 'email': obj.email()},
                 'metadata': metadataDict}
 

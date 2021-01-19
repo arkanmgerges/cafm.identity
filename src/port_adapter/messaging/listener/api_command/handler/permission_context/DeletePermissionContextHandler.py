@@ -2,14 +2,13 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
-import time
 
 import src.port_adapter.AppDi as AppDi
 from src.application.PermissionContextApplicationService import PermissionContextApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant, \
-    CommonCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
+from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
 
@@ -36,6 +35,6 @@ class DeletePermissionContextHandler(Handler):
             raise UnAuthorizedException()
 
         # Put the command into the messaging system, in order to be processed later
-        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
+        return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
                 'data': {'id': dataDict['id']},
                 'metadata': metadataDict}

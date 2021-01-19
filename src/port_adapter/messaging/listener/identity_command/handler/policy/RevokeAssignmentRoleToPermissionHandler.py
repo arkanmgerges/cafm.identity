@@ -2,13 +2,13 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
-import time
 
 import src.port_adapter.AppDi as AppDi
 from src.application.PolicyApplicationService import PolicyApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
 from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.identity_command.handler.Handler import Handler
+from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
 
@@ -38,7 +38,7 @@ class RevokeAssignmentRoleToPermissionHandler(Handler):
                                                     permissionId=dataDict['permission_id'],
                                                     token=metadataDict['token'])
         return {'name': self._commandConstant.value,
-                'created_on': round(time.time() * 1000),
+                'created_on': DateTimeHelper.utcNow(),
                 'data': {'role_id': dataDict['role_id'], 'permission_id': dataDict['permission_id']},
                 'metadata': metadataDict}
 

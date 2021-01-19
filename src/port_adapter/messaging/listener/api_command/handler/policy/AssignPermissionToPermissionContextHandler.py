@@ -2,12 +2,11 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
-import time
 
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant, \
-    CommonCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
+from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
 
@@ -33,6 +32,7 @@ class AssignPermissionToPermissionContextHandler(Handler):
             raise UnAuthorizedException()
 
         return {'name': self._commandConstant.value,
-                'created_on': round(time.time() * 1000),
-                'data': {'permission_id': dataDict['permission_id'], 'permission_context_id': dataDict['permission_context_id']},
+                'created_on': DateTimeHelper.utcNow(),
+                'data': {'permission_id': dataDict['permission_id'],
+                         'permission_context_id': dataDict['permission_context_id']},
                 'metadata': metadataDict}

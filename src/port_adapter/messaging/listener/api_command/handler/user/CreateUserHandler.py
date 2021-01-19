@@ -2,14 +2,13 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
-import time
 
 import src.port_adapter.AppDi as AppDi
 from src.application.UserApplicationService import UserApplicationService
 from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import ApiCommandConstant, IdentityCommandConstant, \
-    CommonCommandConstant
+from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
+from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
 
@@ -37,6 +36,6 @@ class CreateUserHandler(Handler):
 
         obj = appService.createUser(email=dataDict['email'],
                                     objectOnly=True, token=metadataDict['token'])
-        return {'name': self._commandConstant.value, 'created_on': round(time.time() * 1000),
-                'data': {'id': obj.id(), 'email': obj.email(),},
+        return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
+                'data': {'id': obj.id(), 'email': obj.email(), },
                 'metadata': metadataDict}
