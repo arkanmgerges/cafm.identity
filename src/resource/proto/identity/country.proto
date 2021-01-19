@@ -3,7 +3,7 @@ syntax = "proto3";
 package cafm.identity.country;
 
 message Country {
-  int32 geoNameId = 1;
+  int32 id = 1;
   string localeCode = 2;
   string continentCode = 3;
   string continentName = 4;

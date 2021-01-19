@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x16identity/country.proto\x12\x15\x63\x61\x66m.identity.country\"\xa6\x01\n\x07\x43ountry\x12\x11\n\tgeoNameId\x18\x01 \x01(\x05\x12\x12\n\nlocaleCode\x18\x02 \x01(\t\x12\x15\n\rcontinentCode\x18\x03 \x01(\t\x12\x15\n\rcontinentName\x18\x04 \x01(\t\x12\x16\n\x0e\x63ountryIsoCode\x18\x05 \x01(\t\x12\x13\n\x0b\x63ountryName\x18\x06 \x01(\t\x12\x19\n\x11isInEuropeanUnion\x18\x07 \x01(\x08\x62\x06proto3'
+  serialized_pb=b'\n\x16identity/country.proto\x12\x15\x63\x61\x66m.identity.country\"\x9f\x01\n\x07\x43ountry\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x12\n\nlocaleCode\x18\x02 \x01(\t\x12\x15\n\rcontinentCode\x18\x03 \x01(\t\x12\x15\n\rcontinentName\x18\x04 \x01(\t\x12\x16\n\x0e\x63ountryIsoCode\x18\x05 \x01(\t\x12\x13\n\x0b\x63ountryName\x18\x06 \x01(\t\x12\x19\n\x11isInEuropeanUnion\x18\x07 \x01(\x08\x62\x06proto3'
 )
 
 
@@ -34,7 +34,7 @@ _COUNTRY = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='geoNameId', full_name='cafm.identity.country.Country.geoNameId', index=0,
+      name='id', full_name='cafm.identity.country.Country.id', index=0,
       number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -95,7 +95,7 @@ _COUNTRY = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=50,
-  serialized_end=216,
+  serialized_end=209,
 )
 
 DESCRIPTOR.message_types_by_name['Country'] = _COUNTRY

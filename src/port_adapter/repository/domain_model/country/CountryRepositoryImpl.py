@@ -58,7 +58,7 @@ class CountryRepositoryImpl(CountryRepository):
         items = result['items']
         itemCount = len(items)
         items = items[resultFrom:resultFrom + resultSize]
-        return {"items": [Country.createFrom(geoNameId=x['geoname_id'], localeCode=x['locale_code'],
+        return {"items": [Country.createFrom(id=x['geoname_id'], localeCode=x['locale_code'],
                                              continentCode=x['continent_code'], continentName=x['continent_name'],
                                              countryIsoCode=x['country_iso_code'], countryName=x['country_name'],
                                              isInEuropeanUnion=x['is_in_european_union']) for x in items],
@@ -71,14 +71,13 @@ class CountryRepositoryImpl(CountryRepository):
                 FILTER d.geoname_id == @id
                 RETURN d
         '''
-
         bindVars = {"id": id}
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
             logger.debug(f'[{CountryRepositoryImpl.countryById.__qualname__}] country id: {id}')
             raise CountryDoesNotExistException(f'country id: {id}')
-        return Country.createFrom(geoNameId=result[0]['geoname_id'],
+        return Country.createFrom(id=result[0]['geoname_id'],
                                   localeCode=result[0]['locale_code'], continentCode=result[0]['continent_code'],
                                   continentName=result[0]['continent_name'],
                                   countryIsoCode=result[0]['country_iso_code'], countryName=result[0]['country_name'],
@@ -116,7 +115,7 @@ class CountryRepositoryImpl(CountryRepository):
         itemCount = len(items)
         items = items[resultFrom:resultFrom + resultSize]
 
-        return {"items": [City.createFrom(geoNameId=x['geoname_id'], localeCode=x['locale_code'],
+        return {"items": [City.createFrom(id=x['geoname_id'], localeCode=x['locale_code'],
                                           continentCode=x['continent_code'], continentName=x['continent_name'],
                                           countryIsoCode=x['country_iso_code'], countryName=x['country_name'],
                                           subdivisionOneIsoCode=x['subdivision_1_iso_code'],
@@ -146,7 +145,7 @@ class CountryRepositoryImpl(CountryRepository):
                 f'[{CountryRepositoryImpl.cityByCountryId.__qualname__}] country id: {countryId}, city id: {cityId}')
             raise CountryDoesNotExistException(f'country id: {countryId}, city id: {cityId}')
 
-        return City.createFrom(geoNameId=result[0]['geoname_id'], localeCode=result[0]['locale_code'],
+        return City.createFrom(id=result[0]['geoname_id'], localeCode=result[0]['locale_code'],
                                continentCode=result[0]['continent_code'], continentName=result[0]['continent_name'],
                                countryIsoCode=result[0]['country_iso_code'], countryName=result[0]['country_name'],
                                subdivisionOneIsoCode=result[0]['subdivision_1_iso_code'],

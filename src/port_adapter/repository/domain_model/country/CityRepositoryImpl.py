@@ -64,7 +64,7 @@ class CityRepositoryImpl(CityRepository):
             cityName = x['city_name'] if 'city_name' in x else ''
             subdivisionOneIsoCode = x['subdivision_1_iso_code'] if 'subdivision_1_iso_code' in x else ''
             subdivisionOneIsoName = x['subdivision_1_name'] if 'subdivision_1_name' in x else ''
-            returnItems.append(City.createFrom(geoNameId=x['geoname_id'], localeCode=x['locale_code'],
+            returnItems.append(City.createFrom(id=x['geoname_id'], localeCode=x['locale_code'],
                                                continentCode=x['continent_code'], cityName=cityName,
                                                subdivisionOneIsoCode=subdivisionOneIsoCode,
                                                subdivisionOneIsoName=subdivisionOneIsoName,
@@ -91,7 +91,7 @@ class CityRepositoryImpl(CityRepository):
         cityName = result[0]['city_name'] if 'city_name' in result[0] else ''
         subdivisionOneIsoCode = result[0]['subdivision_1_iso_code'] if 'subdivision_1_iso_code' in result[0] else ''
         subdivisionOneIsoName = result[0]['subdivision_1_name'] if 'subdivision_1_name' in result[0] else ''
-        return City.createFrom(geoNameId=result[0]['geoname_id'], localeCode=result[0]['locale_code'],
+        return City.createFrom(id=result[0]['geoname_id'], localeCode=result[0]['locale_code'],
                                continentCode=result[0]['continent_code'], continentName=result[0]['continent_name'],
                                countryIsoCode=result[0]['country_iso_code'], countryName=result[0]['country_name'],
                                subdivisionOneIsoCode=subdivisionOneIsoCode, subdivisionOneIsoName=subdivisionOneIsoName,

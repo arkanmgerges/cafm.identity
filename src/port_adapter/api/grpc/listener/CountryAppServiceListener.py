@@ -51,7 +51,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             response = CountryAppService_countriesResponse()
             response.itemCount = result['itemCount']
             for country in result['items']:
-                response.countries.add(geoNameId=country.geoNameId(), localeCode=country.localeCode(),
+                response.countries.add(id=country.id(), localeCode=country.localeCode(),
                                        continentCode=country.continentCode(), continentName=country.continentName(),
                                        countryIsoCode=country.countryIsoCode(), countryName=country.countryName(),
                                        isInEuropeanUnion=country.isInEuropeanUnion())
@@ -73,7 +73,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
 
             country: Country = countryAppService.countryById(id=request.id)
             response = CountryAppService_countryByIdResponse()
-            response.country.geoNameId = country.geoNameId()
+            response.country.id = country.id()
             response.country.localeCode = country.localeCode()
             response.country.continentCode = country.continentCode()
             response.country.continentName = country.continentName()
@@ -108,7 +108,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             response = CountryAppService_citiesByCountryIdResponse()
             response.itemCount = result['itemCount']
             for city in result['items']:
-                response.cities.add(geoNameId=city.geoNameId(), localeCode=city.localeCode(),
+                response.cities.add(id=city.id(), localeCode=city.localeCode(),
                                     continentCode=city.continentCode(), continentName=city.continentName(),
                                     countryIsoCode=city.countryIsoCode(), countryName=city.countryName(),
                                     subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
@@ -134,7 +134,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             city: City = countryAppService.cityByCountryId(countryId=request.countryId, cityId=request.cityId)
 
             response = CountryAppService_cityByCountryIdResponse()
-            response.city.geoNameId = city.geoNameId()
+            response.city.id = city.id()
             response.city.localeCode = city.localeCode()
             response.city.continentCode = city.continentCode()
             response.city.continentName = city.continentName()
