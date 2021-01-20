@@ -233,7 +233,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         resourceSrc = self._resourceRepository.resourceById(id=resourceSrcId)
         resourceDst = self._resourceRepository.resourceById(id=resourceDstId)
-        self._policyControllerService.assignResourceToResource(resourceSrc=resourceSrc, resourceDst=resourceDst)
+        self._policyService.assignResourceToResource(resourceSrc=resourceSrc, resourceDst=resourceDst)
 
     @debugLogger
     def revokeAssignmentResourceToResource(self, resourceSrcId: str = '', resourceDstId: str = '', token: str = ''):
@@ -247,5 +247,4 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         resourceSrc = self._resourceRepository.resourceById(id=resourceSrcId)
         resourceDst = self._resourceRepository.resourceById(id=resourceDstId)
-        self._policyRepository.revokeAssignmentResourceToResource(resourceSrc=resourceSrc,
-                                                                  resourceDst=resourceDst)
+        self._policyService.revokeAssignmentResourceToResource(resourceSrc=resourceSrc, resourceDst=resourceDst)
