@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 import yaml
 import click
 import requests
+from time import sleep
 
 load_dotenv()
 
@@ -21,84 +22,96 @@ baseURL = os.getenv('API_URL')
 def cli():
     pass
 
-@cli.command(help='Create a user')
-@click.argument('email')
-def create_user(email):
-    click.echo(click.style(f'Creating a user email: {email}', fg='green'))
-    token = getAccessToken()
-    createUser(token, email)
-
-
-@cli.command(help='setting password for user')
-@click.argument('user_id')
-@click.argument('password')
-def set_password(user_id, password):
-    click.echo(click.style(f'setting password for user user_id: {user_id}', fg='green'))
-    token = getAccessToken()
-    setPassword(token, user_id, password)
-
-
-@cli.command(help='Delete a user')
-@click.argument('user_id')
-def delete_user(user_id):
-    click.echo(click.style(f'Delete a user user_id: {user_id}', fg='green'))
-    token = getAccessToken()
-    deleteUser(token, user_id)
-
 
 @cli.command(
     help='Create user from file')
 @click.argument('file_name')
 def build_resource_tree_from_file(file_name):
-    token = getAccessToken()
-    fileData = None
-    with open(f'{file_name}', 'r') as f:
-        fileData = yaml.safe_load(f)
+    try:
+        token = getAccessToken()
+        with open(f'{file_name}', 'r') as f:
+            fileData = yaml.safe_load(f)
 
-    # Parse access tree
-    for user in fileData['users']:
-        email = user['email']
-        click.echo(click.style(f'Creating user email: {email}', fg='green'))
-        createUser(token, email)
+        # Parse access tree
+        for realm in fileData['realms']:
+            createRealm(token, realm['name'], realm['type'])
+            # for role in realm['roles']:
+            #     roleReqId = createRole(token, role['name'])
+            #     for user in role['users']:
+            #         userReqId = createUser(token, user['email'])
+            #         passReqId = setPassword(token, userId, user['password'])
+            #         assignReqId = assignUserToRole(token, roleId, userId)
+    except Exception as e:
+        click.echo(click.style(f'{e}', fg='red'))
 
 
 def getAccessToken():
-    try:
-        resp = requests.post(baseURL + 'v1/identity/auth/authenticate',
-                             json=dict(email=os.getenv('ADMIN_EMAIL', None),
-                                       password=os.getenv('ADMIN_PASSWORD', None)))
-        resp.raise_for_status()
-        return resp.text.replace('\"', '')
-    except Exception as e:
-        click.echo(click.style(f'{e}', fg='red'))
+    resp = requests.post(baseURL + 'v1/identity/auth/authenticate',
+                         json=dict(email=os.getenv('ADMIN_EMAIL', None),
+                                   password=os.getenv('ADMIN_PASSWORD', None)))
+    resp.raise_for_status()
+    return resp.text.replace('\"', '')
+
+
+def createRealm(token, name, type):
+    click.echo(click.style(f'Creating realm name: {name} type: {type}', fg='green'))
+    resp = requests.post(baseURL + 'v1/identity/realms/create', headers=dict(Authorization='Bearer ' + token),
+                         json=dict(name=name, realm_type=type))
+    resp.raise_for_status()
+    checkForResult(token, resp.json()['request_id'])
+
+
+def createRole(token, name):
+    click.echo(click.style(f'Creating realm name: {name} type: {type}', fg='green'))
+    resp = requests.post(baseURL + 'v1/identity/roles/create', headers=dict(Authorization='Bearer ' + token),
+                         json=dict(name=name))
+    resp.raise_for_status()
+    return resp.json()['request_id']
 
 
 def createUser(token, email):
-    try:
-        resp = requests.post(baseURL + 'v1/identity/users/create', headers=dict(Authorization='Bearer ' + token),
-                             json=dict(email=email))
-        resp.raise_for_status()
-    except Exception as e:
-        click.echo(click.style(f'{e}', fg='red'))
+    resp = requests.post(baseURL + 'v1/identity/users/create', headers=dict(Authorization='Bearer ' + token),
+                         json=dict(email=email))
+    resp.raise_for_status()
+    return resp.json()['request_id']
 
 
 def setPassword(token, user_id, password):
-    try:
-        resp = requests.post(baseURL + 'v1/identity/users/' + user_id + '/set_password',
-                             headers=dict(Authorization='Bearer ' + token),
-                             json=dict(password=password))
-        resp.raise_for_status()
-    except Exception as e:
-        click.echo(click.style(f'{e}', fg='red'))
+    resp = requests.post(baseURL + 'v1/identity/users/' + user_id + '/set_password',
+                         headers=dict(Authorization='Bearer ' + token),
+                         json=dict(password=password))
+    resp.raise_for_status()
+    return resp.json()['request_id']
 
 
-def deleteUser(token, user_id):
-    try:
-        resp = requests.delete(baseURL + 'v1/identity/users/' + user_id,
-                               headers=dict(Authorization='Bearer ' + token))
-        resp.raise_for_status()
-    except Exception as e:
-        click.echo(click.style(f'{e}', fg='red'))
+def assignUserToRole(token, roleID, userID):
+    resp = requests.post(baseURL + 'v1/identity/assignments/role_to_user',
+                         headers=dict(Authorization='Bearer ' + token),
+                         json=dict(role_id=roleID, user_id=userID))
+    resp.raise_for_status()
+    return resp.json()['request_id']
+
+
+def checkForResult(token, requestId):
+    for i in range(5):
+        sleep(1)
+        isSuccessful = requests.get(baseURL + 'v1/common/request/is_successful',
+                                    headers=dict(Authorization='Bearer ' + token),
+                                    params=dict(request_id=str(requestId)))
+        if isSuccessful.status_code == 200:
+            resp = requests.get(baseURL + 'v1/common/request/result', headers=dict(Authorization='Bearer ' + token),
+                                params=dict(request_id=str(requestId)))
+            resp.raise_for_status()
+            result = resp.json()['result']
+            if isSuccessful.json()['success']:
+                return result['items'][0]['id']
+            else:
+                for item in result['items']:
+                    if 'reason' in item:
+                        raise Exception(item['reason']['message'])
+                raise Exception('Unknown error!')
+
+    raise Exception('Response time out!')
 
 
 if __name__ == '__main__':
