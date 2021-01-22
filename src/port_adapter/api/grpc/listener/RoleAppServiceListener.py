@@ -75,7 +75,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
                 order=orderData)
             response = RoleAppService_rolesResponse()
             for role in result['items']:
-                response.roles.add(id=role.id(), type=role.type(), name=role.name())
+                response.roles.add(id=role.id(), type=role.type(), name=role.name(), title=role.title())
             response.itemCount = result['itemCount']
             logger.debug(f'[{RoleAppServiceListener.roles.__qualname__}] - response: {response}')
             return RoleAppService_rolesResponse(roles=response.roles, itemCount=response.itemCount)
@@ -253,6 +253,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
         response.role.id = obj.id()
         response.role.type = obj.type()
         response.role.name = obj.name()
+        response.role.title = obj.title()
 
     @debugLogger
     def _token(self, context) -> str:

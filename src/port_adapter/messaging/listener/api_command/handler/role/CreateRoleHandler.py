@@ -34,7 +34,8 @@ class CreateRoleHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        obj = appService.createRole(name=dataDict['name'], objectOnly=True, token=metadataDict['token'])
+        obj = appService.createRole(name=dataDict['name'], title=dataDict['title'], objectOnly=True,
+                                    token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': obj.id(), 'name': obj.name()},
+                'data': {'id': obj.id(), 'name': obj.name(), 'title': obj.title()},
                 'metadata': metadataDict}

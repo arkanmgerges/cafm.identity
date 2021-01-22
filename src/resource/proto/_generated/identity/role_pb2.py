@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13identity/role.proto\x12\x12\x63\x61\x66m.identity.role\".\n\x04Role\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\tb\x06proto3'
+  serialized_pb=b'\n\x13identity/role.proto\x12\x12\x63\x61\x66m.identity.role\"=\n\x04Role\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\r\n\x05title\x18\x04 \x01(\tb\x06proto3'
 )
 
 
@@ -54,6 +54,13 @@ _ROLE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='title', full_name='cafm.identity.role.Role.title', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -67,7 +74,7 @@ _ROLE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=43,
-  serialized_end=89,
+  serialized_end=104,
 )
 
 DESCRIPTOR.message_types_by_name['Role'] = _ROLE
