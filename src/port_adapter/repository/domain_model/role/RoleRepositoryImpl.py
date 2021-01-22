@@ -67,7 +67,7 @@ class RoleRepositoryImpl(RoleRepository):
                 let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                 if (res.length == 0) {
                     p = params['resource']
-                    res = db.resource.insert({id: p['id'], name: p['name'], type: p['type']});
+                    res = db.resource.insert({id: p['id'], name: p['name'], title: p['title'],type: p['type']});
                     fromDocId = res['_id'];
                     p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
                     db._query(queryLink, p).execute();
@@ -85,7 +85,7 @@ class RoleRepositoryImpl(RoleRepository):
             }
         '''
         params = {
-            'resource': {"id": obj.id(), "name": obj.name(), "type": obj.type()},
+            'resource': {"id": obj.id(), "name": obj.name(), "title": obj.title(), "type": obj.type()},
             'user': {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
             'rolesDocIds': rolesDocIds,
             'toTypeRole': PermissionContextConstant.ROLE.value,
@@ -104,10 +104,10 @@ class RoleRepositoryImpl(RoleRepository):
         aql = '''
             FOR d IN resource
                 FILTER d.id == @id AND d.type == 'role'
-                UPDATE d WITH {name: @name} IN resource
+                UPDATE d WITH {name: @name, title: @title} IN resource
         '''
 
-        bindVars = {"id": obj.id(), "name": obj.name()}
+        bindVars = {"id": obj.id(), "name": obj.name(), "title": obj.title()}
         logger.debug(f'[{RoleRepositoryImpl.updateRole.__qualname__}] - Update role with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
@@ -168,7 +168,7 @@ class RoleRepositoryImpl(RoleRepository):
             logger.debug(f'[{RoleRepositoryImpl.roleByName.__qualname__}] {name}')
             raise RoleDoesNotExistException(name)
 
-        return Role.createFrom(id=result[0]['id'], name=result[0]['name'])
+        return Role.createFrom(id=result[0]['id'], name=result[0]['name'], title=result[0]['title'])
 
     @debugLogger
     def roleById(self, id: str) -> Role:
@@ -185,7 +185,7 @@ class RoleRepositoryImpl(RoleRepository):
             logger.debug(f'[{RoleRepositoryImpl.roleById.__qualname__}] role id: {id}')
             raise RoleDoesNotExistException(f'role id: {id}')
 
-        return Role.createFrom(id=result[0]['id'], name=result[0]['name'])
+        return Role.createFrom(id=result[0]['id'], name=result[0]['name'], title=result[0]['title'])
 
     @debugLogger
     def roles(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
@@ -205,7 +205,7 @@ class RoleRepositoryImpl(RoleRepository):
         items = result['items']
         itemCount = len(items)
         items = items[resultFrom:resultFrom + resultSize]
-        return {"items": [Role.createFrom(id=x['id'], name=x['name']) for x in items],
+        return {"items": [Role.createFrom(id=x['id'], name=x['name'], title=x['title']) for x in items],
                 "itemCount": itemCount}
 
     @debugLogger

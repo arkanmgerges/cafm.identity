@@ -6,4 +6,5 @@ message Role {
   string id = 1;
   string type = 2;
   string name = 3;
+  string title = 4;
 }

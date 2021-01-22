@@ -23,8 +23,8 @@ class RoleApplicationService:
         self._roleService = roleService
 
     @debugLogger
-    def createRole(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
-        obj: Role = self.constructObject(id=id, name=name)
+    def createRole(self, id: str = '', name: str = '', title: str = '', objectOnly: bool = False, token: str = ''):
+        obj: Role = self.constructObject(id=id, name=name, title=title)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -35,8 +35,8 @@ class RoleApplicationService:
         return self._roleService.createRole(obj=obj, objectOnly=objectOnly, tokenData=tokenData)
 
     @debugLogger
-    def updateRole(self, id: str, name: str, token: str = ''):
-        obj: Role = self.constructObject(id=id, name=name)
+    def updateRole(self, id: str, name: str, title: str = '', token: str = ''):
+        obj: Role = self.constructObject(id=id, name=name, title=title)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -116,5 +116,5 @@ class RoleApplicationService:
                                              roleAccessPermissionData=roleAccessPermissionData)
 
     @debugLogger
-    def constructObject(self, id: str = None, name: str = '') -> Role:
-        return Role.createFrom(id=id, name=name)
+    def constructObject(self, id: str = None, name: str = '', title: str = '') -> Role:
+        return Role.createFrom(id=id, name=name, title=title)
