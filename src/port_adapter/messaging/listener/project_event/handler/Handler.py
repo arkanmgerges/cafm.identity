@@ -54,8 +54,9 @@ class Handler(ABC):
     @staticmethod
     def targetOnException(messageData: dict, e: Exception, creatorServiceName: str) -> dict:
         external = messageData['external']
+        dataDict = external[0] if len(external) > 0 else messageData
         return {
-            'obj': ApiResponse(commandId=external[0]['id'], commandName=external[0]['name'],
+            'obj': ApiResponse(commandId=dataDict['id'], commandName=dataDict['name'],
                                metadata=messageData['metadata'],
                                data=json.dumps({'reason': {'message': e.message, 'code': e.code}}),
                                creatorServiceName=creatorServiceName, success=False),
@@ -65,7 +66,8 @@ class Handler(ABC):
     @staticmethod
     def targetOnSuccess(messageData: dict, creatorServiceName: str, resultData: dict) -> dict:
         external = messageData['external']
-        return {'obj': ApiResponse(commandId=external[0]['id'], commandName=external[0]['name'],
+        dataDict = external[0] if len(external) > 0 else messageData
+        return {'obj': ApiResponse(commandId=dataDict['id'], commandName=dataDict['name'],
                                    metadata=messageData['metadata'],
                                    data=json.dumps(resultData),
                                    creatorServiceName=creatorServiceName, success=True),
