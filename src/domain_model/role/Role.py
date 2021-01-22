@@ -75,4 +75,4 @@ class Role(Resource):
     def __eq__(self, other):
         if not isinstance(other, Role):
             raise NotImplementedError(f'other: {other} can not be compared with Role class')
-        return self.id() == other.id() and self.name() == other.name()
+        return self.id() == other.id() and self.name() == other.name() and self.title() == other.title()
