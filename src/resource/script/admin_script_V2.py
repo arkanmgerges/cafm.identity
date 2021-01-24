@@ -34,18 +34,20 @@ def build_resource_tree_from_file(file_name):
 
         # Parse access tree
         for realm in fileData['realms']:
-            createRealm(token, realm['name'], realm['type'])
-            # for role in realm['roles']:
-            #     roleReqId = createRole(token, role['name'])
-            #     for user in role['users']:
-            #         userReqId = createUser(token, user['email'])
-            #         passReqId = setPassword(token, userId, user['password'])
-            #         assignReqId = assignUserToRole(token, roleId, userId)
+            realmName = realm['name']
+            createRealm(token, realmName, realm['type'])
+            for role in realm['roles']:
+                roleId = createRole(token, role['name'], realmName)
+                for user in role['users']:
+                    userId = createUser(token, user['email'])
+                    setPassword(token, userId, user['password'])
+                    assignUserToRole(token, roleId, userId)
     except Exception as e:
         click.echo(click.style(f'{e}', fg='red'))
 
 
 def getAccessToken():
+    click.echo(click.style(f'Get Access Token', fg='green'))
     resp = requests.post(baseURL + 'v1/identity/auth/authenticate',
                          json=dict(email=os.getenv('ADMIN_EMAIL', None),
                                    password=os.getenv('ADMIN_PASSWORD', None)))
@@ -61,38 +63,41 @@ def createRealm(token, name, type):
     checkForResult(token, resp.json()['request_id'])
 
 
-def createRole(token, name):
-    click.echo(click.style(f'Creating realm name: {name} type: {type}', fg='green'))
+def createRole(token, name, realmName):
+    click.echo(click.style(f'Creating Role name: {name}', fg='green'))
     resp = requests.post(baseURL + 'v1/identity/roles/create', headers=dict(Authorization='Bearer ' + token),
-                         json=dict(name=name))
+                         json=dict(name=f'{realmName}_{name}', title=name))
     resp.raise_for_status()
-    return resp.json()['request_id']
+    return checkForResult(token, resp.json()['request_id'], checkForID=True)
 
 
 def createUser(token, email):
+    click.echo(click.style(f'Creating User email: {email}', fg='green'))
     resp = requests.post(baseURL + 'v1/identity/users/create', headers=dict(Authorization='Bearer ' + token),
                          json=dict(email=email))
     resp.raise_for_status()
-    return resp.json()['request_id']
+    return checkForResult(token, resp.json()['request_id'], checkForID=True)
 
 
 def setPassword(token, user_id, password):
-    resp = requests.post(baseURL + 'v1/identity/users/' + user_id + '/set_password',
-                         headers=dict(Authorization='Bearer ' + token),
-                         json=dict(password=password))
+    click.echo(click.style(f'Set password for User: {user_id}', fg='green'))
+    resp = requests.put(baseURL + 'v1/identity/users/' + user_id + '/set_password',
+                        headers=dict(Authorization='Bearer ' + token),
+                        json=dict(password=password))
     resp.raise_for_status()
-    return resp.json()['request_id']
+    checkForResult(token, resp.json()['request_id'])
 
 
 def assignUserToRole(token, roleID, userID):
+    click.echo(click.style(f'Assign user To role', fg='green'))
     resp = requests.post(baseURL + 'v1/identity/assignments/role_to_user',
                          headers=dict(Authorization='Bearer ' + token),
                          json=dict(role_id=roleID, user_id=userID))
     resp.raise_for_status()
-    return resp.json()['request_id']
+    checkForResult(token, resp.json()['request_id'])
 
 
-def checkForResult(token, requestId):
+def checkForResult(token, requestId, checkForID=False):
     for i in range(5):
         sleep(1)
         isSuccessful = requests.get(baseURL + 'v1/common/request/is_successful',
@@ -104,7 +109,10 @@ def checkForResult(token, requestId):
             resp.raise_for_status()
             result = resp.json()['result']
             if isSuccessful.json()['success']:
-                return result['items'][0]['id']
+                if checkForID:
+                    return result['items'][0]['id']
+                else:
+                    return
             else:
                 for item in result['items']:
                     if 'reason' in item:
