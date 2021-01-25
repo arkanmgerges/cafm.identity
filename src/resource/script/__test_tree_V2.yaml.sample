@@ -3,37 +3,48 @@ realms:
   - name: "Coral"
     type: "provider"
     roles:
-      - name: "Super Admin"
+      - name: "super_admin"
+        title: "Super Admin"
         users:
           - email: "admin@coral.com"
             password: "superC@FM"
-      - name: "Admin"
+      - name: "admin"
+        title: "Admin"
         users: [ ]
-      - name: "Coordinator"
+      - name: "coordinator"
+        title: "Coordinator"
         users: [ ]
-      - name: "Project Manager"
+      - name: "project_manager"
+        title: "Project Manager"
         users: [ ]
-      - name: "Assistant Project Manager"
+      - name: "assistant_project_manager"
+        title: "Assistant Project Manager"
         users: [ ]
-      - name: "Technician"
+      - name: "technician"
+        title: "Technician"
         users: [ ]
-      - name: "Procurement"
+      - name: "procurement"
+        title: "Procurement"
         users: [ ]
   - name: "Globalworth"
     type: "beneficiary"
     roles:
-      - name: "General Manager"
+      - name: "global_general_manager"
+        title: "General Manager"
         users:
           - email: "admin@globalworth.com"
             password: "superC@FM"
-      - name: "Building Manager"
+      - name: "building_manager"
+        title: "Building Manager"
         users: [ ]
   - name: "Amazon"
     type: "tenant"
     roles:
-      - name: "General Manager"
+      - name: "amazon_general_manager"
+        title: "General Manager"
         users:
           - email: "admin@amazon.com"
             password: "superC@FM"
-      - name: "Office Manager"
+      - name: "office_manager"
+        title: "Office Manager"
         users: [ ]

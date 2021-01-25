@@ -37,7 +37,7 @@ def build_resource_tree_from_file(file_name):
             realmName = realm['name']
             createRealm(token, realmName, realm['type'])
             for role in realm['roles']:
-                roleId = createRole(token, role['name'], realmName)
+                roleId = createRole(token, role['name'], role['title'])
                 for user in role['users']:
                     userId = createUser(token, user['email'])
                     setPassword(token, userId, user['password'])
@@ -63,10 +63,10 @@ def createRealm(token, name, type):
     checkForResult(token, resp.json()['request_id'])
 
 
-def createRole(token, name, realmName):
+def createRole(token, name, title):
     click.echo(click.style(f'Creating Role name: {name}', fg='green'))
     resp = requests.post(baseURL + 'v1/identity/roles/create', headers=dict(Authorization='Bearer ' + token),
-                         json=dict(name=f'{realmName}_{name}', title=name))
+                         json=dict(name=name, title=title))
     resp.raise_for_status()
     return checkForResult(token, resp.json()['request_id'], checkForID=True)
 
