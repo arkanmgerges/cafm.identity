@@ -1,0 +1,39 @@
+---
+realms:
+  - name: "Coral"
+    type: "provider"
+    roles:
+      - name: "Super Admin"
+        users:
+          - email: "admin@coral.com"
+            password: "superC@FM"
+      - name: "Admin"
+        users: [ ]
+      - name: "Coordinator"
+        users: [ ]
+      - name: "Project Manager"
+        users: [ ]
+      - name: "Assistant Project Manager"
+        users: [ ]
+      - name: "Technician"
+        users: [ ]
+      - name: "Procurement"
+        users: [ ]
+  - name: "Globalworth"
+    type: "beneficiary"
+    roles:
+      - name: "General Manager"
+        users:
+          - email: "admin@globalworth.com"
+            password: "superC@FM"
+      - name: "Building Manager"
+        users: [ ]
+  - name: "Amazon"
+    type: "tenant"
+    roles:
+      - name: "General Manager"
+        users:
+          - email: "admin@amazon.com"
+            password: "superC@FM"
+      - name: "Office Manager"
+        users: [ ]
