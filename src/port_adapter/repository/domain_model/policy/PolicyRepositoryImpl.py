@@ -831,7 +831,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result[0] if queryResult.result != [] else []
 
-        if result == []:
+        if not result:
             filteredItems = self._filterItems([], roleAccessPermissionData, resourceType)
         else:
             filteredItems = self._filterItems(result['items'], roleAccessPermissionData, resourceType)
@@ -977,7 +977,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
         for role in tokenData.roles():
-            roleDocId = self.roleDocumentId(Role.createFrom(id=role['id'], name=role['name']))
+            roleDocId = self.roleDocumentId(Role.createFrom(id=role['id'], name=role['name'], title=role['title']))
             aql = '''
                 UPSERT {_from: @fromId, _to: @toId}
                     INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}

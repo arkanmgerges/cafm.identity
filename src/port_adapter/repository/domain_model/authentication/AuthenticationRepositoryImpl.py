@@ -52,7 +52,7 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
                             FOR vRole,eRole IN 1..1 OUTBOUND r3[0].ug._id has FILTER eRole._to_type == "role" RETURN vRole
                          )
                 LET r4 = union_distinct(r1, r2)
-                LET r5 = (FOR d5 IN r4 RETURN {"id": d5.id, "name": d5.name})
+                LET r5 = (FOR d5 IN r4 RETURN {"id": d5.id, "name": d5.name, "title": d5.title})
                 RETURN {'id': u.id, 'email': u.email, 'roles': r5}
               '''
 
@@ -89,7 +89,7 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
                             FOR vRole,eRole IN 1..1 OUTBOUND r3[0].ug._id has FILTER eRole._to_type == "role" RETURN vRole
                          )
                 LET r4 = union_distinct(r1, r2)
-                LET r5 = (FOR d5 IN r4 RETURN {"id": d5.id, "name": d5.name})
+                LET r5 = (FOR d5 IN r4 RETURN {"id": d5.id, "name": d5.name, "title": d5.title})
                 RETURN {'id': u.id, 'email': u.email, 'password': u.password, 'roles': r5}
               '''
 

@@ -18,7 +18,7 @@ class Role(Resource):
         anId = str(uuid4()) if id is None or id == '' else id
         super().__init__(id=anId, type='role')
         self._name = name
-        self._title = title
+        self._title = title if title is not None else title
 
     @classmethod
     def createFrom(cls, id: str = None, name='', title: str = '', publishEvent: bool = False):

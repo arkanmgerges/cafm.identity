@@ -196,16 +196,14 @@ class RoleRepositoryImpl(RoleRepository):
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
-
         result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.ROLE.value, tokenData,
                                                                 roleAccessPermissionData, sortData)
-
         if result is None or len(result['items']) == 0:
             return {"items": [], "itemCount": 0}
         items = result['items']
         itemCount = len(items)
         items = items[resultFrom:resultFrom + resultSize]
-        return {"items": [Role.createFrom(id=x['id'], name=x['name'], title=x['title']) for x in items],
+        return {"items": [Role.createFrom(id=x['id'], name=x['name'], title=x['title'] if 'title' in x else '') for x in items],
                 "itemCount": itemCount}
 
     @debugLogger
