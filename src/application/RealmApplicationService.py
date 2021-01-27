@@ -88,6 +88,7 @@ class RealmApplicationService:
                                             resourceType=PermissionContextConstant.REALM.value),
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
+        return resource
 
     @debugLogger
     def realms(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',

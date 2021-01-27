@@ -173,7 +173,7 @@ class RealmRepositoryImpl(RealmRepository):
     @debugLogger
     def realmById(self, id: str) -> Realm:
         aql = '''
-            FOR d IN realm
+            FOR d IN resource
                 FILTER d.id == @id AND d.type == 'realm'
                 RETURN d
         '''
@@ -185,7 +185,8 @@ class RealmRepositoryImpl(RealmRepository):
             logger.debug(f'[{RealmRepositoryImpl.realmById.__qualname__}] realm id: {id}')
             raise RealmDoesNotExistException(f'realm id: {id}')
 
-        return Realm.createFrom(id=result[0]['id'], name=result[0]['name'])
+        return Realm.createFrom(id=result[0]['id'], name=result[0]['name'],
+                                realmType=result[0]['realm_type'] if 'realm_type' in result[0] else '')
 
     @debugLogger
     def realms(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,

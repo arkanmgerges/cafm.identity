@@ -76,6 +76,7 @@ class ProjectApplicationService:
                                             resourceType=PermissionContextConstant.PROJECT.value),
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
+        return resource
 
     @debugLogger
     def projectById(self, id: str, token: str = ''):
@@ -88,6 +89,7 @@ class ProjectApplicationService:
                                             resourceType=PermissionContextConstant.PROJECT.value),
                                         requestedObject=RequestedAuthzObject(obj=resource),
                                         tokenData=tokenData)
+        return resource
 
     @debugLogger
     def projects(self, resultFrom: int = 0, resultSize: int = 100, token: str = '',
