@@ -54,6 +54,9 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.ProjectResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__ProjectAppServiceListener__projects, "Get projects", "grpc listener", "Get all projects")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def projects(self, request, context):
@@ -88,6 +91,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return ProjectAppService_projectsResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__ProjectAppServiceListener__projectById, "Get project by id", "grpc listener", "Get a project by id")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def projectById(self, request, context):

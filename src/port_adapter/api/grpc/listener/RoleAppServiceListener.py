@@ -53,6 +53,9 @@ class RoleAppServiceListener(RoleAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.RoleResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__RoleAppServiceListener__roles, "Get roles", "grpc listener", "Get all roles")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def roles(self, request, context):
@@ -88,6 +91,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return RoleAppService_rolesResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__RoleAppServiceListener__roleById, "Get role by id", "grpc listener", "Get a role by id")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def roleById(self, request, context):

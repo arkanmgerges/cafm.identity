@@ -13,7 +13,10 @@ from src.port_adapter.messaging.listener.api_command.handler.Handler import Hand
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__ResetUserPasswordHandler, "Reset user password", "api command consumer", "Reset user password command")
+c4model:Rel(identity__messaging_api_command_handler__ResetUserPasswordHandler, identity__messaging_identity_command_handler__GenerateUserOneTimePasswordHandler, "Reset user password", "message")
+"""
 class ResetUserPasswordHandler(Handler):
 
     def __init__(self):

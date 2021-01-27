@@ -11,7 +11,10 @@ from src.port_adapter.messaging.listener.identity_command.handler.Handler import
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_identity_command_handler__CreateRealmHandler, "Create realm", "identity command consumer", "Create realm")
+c4model:Rel(identity__messaging_identity_command_handler__CreateRealmHandler, identity__domainmodel_event__RealmCreated, "Realm Created", "message")
+"""
 class CreateRealmHandler(Handler):
 
     def __init__(self):

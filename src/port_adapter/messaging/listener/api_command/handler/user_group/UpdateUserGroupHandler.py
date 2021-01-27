@@ -9,7 +9,10 @@ from src.port_adapter.messaging.listener.api_command.handler.Handler import Hand
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__UpdateUserGroupHandler, "Update user group", "api command consumer", "Update command")
+c4model:Rel(identity__messaging_api_command_handler__UpdateUserGroupHandler, identity__messaging_identity_command_handler__UpdateUserGroupHandler, "Update user group", "message")
+"""
 class UpdateUserGroupHandler(Handler):
 
     def __init__(self):

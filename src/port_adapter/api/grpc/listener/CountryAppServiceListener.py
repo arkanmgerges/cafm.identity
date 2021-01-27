@@ -33,6 +33,9 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
+    """
+    c4model|cb|identity:Component(identity__grpc__CountryAppServiceListener__countries, "Get countries", "grpc listener", "Get all countries")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def countries(self, request, context):
@@ -62,6 +65,9 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             context.set_details('Un Authorized')
             return CountryAppService_countriesResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__CountryAppServiceListener__countryById, "Get country by id", "grpc listener", "Get a country by id")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def countryById(self, request, context):
@@ -91,6 +97,9 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             context.set_details('Un Authorized')
             return CountryAppService_countryByIdResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__CountryAppServiceListener__citiesByCountryId, "Get cities by country id", "grpc listener", "Get cities by country id")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def citiesByCountryId(self, request, context):
@@ -121,6 +130,9 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             context.set_details('Un Authorized')
             return CountryAppService_citiesByCountryIdResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__CountryAppServiceListener__cityByCountryId, "Get city by country id", "grpc listener", "Get a city by country id")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def cityByCountryId(self, request, context):

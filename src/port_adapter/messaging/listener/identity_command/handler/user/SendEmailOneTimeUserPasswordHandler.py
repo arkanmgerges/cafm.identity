@@ -13,7 +13,9 @@ from src.port_adapter.messaging.listener.identity_command.handler.Handler import
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_identity_command_handler__SendEmailOneTimeUserPasswordHandler, "Send email one time password", "identity command consumer", "Send one time password by email")
+"""
 class SendEmailOneTimeUserPasswordHandler(Handler):
 
     def __init__(self):

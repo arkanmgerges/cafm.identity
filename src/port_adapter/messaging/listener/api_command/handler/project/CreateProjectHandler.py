@@ -11,7 +11,10 @@ from src.port_adapter.messaging.listener.api_command.handler.Handler import Hand
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__CreateProjectHandler, "Create project", "api command consumer", "Create command")
+c4model:Rel(identity__messaging_api_command_handler__CreateProjectHandler, identity__messaging_identity_command_handler__CreateProjectHandler, "Create project", "message")
+"""
 class CreateProjectHandler(Handler):
 
     def __init__(self):

@@ -55,6 +55,9 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.UserGroupResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__UserGroupAppServiceListener__userGroups, "Get user groups", "grpc listener", "Get all user groups")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def userGroups(self, request, context):
@@ -89,6 +92,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return UserGroupAppService_userGroupsResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__UserGroupAppServiceListener__userGroupById, "Get user group by id", "grpc listener", "Get a user group by id")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def userGroupById(self, request, context):

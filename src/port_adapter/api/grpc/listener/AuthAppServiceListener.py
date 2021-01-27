@@ -30,6 +30,9 @@ class AuthAppServiceListener(AuthAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
+    """
+    c4model|cb|identity:Component(identity__grpc__AuthAppServiceListener__authenticateUserByEmailAndPassword, "Auth user by email and password", "grpc listener", "Authenticate a user")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def authenticateUserByEmailAndPassword(self, request, context):
@@ -98,6 +101,9 @@ class AuthAppServiceListener(AuthAppServiceServicer):
             context.set_details(e)
             return AuthAppService_isAuthenticatedResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__AuthAppServiceListener__logout, "Logout user", "grpc listener", "Logout a user")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def logout(self, request, context):

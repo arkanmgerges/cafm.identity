@@ -11,7 +11,10 @@ from src.port_adapter.messaging.listener.project_event.handler.Handler import Ha
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_identity_event_handler__UserOneTimePasswordGeneratedHandler, "User one time password generated", "identity event consumer", "User one time password generated")
+c4model:Rel(identity__messaging_identity_event_handler__UserOneTimePasswordGeneratedHandler, identity__messaging_identity_command_handler__SendEmailOneTimeUserPasswordHandler, "Send email one time user password", "message")
+"""
 class UserOneTimePasswordGeneratedHandler(Handler):
 
     def __init__(self):

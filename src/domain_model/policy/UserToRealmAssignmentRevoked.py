@@ -7,7 +7,9 @@ from src.domain_model.event.DomainEvent import DomainEvent
 from src.domain_model.event.EventConstant import CommonEventConstant
 from src.domain_model.resource.Resource import Resource
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserToRealmAssignmentRevoked, "User to Realm Assignment Revoked", "event", "message")
+"""
 class UserToRealmAssignmentRevoked(DomainEvent):
     def __init__(self, user: Resource, realm: Resource):
         super().__init__(id=str(uuid4()), name=CommonEventConstant.USER_TO_REALM_ASSIGNMENT_REVOKED.value)

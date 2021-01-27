@@ -11,7 +11,10 @@ from src.port_adapter.messaging.listener.api_command.handler.Handler import Hand
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__UpdatePermissionContextHandler, "Update permission context", "api command consumer", "Update command")
+c4model:Rel(identity__messaging_api_command_handler__UpdatePermissionContextHandler, identity__messaging_identity_command_handler__UpdatePermissionContextHandler, "Update permission context", "message")
+"""
 class UpdatePermissionContextHandler(Handler):
 
     def __init__(self):

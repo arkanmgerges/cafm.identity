@@ -12,7 +12,10 @@ from src.port_adapter.messaging.listener.api_command.handler.Handler import Hand
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__DeleteOuHandler, "Delete ou", "api command consumer", "Delete command")
+c4model:Rel(identity__messaging_api_command_handler__DeleteOuHandler, identity__messaging_identity_command_handler__DeleteOuHandler, "Delete ou", "message")
+"""
 class DeleteOuHandler(Handler):
 
     def __init__(self):

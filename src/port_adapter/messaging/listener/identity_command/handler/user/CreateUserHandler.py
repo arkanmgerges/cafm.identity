@@ -12,7 +12,10 @@ from src.port_adapter.messaging.listener.identity_command.handler.Handler import
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_identity_command_handler__CreateUserHandler, "Create user", "identity command consumer", "Create user")
+c4model:Rel(identity__messaging_identity_command_handler__CreateUserHandler, identity__domainmodel_event__UserCreated, "User Created", "message")
+"""
 class CreateUserHandler(Handler):
 
     def __init__(self):

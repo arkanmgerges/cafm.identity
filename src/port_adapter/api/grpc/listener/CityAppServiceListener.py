@@ -30,6 +30,9 @@ class CityAppServiceListener(CityAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
+    """
+    c4model|cb|identity:Component(identity__grpc__CityAppServiceListener__cityById, "Get city by id", "grpc listener", "Get a city by id")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def cityById(self, request, context):
@@ -64,6 +67,9 @@ class CityAppServiceListener(CityAppServiceServicer):
             context.set_details('Un Authorized')
             return CityAppService_cityByIdResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__CityAppServiceListener__cities, "Get cities", "grpc listener", "Get all cities")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def cities(self, request, context):

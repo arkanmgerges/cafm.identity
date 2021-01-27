@@ -7,7 +7,9 @@ from src.domain_model.event.EventConstant import CommonEventConstant
 from src.domain_model.event.DomainEvent import DomainEvent
 from src.domain_model.user.User import User
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserOneTimePasswordGenerated, "User One Time Password Generated", "event", "message")
+"""
 class UserOneTimePasswordGenerated(DomainEvent):
     def __init__(self, user: User):
         super().__init__(id=str(uuid4()), name=CommonEventConstant.USER_ONE_TIME_PASSWORD_GENERATED.value)

@@ -55,6 +55,9 @@ class PermissionAppServiceListener(PermissionAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.PermissionResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__PermissionAppServiceListener__permissions, "Get permission", "grpc listener", "Get all permissions")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def permissions(self, request, context):
@@ -96,6 +99,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return PermissionAppService_permissionsResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__PermissionAppServiceListener__permissionById, "Get permission by id", "grpc listener", "Get a permission by id")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def permissionById(self, request, context):

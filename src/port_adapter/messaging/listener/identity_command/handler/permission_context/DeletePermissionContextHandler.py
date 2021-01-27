@@ -11,7 +11,10 @@ from src.port_adapter.messaging.listener.identity_command.handler.Handler import
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_identity_command_handler__DeletePermissionContextHandler, "Delete permission context", "identity command consumer", "Delete command")
+c4model:Rel(identity__messaging_identity_command_handler__DeletePermissionContextHandler, identity__domainmodel_event__PermissionContextDeleted, "PermissionContext Deleted", "message")
+"""
 class DeletePermissionContextHandler(Handler):
 
     def __init__(self):

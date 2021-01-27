@@ -11,7 +11,10 @@ from src.port_adapter.messaging.listener.api_command.handler.Handler import Hand
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__CreateUserGroupHandler, "Create user group", "api command consumer", "Create command")
+c4model:Rel(identity__messaging_api_command_handler__CreateUserGroupHandler, identity__messaging_identity_command_handler__CreateOuHandler, "Create user group", "message")
+"""
 class CreateUserGroupHandler(Handler):
 
     def __init__(self):

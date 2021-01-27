@@ -10,7 +10,10 @@ from src.port_adapter.messaging.listener.project_event.handler.Handler import Ha
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_project_event_handler__UserCreatedHandler, "User created by the project", "project event consumer", "User created by project")
+c4model:Rel(identity__messaging_project_event_handler__UserCreatedHandler, identity__messaging_identity_command_handler__GenerateUserOneTimePasswordHandler, "Generate password", "message")
+"""
 class UserCreatedHandler(Handler):
 
     def __init__(self):

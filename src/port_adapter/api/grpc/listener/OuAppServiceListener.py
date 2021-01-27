@@ -51,6 +51,9 @@ class OuAppServiceListener(OuAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.OuResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__OuAppServiceListener__ous, "Get ous", "grpc listener", "Get all ous")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def ous(self, request, context):
@@ -84,6 +87,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return OuAppService_ousResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__OuAppServiceListener__ouById, "Get ou by id", "grpc listener", "Get a ou by id")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def ouById(self, request, context):

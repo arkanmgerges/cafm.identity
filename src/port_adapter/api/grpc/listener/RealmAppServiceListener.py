@@ -54,6 +54,9 @@ class RealmAppServiceListener(RealmAppServiceServicer):
         #     context.set_details(f'{e}')
         #     return identity_pb2.RealmResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__RealmAppServiceListener__realms, "Get realms", "grpc listener", "Get all realms")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def realms(self, request, context):
@@ -88,6 +91,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}')
             context.set_details('Un Authorized')
             return RealmAppService_realmsResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__RealmAppServiceListener__realmById, "Get realm by id", "grpc listener", "Get a realm by id")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def realmById(self, request, context):

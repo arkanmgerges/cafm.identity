@@ -35,6 +35,9 @@ class PermissionContextAppServiceListener(PermissionContextAppServiceServicer):
     def __str__(self):
         return self.__class__.__name__
 
+    """
+    c4model|cb|identity:Component(identity__grpc__PermissionContextAppServiceListener__permissionContexts, "Get permission contexts", "grpc listener", "Get all permission contexts")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def permissionContexts(self, request, context):
@@ -75,6 +78,9 @@ class PermissionContextAppServiceListener(PermissionContextAppServiceServicer):
             context.set_details('Un Authorized')
             return PermissionContextAppService_permissionContextsResponse()
 
+    """
+    c4model|cb|identity:Component(identity__grpc__PermissionContextAppServiceListener__permissionContextById, "Get permission context by id", "grpc listener", "Get a permission context by id")
+    """
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def permissionContextById(self, request, context):

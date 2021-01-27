@@ -13,7 +13,10 @@ from src.port_adapter.messaging.listener.identity_command.handler.Handler import
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_identity_command_handler__GenerateUserOneTimePasswordHandler, "Generate one time password", "identity command consumer", "Generate user one time password")
+c4model:Rel(identity__messaging_identity_command_handler__GenerateUserOneTimePasswordHandler, identity__domainmodel_event__UserOneTimePasswordGenerated, "User one time password generated", "message")
+"""
 class GenerateUserOneTimePasswordHandler(Handler):
 
     def __init__(self):

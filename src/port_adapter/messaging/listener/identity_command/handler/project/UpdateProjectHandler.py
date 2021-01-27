@@ -11,7 +11,10 @@ from src.port_adapter.messaging.listener.identity_command.handler.Handler import
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_identity_command_handler__UpdateProjectHandler, "Update project", "identity command consumer", "Update project")
+c4model:Rel(identity__messaging_identity_command_handler__UpdateProjectHandler, identity__domainmodel_event__ProjectUpdated, "Project Updated", "message")
+"""
 class UpdateProjectHandler(Handler):
 
     def __init__(self):

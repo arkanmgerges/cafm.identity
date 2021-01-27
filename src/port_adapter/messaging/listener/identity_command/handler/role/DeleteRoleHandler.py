@@ -11,7 +11,10 @@ from src.port_adapter.messaging.listener.identity_command.handler.Handler import
 from src.resource.common.DateTimeHelper import DateTimeHelper
 from src.resource.logging.logger import logger
 
-
+"""
+c4model|cb|identity:ComponentQueue(identity__messaging_identity_command_handler__DeleteRoleHandler, "Delete role", "identity command consumer", "Delete role")
+c4model:Rel(identity__messaging_identity_command_handler__DeleteRoleHandler, identity__domainmodel_event__RoleDeleted, "Role Deleted", "message")
+"""
 class DeleteRoleHandler(Handler):
 
     def __init__(self):
