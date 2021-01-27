@@ -89,3 +89,8 @@ Run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-identity up
 **3 - Stop/Run the services**  
 To stop the services, run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-identity stop`  
 To start the services, run `docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-identity start`
+
+
+
+## Overview diagram about the architecture (C4 Model)
+![system_c4model](https://github.com/DigitalMOB2/cafm.identity/raw/master/src/resource/graph_data/system_c4model.svg)
