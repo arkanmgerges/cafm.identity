@@ -8,7 +8,7 @@ from src.domain_model.event.DomainEvent import DomainEvent
 import src.domain_model.realm.Realm as Realm
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RealmDeleted, "Realm Deleted", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RealmDeleted, "CommonEventConstant.REALM_DELETED.value", "message", "event")
 """
 class RealmDeleted(DomainEvent):
     def __init__(self, realm: Realm):

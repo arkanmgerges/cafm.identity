@@ -23,7 +23,7 @@ class UserApplicationService:
         self._userService = userService
 
     @debugLogger
-    def createUser(self, id: str = '', email: str = '', objectOnly: bool = False, token: str = ''):
+    def createUser(self, id: str = None, email: str = '', objectOnly: bool = False, token: str = ''):
         obj: User = self.constructObject(id=id, email=email)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(

@@ -8,7 +8,7 @@ from src.domain_model.event.DomainEvent import DomainEvent
 import src.domain_model.project.Project as Project
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__ProjectDeleted, "Project Deleted", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__ProjectDeleted, "CommonEventConstant.PROJECT_DELETED.value", "message", "event")
 """
 class ProjectDeleted(DomainEvent):
     def __init__(self, project: Project):

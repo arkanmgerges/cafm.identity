@@ -8,7 +8,7 @@ from src.domain_model.event.DomainEvent import DomainEvent
 from src.domain_model.ou.Ou import Ou
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__OuCreated, "Ou Created", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__OuCreated, "CommonEventConstant.OU_CREATED.value", "message", "event")
 """
 class OuCreated(DomainEvent):
     def __init__(self, ou: Ou):

@@ -10,7 +10,7 @@ from src.domain_model.role.Role import Role
 from src.domain_model.user.User import User
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RoleToUserAssigned, "Role to User Assigned", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RoleToUserAssigned, "CommonEventConstant.ROLE_TO_USER_ASSIGNED.value", "message", "event")
 """
 class RoleToUserAssigned(DomainEvent):
     def __init__(self, role: Role, user: User):

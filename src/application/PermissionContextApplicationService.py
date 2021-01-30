@@ -24,7 +24,7 @@ class PermissionContextApplicationService:
         self._permissionContextService = permissionContextService
 
     @debugLogger
-    def createPermissionContext(self, id: str = '', type: str = '', data: dict = None, objectOnly: bool = False,
+    def createPermissionContext(self, id: str = None, type: str = '', data: dict = None, objectOnly: bool = False,
                                 token: str = ''):
         data = {} if data is None else data
         obj: PermissionContext = self.constructObject(id=id, type=type, data=data)

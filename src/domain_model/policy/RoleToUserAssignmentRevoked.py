@@ -9,7 +9,7 @@ from src.domain_model.role.Role import Role
 from src.domain_model.user.User import User
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RoleToUserAssignmentRevoked, "Role to User Assignment Revoked", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RoleToUserAssignmentRevoked, "CommonEventConstant.ROLE_TO_USER_ASSIGNMENT_REVOKED.value", "message", "event")
 """
 class RoleToUserAssignmentRevoked(DomainEvent):
     def __init__(self, role: Role, user: User):

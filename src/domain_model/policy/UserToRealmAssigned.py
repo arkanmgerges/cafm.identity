@@ -8,7 +8,7 @@ from src.domain_model.event.EventConstant import CommonEventConstant
 from src.domain_model.resource.Resource import Resource
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserToRealmAssigned, "User to Realm Assigned", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserToRealmAssigned, "CommonEventConstant.USER_TO_REALM_ASSIGNED.value", "message", "event")
 """
 class UserToRealmAssigned(DomainEvent):
     def __init__(self, user: Resource, realm: Resource):

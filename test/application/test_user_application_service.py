@@ -52,7 +52,7 @@ def test_create_user_object_when_user_does_not_exist():
     DomainPublishedEvents.cleanup()
     repo = Mock(spec=UserRepository)
     email = 'me@me.test'
-    repo.userByName = Mock(side_effect=UserDoesNotExistException)
+    repo.userByEmail = Mock(side_effect=UserDoesNotExistException)
     userService = UserService(userRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = UserApplicationService(repo, authzService, userService)
     # Act

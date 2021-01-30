@@ -6,13 +6,20 @@ import os
 import re
 from typing import List
 
+from src.resource.graph_data.ConstantPackage import CommonCommandConstant, CommonEventConstant
+
 OUTPUT_FILE_NAME = f'{os.path.dirname(os.path.abspath(__file__))}/../graph_data/graph_c4model'
 
 outsideResult = set()
 insideResult = {}
 
+# Inside a boundary level of the generated file
 inside = re.compile(r'c4model\|cb\|(?P<microservice>\w+):(?P<item>[^\n]+)')
+# At the root level of the generated file
 outside = re.compile(r'c4model:(?P<item>[^\n]+)')
+# Find constants
+commonConst = re.compile(r'(?:CommonCommandConstant|CommonEventConstant).\w+.value')
+
 
 files = []
 for filePath in ['/Users/arkan/dev/company/digital-mob/cafm/cafm-api/**/*.py',
@@ -38,7 +45,7 @@ def extractData():
 
 def _addToOutside(outResult: List):
     for x in outResult:
-        outsideResult.add(x)
+        outsideResult.add(replaceCommonConstants(x))
 
 
 def _addToInside(inResult: List):
@@ -46,7 +53,21 @@ def _addToInside(inResult: List):
         if x[0] != '':
             if x[0] not in insideResult:
                 insideResult[x[0]] = set()
-            insideResult[x[0]].add(x[1])
+            insideResult[x[0]].add(replaceCommonConstants(x[1]))
+
+
+def replaceCommonConstants(st: str):
+    constReplacement = {}
+    constList = commonConst.findall(st)
+    try:
+        for foundString in constList:
+            constReplacement[foundString] = eval(foundString)
+        for whatToReplace, replacement in constReplacement.items():
+            st = st.replace(whatToReplace, replacement)
+    except Exception as e:
+        print(st)
+        raise e
+    return st
 
 
 def readFile(filePath: str) -> str:

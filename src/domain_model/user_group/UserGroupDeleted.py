@@ -8,7 +8,7 @@ from src.domain_model.event.EventConstant import CommonEventConstant
 from src.domain_model.event.DomainEvent import DomainEvent
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserGroupDeleted, "User Group Deleted", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserGroupDeleted, "CommonEventConstant.USER_GROUP_DELETED.value", "message", "event")
 """
 class UserGroupDeleted(DomainEvent):
     def __init__(self, userGroup: UserGroup):

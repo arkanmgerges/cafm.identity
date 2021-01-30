@@ -8,7 +8,7 @@ from src.domain_model.event.DomainEvent import DomainEvent
 from src.domain_model.role.Role import Role
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RoleUpdated, "Role Updated", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RoleUpdated, "CommonEventConstant.ROLE_UPDATED.value", "message", "event")
 """
 class RoleUpdated(DomainEvent):
     def __init__(self, oldRole: Role, newRole: Role):

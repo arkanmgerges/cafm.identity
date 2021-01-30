@@ -23,7 +23,7 @@ class OuApplicationService:
         self._ouService = ouService
 
     @debugLogger
-    def createOu(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
+    def createOu(self, id: str = None, name: str = '', objectOnly: bool = False, token: str = ''):
         obj: Ou = self.constructObject(id=id, name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(

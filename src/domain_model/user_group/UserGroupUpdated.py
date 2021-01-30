@@ -8,7 +8,7 @@ from src.domain_model.event.DomainEvent import DomainEvent
 from src.domain_model.user_group.UserGroup import UserGroup
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserGroupUpdated, "User Group Updated", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserGroupUpdated, "CommonEventConstant.USER_GROUP_UPDATED.value", "message", "event")
 """
 class UserGroupUpdated(DomainEvent):
     def __init__(self, oldUserGroup: UserGroup, newUserGroup: UserGroup):

@@ -8,7 +8,7 @@ from src.domain_model.event.DomainEvent import DomainEvent
 import src.domain_model.user.User as User
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserDeleted, "User Deleted", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserDeleted, "CommonEventConstant.USER_CREATED.value", "message", "event")
 """
 class UserDeleted(DomainEvent):
     def __init__(self, user: User):

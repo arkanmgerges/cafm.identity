@@ -1,42 +1,15 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-import json
-import time
-
-from src.domain_model.event.EventConstant import CommonEventConstant
-from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
-from src.port_adapter.messaging.listener.project_event.handler.Handler import Handler
-from src.resource.common.DateTimeHelper import DateTimeHelper
-from src.resource.logging.logger import logger
+from src.port_adapter.messaging.listener.common.handler.user.UserOneTimePasswordGeneratedHandler import \
+    UserOneTimePasswordGeneratedHandler as Handler
 
 """
-c4model|cb|identity:ComponentQueue(identity__messaging_identity_event_handler__UserOneTimePasswordGeneratedHandler, "User one time password generated", "identity event consumer", "User one time password generated")
-c4model:Rel(identity__messaging_identity_event_handler__UserOneTimePasswordGeneratedHandler, identity__messaging_identity_command_handler__SendEmailOneTimeUserPasswordHandler, "Send email one time user password", "message")
+c4model|cb|identity:ComponentQueue(identity__messaging_identity_event_handler__UserOneTimePasswordGeneratedHandler, "CommonEventConstant.USER_ONE_TIME_PASSWORD_GENERATED.value", "identity event consumer", "")
+c4model:Rel(identity__messaging_project_event_handler__UserCreatedHandler, identity__domainmodel_event__UserOneTimePasswordGenerated, "consume")
+c4model:Rel(identity__messaging_identity_event_handler__UserOneTimePasswordGeneratedHandler, identity__messaging_identity_command_handler__SendEmailOneTimeUserPasswordHandler, "CommonCommandConstant.SEND_EMAIL_ONE_TIME_USER_PASSWORD.value", "message")
 """
+
+
 class UserOneTimePasswordGeneratedHandler(Handler):
-
-    def __init__(self):
-        self._eventConstant = CommonEventConstant.USER_ONE_TIME_PASSWORD_GENERATED
-        self._commandConstant = CommonCommandConstant.SEND_EMAIL_ONE_TIME_USER_PASSWORD
-
-    def canHandle(self, name: str) -> bool:
-        return name == self._eventConstant.value
-
-    def handleCommand(self, messageData: dict) -> dict:
-        name = messageData['name']
-        data = messageData['data']
-        metadata = messageData['metadata']
-
-        logger.debug(
-            f'[{UserOneTimePasswordGeneratedHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
-        dataDict = json.loads(data)
-        metadataDict = json.loads(metadata)
-
-        if 'token' not in metadataDict:
-            raise UnAuthorizedException()
-
-        return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': dataDict['id'], 'email': dataDict['email']},
-                'metadata': metadataDict}
+    pass

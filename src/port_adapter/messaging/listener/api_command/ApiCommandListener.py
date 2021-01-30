@@ -10,11 +10,12 @@ import signal
 from confluent_kafka.cimpl import KafkaError
 
 import src.port_adapter.AppDi as AppDi
+from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.resource.exception.DomainModelException import DomainModelException
 from src.port_adapter.messaging.common.Consumer import Consumer
 from src.port_adapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
 from src.port_adapter.messaging.common.TransactionalProducer import TransactionalProducer
-from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
+from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
 from src.resource.logging.logger import logger
 
 
@@ -23,6 +24,7 @@ class ApiCommandListener:
         self._handlers = []
         self._creatorServiceName = os.getenv('CAFM_IDENTITY_SERVICE_NAME', 'cafm.identity')
         self.addHandlers()
+        self.targetsOnSuccess = []
         self.targetsOnException = []
         signal.signal(signal.SIGINT, self.interruptExecution)
         signal.signal(signal.SIGTERM, self.interruptExecution)
@@ -93,17 +95,33 @@ class ApiCommandListener:
                             'data': msgData['data'],
                             'created_on': msgData['created_on']
                         })
-                        producer.produce(
-                            obj=IdentityCommand(id=msgData['id'],
-                                                creatorServiceName=self._creatorServiceName,
-                                                name=handledResult['name'],
-                                                metadata=msgData['metadata'],
-                                                data=json.dumps(handledResult['data']),
-                                                createdOn=handledResult['created_on'],
-                                                external=external
-                                                ),
-                            schema=IdentityCommand.get_schema())
 
+                        for target in self.targetsOnSuccess:
+                            res = target(messageData=msgData, creatorServiceName=self._creatorServiceName,
+                                         resultData=handledResult['data'])
+                            producer.produce(
+                                obj=res['obj'],
+                                schema=res['schema'])
+
+                        # Produce the domain events
+                        logger.debug(
+                            f'[{ApiCommandListener.run.__qualname__}] get postponed events from the event publisher')
+                        domainEvents = DomainPublishedEvents.postponedEvents()
+                        for domainEvent in domainEvents:
+                            logger.debug(
+                                f'[{ApiCommandListener.run.__qualname__}] produce domain event with name = {domainEvent.name()}')
+                            producer.produce(
+                                obj=IdentityEvent(id=domainEvent.id(),
+                                                  creatorServiceName=self._creatorServiceName,
+                                                  name=domainEvent.name(),
+                                                  metadata=msgData['metadata'],
+                                                  data=json.dumps(domainEvent.data()),
+                                                  createdOn=domainEvent.occurredOn(),
+                                                  external=external),
+                                schema=IdentityEvent.get_schema())
+
+                        logger.debug(f'[{ApiCommandListener.run.__qualname__}] cleanup event publisher')
+                        DomainPublishedEvents.cleanup()
                         # Send the consumer's position to transaction to commit
                         # them along with the transaction, committing both
                         # input and outputs in the same transaction is what provides EOS.

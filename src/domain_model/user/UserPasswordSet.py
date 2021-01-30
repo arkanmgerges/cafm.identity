@@ -8,7 +8,7 @@ from src.domain_model.event.DomainEvent import DomainEvent
 import src.domain_model.user.User as User
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserPasswordSet, "User Password Set", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserPasswordSet, "CommonEventConstant.USER_PASSWORD_SET.value", "message", "event")
 """
 class UserPasswordSet(DomainEvent):
     def __init__(self, user: User):

@@ -8,7 +8,7 @@ from src.domain_model.event.DomainEvent import DomainEvent
 from src.domain_model.realm.Realm import Realm
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RealmUpdated, "Realm Updated", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RealmUpdated, "CommonEventConstant.REALM_UPDATED.value", "message", "event")
 """
 class RealmUpdated(DomainEvent):
     def __init__(self, oldRealm: Realm, newRealm: Realm):

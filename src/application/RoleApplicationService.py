@@ -23,7 +23,7 @@ class RoleApplicationService:
         self._roleService = roleService
 
     @debugLogger
-    def createRole(self, id: str = '', name: str = '', title: str = '', objectOnly: bool = False, token: str = ''):
+    def createRole(self, id: str = None, name: str = '', title: str = '', objectOnly: bool = False, token: str = ''):
         obj: Role = self.constructObject(id=id, name=name, title=title)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(

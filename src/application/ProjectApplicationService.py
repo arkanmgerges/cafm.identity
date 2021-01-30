@@ -24,7 +24,7 @@ class ProjectApplicationService:
         self._projectService = projectService
 
     @debugLogger
-    def createProject(self, id: str = '', name: str = '', objectOnly: bool = False, token: str = ''):
+    def createProject(self, id: str = None, name: str = '', objectOnly: bool = False, token: str = ''):
         obj: Project = self.constructObject(id=id, name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(

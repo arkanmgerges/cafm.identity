@@ -1,44 +1,14 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-import json
-
-import src.port_adapter.AppDi as AppDi
-from src.application.RealmApplicationService import RealmApplicationService
-from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
-from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
-from src.port_adapter.messaging.listener.api_command.handler.Handler import Handler
-from src.resource.common.DateTimeHelper import DateTimeHelper
-from src.resource.logging.logger import logger
+from src.port_adapter.messaging.listener.common.handler.realm.CreateRealmHandler import CreateRealmHandler as Handler
 
 """
-c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__CreateRealmHandler, "Create realm", "api command consumer", "Create command")
-c4model:Rel(identity__messaging_api_command_handler__CreateRealmHandler, identity__messaging_identity_command_handler__CreateRealmHandler, "Create realm", "message")
+c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__CreateRealmHandler, "CommonCommandConstant.CREATE_REALM.value", "api command consumer", "")
+c4model:Rel(api__identity_realm_py__create__api_command_topic, identity__messaging_api_command_handler__CreateRealmHandler, "CommonCommandConstant.CREATE_REALM.value", "message")
+c4model:Rel(identity__messaging_api_command_handler__CreateRealmHandler, identity__domainmodel_event__RealmCreated, "create")
 """
+
+
 class CreateRealmHandler(Handler):
-
-    def __init__(self):
-        self._commandConstant = CommonCommandConstant.CREATE_REALM
-
-    def canHandle(self, name: str) -> bool:
-        return name == self._commandConstant.value
-
-    def handleCommand(self, messageData: dict) -> dict:
-        name = messageData['name']
-        data = messageData['data']
-        metadata = messageData['metadata']
-
-        logger.debug(
-            f'[{CreateRealmHandler.handleCommand.__qualname__}] - received args:\ntype(name): {type(name)}, name: {name}\ntype(data): {type(data)}, data: {data}\ntype(metadata): {type(metadata)}, metadata: {metadata}')
-        appService: RealmApplicationService = AppDi.instance.get(RealmApplicationService)
-        dataDict = json.loads(data)
-        metadataDict = json.loads(metadata)
-
-        if 'token' not in metadataDict:
-            raise UnAuthorizedException()
-
-        obj = appService.createRealm(name=dataDict['name'], realmType=dataDict['realm_type'],
-                                     objectOnly=True, token=metadataDict['token'])
-        return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': obj.id(), 'name': obj.name(), 'realm_type': obj.realmType()},
-                'metadata': metadataDict}
+    pass

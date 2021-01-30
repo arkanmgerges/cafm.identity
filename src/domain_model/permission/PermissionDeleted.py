@@ -8,7 +8,7 @@ from src.domain_model.event.DomainEvent import DomainEvent
 import src.domain_model.permission.Permission as Permission
 
 """
-c4model|cb|identity:ComponentQueue(identity__domainmodel_event__PermissionDeleted, "Permission Deleted", "event", "message")
+c4model|cb|identity:ComponentQueue(identity__domainmodel_event__PermissionDeleted, "CommonEventConstant.PERMISSION_DELETED.value", "message", "event")
 """
 class PermissionDeleted(DomainEvent):
     def __init__(self, permission: Permission):
