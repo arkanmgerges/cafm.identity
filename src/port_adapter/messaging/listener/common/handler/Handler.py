@@ -33,6 +33,14 @@ class Handler(ABC):
         """
 
     @staticmethod
+    def targetsOnSuccess() -> List[func]:
+        """Returns the targets that need to be contacted on success
+        Returns:
+            List[function]: It's a dictionary that has the keys 'obj' and 'schema'
+        """
+        return []
+
+    @staticmethod
     def targetsOnException() -> List[func]:
         """Returns the targets that need to be contacted on exception
 
