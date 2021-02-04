@@ -38,7 +38,7 @@ class Handler(ABC):
         Returns:
             List[function]: It's a dictionary that has the keys 'obj' and 'schema'
         """
-        return []
+        return [Handler.targetOnSuccess]
 
     @staticmethod
     def targetsOnException() -> List[func]:
@@ -51,7 +51,7 @@ class Handler(ABC):
 
     @staticmethod
     def targetOnException(messageData: dict, e: Exception, creatorServiceName: str) -> dict:
-        external = messageData['external']
+        external = messageData['external'] if 'external' in messageData else []
         dataDict = external[0] if len(external) > 0 else messageData
         return {'obj': ApiResponse(commandId=dataDict['id'], commandName=dataDict['name'],
                                    metadata=messageData['metadata'],
@@ -62,7 +62,7 @@ class Handler(ABC):
 
     @staticmethod
     def targetOnSuccess(messageData: dict, creatorServiceName: str, resultData: dict) -> dict:
-        external = messageData['external']
+        external = messageData['external'] if 'external' in messageData else []
         dataDict = external[0] if len(external) > 0 else messageData
         return {'obj': ApiResponse(commandId=dataDict['id'], commandName=dataDict['name'],
                                    metadata=messageData['metadata'],

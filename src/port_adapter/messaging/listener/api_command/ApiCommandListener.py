@@ -97,6 +97,7 @@ class ApiCommandListener:
                         })
 
                         for target in self.targetsOnSuccess:
+                            logger.debug(f'ark1 -> {handledResult}')
                             res = target(messageData=msgData, creatorServiceName=self._creatorServiceName,
                                          resultData=handledResult['data'])
                             producer.produce(
@@ -159,6 +160,7 @@ class ApiCommandListener:
             metadata = messageData['metadata']
 
             if handler.canHandle(name):
+                self.targetsOnSuccess = handler.targetsOnSuccess()
                 self.targetsOnException = handler.targetsOnException()
                 result = handler.handleCommand(messageData=messageData)
                 return {"data": "", "metadata": metadata} if result is None else result
