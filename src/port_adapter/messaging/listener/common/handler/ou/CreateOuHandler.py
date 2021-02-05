@@ -38,8 +38,3 @@ class CreateOuHandler(Handler):
                 'data': {'id': obj.id(), 'name': obj.name()},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

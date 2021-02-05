@@ -40,6 +40,17 @@ class RealmRepositoryImpl(RealmRepository):
             raise Exception(f'Could not connect to the db, message: {e}')
 
     @debugLogger
+    def save(self, obj: Realm, tokenData: TokenData = None):
+        try:
+            user = self.realmById(id=obj.id())
+            if user != obj:
+                self.updateRealm(obj=obj, tokenData=tokenData)
+        except RealmDoesNotExistException as _e:
+            self.createRealm(obj=obj, tokenData=tokenData)
+        except Exception as e:
+            logger.debug(e)
+
+    @debugLogger
     def createRealm(self, obj: Realm, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -120,7 +131,7 @@ class RealmRepositoryImpl(RealmRepository):
             raise ObjectCouldNotBeUpdatedException(f'realm: {obj}')
 
     @debugLogger
-    def deleteRealm(self, obj: Realm, tokenData: TokenData):
+    def deleteRealm(self, obj: Realm, tokenData: TokenData = None):
         try:
             actionFunction = '''
                 function (params) {                                            

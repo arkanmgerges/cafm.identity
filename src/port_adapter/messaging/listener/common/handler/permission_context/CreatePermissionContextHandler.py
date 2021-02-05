@@ -40,8 +40,3 @@ class CreatePermissionContextHandler(Handler):
                 'data': {'id': obj.id(), 'type': obj.type(), 'data': obj.data()},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

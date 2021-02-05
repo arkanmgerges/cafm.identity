@@ -42,6 +42,17 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
                 f'Could not connect to the db, message: {e}')
 
     @debugLogger
+    def save(self, obj: PermissionContext, tokenData: TokenData = None):
+        try:
+            user = self.permissionContextById(id=obj.id())
+            if user != obj:
+                self.updatePermissionContext(obj=obj, tokenData=tokenData)
+        except PermissionContextDoesNotExistException as _e:
+            self.createPermissionContext(obj=obj, tokenData=tokenData)
+        except Exception as e:
+            logger.debug(e)
+
+    @debugLogger
     def createPermissionContext(self, obj: PermissionContext, tokenData: TokenData):
         actionFunction = '''
             function (params) {                                            
@@ -92,7 +103,7 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
             raise ObjectCouldNotBeUpdatedException(f'permission context: {obj}')
 
     @debugLogger
-    def deletePermissionContext(self, obj: PermissionContext, tokenData: TokenData):
+    def deletePermissionContext(self, obj: PermissionContext, tokenData: TokenData = None):
         try:
             actionFunction = '''
                 function (params) {                                            

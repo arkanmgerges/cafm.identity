@@ -11,6 +11,16 @@ from src.domain_model.token.TokenData import TokenData
 
 class OuRepository(ABC):
     @abstractmethod
+    def save(self, obj: Ou, tokenData: TokenData):
+        """Save ou
+
+        Args:
+            obj (Ou): The ou that needs to be saved
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
     def createOu(self, obj: Ou, tokenData: TokenData):
         """Create ou
 

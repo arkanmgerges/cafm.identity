@@ -39,8 +39,3 @@ class DeleteRoleHandler(Handler):
                 'data': {'id': dataDict['id']},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

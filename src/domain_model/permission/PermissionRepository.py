@@ -11,6 +11,16 @@ from src.domain_model.token.TokenData import TokenData
 
 class PermissionRepository(ABC):
     @abstractmethod
+    def save(self, obj: Permission, tokenData: TokenData):
+        """Save permission
+
+        Args:
+            obj (Permission): The permission that needs to be saved
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
     def createPermission(self, obj: Permission, tokenData: TokenData):
         """Create permission
 

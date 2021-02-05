@@ -40,6 +40,17 @@ class RoleRepositoryImpl(RoleRepository):
             raise Exception(f'Could not connect to the db, message: {e}')
 
     @debugLogger
+    def save(self, obj: Role, tokenData: TokenData = None):
+        try:
+            user = self.roleById(id=obj.id())
+            if user != obj:
+                self.updateRole(obj=obj, tokenData=tokenData)
+        except RoleDoesNotExistException as _e:
+            self.createRole(obj=obj, tokenData=tokenData)
+        except Exception as e:
+            logger.debug(e)
+
+    @debugLogger
     def createRole(self, obj: Role, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -120,7 +131,7 @@ class RoleRepositoryImpl(RoleRepository):
             raise ObjectCouldNotBeUpdatedException(f'role: {obj}')
 
     @debugLogger
-    def deleteRole(self, obj: Role, tokenData: TokenData):
+    def deleteRole(self, obj: Role, tokenData: TokenData = None):
         try:
             actionFunction = '''
                 function (params) {                                            

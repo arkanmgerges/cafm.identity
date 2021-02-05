@@ -11,6 +11,16 @@ from src.domain_model.token.TokenData import TokenData
 
 class RoleRepository(ABC):
     @abstractmethod
+    def save(self, obj: Role, tokenData: TokenData):
+        """Save role
+
+        Args:
+            obj (Role): The role that needs to be saved
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
     def createRole(self, obj: Role, tokenData: TokenData):
         """Create role
 

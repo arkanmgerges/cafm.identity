@@ -39,8 +39,3 @@ class UpdateOuHandler(Handler):
                 'data': {'id': dataDict['id'], 'name': dataDict['name']},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

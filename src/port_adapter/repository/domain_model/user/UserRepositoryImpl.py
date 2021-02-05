@@ -40,6 +40,17 @@ class UserRepositoryImpl(UserRepository):
             raise Exception(f'Could not connect to the db, message: {e}')
 
     @debugLogger
+    def save(self, obj: User, tokenData: TokenData = None):
+        try:
+            user = self.userById(id=obj.id())
+            if user != obj:
+                self.updateUser(obj=obj, tokenData=tokenData)
+        except UserDoesNotExistException as _e:
+            self.createUser(obj=obj, tokenData=tokenData)
+        except Exception as e:
+            logger.debug(e)
+
+    @debugLogger
     def createUser(self, obj: User, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -122,7 +133,7 @@ class UserRepositoryImpl(UserRepository):
             raise ObjectCouldNotBeUpdatedException(f'user: {obj.toMap()}')
 
     @debugLogger
-    def deleteUser(self, obj: User, tokenData: TokenData):
+    def deleteUser(self, obj: User, tokenData: TokenData = None):
         try:
             actionFunction = '''
                 function (params) {                                            

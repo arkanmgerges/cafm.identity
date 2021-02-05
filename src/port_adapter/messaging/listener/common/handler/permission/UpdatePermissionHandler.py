@@ -41,8 +41,3 @@ class UpdatePermissionHandler(Handler):
                          'allowed_actions': dataDict['allowed_actions']},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

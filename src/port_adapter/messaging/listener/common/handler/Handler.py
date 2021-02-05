@@ -2,9 +2,8 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
-from _ctypes_test import func
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Callable
 
 from src.port_adapter.messaging.common.model.ApiResponse import ApiResponse
 
@@ -33,21 +32,21 @@ class Handler(ABC):
         """
 
     @staticmethod
-    def targetsOnSuccess() -> List[func]:
+    def targetsOnSuccess() -> List[Callable]:
         """Returns the targets that need to be contacted on success
         Returns:
             List[function]: It's a dictionary that has the keys 'obj' and 'schema'
         """
-        return [Handler.targetOnSuccess]
+        return []
 
     @staticmethod
-    def targetsOnException() -> List[func]:
+    def targetsOnException() -> List[Callable]:
         """Returns the targets that need to be contacted on exception
 
         Returns:
             List[function]: It's a dictionary that has the keys 'obj' and 'schema'
         """
-        return [Handler.targetOnException]
+        return []
 
     @staticmethod
     def targetOnException(messageData: dict, e: Exception, creatorServiceName: str) -> dict:

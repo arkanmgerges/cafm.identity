@@ -40,6 +40,17 @@ class UserGroupRepositoryImpl(UserGroupRepository):
             raise Exception(f'Could not connect to the db, message: {e}')
 
     @debugLogger
+    def save(self, obj: UserGroup, tokenData: TokenData = None):
+        try:
+            user = self.userGroupById(id=obj.id())
+            if user != obj:
+                self.updateUserGroup(obj=obj, tokenData=tokenData)
+        except UserGroupDoesNotExistException as _e:
+            self.createUserGroup(obj=obj, tokenData=tokenData)
+        except Exception as e:
+            logger.debug(e)
+
+    @debugLogger
     def createUserGroup(self, obj: UserGroup, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -112,7 +123,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
             raise ObjectCouldNotBeUpdatedException(f'user group: {obj}')
 
     @debugLogger
-    def deleteUserGroup(self, obj: UserGroup, tokenData: TokenData):
+    def deleteUserGroup(self, obj: UserGroup, tokenData: TokenData = None):
         try:
             actionFunction = '''
                 function (params) {                                            

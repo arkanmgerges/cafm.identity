@@ -41,6 +41,17 @@ class ProjectRepositoryImpl(ProjectRepository):
                 f'Could not connect to the db, message: {e}')
 
     @debugLogger
+    def save(self, obj: Project, tokenData: TokenData = None):
+        try:
+            user = self.projectById(id=obj.id())
+            if user != obj:
+                self.updateProject(obj=obj, tokenData=tokenData)
+        except ProjectDoesNotExistException as _e:
+            self.createProject(obj=obj, tokenData=tokenData)
+        except Exception as e:
+            logger.debug(e)
+
+    @debugLogger
     def createProject(self, obj: Project, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -121,7 +132,7 @@ class ProjectRepositoryImpl(ProjectRepository):
             raise ObjectCouldNotBeUpdatedException(f'project: {obj}')
 
     @debugLogger
-    def deleteProject(self, obj: Project, tokenData: TokenData):
+    def deleteProject(self, obj: Project, tokenData: TokenData = None):
         try:
             actionFunction = '''
                 function (params) {                                            

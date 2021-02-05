@@ -40,8 +40,3 @@ class UpdateUserHandler(Handler):
                 'data': {'id': dataDict['id'], 'email': dataDict['email']},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

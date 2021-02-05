@@ -40,8 +40,3 @@ class CreateRoleHandler(Handler):
                 'data': {'id': obj.id(), 'name': obj.name(), 'title': obj.title()},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

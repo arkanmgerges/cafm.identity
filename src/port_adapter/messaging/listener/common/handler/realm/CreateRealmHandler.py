@@ -41,8 +41,3 @@ class CreateRealmHandler(Handler):
                 'data': {'id': obj.id(), 'name': obj.name(), 'realm_type': obj.realmType()},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

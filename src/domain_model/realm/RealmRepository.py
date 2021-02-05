@@ -11,6 +11,16 @@ from src.domain_model.token.TokenData import TokenData
 
 class RealmRepository(ABC):
     @abstractmethod
+    def save(self, obj: Realm, tokenData: TokenData):
+        """Save realm
+
+        Args:
+            obj (Realm): The realm that needs to be saved
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
     def createRealm(self, obj: Realm, tokenData: TokenData):
         """Create realm
 

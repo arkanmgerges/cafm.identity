@@ -11,6 +11,16 @@ from src.domain_model.token.TokenData import TokenData
 
 class ProjectRepository(ABC):
     @abstractmethod
+    def save(self, obj: Project, tokenData: TokenData):
+        """Save project
+
+        Args:
+            obj (Project): The project that needs to be saved
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
     def createProject(self, obj: Project, tokenData: TokenData):
         """Create project
 

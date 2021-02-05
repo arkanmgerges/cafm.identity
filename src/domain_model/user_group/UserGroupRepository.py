@@ -11,6 +11,16 @@ from src.domain_model.user_group.UserGroup import UserGroup
 
 class UserGroupRepository(ABC):
     @abstractmethod
+    def save(self, obj: UserGroup, tokenData: TokenData):
+        """Save user group
+
+        Args:
+            obj (UserGroup): The user group that needs to be saved
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
     def createUserGroup(self, obj: UserGroup, tokenData: TokenData):
         """Create user group
 

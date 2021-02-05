@@ -40,6 +40,17 @@ class OuRepositoryImpl(OuRepository):
             raise Exception(f'Could not connect to the db, message: {e}')
 
     @debugLogger
+    def save(self, obj: Ou, tokenData: TokenData = None):
+        try:
+            user = self.ouById(id=obj.id())
+            if user != obj:
+                self.updateOu(obj=obj, tokenData=tokenData)
+        except OuDoesNotExistException as _e:
+            self.createOu(obj=obj, tokenData=tokenData)
+        except Exception as e:
+            logger.debug(e)
+
+    @debugLogger
     def createOu(self, obj: Ou, tokenData: TokenData):
         userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
         rolesDocIds = []
@@ -94,7 +105,7 @@ class OuRepositoryImpl(OuRepository):
         self._db.transaction(collections={'write': ['resource', 'owned_by']}, action=actionFunction, params=params)
 
     @debugLogger
-    def deleteOu(self, obj: Ou, tokenData: TokenData):
+    def deleteOu(self, obj: Ou, tokenData: TokenData = None):
         try:
             actionFunction = '''
                 function (params) {                                            

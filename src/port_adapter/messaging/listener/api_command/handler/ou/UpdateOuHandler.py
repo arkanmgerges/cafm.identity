@@ -1,6 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from typing import List, Callable
+
 from src.port_adapter.messaging.listener.common.handler.ou.UpdateOuHandler import UpdateOuHandler as Handler
 
 """
@@ -11,4 +13,6 @@ c4model:Rel(identity__messaging_api_command_handler__UpdateOuHandler, identity__
 
 
 class UpdateOuHandler(Handler):
-    pass
+    @staticmethod
+    def targetsOnException() -> List[Callable]:
+        return [Handler.targetOnException]

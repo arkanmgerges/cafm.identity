@@ -11,6 +11,16 @@ from src.domain_model.user.User import User
 
 class UserRepository(ABC):
     @abstractmethod
+    def save(self, obj: User, tokenData: TokenData):
+        """Save user
+
+        Args:
+            obj (User): The user that needs to be saved
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
     def createUser(self, obj: User, tokenData: TokenData):
         """Create user
 

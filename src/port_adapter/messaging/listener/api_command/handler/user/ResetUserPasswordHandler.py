@@ -1,10 +1,11 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
+from typing import List, Callable
 
+from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.common.handler.user.GenerateUserOneTimePasswordHandler import \
-    GenerateUserOneTimePasswordHandler
+    GenerateUserOneTimePasswordHandler as Handler
 
 """
 c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__ResetUserPasswordHandler, "CommonCommandConstant.RESET_USER_PASSWORD.value", "api command consumer", "")
@@ -13,6 +14,10 @@ c4model:Rel(identity__messaging_api_command_handler__ResetUserPasswordHandler, i
 """
 
 
-class ResetUserPasswordHandler(GenerateUserOneTimePasswordHandler):
+class ResetUserPasswordHandler(Handler):
     def canHandle(self, name: str) -> bool:
         return name == CommonCommandConstant.RESET_USER_PASSWORD.value
+
+    @staticmethod
+    def targetsOnException() -> List[Callable]:
+        return [Handler.targetOnException]

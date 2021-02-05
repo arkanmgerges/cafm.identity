@@ -40,8 +40,3 @@ class GenerateUserOneTimePasswordHandler(Handler):
                 'data': {'id': obj.id(), 'email': obj.email()},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

@@ -43,8 +43,3 @@ class CreatePermissionHandler(Handler):
                          'denied_actions': obj.deniedActions()},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]
