@@ -407,7 +407,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         return result
 
     @debugLogger
-    def revokeAssignmentRoleToPermission(self, role: Role, permission: Permission) -> None:
+    def revokeRoleToPermissionAssignment(self, role: Role, permission: Permission) -> None:
         roleDocId = self.roleDocumentId(role)
         permissionDocId = self.permissionDocumentId(permission)
 
@@ -415,7 +415,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         result = self.assignmentRoleToPermission(roleDocId, permissionDocId)
         if len(result) == 0:
             logger.debug(
-                f'[{PolicyRepositoryImpl.revokeAssignmentRoleToPermission.__qualname__}] Resource not exist for assignment a role id: {role.id()} to permission id: {permission.id()}')
+                f'[{PolicyRepositoryImpl.revokeRoleToPermissionAssignment.__qualname__}] Resource not exist for assignment a role id: {role.id()} to permission id: {permission.id()}')
             raise ResourceAssignmentDoesNotExistException(
                 f'Resource assignment for role id: {role.id()}, permission id: {permission.id()}')
         result = result[0]
@@ -478,7 +478,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         return result
 
     @debugLogger
-    def revokeAssignmentPermissionToPermissionContext(self, permission: Permission,
+    def revokePermissionToPermissionContextAssignment(self, permission: Permission,
                                                       permissionContext: PermissionContext) -> None:
         permissionDocId = self.permissionDocumentId(permission)
         permissionContextDocId = self.permissionContextDocumentId(permissionContext)
@@ -487,7 +487,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         result = self.assignmentPermissionToPermissionContext(permissionDocId, permissionContextDocId)
         if len(result) == 0:
             logger.debug(
-                f'[{PolicyRepositoryImpl.revokeAssignmentPermissionToPermissionContext.__qualname__}] Resource assignment for permission id: {permission.id()}, permission context id: {permissionContext.id()}')
+                f'[{PolicyRepositoryImpl.revokePermissionToPermissionContextAssignment.__qualname__}] Resource assignment for permission id: {permission.id()}, permission context id: {permissionContext.id()}')
             raise ResourceAssignmentDoesNotExistException(
                 f'Resource assignment for permission id: {permission.id()}, permission context id: {permissionContext.id()}')
         result = result[0]
@@ -533,13 +533,13 @@ class PolicyRepositoryImpl(PolicyRepository):
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
     @debugLogger
-    def revokeAccessRoleFromResource(self, role: Role, resource: Resource) -> None:
+    def revokeRoleToResourceAccess(self, role: Role, resource: Resource) -> None:
         resourceDocId = self.resourceDocumentId(resource)
         roleDocId = self.roleDocumentId(role)
         result = self.accessRoleToResource(roleDocId, resourceDocId, resource)
         if len(result) == 0:
             logger.debug(
-                f'[{PolicyRepositoryImpl.revokeAccessRoleFromResource.__qualname__}] Resource assignment for role: {role.id()} and resource: {resource.id()}')
+                f'[{PolicyRepositoryImpl.revokeRoleToResourceAccess.__qualname__}] Resource assignment for role: {role.id()} and resource: {resource.id()}')
             raise ResourceAssignmentDoesNotExistException(
                 f'Resource assignment for role: {role.id()} and resource: {resource.id()}')
         result = result[0]

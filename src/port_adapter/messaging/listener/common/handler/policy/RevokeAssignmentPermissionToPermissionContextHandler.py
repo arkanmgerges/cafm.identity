@@ -42,9 +42,3 @@ class RevokeAssignmentPermissionToPermissionContextHandler(Handler):
                 'data': {'permission_id': dataDict['permission_id'],
                          'permission_context_id': dataDict['permission_context_id']},
                 'metadata': metadataDict}
-
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

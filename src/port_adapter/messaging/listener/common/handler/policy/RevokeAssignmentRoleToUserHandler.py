@@ -34,14 +34,8 @@ class RevokeAssignmentRoleToUserHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.revokeAssignmentRoleToUser(roleId=dataDict['role_id'], userId=dataDict['user_id'],
+        appService.revokeRoleToUserAssignment(roleId=dataDict['role_id'], userId=dataDict['user_id'],
                                               token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
                 'data': {'role_id': dataDict['role_id'], 'user_id': dataDict['user_id']},
                 'metadata': metadataDict}
-
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

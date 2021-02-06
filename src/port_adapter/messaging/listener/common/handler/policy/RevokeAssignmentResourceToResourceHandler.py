@@ -41,9 +41,3 @@ class RevokeAssignmentResourceToResourceHandler(Handler):
                 'data': {'src_resource_id': dataDict['src_resource_id'],
                          'dst_resource_id': dataDict['dst_resource_id']},
                 'metadata': metadataDict}
-
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

@@ -58,7 +58,7 @@ class PolicyApplicationService:
         self._policyService.assignRoleToUser(role=role, user=user)
 
     @debugLogger
-    def revokeAssignmentRoleToUser(self, roleId: str = '', userId: str = '', token: str = ''):
+    def revokeRoleToUserAssignment(self, roleId: str = '', userId: str = '', token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
         permissionAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
             tokenData=tokenData, includeAccessTree=False)
@@ -69,7 +69,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         role = self._roleRepository.roleById(id=roleId)
         user = self._userRepository.userById(id=userId)
-        self._policyService.revokeRoleFromUser(role=role, user=user)
+        self._policyService.revokeRoleToUserAssignment(role=role, user=user)
 
     @debugLogger
     def assignRoleToUserGroup(self, roleId: str = '', userGroupId: str = '', token: str = ''):
@@ -83,7 +83,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         role = self._roleRepository.roleById(id=roleId)
         userGroup = self._userGroupRepository.userGroupById(id=userGroupId)
-        self._policyRepository.assignRoleToUserGroup(role, userGroup)
+        self._policyService.assignRoleToUserGroup(role, userGroup)
 
     @debugLogger
     def revokeAssignmentRoleToUserGroup(self, roleId: str = '', userGroupId: str = '', token: str = ''):
@@ -97,7 +97,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         role = self._roleRepository.roleById(id=roleId)
         userGroup = self._userGroupRepository.userGroupById(id=userGroupId)
-        self._policyRepository.revokeRoleFromUserGroup(role, userGroup)
+        self._policyService.revokeRoleToUserGroupAssignment(role, userGroup)
 
     @debugLogger
     def assignUserToUserGroup(self, userId: str = '', userGroupId: str = '', token: str = ''):
@@ -111,7 +111,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         user = self._userRepository.userById(id=userId)
         userGroup = self._userGroupRepository.userGroupById(id=userGroupId)
-        self._policyRepository.assignUserToUserGroup(user, userGroup)
+        self._policyService.assignUserToUserGroup(user, userGroup)
 
     @debugLogger
     def revokeAssignmentUserToUserGroup(self, userId: str = '', userGroupId: str = '', token: str = ''):
@@ -125,7 +125,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         user = self._userRepository.userById(id=userId)
         userGroup = self._userGroupRepository.userGroupById(id=userGroupId)
-        self._policyRepository.revokeUserFromUserGroup(user, userGroup)
+        self._policyService.revokeUserToUserGroupAssignment(user, userGroup)
 
     @debugLogger
     def assignRoleToPermission(self, roleId: str = '',
@@ -141,7 +141,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         role = self._roleRepository.roleById(id=roleId)
         permission = self._permissionRepository.permissionById(id=permissionId)
-        self._policyRepository.assignRoleToPermission(role=role, permission=permission)
+        self._policyService.assignRoleToPermission(role=role, permission=permission)
 
     @debugLogger
     def revokeAssignmentRoleToPermission(self, roleId: str = '',
@@ -157,7 +157,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         role = self._roleRepository.roleById(id=roleId)
         permission = self._permissionRepository.permissionById(id=permissionId)
-        self._policyRepository.revokeAssignmentRoleToPermission(role=role, permission=permission)
+        self._policyService.revokeRoleToPermissionAssignment(role=role, permission=permission)
 
     @debugLogger
     def assignPermissionToPermissionContext(self, permissionId: str = '',
@@ -173,8 +173,8 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         permission = self._permissionRepository.permissionById(id=permissionId)
         permissionContext = self._permissionContextRepository.permissionContextById(id=permissionContextId)
-        self._policyRepository.assignPermissionToPermissionContext(permission=permission,
-                                                                   permissionContext=permissionContext)
+        self._policyService.assignPermissionToPermissionContext.assignPermissionToPermissionContext(
+            permission=permission, permissionContext=permissionContext)
 
     @debugLogger
     def revokeAssignmentPermissionToPermissionContext(self, permissionId: str = '',
@@ -190,8 +190,8 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         permission = self._permissionRepository.permissionById(id=permissionId)
         permissionContext = self._permissionContextRepository.permissionContextById(id=permissionContextId)
-        self._policyRepository.revokeAssignmentPermissionToPermissionContext(permission=permission,
-                                                                             permissionContext=permissionContext)
+        self._policyService.revokePermissionToPermissionContextAssignment.assignPermissionToPermissionContext(
+            permission=permission, permissionContext=permissionContext)
 
     @debugLogger
     def grantAccessRoleToResource(self, roleId: str = '', resourceId: str = '', token: str = ''):
@@ -205,7 +205,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         role = self._roleRepository.roleById(id=roleId)
         resource = self._resourceRepository.resourceById(id=resourceId)
-        self._policyRepository.grantAccessRoleToResource(role, resource)
+        self._policyService.grantAccessRoleToResource(role, resource)
 
     @debugLogger
     def revokeAccessRoleFromResource(self, roleId: str = '', resourceId: str = '', token: str = ''):
@@ -219,7 +219,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         role = self._roleRepository.roleById(id=roleId)
         resource = self._resourceRepository.resourceById(id=resourceId)
-        self._policyRepository.revokeAccessRoleFromResource(role, resource)
+        self._policyService.revokeRoleToResourceAccess(role, resource)
 
     @debugLogger
     def assignResourceToResource(self, resourceSrcId: str = '', resourceDstId: str = '', token: str = ''):

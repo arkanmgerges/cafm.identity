@@ -19,5 +19,9 @@ class ResetUserPasswordHandler(Handler):
         return name == CommonCommandConstant.RESET_USER_PASSWORD.value
 
     @staticmethod
+    def targetsOnSuccess() -> List[Callable]:
+        return [Handler.targetOnSuccess]
+
+    @staticmethod
     def targetsOnException() -> List[Callable]:
         return [Handler.targetOnException]

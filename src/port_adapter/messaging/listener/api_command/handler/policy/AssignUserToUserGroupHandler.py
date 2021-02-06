@@ -7,4 +7,5 @@ from src.port_adapter.messaging.listener.common.handler.policy.AssignUserToUserG
 
 
 class AssignUserToUserGroupHandler(Handler):
-    pass
+    def targetsOnException(self):
+        return [Handler.targetOnException]

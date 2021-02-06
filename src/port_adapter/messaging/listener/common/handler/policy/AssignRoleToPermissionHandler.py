@@ -42,8 +42,3 @@ class AssignRoleToPermissionHandler(Handler):
                 'data': {'role_id': dataDict['role_id'], 'permission_id': dataDict['permission_id']},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

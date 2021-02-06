@@ -109,7 +109,7 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def revokeAssignmentRoleToPermission(self, role: Role, permission: Permission) -> None:
+    def revokeRoleToPermissionAssignment(self, role: Role, permission: Permission) -> None:
         """Revoke a role from a permission
 
         Args:
@@ -133,7 +133,7 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def revokeAssignmentPermissionToPermissionContext(self, permission: Permission,
+    def revokePermissionToPermissionContextAssignment(self, permission: Permission,
                                                       permissionContext: PermissionContext) -> None:
         """Revoke assignment of a permission to a permission context
 
@@ -158,7 +158,7 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def revokeAccessRoleFromResource(self, role: Role, resource: Resource) -> None:
+    def revokeRoleToResourceAccess(self, role: Role, resource: Resource) -> None:
         """Revoke the link access of a role to a resource
 
         Args:

@@ -43,8 +43,3 @@ class AssignPermissionToPermissionContextHandler(Handler):
                          'permission_context_id': dataDict['permission_context_id']},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

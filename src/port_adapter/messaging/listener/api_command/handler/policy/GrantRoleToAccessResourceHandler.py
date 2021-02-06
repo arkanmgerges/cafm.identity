@@ -7,4 +7,5 @@ from src.port_adapter.messaging.listener.common.handler.policy.GrantRoleToAccess
 
 
 class GrantRoleToAccessResourceHandler(Handler):
-    pass
+    def targetsOnException(self):
+        return [Handler.targetOnException]

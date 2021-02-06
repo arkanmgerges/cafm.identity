@@ -39,9 +39,3 @@ class RevokeAssignmentRoleToUserGroupHandler(Handler):
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
                 'data': {'role_id': dataDict['role_id'], 'user_group_id': dataDict['user_group_id']},
                 'metadata': metadataDict}
-
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

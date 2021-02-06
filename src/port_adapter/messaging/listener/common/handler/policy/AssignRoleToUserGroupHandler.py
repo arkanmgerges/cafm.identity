@@ -40,8 +40,3 @@ class AssignRoleToUserGroupHandler(Handler):
                 'data': {'role_id': dataDict['role_id'], 'user_group_id': dataDict['user_group_id']},
                 'metadata': metadataDict}
 
-    def targetsOnSuccess(self):
-        return [Handler.targetOnSuccess]
-
-    def targetsOnException(self):
-        return [Handler.targetOnException]

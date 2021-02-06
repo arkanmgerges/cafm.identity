@@ -15,5 +15,9 @@ c4model:Rel(identity__messaging_api_command_handler__SetUserPasswordHandler, ide
 
 class SetUserPasswordHandler(Handler):
     @staticmethod
+    def targetsOnSuccess() -> List[Callable]:
+        return [Handler.targetOnSuccess]
+
+    @staticmethod
     def targetsOnException() -> List[Callable]:
         return [Handler.targetOnException]
