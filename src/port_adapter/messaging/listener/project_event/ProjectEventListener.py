@@ -165,7 +165,7 @@ class ProjectEventListener:
                 list(map(lambda x: x[x.find('src.port_adapter.messaging'):],
                          map(lambda x: x.replace('/', '.'),
                              filter(lambda x: x.find('__init__.py') == -1,
-                                    glob.glob(f'{os.path.dirname(os.path.abspath(__file__))}/handler/**/*.py')))))))
+                                    glob.glob(f'{os.path.dirname(os.path.abspath(__file__))}/handler/**/*.py', recursive=True)))))))
         for handlerStr in handlers:
             m = importlib.import_module(handlerStr)
             handlerCls = getattr(m, handlerStr[handlerStr.rfind('.') + 1:])
