@@ -23,7 +23,7 @@ class OuApplicationService:
         self._ouService = ouService
 
     @debugLogger
-    def createOu(self, id: str = None, name: str = '', objectOnly: bool = False, token: str = ''):
+    def createOu(self, id: str = None, name: str = None, objectOnly: bool = False, token: str = ''):
         obj: Ou = self.constructObject(id=id, name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -104,5 +104,5 @@ class OuApplicationService:
                                       order=order)
 
     @debugLogger
-    def constructObject(self, id: str = None, name: str = '') -> Ou:
+    def constructObject(self, id: str = None, name: str = None) -> Ou:
         return Ou.createFrom(id=id, name=name)
