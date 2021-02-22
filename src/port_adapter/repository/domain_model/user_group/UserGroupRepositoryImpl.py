@@ -109,7 +109,8 @@ class UserGroupRepositoryImpl(UserGroupRepository):
                 UPDATE d WITH {name: @name} IN resource
         '''
 
-        bindVars = {"id": obj.id(), "name": obj.name()}
+        bindVars = {"id": obj.id(),
+                    "name": repoObj.name() if obj.name() is None else obj.name()}
         logger.debug(
             f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] - Update user group with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
@@ -191,9 +192,10 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         return UserGroup.createFrom(id=result[0]['id'], name=result[0]['name'])
 
     @debugLogger
-    def userGroups(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
-            resultSize: int = 100,
-            order: List[dict] = None) -> dict:
+    def userGroups(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
+                   resultFrom: int = 0,
+                   resultSize: int = 100,
+                   order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
             for item in order:

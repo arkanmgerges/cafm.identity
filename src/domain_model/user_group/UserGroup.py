@@ -10,13 +10,13 @@ from src.resource.logging.logger import logger
 
 
 class UserGroup(Resource):
-    def __init__(self, id: str = None, name=''):
+    def __init__(self, id: str = None, name=None):
         anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type='user_group')
         self._name = name
 
     @classmethod
-    def createFrom(cls, id: str = None, name='', publishEvent: bool = False):
+    def createFrom(cls, id: str = None, name=None, publishEvent: bool = False):
         userGroup = UserGroup(id, name)
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
@@ -30,7 +30,6 @@ class UserGroup(Resource):
         logger.debug(f'[{UserGroup.createFromObject.__qualname__}]')
         id = None if generateNewId else obj.id()
         return cls.createFrom(id=id, name=obj.name(), publishEvent=publishEvent)
-
 
     def name(self) -> str:
         return self._name

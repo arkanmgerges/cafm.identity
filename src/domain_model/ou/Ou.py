@@ -14,13 +14,13 @@ from uuid import uuid4
 
 
 class Ou(Resource):
-    def __init__(self, id: str = None, name=''):
+    def __init__(self, id: str = None, name=None):
         anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type='ou')
         self._name = name
 
     @classmethod
-    def createFrom(cls, id: str = None, name='', publishEvent: bool = False):
+    def createFrom(cls, id: str = None, name=None, publishEvent: bool = False):
         ou = Ou(id, name)
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents

@@ -24,7 +24,7 @@ class UserGroupApplicationService:
         self._userGroupService = userGroupService
 
     @debugLogger
-    def createUserGroup(self, id: str = None, name: str = '', objectOnly: bool = False, token: str = ''):
+    def createUserGroup(self, id: str = None, name: str = None, objectOnly: bool = False, token: str = ''):
         obj: UserGroup = self.constructObject(id=id, name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -103,5 +103,5 @@ class UserGroupApplicationService:
                                                     order=order)
 
     @debugLogger
-    def constructObject(self, id: str = None, name: str = '') -> UserGroup:
+    def constructObject(self, id: str = None, name: str = None) -> UserGroup:
         return UserGroup.createFrom(id=id, name=name)

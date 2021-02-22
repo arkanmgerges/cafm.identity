@@ -118,7 +118,8 @@ class RealmRepositoryImpl(RealmRepository):
                 UPDATE d WITH {name: @name} IN resource
         '''
 
-        bindVars = {"id": obj.id(), "name": obj.name()}
+        bindVars = {"id": obj.id(),
+                    "name": repoObj.name() if obj.name() is None else obj.name()}
         logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] - Update realm with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result
@@ -200,15 +201,17 @@ class RealmRepositoryImpl(RealmRepository):
                                 realmType=result[0]['realm_type'] if 'realm_type' in result[0] else '')
 
     @debugLogger
-    def realms(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
-                        order: List[dict] = None) -> dict:
+    def realms(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
+               resultFrom: int = 0, resultSize: int = 100,
+               order: List[dict] = None) -> dict:
         sortData = ''
         if order is not None:
             for item in order:
                 sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
             sortData = sortData[2:]
 
-        result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.REALM.value, tokenData, roleAccessPermissionData, sortData)
+        result = self._policyService.resourcesOfTypeByTokenData(PermissionContextConstant.REALM.value, tokenData,
+                                                                roleAccessPermissionData, sortData)
 
         if result is None or len(result['items']) == 0:
             return {"items": [], "itemCount": 0}
@@ -217,4 +220,3 @@ class RealmRepositoryImpl(RealmRepository):
         items = items[resultFrom:resultFrom + resultSize]
         return {"items": [Realm.createFrom(id=x['id'], name=x['name']) for x in items],
                 "itemCount": itemCount}
-

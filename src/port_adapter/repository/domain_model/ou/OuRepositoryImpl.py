@@ -152,7 +152,8 @@ class OuRepositoryImpl(OuRepository):
                 UPDATE d WITH {name: @name} IN resource
         '''
 
-        bindVars = {"id": obj.id(), "name": obj.name()}
+        bindVars = {"id": obj.id(),
+                    "name": repoObj.name() if obj.name() is None else obj.name()}
         logger.debug(f'[{OuRepositoryImpl.updateOu.__qualname__}] - Update ou with id: {obj.id()}')
         queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         _ = queryResult.result

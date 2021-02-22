@@ -24,7 +24,7 @@ class RealmApplicationService:
         self._realmService = realmService
 
     @debugLogger
-    def createRealm(self, id: str = None, name: str = '', realmType: str = '', objectOnly: bool = False, token: str = ''):
+    def createRealm(self, id: str = None, name: str = None, realmType: str = None, objectOnly: bool = False, token: str = ''):
         obj: Realm = self.constructObject(id=id, name=name, realmType=realmType)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[RoleAccessPermissionData] = self._authzService.roleAccessPermissionsData(
@@ -101,5 +101,5 @@ class RealmApplicationService:
                                             order=order)
 
     @debugLogger
-    def constructObject(self, id: str = None, name: str = '', realmType: str = '') -> Realm:
+    def constructObject(self, id: str = None, name: str = None, realmType: str = None) -> Realm:
         return Realm.createFrom(id=id, name=name, realmType=realmType)

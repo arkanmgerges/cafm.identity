@@ -14,14 +14,14 @@ from uuid import uuid4
 
 
 class Realm(Resource):
-    def __init__(self, id: str = None, name: str = '', realmType: str = ''):
+    def __init__(self, id: str = None, name: str = None, realmType: str = None):
         anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type='realm')
         self._name = name
         self._realmType = realmType
 
     @classmethod
-    def createFrom(cls, id: str = None, name: str = '', realmType: str = '', publishEvent: bool = False):
+    def createFrom(cls, id: str = None, name: str = None, realmType: str = None, publishEvent: bool = False):
         logger.debug(f'[{Realm.createFrom.__qualname__}] - Create Realm with name: {name} and id: {id}')
         realm = Realm(id=id, name=name, realmType=realmType)
         if publishEvent:
