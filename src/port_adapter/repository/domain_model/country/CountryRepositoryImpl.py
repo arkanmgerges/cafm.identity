@@ -96,6 +96,7 @@ class CountryRepositoryImpl(CountryRepository):
                         FOR c IN city 
                             FILTER u.country_iso_code == c.country_iso_code 
                             FILTER u.geoname_id == @id 
+                            FILTER u.city_name != null AND u.city_name != ""
                             #sortData
                             RETURN c)
             RETURN {items: ds}
@@ -118,8 +119,11 @@ class CountryRepositoryImpl(CountryRepository):
         return {"items": [City.createFrom(id=x['geoname_id'], localeCode=x['locale_code'],
                                           continentCode=x['continent_code'], continentName=x['continent_name'],
                                           countryIsoCode=x['country_iso_code'], countryName=x['country_name'],
-                                          subdivisionOneIsoCode=x['subdivision_1_iso_code'],
-                                          subdivisionOneIsoName=x['subdivision_1_name'], cityName=x['city_name'],
+                                          subdivisionOneIsoCode=x[
+                                              'subdivision_1_iso_code'] if 'subdivision_1_iso_code' in x else '',
+                                          subdivisionOneIsoName=x[
+                                              'subdivision_1_name'] if 'subdivision_1_name' in x else '',
+                                          cityName=x['city_name'],
                                           timeZone=x['time_zone'], isInEuropeanUnion=x['is_in_european_union']) for x in
                           items],
                 "itemCount": itemCount}
