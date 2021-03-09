@@ -33,9 +33,16 @@ message UserAppService_usersResponse {
   int32 itemCount = 2;
 }
 
+message UserAppService_newIdRequest {}
+
+message UserAppService_newIdResponse {
+  string id = 1;
+}
+
 
 service UserAppService {
   rpc userByEmailAndPassword (UserAppService_userByEmailAndPasswordRequest) returns (UserAppService_userByEmailAndPasswordResponse) {}
   rpc userById (UserAppService_userByIdRequest) returns (UserAppService_userByIdResponse) {}
   rpc users (UserAppService_usersRequest) returns (UserAppService_usersResponse) {}
+  rpc newId (UserAppService_newIdRequest) returns (UserAppService_newIdResponse) {}
 }

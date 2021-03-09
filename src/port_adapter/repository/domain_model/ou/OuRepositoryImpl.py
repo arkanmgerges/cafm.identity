@@ -16,7 +16,6 @@ from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissio
 from src.domain_model.resource.exception.CodeExceptionConstant import CodeExceptionConstant
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
 from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
-from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
 from src.domain_model.token.TokenData import TokenData
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
@@ -47,8 +46,6 @@ class OuRepositoryImpl(OuRepository):
                 self.updateOu(obj=obj, tokenData=tokenData)
         except OuDoesNotExistException as _e:
             self.createOu(obj=obj, tokenData=tokenData)
-        except Exception as e:
-            logger.debug(e)
 
     @debugLogger
     def createOu(self, obj: Ou, tokenData: TokenData):
@@ -141,29 +138,25 @@ class OuRepositoryImpl(OuRepository):
     @debugLogger
     def updateOu(self, obj: Ou, tokenData: TokenData) -> None:
         repoObj = self.ouById(obj.id())
-        if repoObj == obj:
-            logger.debug(
-                f'[{OuRepositoryImpl.updateOu.__qualname__}] Object identical exception for old ou: {repoObj}\nou: {obj}')
-            raise ObjectIdenticalException()
-
-        aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'ou'
-                UPDATE d WITH {name: @name} IN resource
-        '''
-
-        bindVars = {"id": obj.id(),
-                    "name": repoObj.name() if obj.name() is None else obj.name()}
-        logger.debug(f'[{OuRepositoryImpl.updateOu.__qualname__}] - Update ou with id: {obj.id()}')
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        _ = queryResult.result
-
-        # Check if it is updated
-        repoObj = self.ouById(obj.id())
         if repoObj != obj:
-            logger.warn(
-                f'[{OuRepositoryImpl.updateOu.__qualname__}] The object ou: {obj} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'ou: {obj}')
+            aql = '''
+                FOR d IN resource
+                    FILTER d.id == @id AND d.type == 'ou'
+                    UPDATE d WITH {name: @name} IN resource
+            '''
+
+            bindVars = {"id": obj.id(),
+                        "name": repoObj.name() if obj.name() is None else obj.name()}
+            logger.debug(f'[{OuRepositoryImpl.updateOu.__qualname__}] - Update ou with id: {obj.id()}')
+            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            _ = queryResult.result
+
+            # Check if it is updated
+            repoObj = self.ouById(obj.id())
+            if repoObj != obj:
+                logger.warn(
+                    f'[{OuRepositoryImpl.updateOu.__qualname__}] The object ou: {obj} could not be updated in the database')
+                raise ObjectCouldNotBeUpdatedException(f'ou: {obj}')
 
     @debugLogger
     def ouByName(self, name: str) -> Ou:

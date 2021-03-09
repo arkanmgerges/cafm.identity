@@ -21,16 +21,6 @@ class UserGroupRepository(ABC):
         """
 
     @abstractmethod
-    def createUserGroup(self, obj: UserGroup, tokenData: TokenData):
-        """Create user group
-
-        Args:
-            obj (UserGroup): The user group that needs to be created
-            tokenData (TokenData): Token data that has info about the token
-
-        """
-
-    @abstractmethod
     def deleteUserGroup(self, obj: UserGroup, tokenData: TokenData) -> None:
         """Delete a user group
 
@@ -40,18 +30,6 @@ class UserGroupRepository(ABC):
 
         :raises:
             `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the user group could not be deleted
-        """
-
-    @abstractmethod
-    def updateUserGroup(self, obj: UserGroup, tokenData: TokenData) -> None:
-        """Update a user group
-
-        Args:
-            obj (UserGroup): The user group that needs to be updated
-            tokenData (TokenData): Token data used for updating the resource
-
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the user group could not be updated
         """
 
     @abstractmethod

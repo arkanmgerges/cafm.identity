@@ -23,6 +23,10 @@ class OuApplicationService:
         self._ouService = ouService
 
     @debugLogger
+    def newId(self):
+        return Ou.createFrom().id()
+
+    @debugLogger
     def createOu(self, id: str = None, name: str = None, objectOnly: bool = False, token: str = ''):
         obj: Ou = self.constructObject(id=id, name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)

@@ -21,16 +21,6 @@ class PermissionRepository(ABC):
         """
 
     @abstractmethod
-    def createPermission(self, obj: Permission, tokenData: TokenData):
-        """Create permission
-
-        Args:
-            obj (Permission): The permission that needs to be created
-            tokenData (TokenData): Token data that has info about the token
-
-        """
-
-    @abstractmethod
     def deletePermission(self, obj: Permission, tokenData: TokenData) -> None:
         """Delete a permission
 
@@ -40,18 +30,6 @@ class PermissionRepository(ABC):
 
         :raises:
             `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the permission could not be deleted            
-        """
-
-    @abstractmethod
-    def updatePermission(self, obj: Permission, tokenData: TokenData) -> None:
-        """Update a permission
-
-        Args:
-            obj (Permission): The permission that needs to be updated
-            tokenData (TokenData): Token data used for updating the resource
-
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the permission could not be updated
         """
 
     @abstractmethod

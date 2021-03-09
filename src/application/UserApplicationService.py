@@ -23,6 +23,10 @@ class UserApplicationService:
         self._userService = userService
 
     @debugLogger
+    def newId(self):
+        return User.createFrom(skipValidation=True).id()
+
+    @debugLogger
     def createUser(self, id: str = None, email: str = '', objectOnly: bool = False, token: str = ''):
         obj: User = self.constructObject(id=id, email=email)
         tokenData = TokenService.tokenDataFromToken(token=token)

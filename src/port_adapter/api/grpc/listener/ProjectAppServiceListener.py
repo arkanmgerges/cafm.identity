@@ -16,7 +16,7 @@ from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.project_app_service_pb2 import ProjectAppService_projectByNameResponse, \
-    ProjectAppService_projectsResponse, ProjectAppService_projectByIdResponse
+    ProjectAppService_projectsResponse, ProjectAppService_projectByIdResponse, ProjectAppService_newIdResponse
 from src.resource.proto._generated.identity.project_app_service_pb2_grpc import ProjectAppServiceServicer
 
 
@@ -30,6 +30,23 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
 
     def __str__(self):
         return self.__class__.__name__
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def newId(self, request, context):
+        try:
+            token = self._token(context)
+            metadata = context.invocation_metadata()
+            claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
+            logger.debug(
+                f'[{ProjectAppServiceListener.newId.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                    token: {token}')
+            appService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
+            return ProjectAppService_newIdResponse(id=appService.newId())
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return ProjectAppService_newIdResponse()
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel

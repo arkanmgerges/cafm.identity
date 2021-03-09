@@ -21,16 +21,6 @@ class UserRepository(ABC):
         """
 
     @abstractmethod
-    def createUser(self, obj: User, tokenData: TokenData):
-        """Create user
-
-        Args:
-            obj (User): The user that needs to be created
-            tokenData (TokenData): Token data that has info about the token
-
-        """
-
-    @abstractmethod
     def deleteUser(self, obj: User, tokenData: TokenData) -> None:
         """Delete a user
 
@@ -58,18 +48,6 @@ class UserRepository(ABC):
         Args:
             obj (User): The user that needs for its one time password to be deleted
             tokenData (TokenData): Token data used for deleting the resource
-        """
-
-    @abstractmethod
-    def updateUser(self, obj: User, tokenData: TokenData) -> None:
-        """Update a user
-
-        Args:
-            obj (User): The user that needs to be updated
-            tokenData (TokenData): Token data used for updating the resource
-
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the user could not be updated
         """
 
     @abstractmethod

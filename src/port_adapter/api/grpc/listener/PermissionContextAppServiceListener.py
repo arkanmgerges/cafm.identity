@@ -19,7 +19,7 @@ from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.permission_context_app_service_pb2 import \
     PermissionContextAppService_permissionContextsResponse, \
-    PermissionContextAppService_permissionContextByIdResponse
+    PermissionContextAppService_permissionContextByIdResponse, PermissionContextAppService_newIdResponse
 from src.resource.proto._generated.identity.permission_context_app_service_pb2_grpc import \
     PermissionContextAppServiceServicer
 
@@ -34,6 +34,23 @@ class PermissionContextAppServiceListener(PermissionContextAppServiceServicer):
 
     def __str__(self):
         return self.__class__.__name__
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def newId(self, request, context):
+        try:
+            token = self._token(context)
+            metadata = context.invocation_metadata()
+            claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
+            logger.debug(
+                f'[{PermissionContextAppServiceListener.newId.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                    token: {token}')
+            appService: PermissionContextApplicationService = AppDi.instance.get(PermissionContextApplicationService)
+            return PermissionContextAppService_newIdResponse(id=appService.newId())
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return PermissionContextAppService_newIdResponse()
 
     """
     c4model|cb|identity:Component(identity__grpc__PermissionContextAppServiceListener__permissionContexts, "Get permission contexts", "grpc listener", "Get all permission contexts")

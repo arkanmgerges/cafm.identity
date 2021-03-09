@@ -49,8 +49,6 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
                 self.updatePermissionContext(obj=obj, tokenData=tokenData)
         except PermissionContextDoesNotExistException as _e:
             self.createPermissionContext(obj=obj, tokenData=tokenData)
-        except Exception as e:
-            logger.debug(e)
 
     @debugLogger
     def createPermissionContext(self, obj: PermissionContext, tokenData: TokenData):
@@ -78,29 +76,25 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
     @debugLogger
     def updatePermissionContext(self, obj: PermissionContext, tokenData: TokenData) -> None:
         repoObj = self.permissionContextById(obj.id())
-        if repoObj == obj:
-            logger.debug(
-                f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] Object identical exception for old permission context: {repoObj}\npermission context: {obj}')
-            raise ObjectIdenticalException()
-
-        aql = '''
-            FOR d IN permission_context
-                FILTER d.id == @id
-                UPDATE d WITH {data: @data, type: @type} IN permission_context
-        '''
-
-        bindVars = {"id": obj.id(), "data": obj.data(), "type": obj.type()}
-        logger.debug(
-            f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] - Update permission context with id: {obj.id()}')
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        _ = queryResult.result
-
-        # Check if it is updated
-        repoObj = self.permissionContextById(obj.id())
         if repoObj != obj:
-            logger.warn(
-                f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] The object permission context: {obj} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'permission context: {obj}')
+            aql = '''
+                FOR d IN permission_context
+                    FILTER d.id == @id
+                    UPDATE d WITH {data: @data, type: @type} IN permission_context
+            '''
+
+            bindVars = {"id": obj.id(), "data": obj.data(), "type": obj.type()}
+            logger.debug(
+                f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] - Update permission context with id: {obj.id()}')
+            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            _ = queryResult.result
+
+            # Check if it is updated
+            repoObj = self.permissionContextById(obj.id())
+            if repoObj != obj:
+                logger.warn(
+                    f'[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] The object permission context: {obj} could not be updated in the database')
+                raise ObjectCouldNotBeUpdatedException(f'permission context: {obj}')
 
     @debugLogger
     def deletePermissionContext(self, obj: PermissionContext, tokenData: TokenData = None):

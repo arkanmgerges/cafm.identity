@@ -32,9 +32,16 @@ message PermissionAppService_permissionsResponse {
   int32 itemCount = 2;
 }
 
+message PermissionAppService_newIdRequest {}
+
+message PermissionAppService_newIdResponse {
+  string id = 1;
+}
+
 
 service PermissionAppService {
   rpc permissionByName (PermissionAppService_permissionByNameRequest) returns (PermissionAppService_permissionByNameResponse) {}
   rpc permissionById (PermissionAppService_permissionByIdRequest) returns (PermissionAppService_permissionByIdResponse) {}
   rpc permissions (PermissionAppService_permissionsRequest) returns (PermissionAppService_permissionsResponse) {}
+  rpc newId (PermissionAppService_newIdRequest) returns (PermissionAppService_newIdResponse) {}
 }

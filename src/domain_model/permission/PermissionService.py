@@ -19,25 +19,19 @@ class PermissionService:
 
     @debugLogger
     def createPermission(self, obj: Permission, objectOnly: bool = False, tokenData: TokenData = None):
-        try:
-            if obj.id() == '':
-                raise PermissionDoesNotExistException()
-            self._repo.permissionByName(name=obj.name())
-            raise PermissionAlreadyExistException(obj.name())
-        except PermissionDoesNotExistException:
-            if objectOnly:
-                return Permission.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
-            else:
-                obj = Permission.createFromObject(obj=obj, publishEvent=True)
-                self._repo.createPermission(obj=obj, tokenData=tokenData)
-                return obj
+        if objectOnly:
+            return Permission.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
+        else:
+            obj = Permission.createFromObject(obj=obj, publishEvent=True)
+            self._repo.save(obj=obj, tokenData=tokenData)
+            return obj
 
     @debugLogger
     def deletePermission(self, obj: Permission, tokenData: TokenData = None):
-        self._repo.deletePermission(obj=obj, tokenData=tokenData)
         obj.publishDelete()
+        self._repo.deletePermission(obj=obj, tokenData=tokenData)
 
     @debugLogger
     def updatePermission(self, oldObject: Permission, newObject: Permission, tokenData: TokenData = None):
-        self._repo.updatePermission(obj=newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)
+        self._repo.save(obj=newObject, tokenData=tokenData)

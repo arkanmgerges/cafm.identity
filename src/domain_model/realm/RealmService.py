@@ -17,25 +17,19 @@ class RealmService:
 
     @debugLogger
     def createRealm(self, obj: Realm, objectOnly: bool = False, tokenData: TokenData = None):
-        try:
-            if obj.id() == '':
-                raise RealmDoesNotExistException()
-            self._repo.realmByName(name=obj.name())
-            raise RealmAlreadyExistException(obj.name())
-        except RealmDoesNotExistException:
-            if objectOnly:
-                return Realm.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
-            else:
-                obj = Realm.createFromObject(obj=obj, publishEvent=True)
-                self._repo.createRealm(obj=obj, tokenData=tokenData)
-                return obj
+        if objectOnly:
+            return Realm.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
+        else:
+            obj = Realm.createFromObject(obj=obj, publishEvent=True)
+            self._repo.save(obj=obj, tokenData=tokenData)
+            return obj
 
     @debugLogger
     def deleteRealm(self, obj: Realm, tokenData: TokenData = None):
-        self._repo.deleteRealm(obj, tokenData=tokenData)
         obj.publishDelete()
+        self._repo.deleteRealm(obj, tokenData=tokenData)
 
     @debugLogger
     def updateRealm(self, oldObject: Realm, newObject: Realm, tokenData: TokenData = None):
-        self._repo.updateRealm(obj=newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)
+        self._repo.save(obj=newObject, tokenData=tokenData)

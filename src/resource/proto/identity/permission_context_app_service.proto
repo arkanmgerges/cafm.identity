@@ -24,8 +24,15 @@ message PermissionContextAppService_permissionContextsResponse {
   int32 itemCount = 2;
 }
 
+message PermissionContextAppService_newIdRequest {}
+
+message PermissionContextAppService_newIdResponse {
+  string id = 1;
+}
+
 
 service PermissionContextAppService {
   rpc permissionContextById (PermissionContextAppService_permissionContextByIdRequest) returns (PermissionContextAppService_permissionContextByIdResponse) {}
   rpc permissionContexts (PermissionContextAppService_permissionContextsRequest) returns (PermissionContextAppService_permissionContextsResponse) {}
+  rpc newId (PermissionContextAppService_newIdRequest) returns (PermissionContextAppService_newIdResponse) {}  
 }

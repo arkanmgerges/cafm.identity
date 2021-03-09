@@ -21,25 +21,19 @@ class OuService:
 
     @debugLogger
     def createOu(self, obj: Ou, objectOnly: bool = False, tokenData: TokenData = None):
-        try:
-            if obj.id() == '':
-                raise OuDoesNotExistException()
-            self._repo.ouByName(name=obj.name())
-            raise OuAlreadyExistException(obj.name())
-        except OuDoesNotExistException:
-            if objectOnly:
-                return Ou.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
-            else:
-                obj = Ou.createFromObject(obj=obj, publishEvent=True)
-                self._repo.createOu(obj=obj, tokenData=tokenData)
-                return obj
+        if objectOnly:
+            return Ou.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
+        else:
+            obj = Ou.createFromObject(obj=obj, publishEvent=True)
+            self._repo.save(obj=obj, tokenData=tokenData)
+            return obj
 
     @debugLogger
     def deleteOu(self, obj:Ou, tokenData: TokenData = None):
-        self._repo.deleteOu(obj=obj, tokenData=tokenData)
         obj.publishDelete()
+        self._repo.deleteOu(obj=obj, tokenData=tokenData)
 
     @debugLogger
     def updateOu(self, oldObject:Ou, newObject: Ou, tokenData: TokenData = None):
-        self._repo.updateOu(obj=newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)
+        self._repo.save(obj=newObject, tokenData=tokenData)

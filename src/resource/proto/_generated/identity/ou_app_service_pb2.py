@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1didentity/ou_app_service.proto\x12\x10\x63\x61\x66m.identity.ou\x1a\x11identity/ou.proto\x1a\x0border.proto\",\n\x1cOuAppService_ouByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"A\n\x1dOuAppService_ouByNameResponse\x12 \n\x02ou\x18\x01 \x01(\x0b\x32\x14.cafm.identity.ou.Ou\"(\n\x1aOuAppService_ouByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"?\n\x1bOuAppService_ouByIdResponse\x12 \n\x02ou\x18\x01 \x01(\x0b\x32\x14.cafm.identity.ou.Ou\"j\n\x17OuAppService_ousRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\x12\'\n\x05order\x18\x03 \x03(\x0b\x32\x18.cafm.common.order.Order\"P\n\x18OuAppService_ousResponse\x12!\n\x03ous\x18\x01 \x03(\x0b\x32\x14.cafm.identity.ou.Ou\x12\x11\n\titemCount\x18\x02 \x01(\x05\x32\xc6\x02\n\x0cOuAppService\x12m\n\x08ouByName\x12..cafm.identity.ou.OuAppService_ouByNameRequest\x1a/.cafm.identity.ou.OuAppService_ouByNameResponse\"\x00\x12g\n\x06ouById\x12,.cafm.identity.ou.OuAppService_ouByIdRequest\x1a-.cafm.identity.ou.OuAppService_ouByIdResponse\"\x00\x12^\n\x03ous\x12).cafm.identity.ou.OuAppService_ousRequest\x1a*.cafm.identity.ou.OuAppService_ousResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x1didentity/ou_app_service.proto\x12\x10\x63\x61\x66m.identity.ou\x1a\x11identity/ou.proto\x1a\x0border.proto\",\n\x1cOuAppService_ouByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"A\n\x1dOuAppService_ouByNameResponse\x12 \n\x02ou\x18\x01 \x01(\x0b\x32\x14.cafm.identity.ou.Ou\"(\n\x1aOuAppService_ouByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"?\n\x1bOuAppService_ouByIdResponse\x12 \n\x02ou\x18\x01 \x01(\x0b\x32\x14.cafm.identity.ou.Ou\"j\n\x17OuAppService_ousRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\x12\'\n\x05order\x18\x03 \x03(\x0b\x32\x18.cafm.common.order.Order\"P\n\x18OuAppService_ousResponse\x12!\n\x03ous\x18\x01 \x03(\x0b\x32\x14.cafm.identity.ou.Ou\x12\x11\n\titemCount\x18\x02 \x01(\x05\"\x1b\n\x19OuAppService_newIdRequest\"(\n\x1aOuAppService_newIdResponse\x12\n\n\x02id\x18\x01 \x01(\t2\xac\x03\n\x0cOuAppService\x12m\n\x08ouByName\x12..cafm.identity.ou.OuAppService_ouByNameRequest\x1a/.cafm.identity.ou.OuAppService_ouByNameResponse\"\x00\x12g\n\x06ouById\x12,.cafm.identity.ou.OuAppService_ouByIdRequest\x1a-.cafm.identity.ou.OuAppService_ouByIdResponse\"\x00\x12^\n\x03ous\x12).cafm.identity.ou.OuAppService_ousRequest\x1a*.cafm.identity.ou.OuAppService_ousResponse\"\x00\x12\x64\n\x05newId\x12+.cafm.identity.ou.OuAppService_newIdRequest\x1a,.cafm.identity.ou.OuAppService_newIdResponse\"\x00\x62\x06proto3'
   ,
   dependencies=[identity_dot_ou__pb2.DESCRIPTOR,order__pb2.DESCRIPTOR,])
 
@@ -240,6 +240,63 @@ _OUAPPSERVICE_OUSRESPONSE = _descriptor.Descriptor(
   serialized_end=491,
 )
 
+
+_OUAPPSERVICE_NEWIDREQUEST = _descriptor.Descriptor(
+  name='OuAppService_newIdRequest',
+  full_name='cafm.identity.ou.OuAppService_newIdRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=493,
+  serialized_end=520,
+)
+
+
+_OUAPPSERVICE_NEWIDRESPONSE = _descriptor.Descriptor(
+  name='OuAppService_newIdResponse',
+  full_name='cafm.identity.ou.OuAppService_newIdResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='id', full_name='cafm.identity.ou.OuAppService_newIdResponse.id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=522,
+  serialized_end=562,
+)
+
 _OUAPPSERVICE_OUBYNAMERESPONSE.fields_by_name['ou'].message_type = identity_dot_ou__pb2._OU
 _OUAPPSERVICE_OUBYIDRESPONSE.fields_by_name['ou'].message_type = identity_dot_ou__pb2._OU
 _OUAPPSERVICE_OUSREQUEST.fields_by_name['order'].message_type = order__pb2._ORDER
@@ -250,6 +307,8 @@ DESCRIPTOR.message_types_by_name['OuAppService_ouByIdRequest'] = _OUAPPSERVICE_O
 DESCRIPTOR.message_types_by_name['OuAppService_ouByIdResponse'] = _OUAPPSERVICE_OUBYIDRESPONSE
 DESCRIPTOR.message_types_by_name['OuAppService_ousRequest'] = _OUAPPSERVICE_OUSREQUEST
 DESCRIPTOR.message_types_by_name['OuAppService_ousResponse'] = _OUAPPSERVICE_OUSRESPONSE
+DESCRIPTOR.message_types_by_name['OuAppService_newIdRequest'] = _OUAPPSERVICE_NEWIDREQUEST
+DESCRIPTOR.message_types_by_name['OuAppService_newIdResponse'] = _OUAPPSERVICE_NEWIDRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 OuAppService_ouByNameRequest = _reflection.GeneratedProtocolMessageType('OuAppService_ouByNameRequest', (_message.Message,), {
@@ -294,6 +353,20 @@ OuAppService_ousResponse = _reflection.GeneratedProtocolMessageType('OuAppServic
   })
 _sym_db.RegisterMessage(OuAppService_ousResponse)
 
+OuAppService_newIdRequest = _reflection.GeneratedProtocolMessageType('OuAppService_newIdRequest', (_message.Message,), {
+  'DESCRIPTOR' : _OUAPPSERVICE_NEWIDREQUEST,
+  '__module__' : 'identity.ou_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.ou.OuAppService_newIdRequest)
+  })
+_sym_db.RegisterMessage(OuAppService_newIdRequest)
+
+OuAppService_newIdResponse = _reflection.GeneratedProtocolMessageType('OuAppService_newIdResponse', (_message.Message,), {
+  'DESCRIPTOR' : _OUAPPSERVICE_NEWIDRESPONSE,
+  '__module__' : 'identity.ou_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.ou.OuAppService_newIdResponse)
+  })
+_sym_db.RegisterMessage(OuAppService_newIdResponse)
+
 
 
 _OUAPPSERVICE = _descriptor.ServiceDescriptor(
@@ -303,8 +376,8 @@ _OUAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=494,
-  serialized_end=820,
+  serialized_start=565,
+  serialized_end=993,
   methods=[
   _descriptor.MethodDescriptor(
     name='ouByName',
@@ -333,6 +406,16 @@ _OUAPPSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_OUAPPSERVICE_OUSREQUEST,
     output_type=_OUAPPSERVICE_OUSRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='newId',
+    full_name='cafm.identity.ou.OuAppService.newId',
+    index=3,
+    containing_service=None,
+    input_type=_OUAPPSERVICE_NEWIDREQUEST,
+    output_type=_OUAPPSERVICE_NEWIDRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

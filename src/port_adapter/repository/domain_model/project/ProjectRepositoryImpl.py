@@ -48,8 +48,6 @@ class ProjectRepositoryImpl(ProjectRepository):
                 self.updateProject(obj=obj, tokenData=tokenData)
         except ProjectDoesNotExistException as _e:
             self.createProject(obj=obj, tokenData=tokenData)
-        except Exception as e:
-            logger.debug(e)
 
     @debugLogger
     def createProject(self, obj: Project, tokenData: TokenData):
@@ -108,28 +106,24 @@ class ProjectRepositoryImpl(ProjectRepository):
     @debugLogger
     def updateProject(self, obj: Project, tokenData: TokenData) -> None:
         repoObj = self.projectById(obj.id())
-        if repoObj == obj:
-            logger.debug(
-                f'[{ProjectRepositoryImpl.updateProject.__qualname__}] Object identical exception for old project: {repoObj}\nproject: {obj}')
-            raise ObjectIdenticalException()
-
-        aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'project'
-                UPDATE d WITH {name: @name} IN resource
-        '''
-
-        bindVars = {"id": obj.id(), "name": obj.name()}
-        logger.debug(f'[{ProjectRepositoryImpl.updateProject.__qualname__}] - Update project with id: {obj.id()}')
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        _ = queryResult.result
-
-        # Check if it is updated
-        repoObj = self.projectById(obj.id())
         if repoObj != obj:
-            logger.warn(
-                f'[{ProjectRepositoryImpl.updateProject.__qualname__}] The object project: {obj} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'project: {obj}')
+            aql = '''
+                FOR d IN resource
+                    FILTER d.id == @id AND d.type == 'project'
+                    UPDATE d WITH {name: @name} IN resource
+            '''
+
+            bindVars = {"id": obj.id(), "name": obj.name()}
+            logger.debug(f'[{ProjectRepositoryImpl.updateProject.__qualname__}] - Update project with id: {obj.id()}')
+            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            _ = queryResult.result
+
+            # Check if it is updated
+            repoObj = self.projectById(obj.id())
+            if repoObj != obj:
+                logger.warn(
+                    f'[{ProjectRepositoryImpl.updateProject.__qualname__}] The object project: {obj} could not be updated in the database')
+                raise ObjectCouldNotBeUpdatedException(f'project: {obj}')
 
     @debugLogger
     def deleteProject(self, obj: Project, tokenData: TokenData = None):

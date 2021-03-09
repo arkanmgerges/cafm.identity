@@ -15,7 +15,6 @@ from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissio
 from src.domain_model.resource.exception.CodeExceptionConstant import CodeExceptionConstant
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
 from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
-from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.PermissionDoesNotExistException import PermissionDoesNotExistException
 from src.domain_model.token.TokenData import TokenData
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
@@ -47,8 +46,6 @@ class PermissionRepositoryImpl(PermissionRepository):
                 self.updatePermission(obj=obj, tokenData=tokenData)
         except PermissionDoesNotExistException as _e:
             self.createPermission(obj=obj, tokenData=tokenData)
-        except Exception as e:
-            logger.debug(e)
 
     @debugLogger
     def createPermission(self, obj: Permission, tokenData: TokenData):
@@ -77,30 +74,26 @@ class PermissionRepositoryImpl(PermissionRepository):
     @debugLogger
     def updatePermission(self, obj: Permission, tokenData: TokenData) -> None:
         repoObj = self.permissionById(obj.id())
-        if repoObj == obj:
-            logger.debug(
-                f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] Object identical exception for old permission: {repoObj}\npermission: {obj}')
-            raise ObjectIdenticalException()
-
-        aql = '''
-            FOR d IN permission
-                FILTER d.id == @id
-                UPDATE d WITH {name: @name, allowed_actions: @allowed_actions, denied_actions: @denied_actions} IN permission
-        '''
-
-        bindVars = {"id": obj.id(), "name": obj.name(), "allowed_actions": obj.allowedActions(),
-                    "denied_actions": obj.deniedActions()}
-        logger.debug(
-            f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] - Update permission with id: {obj.id()}')
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        _ = queryResult.result
-
-        # Check if it is updated
-        repoObj = self.permissionById(obj.id())
         if repoObj != obj:
-            logger.warn(
-                f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] The object permission: {obj} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'permission: {obj}')
+            aql = '''
+                FOR d IN permission
+                    FILTER d.id == @id
+                    UPDATE d WITH {name: @name, allowed_actions: @allowed_actions, denied_actions: @denied_actions} IN permission
+            '''
+
+            bindVars = {"id": obj.id(), "name": obj.name(), "allowed_actions": obj.allowedActions(),
+                        "denied_actions": obj.deniedActions()}
+            logger.debug(
+                f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] - Update permission with id: {obj.id()}')
+            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            _ = queryResult.result
+
+            # Check if it is updated
+            repoObj = self.permissionById(obj.id())
+            if repoObj != obj:
+                logger.warn(
+                    f'[{PermissionRepositoryImpl.updatePermission.__qualname__}] The object permission: {obj} could not be updated in the database')
+                raise ObjectCouldNotBeUpdatedException(f'permission: {obj}')
 
     @debugLogger
     def deletePermission(self, obj: Permission, tokenData: TokenData = None):

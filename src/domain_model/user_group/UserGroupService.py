@@ -17,25 +17,19 @@ class UserGroupService:
 
     @debugLogger
     def createUserGroup(self, obj: UserGroup, objectOnly: bool = False, tokenData: TokenData = None):
-        try:
-            if obj.id() == '':
-                raise UserGroupDoesNotExistException()
-            self._repo.userGroupByName(name=obj.name())
-            raise UserGroupAlreadyExistException(obj.name())
-        except UserGroupDoesNotExistException:
-            if objectOnly:
-                return UserGroup.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
-            else:
-                obj = UserGroup.createFromObject(obj=obj, publishEvent=True)
-                self._repo.createUserGroup(obj=obj, tokenData=tokenData)
-                return obj
+        if objectOnly:
+            return UserGroup.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
+        else:
+            obj = UserGroup.createFromObject(obj=obj, publishEvent=True)
+            self._repo.save(obj=obj, tokenData=tokenData)
+            return obj
 
     @debugLogger
     def deleteUserGroup(self, obj: UserGroup, tokenData: TokenData = None):
-        self._repo.deleteUserGroup(obj=obj, tokenData=tokenData)
         obj.publishDelete()
+        self._repo.deleteUserGroup(obj=obj, tokenData=tokenData)
 
     @debugLogger
     def updateUserGroup(self, oldObject: UserGroup, newObject: UserGroup, tokenData: TokenData = None):
-        self._repo.updateUserGroup(obj=newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)
+        self._repo.save(obj=newObject, tokenData=tokenData)

@@ -47,8 +47,6 @@ class UserGroupRepositoryImpl(UserGroupRepository):
                 self.updateUserGroup(obj=obj, tokenData=tokenData)
         except UserGroupDoesNotExistException as _e:
             self.createUserGroup(obj=obj, tokenData=tokenData)
-        except Exception as e:
-            logger.debug(e)
 
     @debugLogger
     def createUserGroup(self, obj: UserGroup, tokenData: TokenData):
@@ -98,30 +96,26 @@ class UserGroupRepositoryImpl(UserGroupRepository):
     @debugLogger
     def updateUserGroup(self, obj: UserGroup, tokenData: TokenData) -> None:
         repoObj = self.userGroupById(obj.id())
-        if repoObj == obj:
-            logger.debug(
-                f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] Object identical exception for old user group: {repoObj}\nuser group: {obj}')
-            raise ObjectIdenticalException()
-
-        aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'userGroup'
-                UPDATE d WITH {name: @name} IN resource
-        '''
-
-        bindVars = {"id": obj.id(),
-                    "name": repoObj.name() if obj.name() is None else obj.name()}
-        logger.debug(
-            f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] - Update user group with id: {obj.id()}')
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        _ = queryResult.result
-
-        # Check if it is updated
-        repoObj = self.userGroupById(obj.id())
         if repoObj != obj:
-            logger.warn(
-                f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] The object user group: {obj} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'user group: {obj}')
+            aql = '''
+                FOR d IN resource
+                    FILTER d.id == @id AND d.type == 'userGroup'
+                    UPDATE d WITH {name: @name} IN resource
+            '''
+
+            bindVars = {"id": obj.id(),
+                        "name": repoObj.name() if obj.name() is None else obj.name()}
+            logger.debug(
+                f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] - Update user group with id: {obj.id()}')
+            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            _ = queryResult.result
+
+            # Check if it is updated
+            repoObj = self.userGroupById(obj.id())
+            if repoObj != obj:
+                logger.warn(
+                    f'[{UserGroupRepositoryImpl.updateUserGroup.__qualname__}] The object user group: {obj} could not be updated in the database')
+                raise ObjectCouldNotBeUpdatedException(f'user group: {obj}')
 
     @debugLogger
     def deleteUserGroup(self, obj: UserGroup, tokenData: TokenData = None):

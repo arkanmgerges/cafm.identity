@@ -17,3 +17,7 @@ class CreatePermissionContextHandler(Handler):
     @staticmethod
     def targetsOnException() -> List[Callable]:
         return [Handler.targetOnException]
+
+    @staticmethod
+    def targetsOnSuccess() -> List[Callable]:
+        return [Handler.targetOnSuccess]

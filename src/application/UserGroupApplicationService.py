@@ -24,6 +24,10 @@ class UserGroupApplicationService:
         self._userGroupService = userGroupService
 
     @debugLogger
+    def newId(self):
+        return UserGroup.createFrom().id()
+
+    @debugLogger
     def createUserGroup(self, id: str = None, name: str = None, objectOnly: bool = False, token: str = ''):
         obj: UserGroup = self.constructObject(id=id, name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)

@@ -23,6 +23,10 @@ class PermissionApplicationService:
         self._permissionService = permissionService
 
     @debugLogger
+    def newId(self):
+        return Permission.createFrom().id()
+
+    @debugLogger
     def createPermission(self, id: str = None, name: str = '', allowedActions: List[str] = None,
                          deniedActions: List[str] = None, objectOnly: bool = False, token: str = ''):
         obj: Permission = self.constructObject(id=id, name=name, allowedActions=allowedActions,

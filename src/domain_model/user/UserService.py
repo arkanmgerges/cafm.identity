@@ -17,25 +17,19 @@ class UserService:
 
     @debugLogger
     def createUser(self, obj: User, objectOnly: bool = False, tokenData: TokenData = None):
-        try:
-            if obj.id() == '':
-                raise UserDoesNotExistException()
-            self._repo.userByEmail(email=obj.email())
-            raise UserAlreadyExistException(obj.email())
-        except UserDoesNotExistException:
-            if objectOnly:
-                return User.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
-            else:
-                obj = User.createFromObject(obj=obj, publishEvent=True)
-                self._repo.createUser(obj=obj, tokenData=tokenData)
-                return obj
+        if objectOnly:
+            return User.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
+        else:
+            obj = User.createFromObject(obj=obj, publishEvent=True)
+            self._repo.save(obj=obj, tokenData=tokenData)
+            return obj
 
     @debugLogger
     def deleteUser(self, obj: User, tokenData: TokenData = None):
-        self._repo.deleteUser(obj, tokenData=tokenData)
         obj.publishDelete()
+        self._repo.deleteUser(obj, tokenData=tokenData)
 
     @debugLogger
     def updateUser(self, oldObject: User, newObject: User, tokenData: TokenData = None):
-        self._repo.updateUser(obj=newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)
+        self._repo.save(obj=newObject, tokenData=tokenData)

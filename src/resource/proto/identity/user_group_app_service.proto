@@ -32,9 +32,16 @@ message UserGroupAppService_userGroupsResponse {
   int32 itemCount = 2;
 }
 
+message UserGroupAppService_newIdRequest {}
+
+message UserGroupAppService_newIdResponse {
+  string id = 1;
+}
+
 
 service UserGroupAppService {
   rpc userGroupByName (UserGroupAppService_userGroupByNameRequest) returns (UserGroupAppService_userGroupByNameResponse) {}
   rpc userGroupById (UserGroupAppService_userGroupByIdRequest) returns (UserGroupAppService_userGroupByIdResponse) {}
   rpc userGroups (UserGroupAppService_userGroupsRequest) returns (UserGroupAppService_userGroupsResponse) {}
+  rpc newId (UserGroupAppService_newIdRequest) returns (UserGroupAppService_newIdResponse) {}
 }

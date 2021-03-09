@@ -47,8 +47,6 @@ class RealmRepositoryImpl(RealmRepository):
                 self.updateRealm(obj=obj, tokenData=tokenData)
         except RealmDoesNotExistException as _e:
             self.createRealm(obj=obj, tokenData=tokenData)
-        except Exception as e:
-            logger.debug(e)
 
     @debugLogger
     def createRealm(self, obj: Realm, tokenData: TokenData):
@@ -107,29 +105,25 @@ class RealmRepositoryImpl(RealmRepository):
     @debugLogger
     def updateRealm(self, obj: Realm, tokenData: TokenData) -> None:
         repoObj = self.realmById(obj.id())
-        if repoObj == obj:
-            logger.debug(
-                f'[{RealmRepositoryImpl.updateRealm.__qualname__}] Object identical exception for old realm: {repoObj}\nrealm: {obj}')
-            raise ObjectIdenticalException()
-
-        aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'realm'
-                UPDATE d WITH {name: @name} IN resource
-        '''
-
-        bindVars = {"id": obj.id(),
-                    "name": repoObj.name() if obj.name() is None else obj.name()}
-        logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] - Update realm with id: {obj.id()}')
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        _ = queryResult.result
-
-        # Check if it is updated
-        repoObj = self.realmById(obj.id())
         if repoObj != obj:
-            logger.warn(
-                f'[{RealmRepositoryImpl.updateRealm.__qualname__}] The object realm: {obj} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'realm: {obj}')
+            aql = '''
+                FOR d IN resource
+                    FILTER d.id == @id AND d.type == 'realm'
+                    UPDATE d WITH {name: @name} IN resource
+            '''
+
+            bindVars = {"id": obj.id(),
+                        "name": repoObj.name() if obj.name() is None else obj.name()}
+            logger.debug(f'[{RealmRepositoryImpl.updateRealm.__qualname__}] - Update realm with id: {obj.id()}')
+            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            _ = queryResult.result
+
+            # Check if it is updated
+            repoObj = self.realmById(obj.id())
+            if repoObj != obj:
+                logger.warn(
+                    f'[{RealmRepositoryImpl.updateRealm.__qualname__}] The object realm: {obj} could not be updated in the database')
+                raise ObjectCouldNotBeUpdatedException(f'realm: {obj}')
 
     @debugLogger
     def deleteRealm(self, obj: Realm, tokenData: TokenData = None):

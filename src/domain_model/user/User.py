@@ -14,19 +14,20 @@ from src.resource.logging.logger import logger
 class User(Resource):
     ONE_TIME_PASSWORD_TAG = '###ABC_ZYX_1_TIME_PASS'
 
-    def __init__(self, id: str = None, email: str = '', password: str = ''):
+    def __init__(self, id: str = None, email: str = '', password: str = '', skipValidation: bool = False):
         anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type='user')
 
-        self._validateEmail(email)
+        if not skipValidation:
+            self._validateEmail(email)
         self._email = email
         self._password = password
 
     @classmethod
     def createFrom(cls, id: str = None, email: str = '', password: str = '',
-                   publishEvent: bool = False):
+                   publishEvent: bool = False, skipValidation: bool = False):
         logger.debug(f'[{User.createFrom.__qualname__}] - with name {email}')
-        user = User(id=id, email=email, password=password)
+        user = User(id=id, email=email, password=password, skipValidation=skipValidation)
         if publishEvent:
             logger.debug(f'[{User.createFrom.__qualname__}] - publish UserCreated event')
             from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
@@ -35,10 +36,10 @@ class User(Resource):
         return user
 
     @classmethod
-    def createFromObject(cls, obj: 'User', publishEvent: bool = False, generateNewId: bool = False):
+    def createFromObject(cls, obj: 'User', publishEvent: bool = False, generateNewId: bool = False, skipValidation: bool = False):
         logger.debug(f'[{User.createFromObject.__qualname__}]')
         id = None if generateNewId else obj.id()
-        return cls.createFrom(id=id, email=obj.email(), password=obj.password(), publishEvent=publishEvent)
+        return cls.createFrom(id=id, email=obj.email(), password=obj.password(), publishEvent=publishEvent, skipValidation=skipValidation)
 
     def _validateEmail(self, email):
         regex = r'^[a-zA-Z0-9]+[a-zA-Z0-9\._]+[@]\w+[.]\w{2,6}$'

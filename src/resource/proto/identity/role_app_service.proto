@@ -45,6 +45,11 @@ message RoleAppService_rolesResponse {
   int32 itemCount = 2;
 }
 
+message RoleAppService_newIdRequest {}
+
+message RoleAppService_newIdResponse {
+  string id = 1;
+}
 
 service RoleAppService {
   rpc roleByName (RoleAppService_roleByNameRequest) returns (RoleAppService_roleByNameResponse) {}
@@ -52,4 +57,5 @@ service RoleAppService {
   rpc roles (RoleAppService_rolesRequest) returns (RoleAppService_rolesResponse) {}
   rpc rolesTrees (RoleAppService_rolesTreesRequest) returns (RoleAppService_rolesTreesResponse) {}
   rpc roleTree (RoleAppService_roleTreeRequest) returns (RoleAppService_roleTreeResponse) {}
+  rpc newId (RoleAppService_newIdRequest) returns (RoleAppService_newIdResponse) {}
 }

@@ -24,6 +24,10 @@ class RealmApplicationService:
         self._realmService = realmService
 
     @debugLogger
+    def newId(self):
+        return Realm.createFrom().id()
+
+    @debugLogger
     def createRealm(self, id: str = None, name: str = None, realmType: str = None, objectOnly: bool = False, token: str = ''):
         obj: Realm = self.constructObject(id=id, name=name, realmType=realmType)
         tokenData = TokenService.tokenDataFromToken(token=token)

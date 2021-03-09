@@ -21,16 +21,6 @@ class PermissionContextRepository(ABC):
         """
 
     @abstractmethod
-    def createPermissionContext(self, obj: PermissionContext, tokenData: TokenData):
-        """Create permission context
-
-        Args:
-            obj (PermissionContext): The permission context that needs to be created
-            tokenData (TokenData): Token data that has info about the token
-
-        """
-
-    @abstractmethod
     def deletePermissionContext(self, obj: PermissionContext, tokenData: TokenData) -> None:
         """Delete a permission context
 
@@ -40,18 +30,6 @@ class PermissionContextRepository(ABC):
 
         :raises:
             `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the permission context could not be deleted
-        """
-
-    @abstractmethod
-    def updatePermissionContext(self, obj: PermissionContext, tokenData: TokenData) -> None:
-        """Update a permission context
-
-        Args:
-            obj (PermissionContext): The permission context that needs to be updated
-            tokenData (TokenData): Token data used for updating the resource
-
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the permission context could not be updated
         """
 
     @abstractmethod

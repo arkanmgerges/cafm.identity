@@ -24,6 +24,10 @@ class PermissionContextApplicationService:
         self._permissionContextService = permissionContextService
 
     @debugLogger
+    def newId(self):
+        return PermissionContext.createFrom().id()
+
+    @debugLogger
     def createPermissionContext(self, id: str = None, type: str = '', data: dict = None, objectOnly: bool = False,
                                 token: str = ''):
         data = {} if data is None else data

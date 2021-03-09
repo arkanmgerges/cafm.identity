@@ -24,6 +24,10 @@ class ProjectApplicationService:
         self._projectService = projectService
 
     @debugLogger
+    def newId(self):
+        return Project.createFrom().id()
+
+    @debugLogger
     def createProject(self, id: str = None, name: str = '', objectOnly: bool = False, token: str = ''):
         obj: Project = self.constructObject(id=id, name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)

@@ -29,6 +29,11 @@ class RealmAppServiceStub(object):
                 request_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsRequest.SerializeToString,
                 response_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsResponse.FromString,
                 )
+        self.newId = channel.unary_unary(
+                '/cafm.identity.realm.RealmAppService/newId',
+                request_serializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdRequest.SerializeToString,
+                response_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdResponse.FromString,
+                )
 
 
 class RealmAppServiceServicer(object):
@@ -52,6 +57,12 @@ class RealmAppServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def newId(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_RealmAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -69,6 +80,11 @@ def add_RealmAppServiceServicer_to_server(servicer, server):
                     servicer.realms,
                     request_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsRequest.FromString,
                     response_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsResponse.SerializeToString,
+            ),
+            'newId': grpc.unary_unary_rpc_method_handler(
+                    servicer.newId,
+                    request_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdRequest.FromString,
+                    response_serializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -128,5 +144,22 @@ class RealmAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.realm.RealmAppService/realms',
             identity_dot_realm__app__service__pb2.RealmAppService_realmsRequest.SerializeToString,
             identity_dot_realm__app__service__pb2.RealmAppService_realmsResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def newId(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.realm.RealmAppService/newId',
+            identity_dot_realm__app__service__pb2.RealmAppService_newIdRequest.SerializeToString,
+            identity_dot_realm__app__service__pb2.RealmAppService_newIdResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

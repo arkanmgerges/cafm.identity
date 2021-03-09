@@ -17,25 +17,19 @@ class ProjectService:
 
     @debugLogger
     def createProject(self, obj: Project, objectOnly: bool = False, tokenData: TokenData = None):
-        try:
-            if obj.id() == '':
-                raise ProjectDoesNotExistException()
-            self._repo.projectByName(name=obj.name())
-            raise ProjectAlreadyExistException(obj.name())
-        except ProjectDoesNotExistException:
-            if objectOnly:
-                return Project.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
-            else:
-                obj = Project.createFromObject(obj=obj, publishEvent=True)
-                self._repo.createProject(obj=obj, tokenData=tokenData)
-                return obj
+        if objectOnly:
+            return Project.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
+        else:
+            obj = Project.createFromObject(obj=obj, publishEvent=True)
+            self._repo.save(obj=obj, tokenData=tokenData)
+            return obj
 
     @debugLogger
     def deleteProject(self, obj: Project, tokenData: TokenData = None):
-        self._repo.deleteProject(obj=obj, tokenData=tokenData)
         obj.publishDelete()
+        self._repo.deleteProject(obj=obj, tokenData=tokenData)
 
     @debugLogger
     def updateProject(self, oldObject: Project, newObject: Project, tokenData: TokenData = None):
-        self._repo.updateProject(obj=newObject, tokenData=tokenData)
         newObject.publishUpdate(oldObject)
+        self._repo.save(obj=newObject, tokenData=tokenData)

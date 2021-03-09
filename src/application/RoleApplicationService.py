@@ -23,6 +23,10 @@ class RoleApplicationService:
         self._roleService = roleService
 
     @debugLogger
+    def newId(self):
+        return Role.createFrom().id()
+
+    @debugLogger
     def createRole(self, id: str = None, name: str = '', title: str = '', objectOnly: bool = False, token: str = ''):
         obj: Role = self.constructObject(id=id, name=name, title=title)
         tokenData = TokenService.tokenDataFromToken(token=token)

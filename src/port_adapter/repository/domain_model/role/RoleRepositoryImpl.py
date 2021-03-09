@@ -14,7 +14,6 @@ from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissio
 from src.domain_model.resource.exception.CodeExceptionConstant import CodeExceptionConstant
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import ObjectCouldNotBeDeletedException
 from src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException import ObjectCouldNotBeUpdatedException
-from src.domain_model.resource.exception.ObjectIdenticalException import ObjectIdenticalException
 from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
 from src.domain_model.role.Role import Role
 from src.domain_model.role.RoleRepository import RoleRepository
@@ -47,8 +46,6 @@ class RoleRepositoryImpl(RoleRepository):
                 self.updateRole(obj=obj, tokenData=tokenData)
         except RoleDoesNotExistException as _e:
             self.createRole(obj=obj, tokenData=tokenData)
-        except Exception as e:
-            logger.debug(e)
 
     @debugLogger
     def createRole(self, obj: Role, tokenData: TokenData):
@@ -107,28 +104,24 @@ class RoleRepositoryImpl(RoleRepository):
     @debugLogger
     def updateRole(self, obj: Role, tokenData: TokenData) -> None:
         repoObj = self.roleById(obj.id())
-        if repoObj == obj:
-            logger.debug(
-                f'[{RoleRepositoryImpl.updateRole.__qualname__}] Object identical exception for old role: {repoObj}\nrole: {obj}')
-            raise ObjectIdenticalException()
-
-        aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'role'
-                UPDATE d WITH {name: @name, title: @title} IN resource
-        '''
-
-        bindVars = {"id": obj.id(), "name": obj.name(), "title": obj.title()}
-        logger.debug(f'[{RoleRepositoryImpl.updateRole.__qualname__}] - Update role with id: {obj.id()}')
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        _ = queryResult.result
-
-        # Check if it is updated
-        repoObj = self.roleById(obj.id())
         if repoObj != obj:
-            logger.warn(
-                f'[{RoleRepositoryImpl.updateRole.__qualname__}] The object role: {obj} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'role: {obj}')
+            aql = '''
+                FOR d IN resource
+                    FILTER d.id == @id AND d.type == 'role'
+                    UPDATE d WITH {name: @name, title: @title} IN resource
+            '''
+
+            bindVars = {"id": obj.id(), "name": obj.name(), "title": obj.title()}
+            logger.debug(f'[{RoleRepositoryImpl.updateRole.__qualname__}] - Update role with id: {obj.id()}')
+            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            _ = queryResult.result
+
+            # Check if it is updated
+            repoObj = self.roleById(obj.id())
+            if repoObj != obj:
+                logger.warn(
+                    f'[{RoleRepositoryImpl.updateRole.__qualname__}] The object role: {obj} could not be updated in the database')
+                raise ObjectCouldNotBeUpdatedException(f'role: {obj}')
 
     @debugLogger
     def deleteRole(self, obj: Role, tokenData: TokenData = None):
@@ -214,7 +207,8 @@ class RoleRepositoryImpl(RoleRepository):
         items = result['items']
         itemCount = len(items)
         items = items[resultFrom:resultFrom + resultSize]
-        return {"items": [Role.createFrom(id=x['id'], name=x['name'], title=x['title'] if 'title' in x else '') for x in items],
+        return {"items": [Role.createFrom(id=x['id'], name=x['name'], title=x['title'] if 'title' in x else '') for x in
+                          items],
                 "itemCount": itemCount}
 
     @debugLogger

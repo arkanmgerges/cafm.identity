@@ -47,8 +47,6 @@ class UserRepositoryImpl(UserRepository):
                 self.updateUser(obj=obj, tokenData=tokenData)
         except UserDoesNotExistException as _e:
             self.createUser(obj=obj, tokenData=tokenData)
-        except Exception as e:
-            logger.debug(e)
 
     @debugLogger
     def createUser(self, obj: User, tokenData: TokenData):
@@ -109,28 +107,24 @@ class UserRepositoryImpl(UserRepository):
     @debugLogger
     def updateUser(self, obj: User, tokenData: TokenData) -> None:
         repoObj = self.userById(obj.id())
-        if repoObj == obj:
-            logger.debug(
-                f'[{UserRepositoryImpl.updateUser.__qualname__}] Object identical exception for old user: {repoObj}\nuser: {obj}')
-            raise ObjectIdenticalException()
-
-        aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'user'
-                UPDATE d WITH {email: @email} IN resource
-        '''
-
-        bindVars = {"id": obj.id(), "email": obj.email()}
-        logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {obj.id()}')
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-        _ = queryResult.result
-
-        # Check if it is updated
-        repoObj = self.userById(obj.id())
         if repoObj != obj:
-            logger.warn(
-                f'[{UserRepositoryImpl.updateUser.__qualname__}] The object user: {obj} could not be updated in the database')
-            raise ObjectCouldNotBeUpdatedException(f'user: {obj.toMap()}')
+            aql = '''
+                FOR d IN resource
+                    FILTER d.id == @id AND d.type == 'user'
+                    UPDATE d WITH {email: @email} IN resource
+            '''
+
+            bindVars = {"id": obj.id(), "email": obj.email()}
+            logger.debug(f'[{UserRepositoryImpl.updateUser.__qualname__}] - Update user with id: {obj.id()}')
+            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            _ = queryResult.result
+
+            # Check if it is updated
+            repoObj = self.userById(obj.id())
+            if repoObj != obj:
+                logger.warn(
+                    f'[{UserRepositoryImpl.updateUser.__qualname__}] The object user: {obj} could not be updated in the database')
+                raise ObjectCouldNotBeUpdatedException(f'user: {obj.toMap()}')
 
     @debugLogger
     def deleteUser(self, obj: User, tokenData: TokenData = None):

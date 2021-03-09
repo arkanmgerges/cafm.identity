@@ -32,9 +32,16 @@ message ProjectAppService_projectsResponse {
   int32 itemCount = 2;
 }
 
+message ProjectAppService_newIdRequest {}
+
+message ProjectAppService_newIdResponse {
+  string id = 1;
+}
+
 
 service ProjectAppService {
   rpc projectByName (ProjectAppService_projectByNameRequest) returns (ProjectAppService_projectByNameResponse) {}
   rpc projectById (ProjectAppService_projectByIdRequest) returns (ProjectAppService_projectByIdResponse) {}
   rpc projects (ProjectAppService_projectsRequest) returns (ProjectAppService_projectsResponse) {}
+  rpc newId (ProjectAppService_newIdRequest) returns (ProjectAppService_newIdResponse) {}  
 }

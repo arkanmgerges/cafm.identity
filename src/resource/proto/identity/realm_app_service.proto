@@ -32,9 +32,15 @@ message RealmAppService_realmsResponse {
   int32 itemCount = 2;
 }
 
+message RealmAppService_newIdRequest {}
+
+message RealmAppService_newIdResponse {
+  string id = 1;
+}
 
 service RealmAppService {
   rpc realmByName (RealmAppService_realmByNameRequest) returns (RealmAppService_realmByNameResponse) {}
   rpc realmById (RealmAppService_realmByIdRequest) returns (RealmAppService_realmByIdResponse) {}
   rpc realms (RealmAppService_realmsRequest) returns (RealmAppService_realmsResponse) {}
+  rpc newId (RealmAppService_newIdRequest) returns (RealmAppService_newIdResponse) {}  
 }

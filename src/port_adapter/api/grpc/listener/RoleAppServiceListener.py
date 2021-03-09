@@ -19,7 +19,8 @@ from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.role_app_service_pb2 import RoleAppService_roleByNameResponse, \
-    RoleAppService_rolesResponse, RoleAppService_roleByIdResponse, RoleAppService_rolesTreesResponse
+    RoleAppService_rolesResponse, RoleAppService_roleByIdResponse, RoleAppService_rolesTreesResponse, \
+    RoleAppService_newIdResponse
 from src.resource.proto._generated.identity.role_app_service_pb2_grpc import RoleAppServiceServicer
 
 
@@ -33,6 +34,23 @@ class RoleAppServiceListener(RoleAppServiceServicer):
 
     def __str__(self):
         return self.__class__.__name__
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def newId(self, request, context):
+        try:
+            token = self._token(context)
+            metadata = context.invocation_metadata()
+            claims = self._tokenService.claimsFromToken(token=metadata[0].value) if 'token' in metadata[0] else None
+            logger.debug(
+                f'[{RoleAppServiceListener.newId.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                    token: {token}')
+            appService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
+            return RoleAppService_newIdResponse(id=appService.newId())
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return RoleAppService_newIdResponse()
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel

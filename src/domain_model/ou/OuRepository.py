@@ -21,16 +21,6 @@ class OuRepository(ABC):
         """
 
     @abstractmethod
-    def createOu(self, obj: Ou, tokenData: TokenData):
-        """Create ou
-
-        Args:
-            obj (Ou): The ou that needs to be created
-            tokenData (TokenData): Token data that has info about the token
-
-        """
-
-    @abstractmethod
     def deleteOu(self, obj: Ou, tokenData: TokenData) -> None:
         """Delete a ou
 
@@ -40,18 +30,6 @@ class OuRepository(ABC):
 
         :raises:
             `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the ou could not be deleted
-        """
-
-    @abstractmethod
-    def updateOu(self, obj: Ou, tokenData: TokenData) -> None:
-        """Update a ou
-
-        Args:
-            obj (Ou): The ou that needs to be updated
-            tokenData (TokenData): Token data used for updating the resource
-
-        :raises:
-            `ObjectCouldNotBeUpdatedException <src.domain_model.resource.exception.ObjectCouldNotBeUpdatedException>` Raise an exception if the ou could not be updated
         """
 
     @abstractmethod
