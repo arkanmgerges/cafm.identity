@@ -5,6 +5,7 @@ import glob
 import importlib
 import os
 import signal
+from time import sleep
 
 from confluent_kafka.cimpl import KafkaError
 
@@ -60,57 +61,64 @@ class IdentityEventListener:
                     else:
                         logger.error(msg.error())
                 else:
-                    # Proper message
-                    logger.info(
-                        f'[{IdentityEventListener.run.__qualname__}] topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
-                    logger.info(f'value: {msg.value()}')
+                    isMsgProcessed = False
+                    while not isMsgProcessed:
+                        # Proper message
+                        logger.info(
+                            f'[{IdentityEventListener.run.__qualname__}] topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
+                        logger.info(f'value: {msg.value()}')
 
-                    try:
-                        msgData = msg.value()
-                        logger.debug(f'[{IdentityEventListener.run.__qualname__}] received message data = {msgData}')
-                        handledResult = self.handleCommand(messageData=msgData)
-                        if handledResult is None:  # Consume the offset since there is no handler for it
-                            logger.info(
-                                f'[{IdentityEventListener.run.__qualname__}] Command handle result is None, The offset is consumed for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})')
+                        try:
+                            msgData = msg.value()
+                            logger.debug(f'[{IdentityEventListener.run.__qualname__}] received message data = {msgData}')
+                            handledResult = self.handleCommand(messageData=msgData)
+                            if handledResult is None:  # Consume the offset since there is no handler for it
+                                logger.info(
+                                    f'[{IdentityEventListener.run.__qualname__}] Command handle result is None, The offset is consumed for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})')
+                                producer.sendOffsetsToTransaction(consumer)
+                                producer.commitTransaction()
+                                producer.beginTransaction()
+                                isMsgProcessed = True
+                                continue
+
+                            external = []
+                            logger.debug(
+                                f'[{IdentityEventListener.run.__qualname__}] handleResult returned with: {handledResult}')
+                            if 'external' in msgData:
+                                external = msgData['external']
+                            external.append({
+                                'id': msgData['id'],
+                                'creator_service_name': msgData['creator_service_name'],
+                                'name': msgData['name'],
+                                'version': msgData['version'],
+                                'metadata': msgData['metadata'],
+                                'data': msgData['data'],
+                                'created_on': msgData['created_on']
+                            })
+
+                            msgData['name'] = f'{msgData["name"]}_persisted'
+                            for target in self.targetsOnSuccess:
+                                res = target(messageData=msgData, creatorServiceName=self._creatorServiceName,
+                                             resultData=handledResult['data'])
+                                producer.produce(
+                                    obj=res['obj'],
+                                    schema=res['schema'])
+
                             producer.sendOffsetsToTransaction(consumer)
                             producer.commitTransaction()
                             producer.beginTransaction()
-                            continue
-
-                        external = []
-                        logger.debug(
-                            f'[{IdentityEventListener.run.__qualname__}] handleResult returned with: {handledResult}')
-                        if 'external' in msgData:
-                            external = msgData['external']
-                        external.append({
-                            'id': msgData['id'],
-                            'creator_service_name': msgData['creator_service_name'],
-                            'name': msgData['name'],
-                            'version': msgData['version'],
-                            'metadata': msgData['metadata'],
-                            'data': msgData['data'],
-                            'created_on': msgData['created_on']
-                        })
-
-                        msgData['name'] = f'{msgData["name"]}_persisted'
-                        for target in self.targetsOnSuccess:
-                            res = target(messageData=msgData, creatorServiceName=self._creatorServiceName,
-                                         resultData=handledResult['data'])
-                            producer.produce(
-                                obj=res['obj'],
-                                schema=res['schema'])
-
-                        producer.sendOffsetsToTransaction(consumer)
-                        producer.commitTransaction()
-                        producer.beginTransaction()
-                    except DomainModelException as e:
-                        logger.warn(e)
-                        producer.sendOffsetsToTransaction(consumer)
-                        producer.commitTransaction()
-                        producer.beginTransaction()
-                        DomainPublishedEvents.cleanup()
-                    except Exception as e:
-                        logger.error(e)
+                            isMsgProcessed = True
+                        except DomainModelException as e:
+                            logger.warn(e)
+                            producer.sendOffsetsToTransaction(consumer)
+                            producer.commitTransaction()
+                            producer.beginTransaction()
+                            DomainPublishedEvents.cleanup()
+                            isMsgProcessed = True
+                        except Exception as e:
+                            DomainPublishedEvents.cleanup()
+                            logger.error(e)
+                            sleep(1)
 
                 # sleep(3)
         except KeyboardInterrupt:
