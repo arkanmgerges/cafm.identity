@@ -78,8 +78,8 @@ class ApiCommandListener:
                                     f'[{ApiCommandListener.run.__qualname__}] Consume the offset for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})')
                                 producer.sendOffsetsToTransaction(consumer)
                                 producer.commitTransaction()
-                                producer.beginTransaction()
                                 isMsgProcessed = True
+                                producer.beginTransaction()
                                 continue
 
                             logger.debug(
@@ -132,8 +132,8 @@ class ApiCommandListener:
                             # input and outputs in the same transaction is what provides EOS.
                             producer.sendOffsetsToTransaction(consumer)
                             producer.commitTransaction()
-                            producer.beginTransaction()
                             isMsgProcessed = True
+                            producer.beginTransaction()
                         except DomainModelException as e:
                             logger.warn(e)
                             msgData = msg.value()
@@ -145,8 +145,8 @@ class ApiCommandListener:
                             DomainPublishedEvents.cleanup()
                             producer.sendOffsetsToTransaction(consumer)
                             producer.commitTransaction()
-                            producer.beginTransaction()
                             isMsgProcessed = True
+                            producer.beginTransaction()
                         except Exception as e:
                             DomainPublishedEvents.cleanup()
                             logger.error(e)

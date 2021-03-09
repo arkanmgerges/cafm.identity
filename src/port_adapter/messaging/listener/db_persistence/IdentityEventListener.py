@@ -77,8 +77,8 @@ class IdentityEventListener:
                                     f'[{IdentityEventListener.run.__qualname__}] Command handle result is None, The offset is consumed for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})')
                                 producer.sendOffsetsToTransaction(consumer)
                                 producer.commitTransaction()
-                                producer.beginTransaction()
                                 isMsgProcessed = True
+                                producer.beginTransaction()
                                 continue
 
                             external = []
@@ -106,15 +106,15 @@ class IdentityEventListener:
 
                             producer.sendOffsetsToTransaction(consumer)
                             producer.commitTransaction()
-                            producer.beginTransaction()
                             isMsgProcessed = True
+                            producer.beginTransaction()
                         except DomainModelException as e:
                             logger.warn(e)
                             producer.sendOffsetsToTransaction(consumer)
                             producer.commitTransaction()
+                            isMsgProcessed = True
                             producer.beginTransaction()
                             DomainPublishedEvents.cleanup()
-                            isMsgProcessed = True
                         except Exception as e:
                             DomainPublishedEvents.cleanup()
                             logger.error(e)
