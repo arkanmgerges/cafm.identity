@@ -34,7 +34,8 @@ class CreatePermissionHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        obj = appService.createPermission(id=None, name=dataDict['name'],
+        id = dataDict['id'] if 'id' in dataDict else None
+        obj = appService.createPermission(id=id, name=dataDict['name'],
                                           allowedActions=dataDict['allowed_actions'],
                                           deniedActions=dataDict['denied_actions'],
                                           token=metadataDict['token'])

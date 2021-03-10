@@ -34,7 +34,8 @@ class CreateRealmHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        obj = appService.createRealm(id=None, name=dataDict['name'],
+        id = dataDict['id'] if 'id' in dataDict else None
+        obj = appService.createRealm(id=id, name=dataDict['name'],
                                      realmType=dataDict['realm_type'],
                                      token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),

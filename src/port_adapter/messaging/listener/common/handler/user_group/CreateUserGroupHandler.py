@@ -34,7 +34,8 @@ class CreateUserGroupHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        obj = appService.createUserGroup(id=None, name=dataDict['name'], token=metadataDict['token'])
+        id = dataDict['id'] if 'id' in dataDict else None
+        obj = appService.createUserGroup(id=id, name=dataDict['name'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
                 'data': {'id': obj.id(), 'name': obj.name()},
                 'metadata': metadataDict}

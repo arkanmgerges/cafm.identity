@@ -101,7 +101,6 @@ class ApiCommandListener:
                             })
 
                             for target in self.targetsOnSuccess:
-                                logger.debug(f'ark1 -> {handledResult}')
                                 res = target(messageData=msgData, creatorServiceName=self._creatorServiceName,
                                              resultData=handledResult['data'])
                                 producer.produce(
