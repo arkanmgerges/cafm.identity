@@ -33,6 +33,7 @@ class CityAppServiceListener(CityAppServiceServicer):
     """
     c4model|cb|identity:Component(identity__grpc__CityAppServiceListener__cityById, "Get city by id", "grpc listener", "Get a city by id")
     """
+
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def cityById(self, request, context):
@@ -70,6 +71,7 @@ class CityAppServiceListener(CityAppServiceServicer):
     """
     c4model|cb|identity:Component(identity__grpc__CityAppServiceListener__cities, "Get cities", "grpc listener", "Get all cities")
     """
+
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def cities(self, request, context):
@@ -92,6 +94,39 @@ class CityAppServiceListener(CityAppServiceServicer):
                                     subdivisionOneIsoName=city.subdivisionOneIsoName(), cityName=city.cityName(),
                                     timeZone=city.timeZone(), isInEuropeanUnion=city.isInEuropeanUnion())
             logger.debug(f'[{CityApplicationService.cities.__qualname__}] - response: {response}')
+            return response
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return CityAppService_citiesResponse()
+
+    """
+        c4model|cb|identity:Component(identity__grpc__CityAppServiceListener__citiesByStateId, "Get cities by state id", "grpc listener", "Get all cities by state id")
+        """
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def citiesByStateId(self, request, context):
+        try:
+            metadata = context.invocation_metadata()
+            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            logger.debug(
+                f'[{CityAppServiceListener.citiesByStateId.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}')
+            cityAppService: CityApplicationService = AppDi.instance.get(CityApplicationService)
+
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            result: dict = cityAppService.citiesByStateId(id=request.id, resultFrom=request.resultFrom,
+                                                          resultSize=resultSize, order=orderData)
+            response = CityAppService_citiesResponse()
+            response.itemCount = result['itemCount']
+            for city in result['items']:
+                response.cities.add(id=city.id(), localeCode=city.localeCode(),
+                                    continentCode=city.continentCode(), continentName=city.continentName(),
+                                    countryIsoCode=city.countryIsoCode(), countryName=city.countryName(),
+                                    subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
+                                    subdivisionOneIsoName=city.subdivisionOneIsoName(), cityName=city.cityName(),
+                                    timeZone=city.timeZone(), isInEuropeanUnion=city.isInEuropeanUnion())
+            logger.debug(f'[{CityApplicationService.citiesByStateId.__qualname__}] - response: {response}')
             return response
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)

@@ -97,3 +97,46 @@ class CityRepositoryImpl(CityRepository):
                                subdivisionOneIsoCode=subdivisionOneIsoCode, subdivisionOneIsoName=subdivisionOneIsoName,
                                cityName=cityName, timeZone=result[0]['time_zone'],
                                isInEuropeanUnion=result[0]['is_in_european_union'])
+
+    def citiesByStateId(self, id: str, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
+        sortData = ''
+        if order is not None:
+            for item in order:
+                sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
+            sortData = sortData[2:]
+
+        aql = '''
+            LET ds = (FOR d IN city
+                        FILTER d.subdivision_1_iso_code == @id
+                        #sortData 
+                        RETURN d)
+            RETURN {items: ds}
+        '''
+        if sortData != '':
+            aql = aql.replace('#sortData', f'SORT {sortData}')
+        else:
+            aql = aql.replace('#sortData', '')
+        bindVars = {"id": id}
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result[0]
+
+        if result is None or len(result['items']) == 0:
+            return {"items": [], "itemCount": 0}
+        items = result['items']
+        itemCount = len(items)
+        items = items[resultFrom:resultFrom + resultSize]
+
+        returnItems = []
+        for x in items:
+            cityName = x['city_name'] if 'city_name' in x else ''
+            subdivisionOneIsoCode = x['subdivision_1_iso_code'] if 'subdivision_1_iso_code' in x else ''
+            subdivisionOneIsoName = x['subdivision_1_name'] if 'subdivision_1_name' in x else ''
+            returnItems.append(City.createFrom(id=x['geoname_id'], localeCode=x['locale_code'],
+                                               continentCode=x['continent_code'], cityName=cityName,
+                                               subdivisionOneIsoCode=subdivisionOneIsoCode,
+                                               subdivisionOneIsoName=subdivisionOneIsoName,
+                                               continentName=x['continent_name'], countryIsoCode=x['country_iso_code'],
+                                               countryName=x['country_name'], timeZone=x['time_zone'],
+                                               isInEuropeanUnion=x['is_in_european_union']))
+        return {"items": returnItems,
+                "itemCount": itemCount}
