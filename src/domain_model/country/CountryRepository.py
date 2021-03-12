@@ -70,3 +70,20 @@ class CountryRepository(ABC):
         :raises:
             `CountryDoesNotExistException <src.domain_model.resource.exception.CountryDoesNotExistException>` Raise an exception if the city does not exist
         """
+
+    @abstractmethod
+    def statesByCountryId(self, id: int = 0,
+                          resultFrom: int = 0,
+                          resultSize: int = 100,
+                          order: List[dict] = None) -> dict:
+        """Get a country states by country id
+
+        Args:
+            id (int): The id of the country
+            resultFrom (int): The start offset of the result item
+            resultSize (int): The size of the items in the result
+            order (List[dict]): A list of order e.g. [{'orderBy': 'name', 'direction': 'asc'}, {'orderBy': 'age', 'direction': 'desc'}]
+
+        Returns:
+            dict: A dict that has {"items": [], "itemCount": 0}
+        """

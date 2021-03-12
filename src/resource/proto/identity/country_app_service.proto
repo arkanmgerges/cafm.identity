@@ -4,6 +4,7 @@ package cafm.identity.country;
 
 import "identity/country.proto";
 import "identity/city.proto";
+import "identity/state.proto";
 import "order.proto";
 
 message CountryAppService_countryByIdRequest {
@@ -46,9 +47,22 @@ message CountryAppService_cityByCountryIdResponse {
   City city = 1;
 }
 
+message CountryAppService_statesByCountryIdRequest {
+  int32 id = 1;
+  int32 resultFrom = 2;
+  int32 resultSize = 3;
+  repeated cafm.common.order.Order order = 4;
+}
+
+message CountryAppService_statesByCountryIdResponse {
+  repeated State states = 1;
+  int32 itemCount = 2;
+}
+
 service CountryAppService {
   rpc countryById (CountryAppService_countryByIdRequest) returns (CountryAppService_countryByIdResponse) {}
   rpc countries (CountryAppService_countriesRequest) returns (CountryAppService_countriesResponse) {}
   rpc citiesByCountryId (CountryAppService_citiesByCountryIdRequest) returns (CountryAppService_citiesByCountryIdResponse) {}
   rpc cityByCountryId (CountryAppService_cityByCountryIdRequest) returns (CountryAppService_cityByCountryIdResponse) {}
+  rpc statesByCountryId (CountryAppService_statesByCountryIdRequest) returns (CountryAppService_statesByCountryIdResponse) {}
 }

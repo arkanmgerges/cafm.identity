@@ -11,6 +11,7 @@ import src.port_adapter.AppDi as AppDi
 from src.domain_model.country.City import City
 from src.domain_model.country.Country import Country
 from src.domain_model.country.CountryRepository import CountryRepository
+from src.domain_model.country.State import State
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.resource.exception.CountryDoesNotExistException import CountryDoesNotExistException
 from src.port_adapter.repository.domain_model.helper.HelperRepository import HelperRepository
@@ -96,7 +97,7 @@ class CountryRepositoryImpl(CountryRepository):
                         FOR c IN city 
                             FILTER u.country_iso_code == c.country_iso_code 
                             FILTER u.geoname_id == @id 
-                            FILTER u.city_name != null AND u.city_name != ""
+                            FILTER c.city_name != null AND c.city_name != ""
                             #sortData
                             RETURN c)
             RETURN {items: ds}
@@ -156,3 +157,45 @@ class CountryRepositoryImpl(CountryRepository):
                                subdivisionOneIsoName=result[0]['subdivision_1_name'],
                                cityName=result[0]['city_name'], timeZone=result[0]['time_zone'],
                                isInEuropeanUnion=result[0]['is_in_european_union'])
+
+    @debugLogger
+    def statesByCountryId(self, id: int = 0, resultFrom: int = 0, resultSize: int = 100,
+                          order: List[dict] = None) -> dict:
+        sortData = ''
+        if order is not None:
+            for item in order:
+                sortData = f'{sortData}, c.{item["orderBy"]} {item["direction"]}'
+            sortData = sortData[2:]
+        aql = '''
+                    LET ds = (FOR u IN country 
+                                FOR c IN city 
+                                    FILTER u.country_iso_code == c.country_iso_code 
+                                    FILTER u.geoname_id == @id 
+                                    FILTER c.subdivision_1_iso_code != null AND c.subdivision_1_iso_code != ""
+                                    #sortData
+                                    RETURN c)
+                    
+                    RETURN {items: ds}
+                '''
+        if sortData != '':
+            aql = aql.replace('#sortData', f'SORT {sortData}')
+        else:
+            aql = aql.replace('#sortData', '')
+
+        bindVars = {"id": id}
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result[0]
+        if result is None or len(result['items']) == 0:
+            return {"items": [], "itemCount": 0}
+        items = []
+        duplicate = []
+        for item in result['items']:
+            if item['subdivision_1_iso_code'] not in duplicate:
+                items.append(item)
+                duplicate.append(item['subdivision_1_iso_code'])
+        itemCount = len(items)
+        items = items[resultFrom:resultFrom + resultSize]
+
+        return {"items": [State.createFrom(id=str(x['subdivision_1_iso_code']), name=x['subdivision_1_name'])
+                          for x in items],
+                "itemCount": itemCount}
