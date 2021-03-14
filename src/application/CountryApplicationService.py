@@ -19,14 +19,20 @@ class CountryApplicationService:
         return self._countryRepository.countries(resultFrom=resultFrom, resultSize=resultSize, order=order)
 
     @debugLogger
-    def countryById(self, id: str) -> Country:
+    def countryById(self, id: int) -> Country:
         resource = self._countryRepository.countryById(id=id)
         return resource
 
     @debugLogger
     def citiesByCountryId(self, id: int, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
-        return self._countryRepository.citiesByCountryId(id=id, resultFrom=resultFrom, resultSize=resultSize, order=order)
+        return self._countryRepository.citiesByCountryId(id=id, resultFrom=resultFrom, resultSize=resultSize,
+                                                         order=order)
 
     @debugLogger
     def cityByCountryId(self, countryId: int, cityId: int):
         return self._countryRepository.cityByCountryId(countryId=countryId, cityId=cityId)
+
+    @debugLogger
+    def statesByCountryId(self, id: int, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
+        return self._countryRepository.statesByCountryId(id=id, resultFrom=resultFrom, resultSize=resultSize,
+                                                         order=order)

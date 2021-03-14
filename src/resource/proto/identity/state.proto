@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package cafm.identity.country;
+
+message State {
+  string id = 1;
+  string name = 2;
+}
