@@ -10,9 +10,7 @@ from opentelemetry import trace
 from opentelemetry.context import attach, detach
 from opentelemetry.exporter import jaeger
 from opentelemetry.sdk.trace import TracerProvider, Tracer
-from opentelemetry.sdk.trace.export import (BatchExportSpanProcessor,
-                                            ConsoleSpanExporter,
-                                            SimpleExportSpanProcessor)
+from opentelemetry.sdk.trace.export import (BatchExportSpanProcessor)
 from opentelemetry.trace.span import SpanContext
 
 

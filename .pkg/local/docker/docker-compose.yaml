@@ -10,6 +10,8 @@ services:
       - "9999:9999"
     entrypoint: ["hupper", "python", "-m", "src.port_adapter.api.grpc.server"]
     working_dir: /app
+    env_file:
+      - ../../../.env
     networks:
       - cafm-infra_default
     volumes:
@@ -19,6 +21,8 @@ services:
     image: cafm-identity:local
     entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.api_command.ApiCommandListener"]
     working_dir: /app
+    env_file:
+      - ../../../.env
     networks:
       - cafm-infra_default
     volumes:
@@ -30,6 +34,8 @@ services:
     image: cafm-identity:local
     entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.identity_command.IdentityCommandListener"]
     working_dir: /app
+    env_file:
+      - ../../../.env
     networks:
       - cafm-infra_default
     volumes:
@@ -41,6 +47,8 @@ services:
     image: cafm-identity:local
     entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.project_event.ProjectEventListener"]
     working_dir: /app
+    env_file:
+      - ../../../.env
     networks:
       - cafm-infra_default
     volumes:
@@ -52,6 +60,8 @@ services:
     image: cafm-identity:local
     entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.identity_event.IdentityEventListener"]
     working_dir: /app
+    env_file:
+      - ../../../.env
     networks:
       - cafm-infra_default
     volumes:
@@ -68,6 +78,8 @@ services:
       && python -m src.resource.script.admin_script assign-user-super-admin-role ${ADMIN_EMAIL:-admin@local.me} ${ADMIN_PASSWORD:-1234} ${DB_NAME:-cafm-identity}
       && python -m src.resource.script.admin_script build-resource-tree-from-file ${TREE_FILE:-src/resource/script/__test_tree.yaml.sample}"
     working_dir: /app
+    env_file:
+      - ../../../.env
     networks:
       - cafm-infra_default
     volumes:

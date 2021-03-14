@@ -132,3 +132,6 @@ dmypy.json
 __test_*
 src/resource/graph_data/*.dot
 src/resource/graph_data/*.mmd
+
+# Other
+.vs
