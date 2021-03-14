@@ -33,20 +33,6 @@ def setup_function():
     authzService = AuthorizationService(authzRepoMock, policyService)
 
 
-def test_create_role_object_when_role_already_exist():
-    # Arrange
-    from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
-    DomainPublishedEvents.cleanup()
-    repo = Mock(spec=RoleRepository)
-    name = 'me'
-    repo.roleByName = Mock(side_effect=RoleAlreadyExistException)
-    roleService = RoleService(roleRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = RoleApplicationService(repo, authzService, roleService)
-    # Act, Assert
-    with pytest.raises(RoleAlreadyExistException):
-        role = appService.createRole(id='1234', name=name, objectOnly=True, token=token)
-
-
 def test_create_role_object_when_role_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
@@ -63,25 +49,6 @@ def test_create_role_object_when_role_does_not_exist():
     assert role.name() == name
 
 
-def test_create_role_with_event_publishing_when_role_does_not_exist():
-    # Arrange
-    from src.domain_model.resource.exception.RoleDoesNotExistException import RoleDoesNotExistException
-    DomainPublishedEvents.cleanup()
-    repo = Mock(spec=RoleRepository)
-    id = '1234567'
-    name = 'me'
-    repo.roleByName = Mock(side_effect=RoleDoesNotExistException)
-    repo.createRole = Mock(spec=RoleRepository.createRole)
-    roleService = RoleService(roleRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = RoleApplicationService(repo, authzService, roleService)
-    # Act
-    appService.createRole(id=id, name=name, token=token)
-    # Assert
-    repo.roleByName.assert_called_once()
-    repo.createRole.assert_called_once()
-    assert len(DomainPublishedEvents.postponedEvents()) > 0
-
-
 def test_get_role_by_name_when_role_exists():
     # Arrange
     repo = Mock(spec=RoleRepository)
@@ -94,34 +61,6 @@ def test_get_role_by_name_when_role_exists():
     appService.roleByName(name=name, token=token)
     # Assert
     repo.roleByName.assert_called_once_with(name=name)
-
-
-def test_create_object_only_raise_exception_when_role_exists():
-    # Arrange
-    from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
-    repo = Mock(spec=RoleRepository)
-    name = 'me'
-    role = Role(name=name)
-    repo.roleByName = Mock(return_value=role)
-    roleService = RoleService(roleRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = RoleApplicationService(repo, authzService, roleService)
-    # Act, Assert
-    with pytest.raises(RoleAlreadyExistException):
-        role = appService.createRole(id='1234', name=name, objectOnly=True, token=token)
-
-
-def test_create_role_raise_exception_when_role_exists():
-    # Arrange
-    from src.domain_model.resource.exception.RoleAlreadyExistException import RoleAlreadyExistException
-    repo = Mock(spec=RoleRepository)
-    name = 'me'
-    role = Role(name=name)
-    repo.roleByName = Mock(return_value=role)
-    roleService = RoleService(roleRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = RoleApplicationService(repo, authzService, roleService)
-    # Act, Assert
-    with pytest.raises(RoleAlreadyExistException):
-        role = appService.createRole(id='1', name=name, token=token)
 
 
 def test_get_role_by_id_when_role_exists():

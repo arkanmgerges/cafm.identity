@@ -32,20 +32,6 @@ def setup_function():
     authzService = AuthorizationService(authzRepoMock, policyService)
 
 
-def test_create_project_object_when_project_already_exist():
-    # Arrange
-    from src.domain_model.resource.exception.ProjectAlreadyExistException import ProjectAlreadyExistException
-    DomainPublishedEvents.cleanup()
-    repo = Mock(spec=ProjectRepository)
-    name = 'me'
-    repo.projectByProjectName = Mock(side_effect=ProjectAlreadyExistException)
-    projectService = ProjectService(projectRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = ProjectApplicationService(repo, authzService, projectService)
-    # Act, Assert
-    with pytest.raises(ProjectAlreadyExistException):
-        project = appService.createProject(id='1234', name=name, objectOnly=True, token=token)
-
-
 def test_create_project_object_when_project_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
@@ -60,67 +46,6 @@ def test_create_project_object_when_project_does_not_exist():
     # Assert
     assert isinstance(project, Project)
     assert project.name() == name
-
-
-def test_create_project_with_event_publishing_when_project_does_not_exist():
-    # Arrange
-    from src.domain_model.resource.exception.ProjectDoesNotExistException import ProjectDoesNotExistException
-    DomainPublishedEvents.cleanup()
-    repo = Mock(spec=ProjectRepository)
-    id = '1234567'
-    name = 'me'
-    repo.projectByName = Mock(side_effect=ProjectDoesNotExistException)
-    repo.createProject = Mock(spec=ProjectRepository.createProject)
-    projectService = ProjectService(projectRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = ProjectApplicationService(repo, authzService, projectService)
-    # Act
-    appService.createProject(id=id, name=name, token=token)
-    # Assert
-    repo.projectByName.assert_called_once()
-    repo.createProject.assert_called_once()
-    assert len(DomainPublishedEvents.postponedEvents()) > 0
-
-
-def test_get_project_by_name_when_project_exists():
-    # Arrange
-    repo = Mock(spec=ProjectRepository)
-    name = 'me'
-    project = Project(name=name)
-    repo.projectByName = Mock(return_value=project)
-    projectService = ProjectService(projectRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = ProjectApplicationService(repo, authzService, projectService)
-    # Act
-    appService.projectByName(name=name, token=token)
-    # Assert
-    repo.projectByName.assert_called_once_with(name=name)
-
-
-def test_create_object_only_raise_exception_when_role_exists():
-    # Arrange
-    from src.domain_model.resource.exception.ProjectAlreadyExistException import ProjectAlreadyExistException
-    repo = Mock(spec=ProjectRepository)
-    name = 'me'
-    role = Project(name=name)
-    repo.roleByName = Mock(return_value=role)
-    projectService = ProjectService(projectRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = ProjectApplicationService(repo, authzService, projectService)
-    # Act, Assert
-    with pytest.raises(ProjectAlreadyExistException):
-        role = appService.createProject(id='1234', name=name, objectOnly=True, token=token)
-
-
-def test_create_role_raise_exception_when_role_exists():
-    # Arrange
-    from src.domain_model.resource.exception.ProjectAlreadyExistException import ProjectAlreadyExistException
-    repo = Mock(spec=ProjectRepository)
-    name = 'me'
-    role = Project(name=name)
-    repo.roleByName = Mock(return_value=role)
-    projectService = ProjectService(projectRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = ProjectApplicationService(repo, authzService, projectService)
-    # Act, Assert
-    with pytest.raises(ProjectAlreadyExistException):
-        role = appService.createProject(id='1', name=name, token=token)
 
 
 def test_get_project_by_id_when_project_exists():

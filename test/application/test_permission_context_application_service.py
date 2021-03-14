@@ -34,20 +34,6 @@ def setup_function():
     authzService = AuthorizationService(authzRepoMock, policyService)
 
 
-def test_create_permissionContext_object_when_permissionContext_already_exist():
-    # Arrange
-    from src.domain_model.resource.exception.PermissionContextAlreadyExistException import PermissionContextAlreadyExistException
-    DomainPublishedEvents.cleanup()
-    repo = Mock(spec=PermissionContextRepository)
-    id = '1234567'
-    repo.permissionContextById = Mock(side_effect=PermissionContextAlreadyExistException)
-    permissionContextService = PermissionContextService(permissionContextRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = PermissionContextApplicationService(repo, authzService, permissionContextService)
-    # Act, Assert
-    with pytest.raises(PermissionContextAlreadyExistException):
-        permissionContext = appService.createPermissionContext(id=id, objectOnly=True, token=token)
-
-
 def test_create_permissionContext_object_when_permissionContext_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.PermissionContextDoesNotExistException import PermissionContextDoesNotExistException
@@ -64,23 +50,6 @@ def test_create_permissionContext_object_when_permissionContext_does_not_exist()
     assert permissionContext.id() == id
 
 
-def test_create_permissionContext_with_event_publishing_when_permissionContext_does_not_exist():
-    # Arrange
-    from src.domain_model.resource.exception.PermissionContextDoesNotExistException import PermissionContextDoesNotExistException
-    DomainPublishedEvents.cleanup()
-    repo = Mock(spec=PermissionContextRepository)
-    id = '1234567'
-    repo.permissionContextById = Mock(side_effect=PermissionContextDoesNotExistException)
-    permissionContextService = PermissionContextService(permissionContextRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = PermissionContextApplicationService(repo, authzService, permissionContextService)
-    # Act
-    appService.createPermissionContext(id=id, token=token)
-    # Assert
-    repo.permissionContextById.assert_called_once()
-    repo.createPermissionContext.assert_called_once()
-    assert len(DomainPublishedEvents.postponedEvents()) > 0
-
-
 def test_get_permissionContext_by_name_when_permissionContext_exists():
     # Arrange
     repo = Mock(spec=PermissionContextRepository)
@@ -93,34 +62,6 @@ def test_get_permissionContext_by_name_when_permissionContext_exists():
     appService.permissionContextById(id=id, token=token)
     # Assert
     repo.permissionContextById.assert_called_once_with(id=id)
-
-
-def test_create_object_only_raise_exception_when_permissionContext_exists():
-    # Arrange
-    from src.domain_model.resource.exception.PermissionContextAlreadyExistException import PermissionContextAlreadyExistException
-    repo = Mock(spec=PermissionContextRepository)
-    id = '1234567'
-    permissionContext = PermissionContext(id=id)
-    repo.permissionContextById = Mock(return_value=permissionContext)
-    permissionContextService = PermissionContextService(permissionContextRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = PermissionContextApplicationService(repo, authzService, permissionContextService)
-    # Act, Assert
-    with pytest.raises(PermissionContextAlreadyExistException):
-        permissionContext = appService.createPermissionContext(id=id, objectOnly=True, token=token)
-
-
-def test_create_permissionContext_raise_exception_when_permissionContext_exists():
-    # Arrange
-    from src.domain_model.resource.exception.PermissionContextAlreadyExistException import PermissionContextAlreadyExistException
-    repo = Mock(spec=PermissionContextRepository)
-    id = '1234567'
-    permissionContext = PermissionContext(id=id)
-    repo.permissionContextById = Mock(return_value=permissionContext)
-    permissionContextService = PermissionContextService(permissionContextRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = PermissionContextApplicationService(repo, authzService, permissionContextService)
-    # Act, Assert
-    with pytest.raises(PermissionContextAlreadyExistException):
-        permissionContext = appService.createPermissionContext(id=id, token=token)
 
 
 def test_get_permissionContext_by_id_when_permissionContext_exists():

@@ -33,21 +33,6 @@ def setup_function():
     authzService = AuthorizationService(authzRepoMock, policyService)
 
 
-def test_create_ou_object_when_ou_already_exist():
-    # Arrange
-    from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
-    DomainPublishedEvents.cleanup()
-    repo = Mock(spec=OuRepository)
-    name = 'me'
-    repo.ouByName = Mock(side_effect=OuAlreadyExistException)
-    ouService = OuService(ouRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-
-    appService = OuApplicationService(repo, authzService, ouService)
-    # Act, Assert
-    with pytest.raises(OuAlreadyExistException):
-        ou = appService.createOu(id='1234', name=name, objectOnly=True, token=token)
-
-
 def test_create_ou_object_when_ou_does_not_exist():
     # Arrange
     from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
@@ -64,25 +49,6 @@ def test_create_ou_object_when_ou_does_not_exist():
     assert ou.name() == name
 
 
-def test_create_ou_with_event_publishing_when_ou_does_not_exist():
-    # Arrange
-    from src.domain_model.resource.exception.OuDoesNotExistException import OuDoesNotExistException
-    DomainPublishedEvents.cleanup()
-    repo = Mock(spec=OuRepository)
-    id = '1234567'
-    name = 'me'
-    repo.ouByName = Mock(side_effect=OuDoesNotExistException)
-    repo.createOu = Mock(spec=OuRepository.createOu)
-    ouService = OuService(ouRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = OuApplicationService(repo, authzService, ouService)
-    # Act
-    appService.createOu(id=id, name=name, token=token)
-    # Assert
-    repo.ouByName.assert_called_once()
-    repo.createOu.assert_called_once()
-    assert len(DomainPublishedEvents.postponedEvents()) > 0
-
-
 def test_get_ou_by_name_when_ou_exists():
     # Arrange
     repo = Mock(spec=OuRepository)
@@ -95,34 +61,6 @@ def test_get_ou_by_name_when_ou_exists():
     appService.ouByName(name=name, token=token)
     # Assert
     repo.ouByName.assert_called_once_with(name=name)
-
-
-def test_create_object_only_raise_exception_when_ou_exists():
-    # Arrange
-    from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
-    repo = Mock(spec=OuRepository)
-    name = 'me'
-    ou = Ou(name=name)
-    repo.ouByName = Mock(return_value=ou)
-    ouService = OuService(ouRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = OuApplicationService(repo, authzService, ouService)
-    # Act, Assert
-    with pytest.raises(OuAlreadyExistException):
-        ou = appService.createOu(id='1234', name=name, objectOnly=True, token=token)
-
-
-def test_create_ou_raise_exception_when_ou_exists():
-    # Arrange
-    from src.domain_model.resource.exception.OuAlreadyExistException import OuAlreadyExistException
-    repo = Mock(spec=OuRepository)
-    name = 'me'
-    ou = Ou(name=name)
-    repo.ouByName = Mock(return_value=ou)
-    ouService = OuService(ouRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
-    appService = OuApplicationService(repo, authzService, ouService)
-    # Act, Assert
-    with pytest.raises(OuAlreadyExistException):
-        ou = appService.createOu(id='1', name=name, token=token)
 
 
 def test_get_ou_by_id_when_ou_exists():
