@@ -18,7 +18,8 @@ from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.country_app_service_pb2 import (CountryAppService_countriesResponse,
                                                                             CountryAppService_countryByIdResponse,
                                                                             CountryAppService_cityByCountryIdResponse,
-                                                                            CountryAppService_citiesByCountryIdResponse)
+                                                                            CountryAppService_citiesByCountryIdResponse,
+                                                                            CountryAppService_statesByCountryIdResponse)
 from src.resource.proto._generated.identity.country_app_service_pb2_grpc import CountryAppServiceServicer
 
 
@@ -36,6 +37,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     """
     c4model|cb|identity:Component(identity__grpc__CountryAppServiceListener__countries, "Get countries", "grpc listener", "Get all countries")
     """
+
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def countries(self, request, context):
@@ -68,6 +70,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     """
     c4model|cb|identity:Component(identity__grpc__CountryAppServiceListener__countryById, "Get country by id", "grpc listener", "Get a country by id")
     """
+
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def countryById(self, request, context):
@@ -100,6 +103,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     """
     c4model|cb|identity:Component(identity__grpc__CountryAppServiceListener__citiesByCountryId, "Get cities by country id", "grpc listener", "Get cities by country id")
     """
+
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def citiesByCountryId(self, request, context):
@@ -133,6 +137,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     """
     c4model|cb|identity:Component(identity__grpc__CountryAppServiceListener__cityByCountryId, "Get city by country id", "grpc listener", "Get a city by country id")
     """
+
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def cityByCountryId(self, request, context):
@@ -164,3 +169,32 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details('Un Authorized')
             return CountryAppService_cityByCountryIdResponse()
+
+    """
+    c4model|cb|identity:Component(identity__grpc__CountryAppServiceListener__statesByCountryId, "Get states by country id", "grpc listener", "Get a states by country id")
+    """
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def statesByCountryId(self, request, context):
+        try:
+            metadata = context.invocation_metadata()
+            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            logger.debug(
+                f'[{CountryAppServiceListener.statesByCountryId.__qualname__}] - metadata: {metadata}\n\t \ '
+                f'id: {request.id},resultFrom: {request.resultFrom}, resultSize: {resultSize}')
+            countryAppService: CountryApplicationService = AppDi.instance.get(CountryApplicationService)
+
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            result: dict = countryAppService.statesByCountryId(id=request.id, resultFrom=request.resultFrom,
+                                                               resultSize=resultSize, order=orderData)
+            response = CountryAppService_statesByCountryIdResponse()
+            response.itemCount = result['itemCount']
+            for state in result['items']:
+                response.states.add(id=state.id(), name=state.name())
+            logger.debug(f'[{CountryApplicationService.statesByCountryId.__qualname__}] - response: {response}')
+            return response
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details('Un Authorized')
+            return CountryAppService_statesByCountryIdResponse()
