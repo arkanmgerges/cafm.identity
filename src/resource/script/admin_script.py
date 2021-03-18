@@ -3,6 +3,7 @@
 """
 import csv
 import sys
+from time import sleep
 
 sys.path.append("../../../")
 
@@ -44,8 +45,16 @@ def init_db():
 
         connection = dbClientConnection()
         click.echo(click.style(f'Create database {dbName} if not exist', fg='green'))
-        if not connection.hasDatabase(dbName):
-            connection.createDatabase(name=dbName)
+
+        sleepPeriod = 1
+        for i in range(30):
+            if not connection.hasDatabase(dbName):
+                connection.createDatabase(name=dbName)
+                connection.reload()
+                sleep(sleepPeriod)
+                sleepPeriod += 3
+            else:
+                break
 
         dbConnection = connection[dbName]
         click.echo(click.style(f'Create collections:', fg='green'))
