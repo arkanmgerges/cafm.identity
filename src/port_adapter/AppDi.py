@@ -49,6 +49,7 @@ from src.port_adapter.messaging.common.SimpleProducer import SimpleProducer
 from src.port_adapter.messaging.common.TransactionalProducer import TransactionalProducer
 from src.port_adapter.messaging.common.kafka.KafkaConsumer import KafkaConsumer
 from src.port_adapter.messaging.common.kafka.KafkaProducer import KafkaProducer
+from src.port_adapter.repository.cache.RedisCache import RedisCache
 from src.port_adapter.repository.domain_model.authentication.AuthenticationRepositoryImpl import \
     AuthenticationRepositoryImpl
 from src.port_adapter.repository.domain_model.authorization.AuthorizationRepositoryImpl import \
@@ -345,6 +346,11 @@ class AppDi(Module):
     @provider
     def provideSendGrid(self) -> Mailer:
         return SendGrid()
+
+    @singleton
+    @provider
+    def provideRedisClient(self) -> RedisCache:
+        return RedisCache()
     # endregion
 
 

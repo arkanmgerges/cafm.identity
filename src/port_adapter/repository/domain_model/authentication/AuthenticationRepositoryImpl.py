@@ -4,12 +4,12 @@
 
 import os
 
-import redis
 from pyArango.connection import *
 from pyArango.query import AQLQuery
 
 from src.domain_model.authentication.AuthenticationRepository import AuthenticationRepository
 from src.domain_model.resource.exception.InvalidCredentialsException import InvalidCredentialsException
+from src.port_adapter.repository.cache.RedisCache import RedisCache
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
@@ -28,10 +28,11 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
                 f'[{AuthenticationRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
 
         try:
-            self._cache = redis.Redis(host=os.getenv('CAFM_IDENTITY_REDIS_HOST', 'localhost'),
-                                      port=os.getenv('CAFM_IDENTITY_REDIS_PORT', 6379))
-            self._cacheSessionKeyPrefix = os.getenv('CAFM_IDENTITY_REDIS_SESSION_KEY_PREFIX',
-                                                    'cafm.identity.session.')
+            import src.port_adapter.AppDi as AppDi
+            cache = AppDi.instance.get(RedisCache)
+            self._cache = cache.client()
+            self._cacheSessionKeyPrefix = cache.cacheSessionKeyPrefix()
+            self._refreshTokenTtl = cache.refreshTokenTtl()
         except Exception as e:
             raise Exception(
                 f'[{AuthenticationRepositoryImpl.__init__.__qualname__}] Could not connect to the redis, message: {e}')
@@ -111,11 +112,13 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
         return {}
 
     @debugLogger
-    def persistToken(self, token: str, ttl: int = 300) -> None:
+    def persistToken(self, token: str, ttl: int = -1) -> None:
+        ttl = ttl if ttl > 0 else self._refreshTokenTtl
         self._cache.setex(f'{self._cacheSessionKeyPrefix}{token}', ttl, token)
 
     @debugLogger
-    def refreshToken(self, token: str, ttl: int = 300) -> None:
+    def refreshToken(self, token: str, ttl: int = -1) -> None:
+        ttl = ttl if ttl > 0 else self._refreshTokenTtl
         self._cache.setex(f'{self._cacheSessionKeyPrefix}{token}', ttl, token)
 
     @debugLogger

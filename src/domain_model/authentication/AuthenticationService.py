@@ -34,7 +34,7 @@ class AuthenticationService:
             from src.domain_model.user.UserWithOneTimePasswordLoggedIn import UserWithOneTimePasswordLoggedIn
             DomainPublishedEvents.addEventForPublishing(UserWithOneTimePasswordLoggedIn(result['id']))
         token = TokenService.generateToken(payload=payload)
-        ttl = os.getenv('CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS', 300)
+        ttl = int(os.getenv('CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS', 300))
         self._authRepo.persistToken(token=token, ttl=ttl)
         return token
 
@@ -51,7 +51,7 @@ class AuthenticationService:
         try:
             exists = self._authRepo.tokenExists(token=token)
             if exists:
-                self._authRepo.refreshToken(token=token, ttl=os.getenv('CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS', 300))
+                self._authRepo.refreshToken(token=token, ttl=int(os.getenv('CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS', 300)))
             return exists
         except:
             return False
