@@ -34,8 +34,8 @@ class UpdateProjectHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.updateProject(id=dataDict['id'], name=dataDict['name'], token=metadataDict['token'])
+        appService.updateProject(id=dataDict['project_id'], name=dataDict['name'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': dataDict['id'], 'name': dataDict['name']},
+                'data': {'project_id': dataDict['project_id'], 'name': dataDict['name']},
                 'metadata': metadataDict}
 

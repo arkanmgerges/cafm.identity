@@ -34,8 +34,8 @@ class DeleteRoleHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.deleteRole(id=dataDict['id'], token=metadataDict['token'])
+        appService.deleteRole(id=dataDict['role_id'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': dataDict['id']},
+                'data': {'role_id': dataDict['role_id']},
                 'metadata': metadataDict}
 

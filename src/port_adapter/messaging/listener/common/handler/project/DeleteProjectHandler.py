@@ -34,8 +34,8 @@ class DeleteProjectHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.deleteProject(id=dataDict['id'], token=metadataDict['token'])
+        appService.deleteProject(id=dataDict['project_id'], token=metadataDict['token'])
         return {'name': self._commandConstant.DELETE_PROJECT.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': dataDict['id']},
+                'data': {'project_id': dataDict['project_id']},
                 'metadata': metadataDict}
 

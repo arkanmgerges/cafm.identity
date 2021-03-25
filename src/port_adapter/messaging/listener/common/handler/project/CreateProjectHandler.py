@@ -34,9 +34,9 @@ class CreateProjectHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        id = dataDict['id'] if 'id' in dataDict else None
+        id = dataDict['project_id'] if 'project_id' in dataDict else None
         obj = appService.createProject(id=id, name=dataDict['name'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': obj.id(), 'name': obj.name()},
+                'data': {'project_id': obj.id(), 'name': obj.name()},
                 'metadata': metadataDict}
 

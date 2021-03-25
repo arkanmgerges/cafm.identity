@@ -89,7 +89,7 @@ class User(Resource):
         DomainPublishedEvents.addEventForPublishing(UserUpdated(old, self))
 
     def toMap(self) -> dict:
-        return {"id": self.id(), "email": self.email()}
+        return {"user_id": self.id(), "email": self.email()}
 
     def __repr__(self):
         return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'

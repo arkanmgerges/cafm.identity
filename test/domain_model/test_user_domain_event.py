@@ -14,6 +14,6 @@ def test_event_UserCreated():
     domainEvent = UserCreated(user)
     # Assert
     assert isinstance(domainEvent, DomainEvent)
-    assert json.dumps(domainEvent.data()) == json.dumps({"id": user.id(), "email": user.email()})
+    assert json.dumps(domainEvent.data()) == json.dumps({"user_id": user.id(), "email": user.email()})
     assert isinstance(domainEvent.id(), str)
     assert domainEvent.occurredOn() > 0

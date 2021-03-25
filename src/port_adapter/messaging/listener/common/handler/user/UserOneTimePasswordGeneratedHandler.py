@@ -34,5 +34,5 @@ class UserOneTimePasswordGeneratedHandler(Handler):
             raise UnAuthorizedException()
 
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': dataDict['id'], 'email': dataDict['email']},
+                'data': {'user_id': dataDict['user_id'], 'email': dataDict['email']},
                 'metadata': metadataDict}

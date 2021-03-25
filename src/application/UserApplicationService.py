@@ -75,9 +75,9 @@ class UserApplicationService:
         resource = self._userRepository.userById(id=id)
         self._userRepository.deleteUserOneTimePassword(obj=resource, tokenData=tokenData)
 
-    def setUserPassword(self, id: str, password: str, token: str = ''):
+    def setUserPassword(self, userId: str, password: str, token: str = ''):
         tokenData = TokenService.tokenDataFromToken(token=token)
-        resource: User = self._userRepository.userById(id=id)
+        resource: User = self._userRepository.userById(id=userId)
         resource.setPassword(password=password)
         self._userRepository.setUserPassword(obj=resource, tokenData=tokenData)
 
@@ -108,8 +108,8 @@ class UserApplicationService:
                                           resultSize=resultSize,
                                           order=order)
 
-    def generateUserOneTimePassword(self, id: str, token: str = ''):
-        resource: User = self._userRepository.userById(id=id)
+    def generateUserOneTimePassword(self, userId: str, token: str = ''):
+        resource: User = self._userRepository.userById(id=userId)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessPermissionData = self._authzService.roleAccessPermissionsData(tokenData=tokenData)
         self._authzService.verifyAccess(roleAccessPermissionsData=roleAccessPermissionData,

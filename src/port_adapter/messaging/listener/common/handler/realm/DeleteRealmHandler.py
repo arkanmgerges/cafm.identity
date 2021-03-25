@@ -34,8 +34,8 @@ class DeleteRealmHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.deleteRealm(id=dataDict['id'], token=metadataDict['token'])
+        appService.deleteRealm(id=dataDict['realm_id'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': dataDict['id']},
+                'data': {'realm_id': dataDict['realm_id']},
                 'metadata': metadataDict}
 

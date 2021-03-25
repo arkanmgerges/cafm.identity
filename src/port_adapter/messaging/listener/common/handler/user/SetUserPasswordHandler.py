@@ -34,7 +34,7 @@ class SetUserPasswordHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.setUserPassword(id=dataDict['id'], password=dataDict['password'], token=metadataDict['token'])
+        appService.setUserPassword(userId=dataDict['user_id'], password=dataDict['password'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': dataDict['id']},
+                'data': {'user_id': dataDict['user_id']},
                 'metadata': metadataDict}

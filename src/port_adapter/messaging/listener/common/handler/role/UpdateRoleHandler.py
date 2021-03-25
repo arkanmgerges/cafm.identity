@@ -34,8 +34,8 @@ class UpdateRoleHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.updateRole(id=dataDict['id'], name=dataDict['name'], token=metadataDict['token'])
+        appService.updateRole(id=dataDict['role_id'], name=dataDict['name'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': dataDict['id'], 'name': dataDict['name']},
+                'data': {'role_id': dataDict['role_id'], 'name': dataDict['name']},
                 'metadata': metadataDict}
 

@@ -34,8 +34,8 @@ class UpdateRealmHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.updateRealm(id=dataDict['id'], name=dataDict['name'], token=metadataDict['token'])
+        appService.updateRealm(id=dataDict['realm_id'], name=dataDict['name'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': dataDict['id'], 'name': dataDict['name']},
+                'data': {'realm_id': dataDict['realm_id'], 'name': dataDict['name']},
                 'metadata': metadataDict}
 

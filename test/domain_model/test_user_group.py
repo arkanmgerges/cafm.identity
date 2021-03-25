@@ -30,7 +30,7 @@ def test_create_by_semantic_constructor():
     assert isinstance(userGroup, UserGroup)
     assert userGroup.id() == id
     data = DomainPublishedEvents.postponedEvents()[0].data()
-    assert data['id'] == id
+    assert data['user_group_id'] == id
 
 
 def test_that_two_objects_with_same_attributes_are_equal():

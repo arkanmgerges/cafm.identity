@@ -71,7 +71,7 @@ class City(Resource):
         return self._isInEuropeanUnion
 
     def toMap(self) -> dict:
-        return {"id": self.id()}
+        return {"city_id": self.id()}
 
     def __repr__(self):
         return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'

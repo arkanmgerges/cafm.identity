@@ -16,7 +16,7 @@ class Resource:
         return self._type
 
     def toMap(self) -> dict:
-        return {"id": self.id(), "type": self.type()}
+        return {"resource_id": self.id(), "type": self.type()}
 
     def __repr__(self):
         return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'

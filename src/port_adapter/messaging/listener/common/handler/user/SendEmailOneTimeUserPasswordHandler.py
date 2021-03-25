@@ -36,7 +36,7 @@ class SendEmailOneTimeUserPasswordHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        obj: User = appService.userById(id=dataDict['id'], token=metadataDict['token'])
+        obj: User = appService.userById(id=dataDict['user_id'], token=metadataDict['token'])
         password = obj.stripOneTimePasswordTag()
         content = f'Hi, this is your one time login password <strong>{password}</strong>, use it to login and to create new one'
 
@@ -44,5 +44,5 @@ class SendEmailOneTimeUserPasswordHandler(Handler):
         mailer.send(toEmail=obj.email(), subject='CAFM User Creation - One time login password', content=content)
 
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': obj.id(), 'email': obj.email()},
+                'data': {'user_id': obj.id(), 'email': obj.email()},
                 'metadata': metadataDict}

@@ -35,8 +35,8 @@ class GenerateUserOneTimePasswordHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        obj: User = appService.generateUserOneTimePassword(id=dataDict['id'], token=metadataDict['token'])
+        obj: User = appService.generateUserOneTimePassword(userId=dataDict['user_id'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': obj.id(), 'email': obj.email()},
+                'data': {'user_id': obj.id(), 'email': obj.email()},
                 'metadata': metadataDict}
 

@@ -34,8 +34,8 @@ class DeleteUserGroupHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.deleteUserGroup(id=dataDict['id'], token=metadataDict['token'])
+        appService.deleteUserGroup(id=dataDict['user_group_id'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': dataDict['id']},
+                'data': {'user_group_id': dataDict['user_group_id']},
                 'metadata': metadataDict}
 

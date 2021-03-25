@@ -34,8 +34,8 @@ class DeletePermissionHandler(Handler):
         if 'token' not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.deletePermission(id=dataDict['id'], token=metadataDict['token'])
+        appService.deletePermission(id=dataDict['permission_id'], token=metadataDict['token'])
         return {'name': self._commandConstant.value, 'created_on': DateTimeHelper.utcNow(),
-                'data': {'id': dataDict['id']},
+                'data': {'permission_id': dataDict['permission_id']},
                 'metadata': metadataDict}
 
