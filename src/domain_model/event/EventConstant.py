@@ -60,4 +60,5 @@ class CommonEventConstant(Enum):
     USER_TO_REALM_ASSIGNMENT_REVOKED = 'user_to_realm_assignment_revoked'
     PERMISSION_TO_PERMISSION_CONTEXT_ASSIGNED = 'permission_to_permission_context_assigned'
     PERMISSION_TO_PERMISSION_CONTEXT_ASSIGNMENT_REVOKED = 'permission_to_permission_context_assignment_revoked'
+    ORGANIZATION_UPDATED = 'organization_updated'
 
