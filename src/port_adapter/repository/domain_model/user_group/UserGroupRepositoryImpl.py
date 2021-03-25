@@ -99,7 +99,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
         if repoObj != obj:
             aql = '''
                 FOR d IN resource
-                    FILTER d.id == @id AND d.type == 'userGroup'
+                    FILTER d.id == @id AND d.type == 'user_group'
                     UPDATE d WITH {name: @name} IN resource
             '''
 
