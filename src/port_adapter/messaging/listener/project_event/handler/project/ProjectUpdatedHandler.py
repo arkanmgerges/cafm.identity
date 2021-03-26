@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
+from typing import Callable, List
 
 from src.domain_model.event.EventConstant import CommonEventConstant
 from src.port_adapter.messaging.listener.common.handler.project.UpdateProjectHandler import UpdateProjectHandler as Handler
@@ -24,8 +25,10 @@ class ProjectUpdatedHandler(Handler):
         messageData['data'] = json.dumps(dataDict)
         return super().handleCommand(messageData)
 
-    def targetsOnSuccess(self):
-        return []
+    @staticmethod
+    def targetsOnException() -> List[Callable]:
+        return [Handler.targetOnException]
 
-    def targetsOnException(self):
-        return []
+    @staticmethod
+    def targetsOnSuccess() -> List[Callable]:
+        return [Handler.targetOnSuccess]
