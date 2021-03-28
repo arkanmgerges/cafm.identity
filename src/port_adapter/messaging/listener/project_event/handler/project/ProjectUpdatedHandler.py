@@ -20,8 +20,11 @@ class ProjectUpdatedHandler(Handler):
 
     def handleCommand(self, messageData: dict) -> dict:
         data = messageData['data']
-        dataDict = json.loads(data)
-        dataDict = dataDict['new']
+        tmpDataDict = json.loads(data)
+        old = tmpDataDict['old']
+        new = tmpDataDict['new']
+        dataDict = tmpDataDict['old']
+        dataDict['name'] = new['name'] if new['name'] is not None else old['name']
         messageData['data'] = json.dumps(dataDict)
         return super().handleCommand(messageData)
 
