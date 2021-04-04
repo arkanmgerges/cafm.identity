@@ -42,7 +42,7 @@ class User(Resource):
         return cls.createFrom(id=id, email=obj.email(), password=obj.password(), publishEvent=publishEvent, skipValidation=skipValidation)
 
     def _validateEmail(self, email):
-        regex = r'^[a-zA-Z0-9]+[a-zA-Z0-9\._]+[@]\w+[.]\w{2,6}$'
+        regex = r'^[a-zA-Z0-9]+[a-zA-Z0-9\._]+[@]\w+[.]\w{2,30}$'
         if not (re.search(regex, email)):
             raise InvalidValueException(f'Email is not valid: {email}')
 
