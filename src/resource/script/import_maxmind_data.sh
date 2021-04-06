@@ -12,21 +12,21 @@ ensureIndexToCollection() {
     collection.ensureIndex({type: 'persistent', fields: ['country_iso_code']});
   "
   arangosh \
-  --server.endpoint tcp://arangodb:8529 \
-  --server.database cafm-identity \
-  --server.password ${CAFM_IDENTITY_ARANGODB_PASSWORD} \
-  --javascript.execute-string "${JS}"
+    --server.endpoint tcp://arangodb:8529 \
+    --server.database cafm-identity \
+    --server.password ${CAFM_IDENTITY_ARANGODB_PASSWORD} \
+    --javascript.execute-string "${JS}"
 }
 
 importFileToCollection() {
-  collectionName=$1;
-  fileName=$2;
+  collectionName=$1
+  fileName=$2
   arangoimport --server.endpoint tcp://arangodb:8529 \
-  --server.database cafm-identity --server.password ${CAFM_IDENTITY_ARANGODB_PASSWORD} \
-  --create-collection true \
-  --collection "${collectionName}" \
-  --type csv \
-  --file "${fileName}"
+    --server.database cafm-identity --server.password ${CAFM_IDENTITY_ARANGODB_PASSWORD} \
+    --create-collection true \
+    --collection "${collectionName}" \
+    --type csv \
+    --file "${fileName}"
 }
 
 dropCollection() {
@@ -37,10 +37,10 @@ dropCollection() {
     collection.drop();
   "
   arangosh \
-  --server.endpoint tcp://arangodb:8529 \
-  --server.database cafm-identity \
-  --server.password ${CAFM_IDENTITY_ARANGODB_PASSWORD} \
-  --javascript.execute-string "${JS}"
+    --server.endpoint tcp://arangodb:8529 \
+    --server.database cafm-identity \
+    --server.password ${CAFM_IDENTITY_ARANGODB_PASSWORD} \
+    --javascript.execute-string "${JS}"
 }
 
 collectionCount() {
@@ -56,25 +56,55 @@ collectionCount() {
   }"
 
   arangosh --server.endpoint tcp://arangodb:8529 \
-  --server.database cafm-identity \
-  --server.password ${CAFM_IDENTITY_ARANGODB_PASSWORD} \
-  --javascript.execute-string "${JS}";
+    --server.database cafm-identity \
+    --server.password ${CAFM_IDENTITY_ARANGODB_PASSWORD} \
+    --javascript.execute-string "${JS}"
 }
 
+check_db() {
+  collectionName=$1
+  JS="
+  const {db} = require(\"@arangodb\");
+  internal = require(\"internal\");
+  try {
+    internal.print(db._databases().includes(\"cafm-identity\"))
+  }
+  catch (error) {
+    internal.print(false)
+  }"
+
+  arangosh --server.endpoint tcp://arangodb:8529 \
+    --server.database _system \
+    --server.password ${CAFM_IDENTITY_ARANGODB_PASSWORD} \
+    --javascript.execute-string "${JS}"
+}
+
+wait_for() {
+  while :; do
+    if [ $(check_db) = true ]; then
+      break
+    fi
+    echo waiting for arangodb to be ready
+    sleep 1
+  done
+}
+
+wait_for
 # Import countries
-if [ "$(collectionCount 'country')" -eq 0 ];
-  then importFileToCollection "country" "src/resource/maxmind/GeoLite2-Country-Locations-en.csv";
-elif [ "$(collectionCount 'country')" -lt 252 ];
-  then dropCollection "country";
-  importFileToCollection "country" "src/resource/maxmind/GeoLite2-Country-Locations-en.csv";
-fi;
+if [ "$(collectionCount 'country')" -eq 0 ]; then
+  importFileToCollection "country" "src/resource/maxmind/GeoLite2-Country-Locations-en.csv"
+elif [ "$(collectionCount 'country')" -lt 252 ]; then
+  dropCollection "country"
+  importFileToCollection "country" "src/resource/maxmind/GeoLite2-Country-Locations-en.csv"
+fi
 
 # Import cities
-if [ "$(collectionCount 'city')" -eq 0 ];
-  then importFileToCollection "city" "src/resource/maxmind/GeoLite2-City-Locations-en.csv";
-elif [ "$(collectionCount 'city')" -lt 121259 ];
-  then dropCollection "city"; importFileToCollection "city" "src/resource/maxmind/GeoLite2-City-Locations-en.csv";
-fi;
+if [ "$(collectionCount 'city')" -eq 0 ]; then
+  importFileToCollection "city" "src/resource/maxmind/GeoLite2-City-Locations-en.csv"
+elif [ "$(collectionCount 'city')" -lt 121259 ]; then
+  dropCollection "city"
+  importFileToCollection "city" "src/resource/maxmind/GeoLite2-City-Locations-en.csv"
+fi
 
 # Add indexes
 ensureIndexToCollection 'country'
