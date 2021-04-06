@@ -43,7 +43,9 @@ class CountryRepositoryImpl(CountryRepository):
             sortData = sortData[2:]
 
         aql = '''
-            LET ds = (FOR d IN country #sortData RETURN d)
+            LET ds = (FOR d IN country 
+                          FILTER d.country_iso_code != null AND d.country_iso_code != ""
+                          #sortData RETURN d)
             RETURN {items: ds}
         '''
         if sortData != '':
@@ -70,6 +72,7 @@ class CountryRepositoryImpl(CountryRepository):
         aql = '''
             FOR d IN country
                 FILTER d.geoname_id == @id
+                FILTER d.country_iso_code != null AND d.country_iso_code != ""
                 RETURN d
         '''
         bindVars = {"id": id}
