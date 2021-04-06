@@ -89,6 +89,7 @@ wait_for() {
   done
 }
 
+# wait for arangodb to be ready
 wait_for
 # Import countries
 if [ "$(collectionCount 'country')" -eq 0 ]; then
