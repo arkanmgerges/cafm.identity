@@ -443,6 +443,56 @@ def drop_kafka_topics_and_schemas():
     [c.delete_subject(schema) for schema in schemas]
 
 
+@cli.command(help='Check if schema registry is ready')
+def check_schema_registry_readiness():
+    from confluent_kafka.avro import CachedSchemaRegistryClient
+    click.echo(click.style('Check if schema registry is ready', fg='green', bold=True))
+    counter = 15
+    sleepPeriod = 10
+    while counter > 0:
+        try:
+            counter -= 1
+            click.echo(click.style('Sending a request ...', fg='green', bold=True))
+            c = CachedSchemaRegistryClient({'url': os.getenv('MESSAGE_SCHEMA_REGISTRY_URL', '')})
+            c.get_latest_schema(subject='test')
+            click.echo(click.style('Schema registry is ready', fg='green', bold=True))
+            exit(0)
+        except Exception as e:
+            click.echo(click.style(f'Error thrown ... {e}', fg='red'))
+            click.echo(click.style(f'Sleep {sleepPeriod} seconds ...', fg='green', bold=True))
+            click.echo(click.style(f'Remaining retries: {counter}', fg='green'))
+            sleepPeriod += 3
+            sleep(sleepPeriod)
+    exit(1)
+
+
+@cli.command(help='Check if redis is ready')
+def check_redis_readiness():
+    import redis
+    from redis.client import Redis
+    click.echo(click.style('Check if redis is ready', fg='green', bold=True))
+    counter = 15
+    sleepPeriod = 10
+    while counter > 0:
+        try:
+            counter -= 1
+            cache: Redis = redis.Redis(host=os.getenv('CAFM_IDENTITY_REDIS_HOST', 'localhost'),
+                                       port=os.getenv('CAFM_IDENTITY_REDIS_PORT', 6379))
+            cache.setex('test_redis_key', 10, "test")
+            if cache.exists('test_redis_key'):
+                click.echo(click.style('redis is ready', fg='green', bold=True))
+                exit(0)
+            sleepPeriod += 3
+            sleep(sleepPeriod)
+        except Exception as e:
+            click.echo(click.style(f'Error thrown ... {e}', fg='red'))
+            click.echo(click.style(f'Sleep {sleepPeriod} seconds ...', fg='green', bold=True))
+            click.echo(click.style(f'Remaining retries: {counter}', fg='green'))
+            sleepPeriod += 3
+            sleep(sleepPeriod)
+    exit(1)
+
+
 def dbClientConnection():
     try:
         connection = Connection(
