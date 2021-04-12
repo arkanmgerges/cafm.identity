@@ -93,6 +93,8 @@ services:
     image: arangodb/arangodb:3.7.2.1
     command: sh src/resource/script/import_maxmind_data.sh
     working_dir: /app
+    env_file:
+      - ../../../.env
     networks:
       - cafm-infra_default
     volumes:

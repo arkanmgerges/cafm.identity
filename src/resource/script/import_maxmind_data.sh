@@ -62,12 +62,11 @@ collectionCount() {
 }
 
 check_db() {
-  collectionName=$1
   JS="
   const {db} = require(\"@arangodb\");
   internal = require(\"internal\");
   try {
-    internal.print(db._databases().includes(\"cafm-identity\"))
+    internal.print(db._databases().includes(\"${CAFM_IDENTITY_ARANGODB_DB_NAME}\"))
   }
   catch (error) {
     internal.print(false)
@@ -81,7 +80,7 @@ check_db() {
 
 wait_for() {
   while :; do
-    if [ $(check_db) = true ]; then
+    if [ "$(check_db)" = true ]; then
       break
     fi
     echo waiting for arangodb to be ready
