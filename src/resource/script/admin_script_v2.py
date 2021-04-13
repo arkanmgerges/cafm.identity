@@ -22,7 +22,6 @@ baseURL = os.getenv('API_URL')
 def cli():
     pass
 
-
 @cli.command(
     help='Create user from file')
 @click.argument('file_name')
@@ -48,7 +47,7 @@ def build_resource_tree_from_file(file_name):
 
 def getAccessToken():
     click.echo(click.style(f'Get Access Token', fg='green'))
-    resp = requests.post(baseURL + 'v1/identity/auth/authenticate',
+    resp = requests.post(baseURL + '/v1/identity/auth/authenticate',
                          json=dict(email=os.getenv('ADMIN_EMAIL', None),
                                    password=os.getenv('ADMIN_PASSWORD', None)))
     resp.raise_for_status()
@@ -57,7 +56,7 @@ def getAccessToken():
 
 def createRealm(token, name, type):
     click.echo(click.style(f'Creating realm name: {name} type: {type}', fg='green'))
-    resp = requests.post(baseURL + 'v1/identity/realms/create', headers=dict(Authorization='Bearer ' + token),
+    resp = requests.post(baseURL + '/v1/identity/realms/create', headers=dict(Authorization='Bearer ' + token),
                          json=dict(name=name, realm_type=type))
     resp.raise_for_status()
     checkForResult(token, resp.json()['request_id'])
@@ -65,7 +64,7 @@ def createRealm(token, name, type):
 
 def createRole(token, name, title):
     click.echo(click.style(f'Creating Role name: {name}', fg='green'))
-    resp = requests.post(baseURL + 'v1/identity/roles/create', headers=dict(Authorization='Bearer ' + token),
+    resp = requests.post(baseURL + '/v1/identity/roles/create', headers=dict(Authorization='Bearer ' + token),
                          json=dict(name=name, title=title))
     resp.raise_for_status()
     return checkForResult(token, resp.json()['request_id'], checkForID=True)
@@ -73,7 +72,7 @@ def createRole(token, name, title):
 
 def createUser(token, email):
     click.echo(click.style(f'Creating User email: {email}', fg='green'))
-    resp = requests.post(baseURL + 'v1/identity/users/create', headers=dict(Authorization='Bearer ' + token),
+    resp = requests.post(baseURL + '/v1/identity/users/create', headers=dict(Authorization='Bearer ' + token),
                          json=dict(email=email))
     resp.raise_for_status()
     return checkForResult(token, resp.json()['request_id'], checkForID=True)
@@ -81,7 +80,7 @@ def createUser(token, email):
 
 def setPassword(token, user_id, password):
     click.echo(click.style(f'Set password for User: {user_id}', fg='green'))
-    resp = requests.put(baseURL + 'v1/identity/users/' + user_id + '/set_password',
+    resp = requests.put(baseURL + '/v1/identity/users/' + user_id + '/set_password',
                         headers=dict(Authorization='Bearer ' + token),
                         json=dict(password=password))
     resp.raise_for_status()
@@ -90,7 +89,7 @@ def setPassword(token, user_id, password):
 
 def assignUserToRole(token, roleID, userID):
     click.echo(click.style(f'Assign user To role', fg='green'))
-    resp = requests.post(baseURL + 'v1/identity/assignments/role_to_user',
+    resp = requests.post(baseURL + '/v1/identity/assignments/role_to_user',
                          headers=dict(Authorization='Bearer ' + token),
                          json=dict(role_id=roleID, user_id=userID))
     resp.raise_for_status()
@@ -100,11 +99,11 @@ def assignUserToRole(token, roleID, userID):
 def checkForResult(token, requestId, checkForID=False):
     for i in range(5):
         sleep(1)
-        isSuccessful = requests.get(baseURL + 'v1/common/request/is_successful',
+        isSuccessful = requests.get(baseURL + '/v1/common/request/is_successful',
                                     headers=dict(Authorization='Bearer ' + token),
                                     params=dict(request_id=str(requestId)))
         if isSuccessful.status_code == 200:
-            resp = requests.get(baseURL + 'v1/common/request/result', headers=dict(Authorization='Bearer ' + token),
+            resp = requests.get(baseURL + '/v1/common/request/result', headers=dict(Authorization='Bearer ' + token),
                                 params=dict(request_id=str(requestId)))
             resp.raise_for_status()
             result = resp.json()['result']
