@@ -1148,7 +1148,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
     def _addAccessKey(self, result: dict, key: str, verts: List[dict]):
         for vert in verts:
-            if vert['_id'] == key:
+            if vert is not None and vert['_id'] == key:
                 node = AccessNode()
                 resource = Resource(id=vert['id'], type=vert['type'])
                 resourceName = vert['name']
