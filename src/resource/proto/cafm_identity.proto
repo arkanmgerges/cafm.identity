@@ -12,5 +12,6 @@ import "identity/role_app_service.proto";
 import "identity/user_app_service.proto";
 import "identity/user_group_app_service.proto";
 import "identity/auth_app_service.proto";
+import "identity/authz_app_service.proto";
 import "identity/country_app_service.proto";
 import "identity/city_app_service.proto";

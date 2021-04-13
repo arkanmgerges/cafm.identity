@@ -1,7 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from typing import List
+import hashlib
+from typing import List, Dict
 
 from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
 from src.domain_model.authorization.RequestedAuthzObject import RequestedAuthzObject, RequestedAuthzObjectEnum
@@ -35,6 +36,16 @@ class AuthorizationService:
     def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool = True) -> List[
         RoleAccessPermissionData]:
         return self._policyService.roleAccessPermissionsData(tokenData=tokenData, includeAccessTree=includeAccessTree)
+
+    @debugLogger
+    def hashKeys(self, keys: List[Dict[str, str]]) -> List[Dict[str, str]]:
+        result = []
+        for keyItem in keys:
+            result.append({
+                'key': keyItem['key'],
+                'hashCode': hashlib.sha256(keyItem['key'].encode()).hexdigest()
+            })
+        return result
 
     @debugLogger
     def verifyAccess(self,

@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package cafm.identity.authz;
+
+message UnhashedKey {
+  string key = 1;
+}

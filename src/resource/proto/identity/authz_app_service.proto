@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package cafm.identity.authz;
 
+import "identity/unhashed_key.proto";
+import "identity/hashed_key.proto";
+
 message AuthzAppService_isAllowedRequest {
   string token = 1;
   string action = 2;
@@ -13,6 +16,15 @@ message AuthzAppService_isAllowedResponse {
   bool isAllowed = 1;
 }
 
+message AuthzAppService_hashKeysRequest {
+  repeated UnhashedKey keys = 1;
+}
+
+message AuthzAppService_hashKeysResponse {
+  repeated HashedKey hashedKeys = 1;
+}
+
 service AuthzAppService {
   rpc isAllowed (AuthzAppService_isAllowedRequest) returns (AuthzAppService_isAllowedResponse) {}
+  rpc hashKeys (AuthzAppService_hashKeysRequest) returns (AuthzAppService_hashKeysResponse) {}
 }

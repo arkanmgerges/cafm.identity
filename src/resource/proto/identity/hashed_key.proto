@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package cafm.identity.authz;
+
+message HashedKey {
+  string key = 1;
+  string hashCode = 2;
+}

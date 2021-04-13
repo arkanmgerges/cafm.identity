@@ -4,6 +4,7 @@ from injector import ClassAssistedBuilder
 from injector import Module, Injector, singleton, provider
 
 from src.application.AuthenticationApplicationService import AuthenticationApplicationService
+from src.application.AuthorizationApplicationService import AuthorizationApplicationService
 from src.application.CityApplicationService import CityApplicationService
 from src.application.CountryApplicationService import CountryApplicationService
 from src.application.OuApplicationService import OuApplicationService
@@ -149,6 +150,11 @@ class AppDi(Module):
     @provider
     def provideAuthenticationApplicationService(self) -> AuthenticationApplicationService:
         return AuthenticationApplicationService(self.__injector__.get(AuthenticationService))
+
+    @singleton
+    @provider
+    def provideAuthorizationApplicationService(self) -> AuthorizationApplicationService:
+        return AuthorizationApplicationService(self.__injector__.get(AuthorizationService))
 
     @singleton
     @provider
