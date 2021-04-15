@@ -173,7 +173,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         permission = self._permissionRepository.permissionById(id=permissionId)
         permissionContext = self._permissionContextRepository.permissionContextById(id=permissionContextId)
-        self._policyService.assignPermissionToPermissionContext.assignPermissionToPermissionContext(
+        self._policyService.assignPermissionToPermissionContext(
             permission=permission, permissionContext=permissionContext)
 
     @debugLogger
@@ -190,7 +190,7 @@ class PolicyApplicationService:
                                         tokenData=tokenData)
         permission = self._permissionRepository.permissionById(id=permissionId)
         permissionContext = self._permissionContextRepository.permissionContextById(id=permissionContextId)
-        self._policyService.revokePermissionToPermissionContextAssignment.assignPermissionToPermissionContext(
+        self._policyService.revokePermissionToPermissionContextAssignment(
             permission=permission, permissionContext=permissionContext)
 
     @debugLogger

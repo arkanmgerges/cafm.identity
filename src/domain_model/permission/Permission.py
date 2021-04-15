@@ -87,8 +87,8 @@ class Permission:
         DomainPublishedEvents.addEventForPublishing(PermissionUpdated(old, self))
 
     def toMap(self) -> dict:
-        return {"permission_id": self.id(), "name": self.name(), "allowedActions": self.allowedActions(),
-                "deniedActions": self.deniedActions()}
+        return {"permission_id": self.id(), "name": self.name(), "allowed_actions": self.allowedActions(),
+                "denied_actions": self.deniedActions()}
 
     def __repr__(self):
         return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'

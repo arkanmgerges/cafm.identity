@@ -351,8 +351,8 @@ class PolicyRepositoryImpl(PolicyRepository):
     def permissionDocumentId(self, permission: Permission):
         # Get the doc id
         aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'permission'
+            FOR d IN permission
+                FILTER d.id == @id
                 RETURN d
         '''
         bindVars = {"id": permission.id()}
@@ -370,8 +370,8 @@ class PolicyRepositoryImpl(PolicyRepository):
     def permissionContextDocumentId(self, permissionContext: PermissionContext):
         # Get the doc id
         aql = '''
-            FOR d IN resource
-                FILTER d.id == @id AND d.type == 'permission_context'
+            FOR d IN permission_context
+                FILTER d.id == @id
                 RETURN d
         '''
         bindVars = {"id": permissionContext.id()}
@@ -439,7 +439,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         permissionDocId = self.permissionDocumentId(permission)
         permissionContextDocId = self.permissionContextDocumentId(permissionContext)
 
-        # Check if there is any already exist link?
+        # Check if there is any link that exists already?
         result = self.assignmentPermissionToPermissionContext(permissionDocId, permissionContextDocId)
         if len(result) > 0:
             logger.debug(

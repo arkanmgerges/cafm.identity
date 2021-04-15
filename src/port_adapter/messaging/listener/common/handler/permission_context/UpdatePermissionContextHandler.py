@@ -15,7 +15,7 @@ from src.resource.logging.logger import logger
 class UpdatePermissionContextHandler(Handler):
 
     def __init__(self):
-        self._commandConstant = CommonCommandConstant.UPDATE_RESOURCE_TYPE
+        self._commandConstant = CommonCommandConstant.UPDATE_PERMISSION_CONTEXT
 
     def canHandle(self, name: str) -> bool:
         return name == self._commandConstant.value
