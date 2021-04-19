@@ -100,8 +100,6 @@ services:
       - cafm-infra_default
     volumes:
       - ../../..:/app
-    environment:
-      CAFM_IDENTITY_ARANGODB_PASSWORD: ${CAFM_IDENTITY_ARANGODB_PASSWORD}
 
 networks:
   cafm-infra_default:
