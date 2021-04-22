@@ -7,8 +7,12 @@ import os
 from pyArango.connection import *
 from pyArango.query import AQLQuery
 
-from src.domain_model.authentication.AuthenticationRepository import AuthenticationRepository
-from src.domain_model.resource.exception.InvalidCredentialsException import InvalidCredentialsException
+from src.domain_model.authentication.AuthenticationRepository import (
+    AuthenticationRepository,
+)
+from src.domain_model.resource.exception.InvalidCredentialsException import (
+    InvalidCredentialsException,
+)
 from src.port_adapter.repository.cache.RedisCache import RedisCache
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
@@ -18,30 +22,34 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
     def __init__(self):
         try:
             self._connection = Connection(
-                arangoURL=os.getenv('CAFM_IDENTITY_ARANGODB_URL', ''),
-                username=os.getenv('CAFM_IDENTITY_ARANGODB_USERNAME', ''),
-                password=os.getenv('CAFM_IDENTITY_ARANGODB_PASSWORD', '')
+                arangoURL=os.getenv("CAFM_IDENTITY_ARANGODB_URL", ""),
+                username=os.getenv("CAFM_IDENTITY_ARANGODB_USERNAME", ""),
+                password=os.getenv("CAFM_IDENTITY_ARANGODB_PASSWORD", ""),
             )
-            self._db = self._connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', '')]
+            self._db = self._connection[os.getenv("CAFM_IDENTITY_ARANGODB_DB_NAME", "")]
         except Exception as e:
             raise Exception(
-                f'[{AuthenticationRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}')
+                f"[{AuthenticationRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}"
+            )
 
         try:
             import src.port_adapter.AppDi as AppDi
+
             cache = AppDi.instance.get(RedisCache)
             self._cache = cache.client()
             self._cacheSessionKeyPrefix = cache.cacheSessionKeyPrefix()
             self._refreshTokenTtl = cache.refreshTokenTtl()
         except Exception as e:
             raise Exception(
-                f'[{AuthenticationRepositoryImpl.__init__.__qualname__}] Could not connect to the redis, message: {e}')
+                f"[{AuthenticationRepositoryImpl.__init__.__qualname__}] Could not connect to the redis, message: {e}"
+            )
 
     @debugLogger
     def authenticateUserByEmailAndPassword(self, email: str, password: str) -> dict:
         logger.debug(
-            f'[{AuthenticationRepositoryImpl.authenticateUserByEmailAndPassword.__qualname__}] - with name: {email}')
-        aql = '''
+            f"[{AuthenticationRepositoryImpl.authenticateUserByEmailAndPassword.__qualname__}] - with name: {email}"
+        )
+        aql = """
                 WITH resource
                 FOR u IN resource
                 FILTER u.email == @email AND u.password == @password AND u.type == 'user'
@@ -55,30 +63,42 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
                 LET r4 = union_distinct(r1, r2)
                 LET r5 = (FOR d5 IN r4 RETURN {"id": d5.id, "name": d5.name, "title": d5.title})
                 RETURN {'id': u.id, 'email': u.email, 'roles': r5}
-              '''
+              """
 
         bindVars = {"email": email, "password": password}
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        queryResult: AQLQuery = self._db.AQLQuery(
+            aql, bindVars=bindVars, rawResults=True
+        )
         result = queryResult.result
         if len(result) == 0:
             res = self.authWithOneTimePassword(email=email, password=password)
             if res != {}:
                 return res
             logger.info(
-                f'[{AuthenticationRepositoryImpl.authenticateUserByEmailAndPassword.__qualname__}] - invalid credentials for user: {email}')
+                f"[{AuthenticationRepositoryImpl.authenticateUserByEmailAndPassword.__qualname__}] - invalid credentials for user: {email}"
+            )
             raise InvalidCredentialsException(email)
 
         result = result[0]
-        return {'id': result['id'], 'email': result['email'], 'roles': result['roles'], 'isOneTimePassword': False}
+        return {
+            "id": result["id"],
+            "email": result["email"],
+            "roles": result["roles"],
+            "isOneTimePassword": False,
+        }
 
     def authWithOneTimePassword(self, email: str, password: str) -> dict:
         import src.port_adapter.AppDi as AppDi
         from src.domain_model.user.User import User
-        from src.domain_model.authentication.AuthenticationService import AuthenticationService
+        from src.domain_model.authentication.AuthenticationService import (
+            AuthenticationService,
+        )
+
         authService: AuthenticationService = AppDi.instance.get(AuthenticationService)
         logger.debug(
-            f'[{AuthenticationRepositoryImpl.authWithOneTimePassword.__qualname__}] - with name: {email}')
-        aql = '''
+            f"[{AuthenticationRepositoryImpl.authWithOneTimePassword.__qualname__}] - with name: {email}"
+        )
+        aql = """
                 WITH resource
                 FOR u IN resource
                 FILTER u.email == @email AND u.type == 'user'
@@ -92,39 +112,45 @@ class AuthenticationRepositoryImpl(AuthenticationRepository):
                 LET r4 = union_distinct(r1, r2)
                 LET r5 = (FOR d5 IN r4 RETURN {"id": d5.id, "name": d5.name, "title": d5.title})
                 RETURN {'id': u.id, 'email': u.email, 'password': u.password, 'roles': r5}
-              '''
+              """
 
         bindVars = {"email": email}
-        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        queryResult: AQLQuery = self._db.AQLQuery(
+            aql, bindVars=bindVars, rawResults=True
+        )
         result = queryResult.result
 
         if len(result) == 0:
             return {}
 
         result = result[0]
-        if 'password' in result and result['password'] is not None:
-            dbPass: str = result['password']
+        if "password" in result and result["password"] is not None:
+            dbPass: str = result["password"]
             isOneTimePassword = User.ONE_TIME_PASSWORD_TAG in dbPass
-            dbPass = dbPass.replace(User.ONE_TIME_PASSWORD_TAG, '')
+            dbPass = dbPass.replace(User.ONE_TIME_PASSWORD_TAG, "")
             if authService.hashPassword(dbPass) == password:
-                return {'id': result['id'], 'email': result['email'], 'roles': result['roles'],
-                        'isOneTimePassword': isOneTimePassword}
+                return {
+                    "id": result["id"],
+                    "email": result["email"],
+                    "roles": result["roles"],
+                    "isOneTimePassword": isOneTimePassword,
+                }
         return {}
 
     @debugLogger
     def persistToken(self, token: str, ttl: int = -1) -> None:
         ttl = ttl if ttl > 0 else self._refreshTokenTtl
-        self._cache.setex(f'{self._cacheSessionKeyPrefix}{token}', ttl, token)
+        self._cache.setex(f"{self._cacheSessionKeyPrefix}{token}", ttl, token)
 
     @debugLogger
     def refreshToken(self, token: str, ttl: int = -1) -> None:
         ttl = ttl if ttl > 0 else self._refreshTokenTtl
-        self._cache.setex(f'{self._cacheSessionKeyPrefix}{token}', ttl, token)
+        self._cache.setex(f"{self._cacheSessionKeyPrefix}{token}", ttl, token)
 
     @debugLogger
     def tokenExists(self, token: str) -> bool:
-        return self._cache.exists(f'{self._cacheSessionKeyPrefix}{token}') == 1
+        return self._cache.exists(f"{self._cacheSessionKeyPrefix}{token}") == 1
 
     @debugLogger
     def deleteToken(self, token: str) -> None:
-        return self._cache.delete(f'{self._cacheSessionKeyPrefix}{token}')
+        return self._cache.delete(f"{self._cacheSessionKeyPrefix}{token}")

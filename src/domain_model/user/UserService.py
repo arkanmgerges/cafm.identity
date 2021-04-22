@@ -2,8 +2,12 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 from src.domain_model.policy.PolicyRepository import PolicyRepository
-from src.domain_model.resource.exception.UserAlreadyExistException import UserAlreadyExistException
-from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
+from src.domain_model.resource.exception.UserAlreadyExistException import (
+    UserAlreadyExistException,
+)
+from src.domain_model.resource.exception.UserDoesNotExistException import (
+    UserDoesNotExistException,
+)
 from src.domain_model.token.TokenData import TokenData
 from src.domain_model.user.User import User
 from src.domain_model.user.UserRepository import UserRepository
@@ -16,9 +20,15 @@ class UserService:
         self._policyRepo = policyRepo
 
     @debugLogger
-    def createUser(self, obj: User, objectOnly: bool = False, tokenData: TokenData = None):
+    def createUser(
+        self, obj: User, objectOnly: bool = False, tokenData: TokenData = None
+    ):
         if objectOnly:
-            return User.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
+            return (
+                User.createFromObject(obj=obj, generateNewId=True)
+                if obj.id() == ""
+                else obj
+            )
         else:
             obj = User.createFromObject(obj=obj, publishEvent=True)
             self._repo.save(obj=obj, tokenData=tokenData)

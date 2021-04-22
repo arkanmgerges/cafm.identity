@@ -29,7 +29,7 @@ class RoleRepository(ABC):
             tokenData (TokenData): Token data used for deleting the resource
 
         :raises:
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the role could not be deleted            
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the role could not be deleted
         """
 
     @abstractmethod
@@ -60,9 +60,14 @@ class RoleRepository(ABC):
             `RoleDoesNotExistException <src.domain_model.resource.exception.RoleDoesNotExistException>` Raise an exception if the role does not exist
         """
 
-    def roles(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
-              resultSize: int = 100,
-              order: List[dict] = None) -> dict:
+    def roles(
+        self,
+        tokenData: TokenData,
+        roleAccessPermissionData: List[RoleAccessPermissionData],
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
         """Get list of roles based on the owned roles that the user has
 
         Args:
@@ -76,8 +81,11 @@ class RoleRepository(ABC):
             dict: A dict that has {"items": [], "itemCount": 0}
         """
 
-    def rolesTrees(self, tokenData: TokenData, roleAccessPermissionDataList: List[RoleAccessPermissionData]) -> List[
-        RoleAccessPermissionData]:
+    def rolesTrees(
+        self,
+        tokenData: TokenData,
+        roleAccessPermissionDataList: List[RoleAccessPermissionData],
+    ) -> List[RoleAccessPermissionData]:
         """Get list of the trees of the roles based on the owned roles that the user has
 
         Args:
@@ -88,7 +96,12 @@ class RoleRepository(ABC):
             List[RoleAccessPermissionData]: A list of role access details
         """
 
-    def roleTree(self, tokenData: TokenData, roleId: str, roleAccessPermissionData: List[RoleAccessPermissionData]) -> RoleAccessPermissionData:
+    def roleTree(
+        self,
+        tokenData: TokenData,
+        roleId: str,
+        roleAccessPermissionData: List[RoleAccessPermissionData],
+    ) -> RoleAccessPermissionData:
         """Get list of the trees of the roles based on the owned roles that the user has
 
         Args:

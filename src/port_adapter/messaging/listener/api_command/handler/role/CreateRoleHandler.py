@@ -3,7 +3,9 @@
 """
 from typing import List, Callable
 
-from src.port_adapter.messaging.listener.common.handler.role.CreateRoleHandler import CreateRoleHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.role.CreateRoleHandler import (
+    CreateRoleHandler as Handler,
+)
 
 """
 c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__CreateRoleHandler, "CommonCommandConstant.CREATE_ROLE.value", "api command consumer", "")

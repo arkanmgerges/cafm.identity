@@ -3,8 +3,9 @@
 """
 from typing import Callable, List
 
-from src.port_adapter.messaging.listener.common.handler.policy.RevokeRoleToAccessResourceHandler import \
-    RevokeRoleToAccessResourceHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.policy.RevokeRoleToAccessResourceHandler import (
+    RevokeRoleToAccessResourceHandler as Handler,
+)
 
 
 class RevokeRoleToAccessResourceHandler(Handler):

@@ -5,7 +5,9 @@ import pytest
 from mock import Mock
 
 from src.application.RealmApplicationService import RealmApplicationService
-from src.domain_model.authorization.AuthorizationRepository import AuthorizationRepository
+from src.domain_model.authorization.AuthorizationRepository import (
+    AuthorizationRepository,
+)
 from src.domain_model.authorization.AuthorizationService import AuthorizationService
 from src.domain_model.policy.PolicyControllerService import PolicyControllerService
 from src.domain_model.realm.RealmService import RealmService
@@ -15,14 +17,20 @@ from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.realm.Realm import Realm
 from src.domain_model.realm.RealmRepository import RealmRepository
 
-token = ''
+token = ""
 authzService = None
 
 
 def setup_function():
     global token
     global authzService
-    token = TokenService.generateToken({'id': '11223344', 'email': 'user_1@local.test', 'roles': [{'id': '1234', 'name': 'super_admin'}]})
+    token = TokenService.generateToken(
+        {
+            "id": "11223344",
+            "email": "user_1@local.test",
+            "roles": [{"id": "1234", "name": "super_admin"}],
+        }
+    )
 
     DomainPublishedEvents.cleanup()
     authzRepoMock = Mock(spec=AuthorizationRepository)
@@ -34,10 +42,13 @@ def setup_function():
 
 def test_create_realm_object_when_realm_does_not_exist():
     # Arrange
-    from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+    from src.domain_model.resource.exception.RealmDoesNotExistException import (
+        RealmDoesNotExistException,
+    )
+
     DomainPublishedEvents.cleanup()
     repo = Mock(spec=RealmRepository)
-    name = 'me'
+    name = "me"
     repo.realmByName = Mock(side_effect=RealmDoesNotExistException)
     realmService = RealmService(realmRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = RealmApplicationService(repo, authzService, realmService)
@@ -51,7 +62,7 @@ def test_create_realm_object_when_realm_does_not_exist():
 def test_get_realm_by_name_when_realm_exists():
     # Arrange
     repo = Mock(spec=RealmRepository)
-    name = 'me'
+    name = "me"
     realm = Realm(name=name)
     repo.realmByName = Mock(return_value=realm)
     realmService = RealmService(realmRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
@@ -65,12 +76,12 @@ def test_get_realm_by_name_when_realm_exists():
 def test_get_realm_by_id_when_realm_exists():
     # Arrange
     repo = Mock(spec=RealmRepository)
-    name = 'me'
-    realm = Realm(id='1234', name=name)
+    name = "me"
+    realm = Realm(id="1234", name=name)
     repo.realmById = Mock(return_value=realm)
     realmService = RealmService(realmRepo=repo, policyRepo=Mock(sepc=PolicyRepository))
     appService = RealmApplicationService(repo, authzService, realmService)
     # Act
-    appService.realmById(id='1234', token=token)
+    appService.realmById(id="1234", token=token)
     # Assert
-    repo.realmById.assert_called_once_with(id='1234')
+    repo.realmById.assert_called_once_with(id="1234")

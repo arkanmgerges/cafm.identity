@@ -9,7 +9,12 @@ from src.domain_model.event.EventConstant import CommonEventConstant
 """
 c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserWithOneTimePasswordLoggedIn, "CommonEventConstant.USER_WITH_ONE_TIME_PASSWORD_LOGGED_IN.value", "message", "event")
 """
+
+
 class UserWithOneTimePasswordLoggedIn(DomainEvent):
     def __init__(self, id: str):
-        super().__init__(id=str(uuid4()), name=CommonEventConstant.USER_WITH_ONE_TIME_PASSWORD_LOGGED_IN.value)
-        self._data = {'user_id': id}
+        super().__init__(
+            id=str(uuid4()),
+            name=CommonEventConstant.USER_WITH_ONE_TIME_PASSWORD_LOGGED_IN.value,
+        )
+        self._data = {"user_id": id}

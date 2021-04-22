@@ -9,36 +9,26 @@ from src.port_adapter.messaging.common.model.MessageBase import MessageBase
 
 
 class TransactionalProducer(ABC):
-    """Message producer to the message broker
-
-    """
+    """Message producer to the message broker"""
 
     @abstractmethod
     def initTransaction(self) -> None:
-        """Init transaction for this producer
-
-        """
+        """Init transaction for this producer"""
         pass
 
     @abstractmethod
     def beginTransaction(self) -> None:
-        """Begin transaction for this producer
-
-        """
+        """Begin transaction for this producer"""
         pass
 
     @abstractmethod
     def abortTransaction(self) -> None:
-        """Abort transaction for this producer
-
-        """
+        """Abort transaction for this producer"""
         pass
 
     @abstractmethod
     def commitTransaction(self) -> None:
-        """Begin transaction for this producer
-
-        """
+        """Begin transaction for this producer"""
         pass
 
     @abstractmethod
@@ -54,7 +44,5 @@ class TransactionalProducer(ABC):
 
     @abstractmethod
     def sendOffsetsToTransaction(self, consumer: Consumer) -> None:
-        """Commit processed message offsets to the transaction
-
-        """
+        """Commit processed message offsets to the transaction"""
         pass

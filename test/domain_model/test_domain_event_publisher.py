@@ -30,7 +30,7 @@ def test_add_event_to_postponed_list_and_verify_that_it_is_added():
     i = 0
     for evt in DomainPublishedEvents.postponedEvents():
         assert isinstance(evt, DomainEvent)
-        assert json.loads(evt.data())['id'] == str(i + 1)
+        assert json.loads(evt.data())["id"] == str(i + 1)
         assert isinstance(evt, UserCreated)
         i += 1
 

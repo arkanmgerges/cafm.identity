@@ -20,16 +20,17 @@ class TokenData:
         return self._roles
 
     def toMap(self) -> dict:
-        return {'id': self.id(), 'email': self.email(),
-                'roles': str(self.roles())}
+        return {"id": self.id(), "email": self.email(), "roles": str(self.roles())}
 
     def __repr__(self):
-        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+        return f"<{self.__module__} object at {hex(id(self))}> {self.toMap()}"
 
     def __str__(self) -> str:
-        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+        return f"<{self.__module__} object at {hex(id(self))}> {self.toMap()}"
 
     def __eq__(self, other):
         if not isinstance(other, TokenData):
-            raise NotImplementedError(f'other: {other} can not be compared with TokenData class')
+            raise NotImplementedError(
+                f"other: {other} can not be compared with TokenData class"
+            )
         return self.id() == other.id() and self.email() == other.email()

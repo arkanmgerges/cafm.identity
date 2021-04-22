@@ -8,10 +8,17 @@ from src.resource.logging.logger import logger
 
 
 class Country(Resource):
-    def __init__(self, id: int = '', localeCode: str = '', continentCode: str = '',
-                 continentName: str = '', countryIsoCode: str = '', countryName: str = '',
-                 isInEuropeanUnion: bool = False):
-        super().__init__(id=id, type='country')
+    def __init__(
+        self,
+        id: int = "",
+        localeCode: str = "",
+        continentCode: str = "",
+        continentName: str = "",
+        countryIsoCode: str = "",
+        countryName: str = "",
+        isInEuropeanUnion: bool = False,
+    ):
+        super().__init__(id=id, type="country")
 
         self._localeCode = localeCode
         self._continentCode = continentCode
@@ -21,13 +28,26 @@ class Country(Resource):
         self._isInEuropeanUnion = isInEuropeanUnion
 
     @classmethod
-    def createFrom(self, id: int = '', localeCode: str = '', continentCode: str = '',
-                   continentName: str = '', countryIsoCode: str = '', countryName: str = '',
-                   isInEuropeanUnion: bool = False):
-        logger.debug(f'[{Country.createFrom.__qualname__}] - with id {id}')
-        country = Country(id=id, localeCode=localeCode, continentCode=continentCode,
-                          continentName=continentName, countryIsoCode=countryIsoCode, countryName=countryName,
-                          isInEuropeanUnion=isInEuropeanUnion)
+    def createFrom(
+        self,
+        id: int = "",
+        localeCode: str = "",
+        continentCode: str = "",
+        continentName: str = "",
+        countryIsoCode: str = "",
+        countryName: str = "",
+        isInEuropeanUnion: bool = False,
+    ):
+        logger.debug(f"[{Country.createFrom.__qualname__}] - with id {id}")
+        country = Country(
+            id=id,
+            localeCode=localeCode,
+            continentCode=continentCode,
+            continentName=continentName,
+            countryIsoCode=countryIsoCode,
+            countryName=countryName,
+            isInEuropeanUnion=isInEuropeanUnion,
+        )
         return country
 
     def localeCode(self) -> str:
@@ -52,12 +72,14 @@ class Country(Resource):
         return {"country_id": self.id()}
 
     def __repr__(self):
-        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+        return f"<{self.__module__} object at {hex(id(self))}> {self.toMap()}"
 
     def __str__(self) -> str:
-        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+        return f"<{self.__module__} object at {hex(id(self))}> {self.toMap()}"
 
     def __eq__(self, other):
         if not isinstance(other, Country):
-            raise NotImplementedError(f'other: {other} can not be compared with Country class')
+            raise NotImplementedError(
+                f"other: {other} can not be compared with Country class"
+            )
         return self.id() == other.id()

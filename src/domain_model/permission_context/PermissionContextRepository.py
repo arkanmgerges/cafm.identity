@@ -21,7 +21,9 @@ class PermissionContextRepository(ABC):
         """
 
     @abstractmethod
-    def deletePermissionContext(self, obj: PermissionContext, tokenData: TokenData) -> None:
+    def deletePermissionContext(
+        self, obj: PermissionContext, tokenData: TokenData
+    ) -> None:
         """Delete a permission context
 
         Args:
@@ -41,16 +43,20 @@ class PermissionContextRepository(ABC):
 
         Returns:
             PermissionContext: permissionContext object
-            
+
         :raises:
             `PermissionContextDoesNotExistException <src.domain_model.resource.exception.PermissionContextDoesNotExistException>` Raise an exception if the permission context does not exist
         """
 
     @abstractmethod
-    def permissionContexts(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
-                           resultFrom: int = 0,
-                           resultSize: int = 100,
-                           order: List[dict] = None) -> dict:
+    def permissionContexts(
+        self,
+        tokenData: TokenData,
+        roleAccessPermissionData: List[RoleAccessPermissionData],
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
         """Get list of permission contexts based on the owned roles that the user has
 
         Args:

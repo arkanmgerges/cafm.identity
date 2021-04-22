@@ -15,5 +15,11 @@ c4model|cb|identity:ComponentQueue(identity__domainmodel_event__PermissionToPerm
 
 class PermissionToPermissionContextAssigned(DomainEvent):
     def __init__(self, permission: Permission, permissionContext: PermissionContext):
-        super().__init__(id=str(uuid4()), name=CommonEventConstant.PERMISSION_TO_PERMISSION_CONTEXT_ASSIGNED.value)
-        self._data = {'permission_id': permission.id(), 'permission_context_id': permissionContext.id()}
+        super().__init__(
+            id=str(uuid4()),
+            name=CommonEventConstant.PERMISSION_TO_PERMISSION_CONTEXT_ASSIGNED.value,
+        )
+        self._data = {
+            "permission_id": permission.id(),
+            "permission_context_id": permissionContext.id(),
+        }

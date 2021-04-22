@@ -10,7 +10,11 @@ from src.domain_model.event.DomainEvent import DomainEvent
 """
 c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserGroupDeleted, "CommonEventConstant.USER_GROUP_DELETED.value", "message", "event")
 """
+
+
 class UserGroupDeleted(DomainEvent):
     def __init__(self, userGroup: UserGroup):
-        super().__init__(id=str(uuid4()), name=CommonEventConstant.USER_GROUP_DELETED.value)
+        super().__init__(
+            id=str(uuid4()), name=CommonEventConstant.USER_GROUP_DELETED.value
+        )
         self._data = userGroup.toMap()

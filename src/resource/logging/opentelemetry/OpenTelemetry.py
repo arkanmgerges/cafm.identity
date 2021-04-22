@@ -10,7 +10,7 @@ from opentelemetry import trace
 from opentelemetry.context import attach, detach
 from opentelemetry.exporter import jaeger
 from opentelemetry.sdk.trace import TracerProvider, Tracer
-from opentelemetry.sdk.trace.export import (BatchExportSpanProcessor)
+from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from opentelemetry.trace.span import SpanContext
 
 
@@ -22,10 +22,10 @@ class OpenTelemetry:
         self._contexts = {}
 
         jaegerExporter = jaeger.JaegerSpanExporter(
-            service_name=os.getenv('CAFM_IDENTITY_SERVICE_NAME', 'cafm-identity'),
+            service_name=os.getenv("CAFM_IDENTITY_SERVICE_NAME", "cafm-identity"),
             # configure agent
-            agent_host_name=os.getenv('JAEGER_HOST', 'localhost'),
-            agent_port=int(os.getenv('JAEGER_THRIFT_AGENT_PORT', 6831)),
+            agent_host_name=os.getenv("JAEGER_HOST", "localhost"),
+            agent_port=int(os.getenv("JAEGER_THRIFT_AGENT_PORT", 6831)),
             # optional: configure also collector
             # collector_host_name='localhost',
             # collector_port=14268,
@@ -52,9 +52,13 @@ class OpenTelemetry:
         return self._trace
 
     def setContext(self, context: SpanContext, name: str):
-        self._contexts[name] = {'trace_id': context.trace_id, 'span_id': context.span_id,
-                                'is_remote': context.is_remote, 'trace_flags': context.trace_flags,
-                                'trace_state': context.trace_state}
+        self._contexts[name] = {
+            "trace_id": context.trace_id,
+            "span_id": context.span_id,
+            "is_remote": context.is_remote,
+            "trace_flags": context.trace_flags,
+            "trace_state": context.trace_state,
+        }
 
     def serializedContext(self, name: str) -> str:
         return json.dumps(self.context(name))
@@ -64,10 +68,11 @@ class OpenTelemetry:
 
     def contextDataFromGrpcContext(self, context) -> dict:
         from src.resource.logging.logger import logger
-        logger.info('grpccontext-1')
+
+        logger.info("grpccontext-1")
         logger.info(context)
         metadata = context.invocation_metadata()
-        if 'opentel' in metadata[1]:
+        if "opentel" in metadata[1]:
             return json.loads(metadata[1].value)
         return {}
 
@@ -80,18 +85,18 @@ class OpenTelemetry:
         # flag values set. Since the setting of at least one implies
         # the desire for some form of sampling, propagate if either
         # header is set to allow.
-        if 'trace_flags' in contextData and contextData['trace_flags'] == 1:
+        if "trace_flags" in contextData and contextData["trace_flags"] == 1:
             options |= trace.TraceFlags.SAMPLED
-        if 'trace_id' in contextData and 'span_id' in contextData:
+        if "trace_id" in contextData and "span_id" in contextData:
             ctx = trace.set_span_in_context(
                 trace.DefaultSpan(
                     trace.SpanContext(
                         # trace an span ids are encoded in hex, so must be converted
-                        trace_id=contextData['trace_id'],
-                        span_id=contextData['span_id'],
-                        is_remote=contextData['is_remote'],
+                        trace_id=contextData["trace_id"],
+                        span_id=contextData["span_id"],
+                        is_remote=contextData["is_remote"],
                         trace_flags=trace.TraceFlags(options),
-                        trace_state=trace.TraceState(contextData['trace_state'])
+                        trace_state=trace.TraceState(contextData["trace_state"]),
                     )
                 )
             )
@@ -107,16 +112,22 @@ class OpenTelemetry:
         import inspect
         import os
 
-        if os.getenv('OPEN_TELEMETRY_IS_RUNNING', True):
+        if os.getenv("OPEN_TELEMETRY_IS_RUNNING", True):
+
             def wrapper(*args, **kwargs):
                 import src.port_adapter.AppDi as AppDi
+
                 openTelemetry = AppDi.instance.get(OpenTelemetry)
                 tracer: Tracer = openTelemetry.tracer(f.__name__)
                 grpcServicerContext = cls._grpcServicerContext(args)
                 if grpcServicerContext is not None:
-                    contextData = openTelemetry.contextDataFromGrpcContext(grpcServicerContext)
+                    contextData = openTelemetry.contextDataFromGrpcContext(
+                        grpcServicerContext
+                    )
                     with openTelemetry.setRemoteContext(contextData):
-                        return cls._startCurrentSpan(args, kwargs, openTelemetry, tracer, f)
+                        return cls._startCurrentSpan(
+                            args, kwargs, openTelemetry, tracer, f
+                        )
                 else:
                     return cls._startCurrentSpan(args, kwargs, openTelemetry, tracer, f)
 
@@ -130,6 +141,7 @@ class OpenTelemetry:
     @classmethod
     def _grpcServicerContext(cls, args):
         from grpc._server import _Context
+
         try:
             for arg in args:
                 if isinstance(arg, _Context):
@@ -141,11 +153,15 @@ class OpenTelemetry:
     @classmethod
     def _startCurrentSpan(cls, args, kwargs, openTelemetry, tracer, f):
         with tracer.start_as_current_span(name=f.__name__) as span:
-            span.set_attribute('module', str(inspect.getmodule(f)))
-            span.set_attribute('function_name', f.__name__)
-            span.set_attribute('function_args', f'args = {str(args)}, kwargs = {str(kwargs)}')
+            span.set_attribute("module", str(inspect.getmodule(f)))
+            span.set_attribute("function_name", f.__name__)
+            span.set_attribute(
+                "function_args", f"args = {str(args)}, kwargs = {str(kwargs)}"
+            )
 
             ctx: SpanContext = span.get_span_context()
             # Important: the decorated method that uses this decorator, needs to use __qualname__ for its method
-            openTelemetry.setContext(ctx, f.__qualname__)  # ex. class name and method like User.userAge
+            openTelemetry.setContext(
+                ctx, f.__qualname__
+            )  # ex. class name and method like User.userAge
             return f(*args, **kwargs)

@@ -22,7 +22,9 @@ def debugLogger(f):
     bgColor1 = "\u001b[43;1m"
 
     from src.resource.logging.logger import logger
-    if os.getenv('DECORATOR_DEBUGGING_INFO_STATUS', True):
+
+    if os.getenv("DECORATOR_DEBUGGING_INFO_STATUS", True):
+
         def wrapper(*args, **kwargs):
             params = {}
             argsCount = len(args)
@@ -36,7 +38,8 @@ def debugLogger(f):
             functionName = f.__code__.co_name
 
             logger.debug(
-                f'{bgColor1}{color1} Debug Logger: {reset}\n{color1} Code execution entered {reset}{color2}[{className}.{functionName}]{reset}{color1} with parameters:{reset} {color2}{params}{reset}\n{color1}File: {reset}{color2}{fileName} {reset}')
+                f"{bgColor1}{color1} Debug Logger: {reset}\n{color1} Code execution entered {reset}{color2}[{className}.{functionName}]{reset}{color1} with parameters:{reset} {color2}{params}{reset}\n{color1}File: {reset}{color2}{fileName} {reset}"
+            )
 
             return f(*args, **kwargs)
 

@@ -6,30 +6,43 @@ import os
 import re
 from typing import List
 
-from src.resource.graph_data.ConstantPackage import CommonCommandConstant, CommonEventConstant
+from src.resource.graph_data.ConstantPackage import (
+    CommonCommandConstant,
+    CommonEventConstant,
+)
 
-OUTPUT_FILE_NAME = f'{os.path.dirname(os.path.abspath(__file__))}/../graph_data/graph_c4model'
+OUTPUT_FILE_NAME = (
+    f"{os.path.dirname(os.path.abspath(__file__))}/../graph_data/graph_c4model"
+)
 
 outsideResult = set()
 insideResult = {}
 
 # Inside a boundary level of the generated file
-inside = re.compile(r'c4model\|cb\|(?P<microservice>\w+):(?P<item>[^\n]+)')
+inside = re.compile(r"c4model\|cb\|(?P<microservice>\w+):(?P<item>[^\n]+)")
 # At the root level of the generated file
-outside = re.compile(r'c4model:(?P<item>[^\n]+)')
+outside = re.compile(r"c4model:(?P<item>[^\n]+)")
 # Find constants
-commonConst = re.compile(r'(?:CommonCommandConstant|CommonEventConstant).\w+.value')
+commonConst = re.compile(r"(?:CommonCommandConstant|CommonEventConstant).\w+.value")
 
 
 files = []
-for filePath in ['/Users/arkan/dev/company/digital-mob/cafm/cafm-api/**/*.py',
-                 '/Users/arkan/dev/company/digital-mob/cafm/cafm-identity/**/*.py',
-                 '/Users/arkan/dev/company/digital-mob/cafm/cafm-project/**/*.py']:
-    files.extend(list(filter(lambda x: x.find('__init__.py') == -1 and
-                                       x.find('src/resource') == -1 and
-                                       x.find('cafm-identity/test') == -1 and
-                                       x.find('cafm-identity/doc') == -1,
-                             glob.glob(filePath, recursive=True))))
+for filePath in [
+    "/Users/arkan/dev/company/digital-mob/cafm/cafm-api/**/*.py",
+    "/Users/arkan/dev/company/digital-mob/cafm/cafm-identity/**/*.py",
+    "/Users/arkan/dev/company/digital-mob/cafm/cafm-project/**/*.py",
+]:
+    files.extend(
+        list(
+            filter(
+                lambda x: x.find("__init__.py") == -1
+                and x.find("src/resource") == -1
+                and x.find("cafm-identity/test") == -1
+                and x.find("cafm-identity/doc") == -1,
+                glob.glob(filePath, recursive=True),
+            )
+        )
+    )
 
 
 def extractData():
@@ -50,7 +63,7 @@ def _addToOutside(outResult: List):
 
 def _addToInside(inResult: List):
     for x in inResult:
-        if x[0] != '':
+        if x[0] != "":
             if x[0] not in insideResult:
                 insideResult[x[0]] = set()
             insideResult[x[0]].add(replaceCommonConstants(x[1]))
@@ -77,7 +90,7 @@ def readFile(filePath: str) -> str:
 
 
 def saveToPumlFile():
-    resultSt = '''@startuml "system_c4model"
+    resultSt = """@startuml "system_c4model"
 !include puml/c4_container.puml
 !include puml/c4_component.puml
 
@@ -91,36 +104,36 @@ LAYOUT_WITH_LEGEND()\n
 Container_Boundary(redis, "Redis System") {
 	Component(api__redis, "Api Caching & Response", "tcp", "Has response, caching results")
 }
-'''
+"""
 
     # Container boundry
     for microservice, itemList in insideResult.items():
-        if microservice == 'api':
+        if microservice == "api":
             resultSt += 'Container_Boundary(api, "Api Microservice") {\n'
             for item in itemList:
-                resultSt += f'\t{item}\n'
-            resultSt += '}\n'
+                resultSt += f"\t{item}\n"
+            resultSt += "}\n"
 
-        if microservice == 'identity':
+        if microservice == "identity":
             resultSt += 'Container_Boundary(identity, "Identity Microservice") {\n'
             for item in itemList:
-                resultSt += f'\t{item}\n'
-            resultSt += '}\n'
+                resultSt += f"\t{item}\n"
+            resultSt += "}\n"
 
-        if microservice == 'project':
+        if microservice == "project":
             resultSt += 'Container_Boundary(project, "Project Microservice") {\n'
             for item in itemList:
-                resultSt += f'\t{item}\n'
-            resultSt += '}\n'
+                resultSt += f"\t{item}\n"
+            resultSt += "}\n"
 
     # Global
     for item in outsideResult:
-        resultSt += f'{item}\n'
+        resultSt += f"{item}\n"
 
     resultSt += 'Rel(api, redis, "Get/Create api response & caching data")\n'
-    resultSt += '\n@enduml\n'
+    resultSt += "\n@enduml\n"
 
-    with open(f'{OUTPUT_FILE_NAME}.puml', 'w') as f:
+    with open(f"{OUTPUT_FILE_NAME}.puml", "w") as f:
         f.write(resultSt)
 
 

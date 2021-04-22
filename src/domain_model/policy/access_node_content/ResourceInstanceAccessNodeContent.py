@@ -1,10 +1,14 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.domain_model.policy.access_node_content.AccessNodeContent import AccessNodeContentTypeConstant, \
-    AccessNodeContent
+from src.domain_model.policy.access_node_content.AccessNodeContent import (
+    AccessNodeContentTypeConstant,
+    AccessNodeContent,
+)
 from src.domain_model.resource.Resource import Resource
-from src.domain_model.resource.exception.InvalidCastException import InvalidCastException
+from src.domain_model.resource.exception.InvalidCastException import (
+    InvalidCastException,
+)
 
 
 class ResourceInstanceAccessNodeContent(AccessNodeContent):
@@ -15,11 +19,13 @@ class ResourceInstanceAccessNodeContent(AccessNodeContent):
 
     @classmethod
     def castFrom(cls, parentObject: AccessNodeContent):
-        if hasattr(parentObject, 'resource') and hasattr(parentObject, 'resourceName'):
-            return ResourceInstanceAccessNodeContent(resource=parentObject.resource,
-                                                     resourceName=parentObject.resourceName)
+        if hasattr(parentObject, "resource") and hasattr(parentObject, "resourceName"):
+            return ResourceInstanceAccessNodeContent(
+                resource=parentObject.resource, resourceName=parentObject.resourceName
+            )
         raise InvalidCastException(
-            f'[{ResourceInstanceAccessNodeContent.castFrom.__qualname__}] {parentObject} is not of type {ResourceInstanceAccessNodeContent.__qualname__}')
+            f"[{ResourceInstanceAccessNodeContent.castFrom.__qualname__}] {parentObject} is not of type {ResourceInstanceAccessNodeContent.__qualname__}"
+        )
 
     def toMap(self) -> dict:
         result = self.resource.toMap()
@@ -27,7 +33,7 @@ class ResourceInstanceAccessNodeContent(AccessNodeContent):
         return result
 
     def __repr__(self):
-        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+        return f"<{self.__module__} object at {hex(id(self))}> {self.toMap()}"
 
     def __str__(self) -> str:
-        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+        return f"<{self.__module__} object at {hex(id(self))}> {self.toMap()}"

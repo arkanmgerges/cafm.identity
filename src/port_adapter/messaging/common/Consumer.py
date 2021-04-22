@@ -7,9 +7,7 @@ from typing import Any, List
 
 
 class Consumer(ABC):
-    """Message consumer from the message broker
-
-    """
+    """Message consumer from the message broker"""
 
     @abstractmethod
     def poll(self, timeout: float = None) -> Any:
@@ -23,16 +21,12 @@ class Consumer(ABC):
 
     @abstractmethod
     def commit(self):
-        """Commit the offset of the consumer
-
-        """
+        """Commit the offset of the consumer"""
         pass
 
     @abstractmethod
     def close(self):
-        """Commit the final offsets (if auto commit is enabled) and close the connection
-
-        """
+        """Commit the final offsets (if auto commit is enabled) and close the connection"""
         pass
 
     @abstractmethod
@@ -47,16 +41,12 @@ class Consumer(ABC):
 
     @abstractmethod
     def consumerGroupMetadata(self) -> Any:
-        """Consumer's current group metadata
-
-        """
+        """Consumer's current group metadata"""
         pass
 
     @abstractmethod
     def assignment(self) -> List[Any]:
-        """Returns the current partition assignment
-
-        """
+        """Returns the current partition assignment"""
         pass
 
     @abstractmethod
@@ -69,7 +59,5 @@ class Consumer(ABC):
 
     @abstractmethod
     def unsubscribe(self) -> None:
-        """Remove current subscription
-
-        """
+        """Remove current subscription"""
         pass

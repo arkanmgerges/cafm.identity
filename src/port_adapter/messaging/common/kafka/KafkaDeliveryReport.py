@@ -7,7 +7,7 @@ import os
 from src.port_adapter.messaging.common.SimpleProducer import SimpleProducer
 from src.resource.logging.logger import logger
 
-MESSAGE_SCHEMA_REGISTRY_URL = os.getenv('MESSAGE_SCHEMA_REGISTRY_URL', '')
+MESSAGE_SCHEMA_REGISTRY_URL = os.getenv("MESSAGE_SCHEMA_REGISTRY_URL", "")
 
 
 class KafkaDeliveryReport(SimpleProducer):
@@ -31,7 +31,8 @@ class KafkaDeliveryReport(SimpleProducer):
 
         """
         if err is not None:
-            logger.error(f'Delivery failed for record {msg.key}: {err}')
+            logger.error(f"Delivery failed for record {msg.key}: {err}")
             return
         logger.info(
-            f'record {msg.key()} successfully produced to {msg.topic()} [{msg.partition()}] at offset {msg.offset()}')
+            f"record {msg.key()} successfully produced to {msg.topic()} [{msg.partition()}] at offset {msg.offset()}"
+        )

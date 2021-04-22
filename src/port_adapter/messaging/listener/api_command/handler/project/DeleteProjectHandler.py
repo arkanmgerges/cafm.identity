@@ -3,8 +3,9 @@
 """
 from typing import List, Callable
 
-from src.port_adapter.messaging.listener.common.handler.project.DeleteProjectHandler import \
-    DeleteProjectHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.project.DeleteProjectHandler import (
+    DeleteProjectHandler as Handler,
+)
 
 """
 c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__DeleteProjectHandler, "CommonCommandConstant.DELETE_PROJECT.value", "api command consumer", "")

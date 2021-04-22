@@ -3,7 +3,9 @@
 """
 import os
 
-from src.domain_model.authentication.AuthenticationRepository import AuthenticationRepository
+from src.domain_model.authentication.AuthenticationRepository import (
+    AuthenticationRepository,
+)
 from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 import hashlib
@@ -27,14 +29,27 @@ class AuthenticationService:
         :raises:
             `UserDoesNotExistException <UserDoesNotExistException>`: When user does not exist
         """
-        result = self._authRepo.authenticateUserByEmailAndPassword(email=email, password=password)
-        payload = {'id': result['id'], 'roles': result['roles'], 'email': result['email']}
-        if 'isOneTimePassword' in result and result['isOneTimePassword'] is True:
-            from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
-            from src.domain_model.user.UserWithOneTimePasswordLoggedIn import UserWithOneTimePasswordLoggedIn
-            DomainPublishedEvents.addEventForPublishing(UserWithOneTimePasswordLoggedIn(result['id']))
+        result = self._authRepo.authenticateUserByEmailAndPassword(
+            email=email, password=password
+        )
+        payload = {
+            "id": result["id"],
+            "roles": result["roles"],
+            "email": result["email"],
+        }
+        if "isOneTimePassword" in result and result["isOneTimePassword"] is True:
+            from src.domain_model.event.DomainPublishedEvents import (
+                DomainPublishedEvents,
+            )
+            from src.domain_model.user.UserWithOneTimePasswordLoggedIn import (
+                UserWithOneTimePasswordLoggedIn,
+            )
+
+            DomainPublishedEvents.addEventForPublishing(
+                UserWithOneTimePasswordLoggedIn(result["id"])
+            )
         token = TokenService.generateToken(payload=payload)
-        ttl = int(os.getenv('CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS', 300))
+        ttl = int(os.getenv("CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS", 300))
         self._authRepo.persistToken(token=token, ttl=ttl)
         return token
 
@@ -51,7 +66,10 @@ class AuthenticationService:
         try:
             exists = self._authRepo.tokenExists(token=token)
             if exists:
-                self._authRepo.refreshToken(token=token, ttl=int(os.getenv('CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS', 300)))
+                self._authRepo.refreshToken(
+                    token=token,
+                    ttl=int(os.getenv("CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS", 300)),
+                )
             return exists
         except:
             return False

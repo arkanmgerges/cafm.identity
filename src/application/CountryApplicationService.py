@@ -10,13 +10,19 @@ from src.domain_model.country.Country import Country
 
 
 class CountryApplicationService:
-    def __init__(self, countryRepository: CountryRepository, authzService: AuthorizationService):
+    def __init__(
+        self, countryRepository: CountryRepository, authzService: AuthorizationService
+    ):
         self._countryRepository = countryRepository
         self._authzService: AuthorizationService = authzService
 
     @debugLogger
-    def countries(self, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
-        return self._countryRepository.countries(resultFrom=resultFrom, resultSize=resultSize, order=order)
+    def countries(
+        self, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None
+    ) -> dict:
+        return self._countryRepository.countries(
+            resultFrom=resultFrom, resultSize=resultSize, order=order
+        )
 
     @debugLogger
     def countryById(self, id: int) -> Country:
@@ -24,15 +30,31 @@ class CountryApplicationService:
         return resource
 
     @debugLogger
-    def citiesByCountryId(self, id: int, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
-        return self._countryRepository.citiesByCountryId(id=id, resultFrom=resultFrom, resultSize=resultSize,
-                                                         order=order)
+    def citiesByCountryId(
+        self,
+        id: int,
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
+        return self._countryRepository.citiesByCountryId(
+            id=id, resultFrom=resultFrom, resultSize=resultSize, order=order
+        )
 
     @debugLogger
     def cityByCountryId(self, countryId: int, cityId: int):
-        return self._countryRepository.cityByCountryId(countryId=countryId, cityId=cityId)
+        return self._countryRepository.cityByCountryId(
+            countryId=countryId, cityId=cityId
+        )
 
     @debugLogger
-    def statesByCountryId(self, id: int, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
-        return self._countryRepository.statesByCountryId(id=id, resultFrom=resultFrom, resultSize=resultSize,
-                                                         order=order)
+    def statesByCountryId(
+        self,
+        id: int,
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
+        return self._countryRepository.statesByCountryId(
+            id=id, resultFrom=resultFrom, resultSize=resultSize, order=order
+        )

@@ -14,20 +14,27 @@ from src.port_adapter.messaging.common.ConsumerOffsetReset import ConsumerOffset
 
 
 class KafkaConsumer(Consumer):
-    def __init__(self, groupId: str = '', autoCommit: bool = False, partitionEof: bool = True,
-                 autoOffsetReset: str = ConsumerOffsetReset.latest.name):
-        self._consumer: ConfluentKafkaConsumer = ConfluentKafkaConsumer({
-            'bootstrap.servers': os.getenv('MESSAGE_BROKER_SERVERS', ''),
-            'group.id': groupId,
-            'auto.offset.reset': autoOffsetReset,
-            'key.deserializer': StringDeserializer('utf_8'),
-            'value.deserializer': lambda v, ctx: json.loads(v.decode('utf-8')),
-            # Do not advance committed offsets outside of the transaction.
-            # Consumer offsets are committed along with the transaction
-            # using the producer's send_offsets_to_transaction() API.
-            'enable.auto.commit': autoCommit,
-            'enable.partition.eof': partitionEof
-        })
+    def __init__(
+        self,
+        groupId: str = "",
+        autoCommit: bool = False,
+        partitionEof: bool = True,
+        autoOffsetReset: str = ConsumerOffsetReset.latest.name,
+    ):
+        self._consumer: ConfluentKafkaConsumer = ConfluentKafkaConsumer(
+            {
+                "bootstrap.servers": os.getenv("MESSAGE_BROKER_SERVERS", ""),
+                "group.id": groupId,
+                "auto.offset.reset": autoOffsetReset,
+                "key.deserializer": StringDeserializer("utf_8"),
+                "value.deserializer": lambda v, ctx: json.loads(v.decode("utf-8")),
+                # Do not advance committed offsets outside of the transaction.
+                # Consumer offsets are committed along with the transaction
+                # using the producer's send_offsets_to_transaction() API.
+                "enable.auto.commit": autoCommit,
+                "enable.partition.eof": partitionEof,
+            }
+        )
 
     def poll(self, timeout: float = None) -> Any:
         return self._consumer.poll(timeout)

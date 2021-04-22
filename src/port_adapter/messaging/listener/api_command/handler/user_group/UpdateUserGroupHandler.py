@@ -3,7 +3,9 @@
 """
 from typing import Callable, List
 
-from src.port_adapter.messaging.listener.common.handler.user_group.UpdateUserGroupHandler import UpdateUserGroupHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.user_group.UpdateUserGroupHandler import (
+    UpdateUserGroupHandler as Handler,
+)
 
 """
 c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__UpdateUserGroupHandler, "CommonCommandConstant.UPDATE_USER_GROUP.value", "api command consumer", "")

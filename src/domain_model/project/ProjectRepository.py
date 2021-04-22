@@ -29,7 +29,7 @@ class ProjectRepository(ABC):
             tokenData (TokenData): Token data used for deleting the resource
 
         :raises:
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the project could not be deleted            
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the project could not be deleted
         """
 
     @abstractmethod
@@ -43,7 +43,7 @@ class ProjectRepository(ABC):
             Project: project object
 
         :raises:
-            `ProjectDoesNotExistException <src.domain_model.resource.exception.ProjectDoesNotExistException>` Raise an exception if the project does not exist            
+            `ProjectDoesNotExistException <src.domain_model.resource.exception.ProjectDoesNotExistException>` Raise an exception if the project does not exist
         """
 
     @abstractmethod
@@ -57,13 +57,18 @@ class ProjectRepository(ABC):
             Project: project object
 
         :raises:
-            `ProjectDoesNotExistException <src.domain_model.resource.exception.ProjectDoesNotExistException>` Raise an exception if the project does not exist            
+            `ProjectDoesNotExistException <src.domain_model.resource.exception.ProjectDoesNotExistException>` Raise an exception if the project does not exist
         """
 
     @abstractmethod
-    def projects(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData], resultFrom: int = 0,
-            resultSize: int = 100,
-            order: List[dict] = None) -> dict:
+    def projects(
+        self,
+        tokenData: TokenData,
+        roleAccessPermissionData: List[RoleAccessPermissionData],
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
         """Get list of projects based on the owned roles that the user has
 
         Args:

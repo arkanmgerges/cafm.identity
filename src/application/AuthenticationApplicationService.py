@@ -5,6 +5,7 @@ from src.domain_model.authentication.AuthenticationService import Authentication
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 
+
 class AuthenticationApplicationService:
     def __init__(self, authService: AuthenticationService):
         self._authService: AuthenticationService = authService
@@ -27,10 +28,14 @@ class AuthenticationApplicationService:
 
     @debugLogger
     def isAuthenticated(self, token: str) -> bool:
-        logger.debug(f'[{AuthenticationApplicationService.isAuthenticated.__qualname__}] - Received token: {token}')
+        logger.debug(
+            f"[{AuthenticationApplicationService.isAuthenticated.__qualname__}] - Received token: {token}"
+        )
         return self._authService.isAuthenticated(token=token)
 
     @debugLogger
     def logout(self, token: str) -> None:
-        logger.debug(f'[{AuthenticationApplicationService.logout.__qualname__}] - Received token: {token}')
+        logger.debug(
+            f"[{AuthenticationApplicationService.logout.__qualname__}] - Received token: {token}"
+        )
         self._authService.logout(token=token)

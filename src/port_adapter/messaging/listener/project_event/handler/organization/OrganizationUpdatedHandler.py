@@ -5,7 +5,9 @@ import json
 from typing import Callable, List
 
 from src.domain_model.event.EventConstant import CommonEventConstant
-from src.port_adapter.messaging.listener.common.handler.realm.UpdateRealmHandler import UpdateRealmHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.realm.UpdateRealmHandler import (
+    UpdateRealmHandler as Handler,
+)
 
 """
 c4model|cb|identity:ComponentQueue(identity__messaging_project_event_handler__OrganizationUpdatedHandler, "CommonEventConstant.ORGANIZATION_UPDATED.value", "project event consumer", "")
@@ -19,11 +21,11 @@ class OrganizationUpdatedHandler(Handler):
         return name == CommonEventConstant.ORGANIZATION_UPDATED.value
 
     def handleCommand(self, messageData: dict) -> dict:
-        data = messageData['data']
+        data = messageData["data"]
         dataDict = json.loads(data)
-        dataDict = dataDict['new']
-        dataDict['realm_id'] = dataDict['organization_id']
-        messageData['data'] = json.dumps(dataDict)
+        dataDict = dataDict["new"]
+        dataDict["realm_id"] = dataDict["organization_id"]
+        messageData["data"] = json.dumps(dataDict)
         return super().handleCommand(messageData)
 
     @staticmethod

@@ -10,13 +10,19 @@ from src.resource.logging.decorator import debugLogger
 
 
 class CityApplicationService:
-    def __init__(self, cityRepository: CityRepository, authzService: AuthorizationService):
+    def __init__(
+        self, cityRepository: CityRepository, authzService: AuthorizationService
+    ):
         self._cityRepository = cityRepository
         self._authzService: AuthorizationService = authzService
 
     @debugLogger
-    def cities(self, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
-        return self._cityRepository.cities(resultFrom=resultFrom, resultSize=resultSize, order=order)
+    def cities(
+        self, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None
+    ) -> dict:
+        return self._cityRepository.cities(
+            resultFrom=resultFrom, resultSize=resultSize, order=order
+        )
 
     @debugLogger
     def cityById(self, id: str) -> City:
@@ -24,6 +30,13 @@ class CityApplicationService:
         return resource
 
     @debugLogger
-    def citiesByStateId(self, id: str = '', resultFrom: int = 0, resultSize: int = 100,
-                        order: List[dict] = None) -> dict:
-        return self._cityRepository.citiesByStateId(id=id, resultFrom=resultFrom, resultSize=resultSize, order=order)
+    def citiesByStateId(
+        self,
+        id: str = "",
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
+        return self._cityRepository.citiesByStateId(
+            id=id, resultFrom=resultFrom, resultSize=resultSize, order=order
+        )

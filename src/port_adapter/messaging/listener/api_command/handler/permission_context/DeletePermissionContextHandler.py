@@ -3,8 +3,9 @@
 """
 from typing import List, Callable
 
-from src.port_adapter.messaging.listener.common.handler.permission_context.DeletePermissionContextHandler import \
-    DeletePermissionContextHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.permission_context.DeletePermissionContextHandler import (
+    DeletePermissionContextHandler as Handler,
+)
 
 """
 c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__DeletePermissionContextHandler, "CommonCommandConstant.DELETE_RESOURCE_TYPE.value", "api command consumer", "")

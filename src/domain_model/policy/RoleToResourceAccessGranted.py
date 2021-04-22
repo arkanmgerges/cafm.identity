@@ -15,5 +15,8 @@ c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RoleToResourceAc
 
 class RoleToResourceAccessGranted(DomainEvent):
     def __init__(self, role: Role, resource: Resource):
-        super().__init__(id=str(uuid4()), name=CommonEventConstant.ROLE_TO_RESOURCE_ACCESS_GRANTED.value)
-        self._data = {'role_id': role.id(), 'resource_id': resource.id()}
+        super().__init__(
+            id=str(uuid4()),
+            name=CommonEventConstant.ROLE_TO_RESOURCE_ACCESS_GRANTED.value,
+        )
+        self._data = {"role_id": role.id(), "resource_id": resource.id()}

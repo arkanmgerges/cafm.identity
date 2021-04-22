@@ -10,10 +10,12 @@ from src.domain_model.user.UserCreated import UserCreated
 
 def test_event_UserCreated():
     # Act
-    user = User.createFrom(id='1', email='john@local.me', password='1234')
+    user = User.createFrom(id="1", email="john@local.me", password="1234")
     domainEvent = UserCreated(user)
     # Assert
     assert isinstance(domainEvent, DomainEvent)
-    assert json.dumps(domainEvent.data()) == json.dumps({"user_id": user.id(), "email": user.email()})
+    assert json.dumps(domainEvent.data()) == json.dumps(
+        {"user_id": user.id(), "email": user.email()}
+    )
     assert isinstance(domainEvent.id(), str)
     assert domainEvent.occurredOn() > 0

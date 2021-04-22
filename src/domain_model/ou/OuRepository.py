@@ -41,7 +41,7 @@ class OuRepository(ABC):
 
         Returns:
             Ou: ou object
-            
+
         :raises:
             `OuDoesNotExistException <src.domain_model.resource.exception.OuDoesNotExistException>` Raise an exception if the ou does not exist
         """
@@ -57,12 +57,18 @@ class OuRepository(ABC):
             Ou: ou object
 
         :raises:
-            `OuDoesNotExistException <src.domain_model.resource.exception.OuDoesNotExistException>` Raise an exception if the ou does not exist            
+            `OuDoesNotExistException <src.domain_model.resource.exception.OuDoesNotExistException>` Raise an exception if the ou does not exist
         """
 
     @abstractmethod
-    def ous(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
-                        order: List[dict] = None) -> dict:
+    def ous(
+        self,
+        tokenData: TokenData,
+        roleAccessPermissionData: List[RoleAccessPermissionData],
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
         """Get list of ous based on the owned roles that the user has
 
         Args:

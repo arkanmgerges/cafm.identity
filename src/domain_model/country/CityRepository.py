@@ -8,9 +8,10 @@ from src.domain_model.country.City import City
 
 
 class CityRepository(ABC):
-
     @abstractmethod
-    def cities(self, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
+    def cities(
+        self, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None
+    ) -> dict:
         """Get list of cities
 
         Args:
@@ -37,7 +38,13 @@ class CityRepository(ABC):
         """
 
     @abstractmethod
-    def citiesByStateId(self, id: str, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
+    def citiesByStateId(
+        self,
+        id: str,
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
         """Get list of cities
 
         Args:

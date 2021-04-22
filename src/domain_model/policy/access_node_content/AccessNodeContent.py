@@ -5,8 +5,8 @@ from enum import Enum
 
 
 class AccessNodeContentTypeConstant(Enum):
-    RESOURCE_INSTANCE = 'resource_instance'
-    RESOURCE_TYPE = 'resource_type'
+    RESOURCE_INSTANCE = "resource_instance"
+    RESOURCE_TYPE = "resource_type"
 
 
 class AccessNodeContent:
