@@ -3,8 +3,9 @@
 """
 from typing import Callable, List
 
-from src.port_adapter.messaging.listener.common.handler.policy.RevokeAssignmentRoleToUserGroupHandler import \
-    RevokeAssignmentRoleToUserGroupHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.policy.RevokeAssignmentRoleToUserGroupHandler import (
+    RevokeAssignmentRoleToUserGroupHandler as Handler,
+)
 
 
 class RevokeAssignmentRoleToUserGroupHandler(Handler):

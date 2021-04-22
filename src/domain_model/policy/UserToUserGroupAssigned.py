@@ -15,5 +15,7 @@ c4model|cb|identity:ComponentQueue(identity__domainmodel_event__UserToUserGroupA
 
 class UserToUserGroupAssigned(DomainEvent):
     def __init__(self, user: User, userGroup: UserGroup):
-        super().__init__(id=str(uuid4()), name=CommonEventConstant.USER_TO_USER_GROUP_ASSIGNED.value)
-        self._data = {'user_id': user.id(), 'user_group_id': userGroup.id()}
+        super().__init__(
+            id=str(uuid4()), name=CommonEventConstant.USER_TO_USER_GROUP_ASSIGNED.value
+        )
+        self._data = {"user_id": user.id(), "user_group_id": userGroup.id()}

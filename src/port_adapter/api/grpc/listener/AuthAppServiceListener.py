@@ -7,17 +7,27 @@ from typing import List
 import grpc
 
 import src.port_adapter.AppDi as AppDi
-from src.application.AuthenticationApplicationService import AuthenticationApplicationService
+from src.application.AuthenticationApplicationService import (
+    AuthenticationApplicationService,
+)
 from src.domain_model.event.DomainEvent import DomainEvent
-from src.domain_model.resource.exception.InvalidCredentialsException import InvalidCredentialsException
-from src.domain_model.resource.exception.UserDoesNotExistException import UserDoesNotExistException
+from src.domain_model.resource.exception.InvalidCredentialsException import (
+    InvalidCredentialsException,
+)
+from src.domain_model.resource.exception.UserDoesNotExistException import (
+    UserDoesNotExistException,
+)
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.identity.auth_app_service_pb2 import \
-    AuthAppService_authenticateUserByEmailAndPasswordResponse, \
-    AuthAppService_isAuthenticatedResponse, AuthAppService_logoutResponse
-from src.resource.proto._generated.identity.auth_app_service_pb2_grpc import AuthAppServiceServicer
+from src.resource.proto._generated.identity.auth_app_service_pb2 import (
+    AuthAppService_authenticateUserByEmailAndPasswordResponse,
+    AuthAppService_isAuthenticatedResponse,
+    AuthAppService_logoutResponse,
+)
+from src.resource.proto._generated.identity.auth_app_service_pb2_grpc import (
+    AuthAppServiceServicer,
+)
 
 
 class AuthAppServiceListener(AuthAppServiceServicer):
@@ -33,6 +43,7 @@ class AuthAppServiceListener(AuthAppServiceServicer):
     """
     c4model|cb|identity:Component(identity__grpc__AuthAppServiceListener__authenticateUserByEmailAndPassword, "Auth user by email and password", "grpc listener", "Authenticate a user")
     """
+
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def authenticateUserByEmailAndPassword(self, request, context):
@@ -42,30 +53,45 @@ class AuthAppServiceListener(AuthAppServiceServicer):
             # for key, value in context.invocation_metadata():
             #     print('Received initial metadata: key=%s value=%s' % (key, value))
             logger.debug(
-                f'[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - receive request with name: {request.email}')
-            authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
-            token: str = authAppService.authenticateUserByEmailAndPassword(email=request.email,
-                                                                           password=request.password)
-            from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
-            self._produceDomainEvents(domainEvents=DomainPublishedEvents.postponedEvents(), token=token)
+                f"[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - receive request with name: {request.email}"
+            )
+            authAppService: AuthenticationApplicationService = AppDi.instance.get(
+                AuthenticationApplicationService
+            )
+            token: str = authAppService.authenticateUserByEmailAndPassword(
+                email=request.email, password=request.password
+            )
+            from src.domain_model.event.DomainPublishedEvents import (
+                DomainPublishedEvents,
+            )
+
+            self._produceDomainEvents(
+                domainEvents=DomainPublishedEvents.postponedEvents(), token=token
+            )
             logger.debug(
-                f'[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - token returned token: {token}')
-            return AuthAppService_authenticateUserByEmailAndPasswordResponse(token=token)
+                f"[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - token returned token: {token}"
+            )
+            return AuthAppService_authenticateUserByEmailAndPasswordResponse(
+                token=token
+            )
         except InvalidCredentialsException:
             logger.debug(
-                f'[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, {InvalidCredentialsException.__qualname__}')
+                f"[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, {InvalidCredentialsException.__qualname__}"
+            )
             context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details('Invalid credentials')
+            context.set_details("Invalid credentials")
             return AuthAppService_authenticateUserByEmailAndPasswordResponse()
         except UserDoesNotExistException:
             logger.debug(
-                f'[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, {UserDoesNotExistException.__qualname__}')
+                f"[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, {UserDoesNotExistException.__qualname__}"
+            )
             context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details('User does not exist')
+            context.set_details("User does not exist")
             return AuthAppService_authenticateUserByEmailAndPasswordResponse()
         except Exception as e:
             logger.warn(
-                f'[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, Unknown: {e}')
+                f"[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, Unknown: {e}"
+            )
             raise e
 
     # def isAuthenticated(self, request, context):
@@ -90,11 +116,16 @@ class AuthAppServiceListener(AuthAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def isAuthenticated(self, request, context):
         try:
-            authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
-            logger.debug(f'[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Call with token: {request.token}')
+            authAppService: AuthenticationApplicationService = AppDi.instance.get(
+                AuthenticationApplicationService
+            )
+            logger.debug(
+                f"[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Call with token: {request.token}"
+            )
             result = authAppService.isAuthenticated(token=request.token)
             logger.debug(
-                f'[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Receive response with result: {result}')
+                f"[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Receive response with result: {result}"
+            )
             return AuthAppService_isAuthenticatedResponse(response=result)
         except Exception as e:
             context.set_code(grpc.StatusCode.ERROR)
@@ -104,12 +135,17 @@ class AuthAppServiceListener(AuthAppServiceServicer):
     """
     c4model|cb|identity:Component(identity__grpc__AuthAppServiceListener__logout, "Logout user", "grpc listener", "Logout a user")
     """
+
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
     def logout(self, request, context):
         try:
-            authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
-            logger.debug(f'[{AuthAppServiceListener.logout.__qualname__}] - Call with token: {request.token}')
+            authAppService: AuthenticationApplicationService = AppDi.instance.get(
+                AuthenticationApplicationService
+            )
+            logger.debug(
+                f"[{AuthAppServiceListener.logout.__qualname__}] - Call with token: {request.token}"
+            )
             authAppService.logout(token=request.token)
             return AuthAppService_logoutResponse()
         except Exception as e:
@@ -119,23 +155,38 @@ class AuthAppServiceListener(AuthAppServiceServicer):
 
     def _produceDomainEvents(self, domainEvents: List[DomainEvent], token: str):
         if len(domainEvents) > 0:
-            from src.port_adapter.messaging.common.TransactionalProducer import TransactionalProducer
+            from src.port_adapter.messaging.common.TransactionalProducer import (
+                TransactionalProducer,
+            )
+
             producer: TransactionalProducer = AppDi.instance.get(TransactionalProducer)
             for domainEvent in domainEvents:
-                from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
+                from src.port_adapter.messaging.common.model.IdentityEvent import (
+                    IdentityEvent,
+                )
+
                 producer.initTransaction()
                 producer.beginTransaction()
                 import os
                 import json
+
                 producer.produce(
-                    obj=IdentityEvent(id=domainEvent.id(),
-                                      creatorServiceName=os.getenv('CAFM_IDENTITY_SERVICE_NAME', 'cafm.identity'),
-                                      name=domainEvent.name(),
-                                      metadata=json.dumps({'token': token}),
-                                      data=json.dumps(domainEvent.data()),
-                                      createdOn=domainEvent.occurredOn(),
-                                      external=[]),
-                    schema=IdentityEvent.get_schema())
-            from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
+                    obj=IdentityEvent(
+                        id=domainEvent.id(),
+                        creatorServiceName=os.getenv(
+                            "CAFM_IDENTITY_SERVICE_NAME", "cafm.identity"
+                        ),
+                        name=domainEvent.name(),
+                        metadata=json.dumps({"token": token}),
+                        data=json.dumps(domainEvent.data()),
+                        createdOn=domainEvent.occurredOn(),
+                        external=[],
+                    ),
+                    schema=IdentityEvent.get_schema(),
+                )
+            from src.domain_model.event.DomainPublishedEvents import (
+                DomainPublishedEvents,
+            )
+
             DomainPublishedEvents.cleanup()
             producer.commitTransaction()

@@ -29,7 +29,7 @@ class PermissionRepository(ABC):
             tokenData (TokenData): Token data used for deleting the resource
 
         :raises:
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the permission could not be deleted            
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the permission could not be deleted
         """
 
     @abstractmethod
@@ -43,7 +43,7 @@ class PermissionRepository(ABC):
             Permission: permission object
 
         :raises:
-            `PermissionDoesNotExistException <src.domain_model.resource.exception.PermissionDoesNotExistException>` Raise an exception if the permission does not exist            
+            `PermissionDoesNotExistException <src.domain_model.resource.exception.PermissionDoesNotExistException>` Raise an exception if the permission does not exist
         """
 
     @abstractmethod
@@ -55,15 +55,20 @@ class PermissionRepository(ABC):
 
         Returns:
             Permission: permission object
-            
+
         :raises:
             `PermissionDoesNotExistException <src.domain_model.resource.exception.PermissionDoesNotExistException>` Raise an exception if the permission does not exist
         """
 
     @abstractmethod
-    def permissions(self, tokenData: TokenData, roleAccessPermissionData: List[RoleAccessPermissionData],
-                    resultFrom: int = 0, resultSize: int = 100,
-                    order: List[dict] = None) -> dict:
+    def permissions(
+        self,
+        tokenData: TokenData,
+        roleAccessPermissionData: List[RoleAccessPermissionData],
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
         """Get list of permissions based on the owned roles that the user has
 
         Args:

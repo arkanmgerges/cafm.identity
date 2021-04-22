@@ -9,11 +9,10 @@ from src.domain_model.country.Country import Country
 
 
 class CountryRepository(ABC):
-
     @abstractmethod
-    def countries(self, resultFrom: int = 0,
-                  resultSize: int = 100,
-                  order: List[dict] = None) -> dict:
+    def countries(
+        self, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None
+    ) -> dict:
         """Get list of countries
 
         Args:
@@ -40,10 +39,13 @@ class CountryRepository(ABC):
         """
 
     @abstractmethod
-    def citiesByCountryId(self, id: int = 0,
-                          resultFrom: int = 0,
-                          resultSize: int = 100,
-                          order: List[dict] = None) -> dict:
+    def citiesByCountryId(
+        self,
+        id: int = 0,
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
         """Get a country cities by country id
 
         Args:
@@ -72,10 +74,13 @@ class CountryRepository(ABC):
         """
 
     @abstractmethod
-    def statesByCountryId(self, id: int = 0,
-                          resultFrom: int = 0,
-                          resultSize: int = 100,
-                          order: List[dict] = None) -> dict:
+    def statesByCountryId(
+        self,
+        id: int = 0,
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
         """Get a country states by country id
 
         Args:

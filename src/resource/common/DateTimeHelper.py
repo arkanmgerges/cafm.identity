@@ -12,6 +12,7 @@ class DateTimeHelper:
              int: Current UTC time in milliseconds
         """
         import datetime
+
         epoch = datetime.datetime(1970, 1, 1, 0, 0, 0)
         now = datetime.datetime.utcnow()
         return round((now - epoch).total_seconds() * 1000)

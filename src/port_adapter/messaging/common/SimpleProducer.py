@@ -8,9 +8,8 @@ from src.port_adapter.messaging.common.model.MessageBase import MessageBase
 
 
 class SimpleProducer(ABC):
-    """Message producer to the message broker
+    """Message producer to the message broker"""
 
-    """
     @abstractmethod
     def produce(self, obj: MessageBase, schema: dict) -> None:
         """Send message to the message broker

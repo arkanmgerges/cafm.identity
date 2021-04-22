@@ -29,7 +29,7 @@ class RealmRepository(ABC):
             tokenData (TokenData): Token data used for deleting the resource
 
         :raises:
-            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the realm could not be deleted            
+            `ObjectCouldNotBeDeletedException <src.domain_model.resource.exception.ObjectCouldNotBeDeletedException>` Raise an exception if the realm could not be deleted
         """
 
     @abstractmethod
@@ -43,7 +43,7 @@ class RealmRepository(ABC):
             Realm: realm object
 
         :raises:
-            `RealmDoesNotExistException <src.domain_model.resource.exception.RealmDoesNotExistException>` Raise an exception if the realm does not exist            
+            `RealmDoesNotExistException <src.domain_model.resource.exception.RealmDoesNotExistException>` Raise an exception if the realm does not exist
         """
 
     @abstractmethod
@@ -57,12 +57,18 @@ class RealmRepository(ABC):
             Realm: realm object
 
         :raises:
-            `RealmDoesNotExistException <src.domain_model.resource.exception.RealmDoesNotExistException>` Raise an exception if the realm does not exist            
+            `RealmDoesNotExistException <src.domain_model.resource.exception.RealmDoesNotExistException>` Raise an exception if the realm does not exist
         """
 
     @abstractmethod
-    def realms(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
-                        order: List[dict] = None) -> dict:
+    def realms(
+        self,
+        tokenData: TokenData,
+        roleAccessPermissionData: List[RoleAccessPermissionData],
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
         """Get list of realms based on the owned roles that the user has
 
         Args:

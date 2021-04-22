@@ -8,15 +8,23 @@ import grpc
 import src.port_adapter.AppDi as AppDi
 from src.application.CityApplicationService import CityApplicationService
 from src.domain_model.country.City import City
-from src.domain_model.resource.exception.CountryDoesNotExistException import CountryDoesNotExistException
-from src.domain_model.resource.exception.UnAuthorizedException import UnAuthorizedException
+from src.domain_model.resource.exception.CountryDoesNotExistException import (
+    CountryDoesNotExistException,
+)
+from src.domain_model.resource.exception.UnAuthorizedException import (
+    UnAuthorizedException,
+)
 from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
-from src.resource.proto._generated.identity.city_app_service_pb2 import CityAppService_citiesResponse, \
-    CityAppService_cityByIdResponse
-from src.resource.proto._generated.identity.city_app_service_pb2_grpc import CityAppServiceServicer
+from src.resource.proto._generated.identity.city_app_service_pb2 import (
+    CityAppService_citiesResponse,
+    CityAppService_cityByIdResponse,
+)
+from src.resource.proto._generated.identity.city_app_service_pb2_grpc import (
+    CityAppServiceServicer,
+)
 
 
 class CityAppServiceListener(CityAppServiceServicer):
@@ -40,8 +48,11 @@ class CityAppServiceListener(CityAppServiceServicer):
         try:
             metadata = context.invocation_metadata()
             logger.debug(
-                f'[{CityAppServiceListener.cityById.__qualname__}] - metadata: {metadata}\n\t id: {request.id}')
-            cityAppService: CityApplicationService = AppDi.instance.get(CityApplicationService)
+                f"[{CityAppServiceListener.cityById.__qualname__}] - metadata: {metadata}\n\t id: {request.id}"
+            )
+            cityAppService: CityApplicationService = AppDi.instance.get(
+                CityApplicationService
+            )
 
             city: City = cityAppService.cityById(id=request.id)
 
@@ -57,15 +68,17 @@ class CityAppServiceListener(CityAppServiceServicer):
             response.city.cityName = city.cityName()
             response.city.timeZone = city.timeZone()
             response.city.isInEuropeanUnion = city.isInEuropeanUnion()
-            logger.debug(f'[{CityAppServiceListener.cityById.__qualname__}] - response: {response}')
+            logger.debug(
+                f"[{CityAppServiceListener.cityById.__qualname__}] - response: {response}"
+            )
             return response
         except CountryDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details('city does not exist')
+            context.set_details("city does not exist")
             return CityAppService_cityByIdResponse()
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
-            context.set_details('Un Authorized')
+            context.set_details("Un Authorized")
             return CityAppService_cityByIdResponse()
 
     """
@@ -79,25 +92,41 @@ class CityAppServiceListener(CityAppServiceServicer):
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize >= 0 else 10
             logger.debug(
-                f'[{CityAppServiceListener.cities.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}')
-            cityAppService: CityApplicationService = AppDi.instance.get(CityApplicationService)
+                f"[{CityAppServiceListener.cities.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}"
+            )
+            cityAppService: CityApplicationService = AppDi.instance.get(
+                CityApplicationService
+            )
 
-            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
-            result: dict = cityAppService.cities(resultFrom=request.resultFrom, resultSize=resultSize, order=orderData)
+            orderData = [
+                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
+            ]
+            result: dict = cityAppService.cities(
+                resultFrom=request.resultFrom, resultSize=resultSize, order=orderData
+            )
             response = CityAppService_citiesResponse()
-            response.itemCount = result['itemCount']
-            for city in result['items']:
-                response.cities.add(id=city.id(), localeCode=city.localeCode(),
-                                    continentCode=city.continentCode(), continentName=city.continentName(),
-                                    countryIsoCode=city.countryIsoCode(), countryName=city.countryName(),
-                                    subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
-                                    subdivisionOneIsoName=city.subdivisionOneIsoName(), cityName=city.cityName(),
-                                    timeZone=city.timeZone(), isInEuropeanUnion=city.isInEuropeanUnion())
-            logger.debug(f'[{CityApplicationService.cities.__qualname__}] - response: {response}')
+            response.itemCount = result["itemCount"]
+            for city in result["items"]:
+                response.cities.add(
+                    id=city.id(),
+                    localeCode=city.localeCode(),
+                    continentCode=city.continentCode(),
+                    continentName=city.continentName(),
+                    countryIsoCode=city.countryIsoCode(),
+                    countryName=city.countryName(),
+                    subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
+                    subdivisionOneIsoName=city.subdivisionOneIsoName(),
+                    cityName=city.cityName(),
+                    timeZone=city.timeZone(),
+                    isInEuropeanUnion=city.isInEuropeanUnion(),
+                )
+            logger.debug(
+                f"[{CityApplicationService.cities.__qualname__}] - response: {response}"
+            )
             return response
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
-            context.set_details('Un Authorized')
+            context.set_details("Un Authorized")
             return CityAppService_citiesResponse()
 
     """
@@ -111,24 +140,42 @@ class CityAppServiceListener(CityAppServiceServicer):
             metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize >= 0 else 10
             logger.debug(
-                f'[{CityAppServiceListener.citiesByStateId.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}')
-            cityAppService: CityApplicationService = AppDi.instance.get(CityApplicationService)
+                f"[{CityAppServiceListener.citiesByStateId.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}"
+            )
+            cityAppService: CityApplicationService = AppDi.instance.get(
+                CityApplicationService
+            )
 
-            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
-            result: dict = cityAppService.citiesByStateId(id=request.id, resultFrom=request.resultFrom,
-                                                          resultSize=resultSize, order=orderData)
+            orderData = [
+                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
+            ]
+            result: dict = cityAppService.citiesByStateId(
+                id=request.id,
+                resultFrom=request.resultFrom,
+                resultSize=resultSize,
+                order=orderData,
+            )
             response = CityAppService_citiesResponse()
-            response.itemCount = result['itemCount']
-            for city in result['items']:
-                response.cities.add(id=city.id(), localeCode=city.localeCode(),
-                                    continentCode=city.continentCode(), continentName=city.continentName(),
-                                    countryIsoCode=city.countryIsoCode(), countryName=city.countryName(),
-                                    subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
-                                    subdivisionOneIsoName=city.subdivisionOneIsoName(), cityName=city.cityName(),
-                                    timeZone=city.timeZone(), isInEuropeanUnion=city.isInEuropeanUnion())
-            logger.debug(f'[{CityApplicationService.citiesByStateId.__qualname__}] - response: {response}')
+            response.itemCount = result["itemCount"]
+            for city in result["items"]:
+                response.cities.add(
+                    id=city.id(),
+                    localeCode=city.localeCode(),
+                    continentCode=city.continentCode(),
+                    continentName=city.continentName(),
+                    countryIsoCode=city.countryIsoCode(),
+                    countryName=city.countryName(),
+                    subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
+                    subdivisionOneIsoName=city.subdivisionOneIsoName(),
+                    cityName=city.cityName(),
+                    timeZone=city.timeZone(),
+                    isInEuropeanUnion=city.isInEuropeanUnion(),
+                )
+            logger.debug(
+                f"[{CityApplicationService.citiesByStateId.__qualname__}] - response: {response}"
+            )
             return response
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
-            context.set_details('Un Authorized')
+            context.set_details("Un Authorized")
             return CityAppService_citiesResponse()

@@ -14,5 +14,11 @@ c4model|cb|identity:ComponentQueue(identity__domainmodel_event__ResourceToResour
 
 class ResourceToResourceAssigned(DomainEvent):
     def __init__(self, srcResource: Resource, dstResource: Resource):
-        super().__init__(id=str(uuid4()), name=CommonEventConstant.RESOURCE_TO_RESOURCE_ASSIGNED.value)
-        self._data = {'src_resource_id': srcResource.id(), 'dst_resource_id': dstResource.id()}
+        super().__init__(
+            id=str(uuid4()),
+            name=CommonEventConstant.RESOURCE_TO_RESOURCE_ASSIGNED.value,
+        )
+        self._data = {
+            "src_resource_id": srcResource.id(),
+            "dst_resource_id": dstResource.id(),
+        }

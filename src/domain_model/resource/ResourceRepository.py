@@ -8,7 +8,7 @@ from src.domain_model.resource.Resource import Resource
 
 class ResourceRepository(ABC):
     @abstractmethod
-    def resourceById(self, id: str = '') -> Resource:
+    def resourceById(self, id: str = "") -> Resource:
         """Retrieve a resource by id
 
         Args:

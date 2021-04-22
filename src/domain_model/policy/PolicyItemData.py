@@ -12,12 +12,19 @@ from src.domain_model.permission_context.PermissionContext import PermissionCont
 
 
 class RoleWithPermissionToPermissionContexts:
-    def __init__(self, role: str, permission: Permission, permissionContexts: List[PermissionContext] = None):
+    def __init__(
+        self,
+        role: str,
+        permission: Permission,
+        permissionContexts: List[PermissionContext] = None,
+    ):
         self.role = role
         self.permission = permission
         self.permissionContexts = permissionContexts
 
 
 class PolicyItemData:
-    def __init__(self, rolesWithPermissions: List[RoleWithPermissionToPermissionContexts] = None):
+    def __init__(
+        self, rolesWithPermissions: List[RoleWithPermissionToPermissionContexts] = None
+    ):
         self.rolesWithPermissions = rolesWithPermissions

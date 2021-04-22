@@ -109,7 +109,9 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def revokeRoleToPermissionAssignment(self, role: Role, permission: Permission) -> None:
+    def revokeRoleToPermissionAssignment(
+        self, role: Role, permission: Permission
+    ) -> None:
         """Revoke a role from a permission
 
         Args:
@@ -121,7 +123,9 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def assignPermissionToPermissionContext(self, permission: Permission, permissionContext: PermissionContext) -> None:
+    def assignPermissionToPermissionContext(
+        self, permission: Permission, permissionContext: PermissionContext
+    ) -> None:
         """Assign permission to a permission context
 
         Args:
@@ -133,8 +137,9 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def revokePermissionToPermissionContextAssignment(self, permission: Permission,
-                                                      permissionContext: PermissionContext) -> None:
+    def revokePermissionToPermissionContextAssignment(
+        self, permission: Permission, permissionContext: PermissionContext
+    ) -> None:
         """Revoke assignment of a permission to a permission context
 
         Args:
@@ -170,7 +175,9 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def assignResourceToResource(self, resourceSrc: Resource, resourceDst: Resource) -> None:
+    def assignResourceToResource(
+        self, resourceSrc: Resource, resourceDst: Resource
+    ) -> None:
         """Make an assignment from a resource to another resource
 
         Args:
@@ -182,7 +189,9 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def revokeAssignmentResourceToResource(self, resourceSrc: Resource, resourceDst: Resource) -> None:
+    def revokeAssignmentResourceToResource(
+        self, resourceSrc: Resource, resourceDst: Resource
+    ) -> None:
         """Revoke assignment from a resource to another resource
 
         Args:
@@ -203,8 +212,9 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def roleAccessPermissionsData(self, tokenData: TokenData, includeAccessTree: bool) -> List[
-        RoleAccessPermissionData]:
+    def roleAccessPermissionsData(
+        self, tokenData: TokenData, includeAccessTree: bool
+    ) -> List[RoleAccessPermissionData]:
         """Retrieve the permissions and permission contexts connected to it also related to the roles that belong
         to the token provided
 
@@ -229,9 +239,13 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def resourcesOfTypeByTokenData(self, resourceType: str = '', tokenData: TokenData = None,
-                                   roleAccessPermissionData: List[RoleAccessPermissionData] = None,
-                                   sortData: str = '') -> dict:
+    def resourcesOfTypeByTokenData(
+        self,
+        resourceType: str = "",
+        tokenData: TokenData = None,
+        roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+        sortData: str = "",
+    ) -> dict:
         """Get resources that is filtered by the allowed permissions
 
         Args:
@@ -245,9 +259,12 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def permissionsByTokenData(self, tokenData: TokenData = None,
-                               roleAccessPermissionData: List[RoleAccessPermissionData] = None,
-                               sortData: str = '') -> dict:
+    def permissionsByTokenData(
+        self,
+        tokenData: TokenData = None,
+        roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+        sortData: str = "",
+    ) -> dict:
         """Get permissions that is filtered by the allowed permissions
 
         Args:
@@ -260,9 +277,12 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def permissionContextsByTokenData(self, tokenData: TokenData = None,
-                                      roleAccessPermissionData: List[RoleAccessPermissionData] = None,
-                                      sortData: str = '') -> dict:
+    def permissionContextsByTokenData(
+        self,
+        tokenData: TokenData = None,
+        roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+        sortData: str = "",
+    ) -> dict:
         """Get permission contexts that is filtered by the allowed permissions
 
         Args:
@@ -275,8 +295,11 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def rolesTrees(self, tokenData: TokenData = None,
-                   roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> List[RoleAccessPermissionData]:
+    def rolesTrees(
+        self,
+        tokenData: TokenData = None,
+        roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+    ) -> List[RoleAccessPermissionData]:
         """Get trees of the roles that is filtered by the allowed permissions
 
         Args:
@@ -288,8 +311,12 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def roleTree(self, tokenData: TokenData = None, roleId: str = '',
-                 roleAccessPermissionData: List[RoleAccessPermissionData] = None) -> RoleAccessPermissionData:
+    def roleTree(
+        self,
+        tokenData: TokenData = None,
+        roleId: str = "",
+        roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+    ) -> RoleAccessPermissionData:
         """Get trees of the a role that is filtered by the allowed permissions
 
         Args:

@@ -3,8 +3,9 @@
 """
 from typing import Callable, List
 
-from src.port_adapter.messaging.listener.common.handler.policy.RevokeAssignmentPermissionToPermissionContextHandler import \
-    RevokeAssignmentPermissionToPermissionContextHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.policy.RevokeAssignmentPermissionToPermissionContextHandler import (
+    RevokeAssignmentPermissionToPermissionContextHandler as Handler,
+)
 
 
 class RevokeAssignmentPermissionToPermissionContextHandler(Handler):

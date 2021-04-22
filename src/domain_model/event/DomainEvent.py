@@ -9,7 +9,7 @@ from src.resource.common.DateTimeHelper import DateTimeHelper
 
 
 class DomainEvent(ABC):
-    def __init__(self, id: str = str(uuid4()), name: str = '', occurredOn: int = None):
+    def __init__(self, id: str = str(uuid4()), name: str = "", occurredOn: int = None):
         self._id = id
         self._name = name
         self._occurredOn = DateTimeHelper.utcNow() if occurredOn is None else occurredOn
@@ -32,9 +32,7 @@ class DomainEvent(ABC):
         return self._name
 
     def occurredOn(self) -> int:
-        """When the event happened
-
-        """
+        """When the event happened"""
         return self._occurredOn
 
     def data(self) -> dict:

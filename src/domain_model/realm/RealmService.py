@@ -4,8 +4,12 @@
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.realm.Realm import Realm
 from src.domain_model.realm.RealmRepository import RealmRepository
-from src.domain_model.resource.exception.RealmAlreadyExistException import RealmAlreadyExistException
-from src.domain_model.resource.exception.RealmDoesNotExistException import RealmDoesNotExistException
+from src.domain_model.resource.exception.RealmAlreadyExistException import (
+    RealmAlreadyExistException,
+)
+from src.domain_model.resource.exception.RealmDoesNotExistException import (
+    RealmDoesNotExistException,
+)
 from src.domain_model.token.TokenData import TokenData
 from src.resource.logging.decorator import debugLogger
 
@@ -16,9 +20,15 @@ class RealmService:
         self._policyRepo = policyRepo
 
     @debugLogger
-    def createRealm(self, obj: Realm, objectOnly: bool = False, tokenData: TokenData = None):
+    def createRealm(
+        self, obj: Realm, objectOnly: bool = False, tokenData: TokenData = None
+    ):
         if objectOnly:
-            return Realm.createFromObject(obj=obj, generateNewId=True) if obj.id() == '' else obj
+            return (
+                Realm.createFromObject(obj=obj, generateNewId=True)
+                if obj.id() == ""
+                else obj
+            )
         else:
             obj = Realm.createFromObject(obj=obj, publishEvent=True)
             self._repo.save(obj=obj, tokenData=tokenData)
@@ -30,6 +40,8 @@ class RealmService:
         self._repo.deleteRealm(obj, tokenData=tokenData)
 
     @debugLogger
-    def updateRealm(self, oldObject: Realm, newObject: Realm, tokenData: TokenData = None):
+    def updateRealm(
+        self, oldObject: Realm, newObject: Realm, tokenData: TokenData = None
+    ):
         newObject.publishUpdate(oldObject)
         self._repo.save(obj=newObject, tokenData=tokenData)

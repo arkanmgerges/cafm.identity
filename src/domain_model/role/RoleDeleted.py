@@ -10,6 +10,8 @@ import src.domain_model.role.Role as Role
 """
 c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RoleDeleted, "CommonEventConstant.ROLE_DELETED.value", "message", "event")
 """
+
+
 class RoleDeleted(DomainEvent):
     def __init__(self, role: Role):
         super().__init__(id=str(uuid4()), name=CommonEventConstant.ROLE_DELETED.value)

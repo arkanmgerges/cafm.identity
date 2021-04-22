@@ -4,11 +4,17 @@
 import time
 
 import src.port_adapter.AppDi as AppDi
-from src.application.AuthorizationApplicationService import AuthorizationApplicationService
+from src.application.AuthorizationApplicationService import (
+    AuthorizationApplicationService,
+)
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
-from src.resource.proto._generated.identity.authz_app_service_pb2 import AuthzAppService_hashKeysResponse
-from src.resource.proto._generated.identity.authz_app_service_pb2_grpc import AuthzAppServiceServicer
+from src.resource.proto._generated.identity.authz_app_service_pb2 import (
+    AuthzAppService_hashKeysResponse,
+)
+from src.resource.proto._generated.identity.authz_app_service_pb2_grpc import (
+    AuthzAppServiceServicer,
+)
 from src.resource.proto._generated.identity.hashed_key_pb2 import HashedKey
 
 
@@ -25,11 +31,20 @@ class AuthzAppServiceListener(AuthzAppServiceServicer):
     @debugLogger
     def hashKeys(self, request, context):
         try:
-            authzAppService: AuthorizationApplicationService = AppDi.instance.get(AuthorizationApplicationService)
-            result = authzAppService.hashKeys(keys=[{'key': item.key} for item in request.keys])
+            authzAppService: AuthorizationApplicationService = AppDi.instance.get(
+                AuthorizationApplicationService
+            )
+            result = authzAppService.hashKeys(
+                keys=[{"key": item.key} for item in request.keys]
+            )
             return AuthzAppService_hashKeysResponse(
-                hashedKeys=[HashedKey(key=item['key'], hashCode=item['hashCode']) for item in result])
+                hashedKeys=[
+                    HashedKey(key=item["key"], hashCode=item["hashCode"])
+                    for item in result
+                ]
+            )
         except Exception as e:
             logger.warn(
-                f'[{AuthzAppServiceListener.hashKeys.__qualname__}] - exception, Unknown: {e}')
+                f"[{AuthzAppServiceListener.hashKeys.__qualname__}] - exception, Unknown: {e}"
+            )
             raise e

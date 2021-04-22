@@ -49,22 +49,37 @@ class Handler(ABC):
         return []
 
     @staticmethod
-    def targetOnException(messageData: dict, e: Exception, creatorServiceName: str) -> dict:
-        external = messageData['external'] if 'external' in messageData else []
+    def targetOnException(
+        messageData: dict, e: Exception, creatorServiceName: str
+    ) -> dict:
+        external = messageData["external"] if "external" in messageData else []
         dataDict = external[0] if len(external) > 0 else messageData
-        return {'obj': ApiResponse(commandId=dataDict['id'], commandName=dataDict['name'],
-                                   metadata=messageData['metadata'],
-                                   data=json.dumps({'reason': {'message': e.message, 'code': e.code}}),
-                                   creatorServiceName=creatorServiceName, success=False),
-                'schema': ApiResponse.get_schema()
-                }
+        return {
+            "obj": ApiResponse(
+                commandId=dataDict["id"],
+                commandName=dataDict["name"],
+                metadata=messageData["metadata"],
+                data=json.dumps({"reason": {"message": e.message, "code": e.code}}),
+                creatorServiceName=creatorServiceName,
+                success=False,
+            ),
+            "schema": ApiResponse.get_schema(),
+        }
 
     @staticmethod
-    def targetOnSuccess(messageData: dict, creatorServiceName: str, resultData: dict) -> dict:
-        external = messageData['external'] if 'external' in messageData else []
+    def targetOnSuccess(
+        messageData: dict, creatorServiceName: str, resultData: dict
+    ) -> dict:
+        external = messageData["external"] if "external" in messageData else []
         dataDict = external[0] if len(external) > 0 else messageData
-        return {'obj': ApiResponse(commandId=dataDict['id'], commandName=dataDict['name'],
-                                   metadata=messageData['metadata'],
-                                   data=json.dumps(resultData),
-                                   creatorServiceName=creatorServiceName, success=True),
-                'schema': ApiResponse.get_schema()}
+        return {
+            "obj": ApiResponse(
+                commandId=dataDict["id"],
+                commandName=dataDict["name"],
+                metadata=messageData["metadata"],
+                data=json.dumps(resultData),
+                creatorServiceName=creatorServiceName,
+                success=True,
+            ),
+            "schema": ApiResponse.get_schema(),
+        }

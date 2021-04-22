@@ -18,7 +18,7 @@ def test_create_user_group():
     # Assert
     assert isinstance(userGroup, UserGroup)
     assert isinstance(userGroup, Resource)
-    assert userGroup.type() == 'user_group'
+    assert userGroup.type() == "user_group"
 
 
 def test_create_by_semantic_constructor():
@@ -30,20 +30,20 @@ def test_create_by_semantic_constructor():
     assert isinstance(userGroup, UserGroup)
     assert userGroup.id() == id
     data = DomainPublishedEvents.postponedEvents()[0].data()
-    assert data['user_group_id'] == id
+    assert data["user_group_id"] == id
 
 
 def test_that_two_objects_with_same_attributes_are_equal():
     # Act
-    object1 = UserGroup.createFrom('1234', 'test')
-    object2 = UserGroup.createFrom('1234', 'test')
+    object1 = UserGroup.createFrom("1234", "test")
+    object2 = UserGroup.createFrom("1234", "test")
     # Assert
     assert object1 == object2
 
 
 def test_that_two_objects_with_different_attributes_are_not_equal():
     # Act
-    object1 = UserGroup.createFrom('1234', 'test')
-    object2 = UserGroup.createFrom('1234', 'test2')
+    object1 = UserGroup.createFrom("1234", "test")
+    object2 = UserGroup.createFrom("1234", "test2")
     # Assert
     assert object1 != object2

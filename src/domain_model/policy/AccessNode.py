@@ -16,11 +16,11 @@ class AccessNode:
         mapsOfChildren = []
         for child in self.children:
             mapsOfChildren.append(child.toMap())
-        result['children'] = mapsOfChildren
+        result["children"] = mapsOfChildren
         return result
 
     def __repr__(self):
-        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+        return f"<{self.__module__} object at {hex(id(self))}> {self.toMap()}"
 
     def __str__(self) -> str:
-        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+        return f"<{self.__module__} object at {hex(id(self))}> {self.toMap()}"

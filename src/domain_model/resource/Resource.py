@@ -5,7 +5,7 @@ from uuid import uuid4
 
 
 class Resource:
-    def __init__(self, id: str = None, type: str = ''):
+    def __init__(self, id: str = None, type: str = ""):
         self._id = str(uuid4()) if id is None else id
         self._type = type
 
@@ -19,7 +19,7 @@ class Resource:
         return {"resource_id": self.id(), "type": self.type()}
 
     def __repr__(self):
-        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+        return f"<{self.__module__} object at {hex(id(self))}> {self.toMap()}"
 
     def __str__(self) -> str:
-        return f'<{self.__module__} object at {hex(id(self))}> {self.toMap()}'
+        return f"<{self.__module__} object at {hex(id(self))}> {self.toMap()}"

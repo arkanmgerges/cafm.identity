@@ -10,8 +10,18 @@ from src.domain_model.permission_context.PermissionContext import PermissionCont
 """
 c4model|cb|identity:ComponentQueue(identity__domainmodel_event__PermissionContextUpdated, "CommonEventConstant.PERMISSION_CONTEXT_UPDATED.value", "message", "event")
 """
-class PermissionContextUpdated(DomainEvent):
-    def __init__(self, oldPermissionContext: PermissionContext, newPermissionContext: PermissionContext):
-        super().__init__(id=str(uuid4()), name=CommonEventConstant.PERMISSION_CONTEXT_UPDATED.value)
-        self._data = {'old': oldPermissionContext.toMap(), 'new': newPermissionContext.toMap()}
 
+
+class PermissionContextUpdated(DomainEvent):
+    def __init__(
+        self,
+        oldPermissionContext: PermissionContext,
+        newPermissionContext: PermissionContext,
+    ):
+        super().__init__(
+            id=str(uuid4()), name=CommonEventConstant.PERMISSION_CONTEXT_UPDATED.value
+        )
+        self._data = {
+            "old": oldPermissionContext.toMap(),
+            "new": newPermissionContext.toMap(),
+        }

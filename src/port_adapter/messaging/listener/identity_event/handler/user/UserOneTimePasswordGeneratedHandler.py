@@ -1,8 +1,9 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from src.port_adapter.messaging.listener.common.handler.user.UserOneTimePasswordGeneratedHandler import \
-    UserOneTimePasswordGeneratedHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.user.UserOneTimePasswordGeneratedHandler import (
+    UserOneTimePasswordGeneratedHandler as Handler,
+)
 
 """
 c4model|cb|identity:ComponentQueue(identity__messaging_identity_event_handler__UserOneTimePasswordGeneratedHandler, "CommonEventConstant.USER_ONE_TIME_PASSWORD_GENERATED.value", "identity event consumer", "")

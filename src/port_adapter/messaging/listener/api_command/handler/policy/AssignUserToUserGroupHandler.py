@@ -3,8 +3,9 @@
 """
 from typing import List, Callable
 
-from src.port_adapter.messaging.listener.common.handler.policy.AssignUserToUserGroupHandler import \
-    AssignUserToUserGroupHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.policy.AssignUserToUserGroupHandler import (
+    AssignUserToUserGroupHandler as Handler,
+)
 
 
 class AssignUserToUserGroupHandler(Handler):

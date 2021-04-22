@@ -30,13 +30,9 @@ class MessageBase(ABC, object):
 
     @abstractmethod
     def msgId(self) -> str:
-        """Retrieve message id
-
-        """
+        """Retrieve message id"""
         pass
 
     @abstractmethod
     def msgKey(self) -> str:
-        """Retrieve message key
-
-        """
+        """Retrieve message key"""

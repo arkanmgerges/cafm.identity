@@ -11,19 +11,15 @@ class DomainPublishedEvents:
 
     @classmethod
     def addEventForPublishing(cls, domainEvent: DomainEvent) -> None:
-        """Add event to the list of postponed events
-        """
+        """Add event to the list of postponed events"""
         cls._postponedEvents.append(domainEvent)
 
     @classmethod
     def postponedEvents(cls) -> List[DomainEvent]:
-        """Get list of postponed domain events
-
-        """
+        """Get list of postponed domain events"""
         return cls._postponedEvents
 
     @classmethod
     def cleanup(cls) -> None:
-        """Empty all the domain events
-        """
+        """Empty all the domain events"""
         cls._postponedEvents = []

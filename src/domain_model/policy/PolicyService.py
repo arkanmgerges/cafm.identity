@@ -19,110 +19,214 @@ class PolicyService:
     @debugLogger
     def assignRoleToUser(self, role: Role, user: User):
         from src.domain_model.policy.RoleToUserAssigned import RoleToUserAssigned
-        DomainPublishedEvents.addEventForPublishing(RoleToUserAssigned(role=role, user=user))
+
+        DomainPublishedEvents.addEventForPublishing(
+            RoleToUserAssigned(role=role, user=user)
+        )
         self._repo.assignRoleToUser(role=role, user=user)
 
     @debugLogger
     def revokeRoleFromUser(self, role: Role, user: User):
-        from src.domain_model.policy.RoleToUserAssignmentRevoked import RoleToUserAssignmentRevoked
-        DomainPublishedEvents.addEventForPublishing(RoleToUserAssignmentRevoked(role=role, user=user))
+        from src.domain_model.policy.RoleToUserAssignmentRevoked import (
+            RoleToUserAssignmentRevoked,
+        )
+
+        DomainPublishedEvents.addEventForPublishing(
+            RoleToUserAssignmentRevoked(role=role, user=user)
+        )
         self._repo.revokeRoleFromUser(role=role, user=user)
 
     @debugLogger
     def assignRoleToPermission(self, role: Role, permission: Permission):
-        from src.domain_model.policy.RoleToPermissionAssigned import RoleToPermissionAssigned
-        DomainPublishedEvents.addEventForPublishing(RoleToPermissionAssigned(role=role, permission=permission))
+        from src.domain_model.policy.RoleToPermissionAssigned import (
+            RoleToPermissionAssigned,
+        )
+
+        DomainPublishedEvents.addEventForPublishing(
+            RoleToPermissionAssigned(role=role, permission=permission)
+        )
         self._repo.assignRoleToPermission(role=role, permission=permission)
 
     @debugLogger
     def revokeRoleToPermissionAssignment(self, role: Role, permission: Permission):
-        from src.domain_model.policy.RoleToPermissionAssignmentRevoked import RoleToPermissionAssignmentRevoked
-        DomainPublishedEvents.addEventForPublishing(RoleToPermissionAssignmentRevoked(role=role, permission=permission))
+        from src.domain_model.policy.RoleToPermissionAssignmentRevoked import (
+            RoleToPermissionAssignmentRevoked,
+        )
+
+        DomainPublishedEvents.addEventForPublishing(
+            RoleToPermissionAssignmentRevoked(role=role, permission=permission)
+        )
         self._repo.revokeRoleToPermissionAssignment(role=role, permission=permission)
 
     @debugLogger
     def grantAccessRoleToResource(self, role: Role, resource: Resource):
-        from src.domain_model.policy.RoleToResourceAccessGranted import RoleToResourceAccessGranted
-        DomainPublishedEvents.addEventForPublishing(RoleToResourceAccessGranted(role=role, resource=resource))
+        from src.domain_model.policy.RoleToResourceAccessGranted import (
+            RoleToResourceAccessGranted,
+        )
+
+        DomainPublishedEvents.addEventForPublishing(
+            RoleToResourceAccessGranted(role=role, resource=resource)
+        )
         self._repo.grantAccessRoleToResource(role=role, resource=resource)
 
     @debugLogger
     def revokeRoleToResourceAccess(self, role: Role, resource: Resource):
-        from src.domain_model.policy.RoleToResourceAccessRevoked import RoleToResourceAccessRevoked
-        DomainPublishedEvents.addEventForPublishing(RoleToResourceAccessRevoked(role=role, resource=resource))
-        self._repo.revokeRoleToResourceAccess(role=role, resource=resource)
+        from src.domain_model.policy.RoleToResourceAccessRevoked import (
+            RoleToResourceAccessRevoked,
+        )
 
+        DomainPublishedEvents.addEventForPublishing(
+            RoleToResourceAccessRevoked(role=role, resource=resource)
+        )
+        self._repo.revokeRoleToResourceAccess(role=role, resource=resource)
 
     @debugLogger
     def assignUserToUserGroup(self, user: User, userGroup: UserGroup):
-        from src.domain_model.policy.UserToUserGroupAssigned import UserToUserGroupAssigned
-        DomainPublishedEvents.addEventForPublishing(UserToUserGroupAssigned(user=user, userGroup=userGroup))
+        from src.domain_model.policy.UserToUserGroupAssigned import (
+            UserToUserGroupAssigned,
+        )
+
+        DomainPublishedEvents.addEventForPublishing(
+            UserToUserGroupAssigned(user=user, userGroup=userGroup)
+        )
         self._repo.assignUserToUserGroup(user=user, userGroup=userGroup)
 
     @debugLogger
     def revokeUserToUserGroupAssignment(self, user: User, userGroup: UserGroup):
-        from src.domain_model.policy.UserToUserGroupAssignmentRevoked import UserToUserGroupAssignmentRevoked
-        DomainPublishedEvents.addEventForPublishing(UserToUserGroupAssignmentRevoked(user=user, userGroup=userGroup))
+        from src.domain_model.policy.UserToUserGroupAssignmentRevoked import (
+            UserToUserGroupAssignmentRevoked,
+        )
+
+        DomainPublishedEvents.addEventForPublishing(
+            UserToUserGroupAssignmentRevoked(user=user, userGroup=userGroup)
+        )
         self._repo.revokeUserFromUserGroup(user=user, userGroup=userGroup)
 
     @debugLogger
     def assignRoleToUserGroup(self, role: Role, userGroup: UserGroup):
-        from src.domain_model.policy.RoleToUserGroupAssigned import RoleToUserGroupAssigned
-        DomainPublishedEvents.addEventForPublishing(RoleToUserGroupAssigned(role=role, userGroup=userGroup))
+        from src.domain_model.policy.RoleToUserGroupAssigned import (
+            RoleToUserGroupAssigned,
+        )
+
+        DomainPublishedEvents.addEventForPublishing(
+            RoleToUserGroupAssigned(role=role, userGroup=userGroup)
+        )
         self._repo.assignRoleToUserGroup(role=role, userGroup=userGroup)
 
     @debugLogger
     def revokeRoleToUserGroupAssignment(self, role: Role, userGroup: UserGroup):
-        from src.domain_model.policy.RoleToUserGroupAssignmentRevoked import RoleToUserGroupAssignmentRevoked
-        DomainPublishedEvents.addEventForPublishing(RoleToUserGroupAssignmentRevoked(role=role, userGroup=userGroup))
+        from src.domain_model.policy.RoleToUserGroupAssignmentRevoked import (
+            RoleToUserGroupAssignmentRevoked,
+        )
+
+        DomainPublishedEvents.addEventForPublishing(
+            RoleToUserGroupAssignmentRevoked(role=role, userGroup=userGroup)
+        )
         self._repo.revokeRoleFromUserGroup(role=role, userGroup=userGroup)
 
     @debugLogger
     def revokeRoleToUserAssignment(self, role: Role, user: User):
-        from src.domain_model.policy.RoleToUserAssignmentRevoked import RoleToUserAssignmentRevoked
-        DomainPublishedEvents.addEventForPublishing(RoleToUserAssignmentRevoked(role=role, user=user))
+        from src.domain_model.policy.RoleToUserAssignmentRevoked import (
+            RoleToUserAssignmentRevoked,
+        )
+
+        DomainPublishedEvents.addEventForPublishing(
+            RoleToUserAssignmentRevoked(role=role, user=user)
+        )
         self._repo.revokeRoleFromUser(role=role, user=user)
 
     @debugLogger
     def assignResourceToResource(self, resourceSrc: Resource, resourceDst: Resource):
-        from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
-        if resourceSrc.type() == PermissionContextConstant.USER.value and \
-                resourceDst.type() == PermissionContextConstant.REALM.value:
+        from src.domain_model.permission_context.PermissionContext import (
+            PermissionContextConstant,
+        )
+
+        if (
+            resourceSrc.type() == PermissionContextConstant.USER.value
+            and resourceDst.type() == PermissionContextConstant.REALM.value
+        ):
             from src.domain_model.policy.UserToRealmAssigned import UserToRealmAssigned
-            DomainPublishedEvents.addEventForPublishing(UserToRealmAssigned(user=resourceSrc, realm=resourceDst))
+
+            DomainPublishedEvents.addEventForPublishing(
+                UserToRealmAssigned(user=resourceSrc, realm=resourceDst)
+            )
         else:
-            from src.domain_model.policy.ResourceToResourceAssigned import ResourceToResourceAssigned
+            from src.domain_model.policy.ResourceToResourceAssigned import (
+                ResourceToResourceAssigned,
+            )
+
             DomainPublishedEvents.addEventForPublishing(
-                ResourceToResourceAssigned(srcResource=resourceSrc, dstResource=resourceDst))
-        self._repo.assignResourceToResource(resourceSrc=resourceSrc, resourceDst=resourceDst)
+                ResourceToResourceAssigned(
+                    srcResource=resourceSrc, dstResource=resourceDst
+                )
+            )
+        self._repo.assignResourceToResource(
+            resourceSrc=resourceSrc, resourceDst=resourceDst
+        )
 
     @debugLogger
-    def revokeAssignmentResourceToResource(self, resourceSrc: Resource, resourceDst: Resource):
-        from src.domain_model.permission_context.PermissionContext import PermissionContextConstant
-        if resourceSrc.type() == PermissionContextConstant.USER.value and \
-                resourceDst.type() == PermissionContextConstant.REALM.value:
-            from src.domain_model.policy.UserToRealmAssignmentRevoked import UserToRealmAssignmentRevoked
+    def revokeAssignmentResourceToResource(
+        self, resourceSrc: Resource, resourceDst: Resource
+    ):
+        from src.domain_model.permission_context.PermissionContext import (
+            PermissionContextConstant,
+        )
+
+        if (
+            resourceSrc.type() == PermissionContextConstant.USER.value
+            and resourceDst.type() == PermissionContextConstant.REALM.value
+        ):
+            from src.domain_model.policy.UserToRealmAssignmentRevoked import (
+                UserToRealmAssignmentRevoked,
+            )
+
             DomainPublishedEvents.addEventForPublishing(
-                UserToRealmAssignmentRevoked(user=resourceSrc, realm=resourceDst))
+                UserToRealmAssignmentRevoked(user=resourceSrc, realm=resourceDst)
+            )
         else:
-            from src.domain_model.policy.ResourceToResourceAssignmentRevoked import ResourceToResourceAssignmentRevoked
+            from src.domain_model.policy.ResourceToResourceAssignmentRevoked import (
+                ResourceToResourceAssignmentRevoked,
+            )
+
             DomainPublishedEvents.addEventForPublishing(
-                ResourceToResourceAssignmentRevoked(srcResource=resourceSrc, dstResource=resourceDst))
-        self._repo.revokeAssignmentResourceToResource(resourceSrc=resourceSrc, resourceDst=resourceDst)
+                ResourceToResourceAssignmentRevoked(
+                    srcResource=resourceSrc, dstResource=resourceDst
+                )
+            )
+        self._repo.revokeAssignmentResourceToResource(
+            resourceSrc=resourceSrc, resourceDst=resourceDst
+        )
 
     @debugLogger
-    def assignPermissionToPermissionContext(self, permission: Permission,
-                                            permissionContext: PermissionContext):
-        from src.domain_model.policy.PermissionToPermissionContextAssigned import PermissionToPermissionContextAssigned
+    def assignPermissionToPermissionContext(
+        self, permission: Permission, permissionContext: PermissionContext
+    ):
+        from src.domain_model.policy.PermissionToPermissionContextAssigned import (
+            PermissionToPermissionContextAssigned,
+        )
+
         DomainPublishedEvents.addEventForPublishing(
-            PermissionToPermissionContextAssigned(permission=permission, permissionContext=permissionContext))
-        self._repo.assignPermissionToPermissionContext(permission=permission, permissionContext=permissionContext)
+            PermissionToPermissionContextAssigned(
+                permission=permission, permissionContext=permissionContext
+            )
+        )
+        self._repo.assignPermissionToPermissionContext(
+            permission=permission, permissionContext=permissionContext
+        )
 
     @debugLogger
-    def revokePermissionToPermissionContextAssignment(self, permission: Permission,
-                                                      permissionContext: PermissionContext):
-        from src.domain_model.policy.PermissionToPermissionContextAssignmentRevoked import \
-            PermissionToPermissionContextAssignmentRevoked
+    def revokePermissionToPermissionContextAssignment(
+        self, permission: Permission, permissionContext: PermissionContext
+    ):
+        from src.domain_model.policy.PermissionToPermissionContextAssignmentRevoked import (
+            PermissionToPermissionContextAssignmentRevoked,
+        )
+
         DomainPublishedEvents.addEventForPublishing(
-            PermissionToPermissionContextAssignmentRevoked(permission=permission, permissionContext=permissionContext))
-        self._repo.revokePermissionToPermissionContextAssignment(permission=permission, permissionContext=permissionContext)
+            PermissionToPermissionContextAssignmentRevoked(
+                permission=permission, permissionContext=permissionContext
+            )
+        )
+        self._repo.revokePermissionToPermissionContextAssignment(
+            permission=permission, permissionContext=permissionContext
+        )

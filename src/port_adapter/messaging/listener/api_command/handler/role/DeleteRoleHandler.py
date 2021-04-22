@@ -3,7 +3,9 @@
 """
 from typing import List, Callable
 
-from src.port_adapter.messaging.listener.common.handler.role.DeleteRoleHandler import DeleteRoleHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.role.DeleteRoleHandler import (
+    DeleteRoleHandler as Handler,
+)
 
 """
 c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__DeleteRoleHandler, "CommonCommandConstant.DELETE_ROLE.value", "api command consumer", "")

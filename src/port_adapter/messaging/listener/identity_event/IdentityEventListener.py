@@ -12,10 +12,14 @@ from confluent_kafka.cimpl import KafkaError
 
 import src.port_adapter.AppDi as AppDi
 from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
-from src.domain_model.resource.exception.DomainModelException import DomainModelException
+from src.domain_model.resource.exception.DomainModelException import (
+    DomainModelException,
+)
 from src.port_adapter.messaging.common.Consumer import Consumer
 from src.port_adapter.messaging.common.ConsumerOffsetReset import ConsumerOffsetReset
-from src.port_adapter.messaging.common.TransactionalProducer import TransactionalProducer
+from src.port_adapter.messaging.common.TransactionalProducer import (
+    TransactionalProducer,
+)
 from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.resource.logging.logger import logger
 
@@ -23,8 +27,10 @@ from src.resource.logging.logger import logger
 class IdentityEventListener:
     def __init__(self):
         self._handlers = []
-        self._creatorServiceName = os.getenv('CAFM_IDENTITY_SERVICE_NAME', 'cafm.identity')
-        self._cafmApiServiceName = os.getenv('CAFM_API_SERVICE_NAME', 'cafm.api')
+        self._creatorServiceName = os.getenv(
+            "CAFM_IDENTITY_SERVICE_NAME", "cafm.identity"
+        )
+        self._cafmApiServiceName = os.getenv("CAFM_API_SERVICE_NAME", "cafm.api")
         self.addHandlers()
         self.targetsOnSuccess = []
         self.targetsOnException = []
@@ -36,13 +42,19 @@ class IdentityEventListener:
 
     def run(self):
         consumer: Consumer = AppDi.Builder.buildConsumer(
-            groupId=os.getenv('CAFM_IDENTITY_CONSUMER_GROUP_IDENTITY_EVT_NAME',
-                              'cafm.identity.consumer-group.identity.evt'), autoCommit=False,
+            groupId=os.getenv(
+                "CAFM_IDENTITY_CONSUMER_GROUP_IDENTITY_EVT_NAME",
+                "cafm.identity.consumer-group.identity.evt",
+            ),
+            autoCommit=False,
             partitionEof=True,
-            autoOffsetReset=ConsumerOffsetReset.earliest.name)
+            autoOffsetReset=ConsumerOffsetReset.earliest.name,
+        )
 
         # Subscribe - Consume the commands that exist in this service own topic
-        consumer.subscribe([os.getenv('CAFM_IDENTITY_EVENT_TOPIC', 'cafm.identity.evt')])
+        consumer.subscribe(
+            [os.getenv("CAFM_IDENTITY_EVENT_TOPIC", "cafm.identity.evt")]
+        )
 
         # Producer
         producer: TransactionalProducer = AppDi.instance.get(TransactionalProducer)
@@ -61,7 +73,8 @@ class IdentityEventListener:
                 if msg.error():
                     if msg.error().code() == KafkaError._PARTITION_EOF:
                         logger.info(
-                            f'[{IdentityEventListener.run.__qualname__}] msg reached partition eof: {msg.error()}')
+                            f"[{IdentityEventListener.run.__qualname__}] msg reached partition eof: {msg.error()}"
+                        )
                     else:
                         logger.error(msg.error())
                 else:
@@ -69,16 +82,22 @@ class IdentityEventListener:
                     while not isMsgProcessed:
                         # Proper message
                         logger.info(
-                            f'[{IdentityEventListener.run.__qualname__}] topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}')
-                        logger.info(f'value: {msg.value()}')
+                            f"[{IdentityEventListener.run.__qualname__}] topic: {msg.topic()}, partition: {msg.partition()}, offset: {msg.offset()} with key: {str(msg.key())}"
+                        )
+                        logger.info(f"value: {msg.value()}")
 
                         try:
                             msgData = msg.value()
-                            logger.debug(f'[{IdentityEventListener.run.__qualname__}] received message data = {msgData}')
+                            logger.debug(
+                                f"[{IdentityEventListener.run.__qualname__}] received message data = {msgData}"
+                            )
                             handledResult = self.handleCommand(messageData=msgData)
-                            if handledResult is None:  # Consume the offset since there is no handler for it
+                            if (
+                                handledResult is None
+                            ):  # Consume the offset since there is no handler for it
                                 logger.info(
-                                    f'[{IdentityEventListener.run.__qualname__}] Command handle result is None, The offset is consumed for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})')
+                                    f'[{IdentityEventListener.run.__qualname__}] Command handle result is None, The offset is consumed for handleCommand(name={msgData["name"]}, data={msgData["data"]}, metadata={msgData["metadata"]})'
+                                )
                                 producer.sendOffsetsToTransaction(consumer)
                                 producer.commitTransaction()
                                 isMsgProcessed = True
@@ -86,39 +105,48 @@ class IdentityEventListener:
                                 continue
 
                             logger.debug(
-                                f'[{IdentityEventListener.run.__qualname__}] handleResult returned with: {handledResult}')
+                                f"[{IdentityEventListener.run.__qualname__}] handleResult returned with: {handledResult}"
+                            )
 
                             # Produce to project command
-                            if 'external' in msgData:
-                                external = msgData['external']
+                            if "external" in msgData:
+                                external = msgData["external"]
                             else:
                                 external = []
 
-                            external.append({
-                                'id': msgData['id'],
-                                'creator_service_name': msgData['creator_service_name'],
-                                'name': msgData['name'],
-                                'version': msgData['version'],
-                                'metadata': msgData['metadata'],
-                                'data': msgData['data'],
-                                'created_on': msgData['created_on']
-                            })
+                            external.append(
+                                {
+                                    "id": msgData["id"],
+                                    "creator_service_name": msgData[
+                                        "creator_service_name"
+                                    ],
+                                    "name": msgData["name"],
+                                    "version": msgData["version"],
+                                    "metadata": msgData["metadata"],
+                                    "data": msgData["data"],
+                                    "created_on": msgData["created_on"],
+                                }
+                            )
                             producer.produce(
-                                obj=IdentityCommand(id=msgData['id'],
-                                                    creatorServiceName=self._creatorServiceName,
-                                                    name=handledResult['name'],
-                                                    metadata=msgData['metadata'],
-                                                    data=json.dumps(handledResult['data']),
-                                                    createdOn=handledResult['created_on'],
-                                                    external=external),
-                                schema=IdentityCommand.get_schema())
+                                obj=IdentityCommand(
+                                    id=msgData["id"],
+                                    creatorServiceName=self._creatorServiceName,
+                                    name=handledResult["name"],
+                                    metadata=msgData["metadata"],
+                                    data=json.dumps(handledResult["data"]),
+                                    createdOn=handledResult["created_on"],
+                                    external=external,
+                                ),
+                                schema=IdentityCommand.get_schema(),
+                            )
 
                             for target in self.targetsOnSuccess:
-                                res = target(messageData=msgData, creatorServiceName=self._creatorServiceName,
-                                             resultData=handledResult['data'])
-                                producer.produce(
-                                    obj=res['obj'],
-                                    schema=res['schema'])
+                                res = target(
+                                    messageData=msgData,
+                                    creatorServiceName=self._creatorServiceName,
+                                    resultData=handledResult["data"],
+                                )
+                                producer.produce(obj=res["obj"], schema=res["schema"])
 
                             # Send the consumer's position to transaction to commit
                             # them along with the transaction, committing both
@@ -132,9 +160,7 @@ class IdentityEventListener:
                             msgData = msg.value()
                             for target in self.targetsOnException:
                                 res = target(msgData, e, self._creatorServiceName)
-                                producer.produce(
-                                    obj=res['obj'],
-                                    schema=res['schema'])
+                                producer.produce(obj=res["obj"], schema=res["schema"])
                             producer.sendOffsetsToTransaction(consumer)
                             producer.commitTransaction()
                             isMsgProcessed = True
@@ -147,9 +173,11 @@ class IdentityEventListener:
 
                 # sleep(3)
         except KeyboardInterrupt:
-            logger.info(f'[{IdentityEventListener.run.__qualname__}] Aborted by user')
+            logger.info(f"[{IdentityEventListener.run.__qualname__}] Aborted by user")
         except SystemExit:
-            logger.info(f'[{IdentityEventListener.run.__qualname__}] Shutting down the process')
+            logger.info(
+                f"[{IdentityEventListener.run.__qualname__}] Shutting down the process"
+            )
         finally:
             producer.abortTransaction()
             # Close down consumer to commit final offsets.
@@ -157,23 +185,41 @@ class IdentityEventListener:
 
     def handleCommand(self, messageData: dict):
         for handler in self._handlers:
-            if handler.canHandle(messageData['name']):
+            if handler.canHandle(messageData["name"]):
                 self.targetsOnSuccess = handler.targetsOnSuccess()
                 self.targetsOnException = handler.targetsOnException()
                 result = handler.handleCommand(messageData=messageData)
-                return {"data": "", "metadata": messageData['metadata']} if result is None else result
+                return (
+                    {"data": "", "metadata": messageData["metadata"]}
+                    if result is None
+                    else result
+                )
         return None
 
     def addHandlers(self):
         handlers = list(
-            map(lambda x: x.strip('.py'),
-                list(map(lambda x: x[x.find('src.port_adapter.messaging'):],
-                         map(lambda x: x.replace('/', '.'),
-                             filter(lambda x: x.find('__init__.py') == -1,
-                                    glob.glob(f'{os.path.dirname(os.path.abspath(__file__))}/handler/**/*.py', recursive=True)))))))
+            map(
+                lambda x: x.strip(".py"),
+                list(
+                    map(
+                        lambda x: x[x.find("src.port_adapter.messaging") :],
+                        map(
+                            lambda x: x.replace("/", "."),
+                            filter(
+                                lambda x: x.find("__init__.py") == -1,
+                                glob.glob(
+                                    f"{os.path.dirname(os.path.abspath(__file__))}/handler/**/*.py",
+                                    recursive=True,
+                                ),
+                            ),
+                        ),
+                    )
+                ),
+            )
+        )
         for handlerStr in handlers:
             m = importlib.import_module(handlerStr)
-            handlerCls = getattr(m, handlerStr[handlerStr.rfind('.') + 1:])
+            handlerCls = getattr(m, handlerStr[handlerStr.rfind(".") + 1 :])
             handler = handlerCls()
             self._handlers.append(handler)
 

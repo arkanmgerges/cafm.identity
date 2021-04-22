@@ -10,7 +10,11 @@ import src.domain_model.permission.Permission as Permission
 """
 c4model|cb|identity:ComponentQueue(identity__domainmodel_event__PermissionDeleted, "CommonEventConstant.PERMISSION_DELETED.value", "message", "event")
 """
+
+
 class PermissionDeleted(DomainEvent):
     def __init__(self, permission: Permission):
-        super().__init__(id=str(uuid4()), name=CommonEventConstant.PERMISSION_DELETED.value)
+        super().__init__(
+            id=str(uuid4()), name=CommonEventConstant.PERMISSION_DELETED.value
+        )
         self._data = permission.toMap()

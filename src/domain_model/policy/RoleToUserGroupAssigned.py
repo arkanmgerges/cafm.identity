@@ -15,5 +15,7 @@ c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RoleToUserGroupA
 
 class RoleToUserGroupAssigned(DomainEvent):
     def __init__(self, role: Role, userGroup: UserGroup):
-        super().__init__(id=str(uuid4()), name=CommonEventConstant.ROLE_TO_USER_GROUP_ASSIGNED.value)
-        self._data = {'role_id': role.id(), 'user_group_id': userGroup.id()}
+        super().__init__(
+            id=str(uuid4()), name=CommonEventConstant.ROLE_TO_USER_GROUP_ASSIGNED.value
+        )
+        self._data = {"role_id": role.id(), "user_group_id": userGroup.id()}

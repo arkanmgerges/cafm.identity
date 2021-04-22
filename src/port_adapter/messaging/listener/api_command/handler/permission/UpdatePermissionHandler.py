@@ -3,8 +3,9 @@
 """
 from typing import List, Callable
 
-from src.port_adapter.messaging.listener.common.handler.permission.UpdatePermissionHandler import \
-    UpdatePermissionHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.permission.UpdatePermissionHandler import (
+    UpdatePermissionHandler as Handler,
+)
 
 """
 c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__UpdatePermissionHandler, "CommonCommandConstant.UPDATE_PERMISSION.value", "api command consumer", "")

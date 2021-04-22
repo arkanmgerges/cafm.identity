@@ -3,8 +3,9 @@
 """
 from typing import List, Callable
 
-from src.port_adapter.messaging.listener.common.handler.permission_context.CreatePermissionContextHandler import \
-    CreatePermissionContextHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.permission_context.CreatePermissionContextHandler import (
+    CreatePermissionContextHandler as Handler,
+)
 
 """
 c4model|cb|identity:ComponentQueue(identity__messaging_api_command_handler__CreatePermissionContextHandler, "CommonCommandConstant.CREATE_RESOURCE_TYPE.value", "api command consumer", "")

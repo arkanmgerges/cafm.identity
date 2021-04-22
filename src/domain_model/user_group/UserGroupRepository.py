@@ -41,9 +41,9 @@ class UserGroupRepository(ABC):
 
         Returns:
             UserGroup: userGroup object
-            
+
         :raises:
-            `UserGroupDoesNotExistException <src.domain_model.resource.exception.UserGroupDoesNotExistException>` Raise an exception if the user group does not exist            
+            `UserGroupDoesNotExistException <src.domain_model.resource.exception.UserGroupDoesNotExistException>` Raise an exception if the user group does not exist
         """
 
     @abstractmethod
@@ -55,14 +55,20 @@ class UserGroupRepository(ABC):
 
         Returns:
             UserGroup: userGroup object
-            
+
         :raises:
-            `UserGroupDoesNotExistException <src.domain_model.resource.exception.UserGroupDoesNotExistException>` Raise an exception if the user group does not exist            
+            `UserGroupDoesNotExistException <src.domain_model.resource.exception.UserGroupDoesNotExistException>` Raise an exception if the user group does not exist
         """
 
     @abstractmethod
-    def userGroups(self, tokenData: TokenData, roleAccessPermissionData:List[RoleAccessPermissionData], resultFrom: int = 0, resultSize: int = 100,
-                        order: List[dict] = None) -> dict:
+    def userGroups(
+        self,
+        tokenData: TokenData,
+        roleAccessPermissionData: List[RoleAccessPermissionData],
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
         """Get list of userGroups based on the owned roles that the user has
 
         Args:

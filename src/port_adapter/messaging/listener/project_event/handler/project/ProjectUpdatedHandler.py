@@ -5,7 +5,9 @@ import json
 from typing import Callable, List
 
 from src.domain_model.event.EventConstant import CommonEventConstant
-from src.port_adapter.messaging.listener.common.handler.project.UpdateProjectHandler import UpdateProjectHandler as Handler
+from src.port_adapter.messaging.listener.common.handler.project.UpdateProjectHandler import (
+    UpdateProjectHandler as Handler,
+)
 
 """
 c4model|cb|identity:ComponentQueue(identity__messaging_project_event_handler__ProjectUpdatedHandler, "CommonEventConstant.PROJECT_UPDATED.value", "project event consumer", "")
@@ -19,13 +21,13 @@ class ProjectUpdatedHandler(Handler):
         return name == CommonEventConstant.PROJECT_UPDATED.value
 
     def handleCommand(self, messageData: dict) -> dict:
-        data = messageData['data']
+        data = messageData["data"]
         tmpDataDict = json.loads(data)
-        old = tmpDataDict['old']
-        new = tmpDataDict['new']
-        dataDict = tmpDataDict['old']
-        dataDict['name'] = new['name'] if new['name'] is not None else old['name']
-        messageData['data'] = json.dumps(dataDict)
+        old = tmpDataDict["old"]
+        new = tmpDataDict["new"]
+        dataDict = tmpDataDict["old"]
+        dataDict["name"] = new["name"] if new["name"] is not None else old["name"]
+        messageData["data"] = json.dumps(dataDict)
         return super().handleCommand(messageData)
 
     @staticmethod

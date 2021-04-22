@@ -24,9 +24,12 @@ class TokenService:
         :raises:
             `BadSignatureError <authlib.jose.errors.BadSignatureError>` If the token is invalid
         """
-        logger.debug(f'[{TokenService.claimsFromToken.__qualname__}] Received token: {token}')
+        logger.debug(
+            f"[{TokenService.claimsFromToken.__qualname__}] Received token: {token}"
+        )
         import os
-        key = os.getenv('CAFM_JWT_SECRET', 'secret')
+
+        key = os.getenv("CAFM_JWT_SECRET", "secret")
         claims = jwt.decode(token, key)
         claims.validate()
         return claims
@@ -41,11 +44,12 @@ class TokenService:
         Returns:
             str: Token string
         """
-        header = {'alg': 'HS256'}
-        key = os.getenv('CAFM_JWT_SECRET', 'secret')
+        header = {"alg": "HS256"}
+        key = os.getenv("CAFM_JWT_SECRET", "secret")
         import uuid
-        payload['_token_gen_num'] = str(uuid.uuid1())
-        token = jwt.encode(header, payload, key).decode('utf-8')
+
+        payload["_token_gen_num"] = str(uuid.uuid1())
+        token = jwt.encode(header, payload, key).decode("utf-8")
         return token
 
     @staticmethod
@@ -61,14 +65,18 @@ class TokenService:
         :raises:
             `BadSignatureError <authlib.jose.errors.BadSignatureError>` If the token is invalid
         """
-        logger.debug(f'[{TokenService.tokenDataFromToken.__qualname__}] Received token: {token}')
+        logger.debug(
+            f"[{TokenService.tokenDataFromToken.__qualname__}] Received token: {token}"
+        )
         dictData = TokenService.claimsFromToken(token=token)
-        return TokenData(id=dictData['id'], email=dictData['email'], roles=dictData['roles'])
+        return TokenData(
+            id=dictData["id"], email=dictData["email"], roles=dictData["roles"]
+        )
 
     @staticmethod
     def isSuperAdmin(tokenData: TokenData):
         role = tokenData.roles()
         for i in role:
-            if i['name'] == 'super_admin':
+            if i["name"] == "super_admin":
                 return True
         return False
