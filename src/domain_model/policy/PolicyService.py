@@ -60,24 +60,20 @@ class PolicyService:
 
     @debugLogger
     def grantAccessRoleToResource(self, role: Role, resource: Resource):
-        from src.domain_model.policy.RoleToResourceAccessGranted import (
-            RoleToResourceAccessGranted,
-        )
-
-        DomainPublishedEvents.addEventForPublishing(
-            RoleToResourceAccessGranted(role=role, resource=resource)
-        )
+        from src.domain_model.policy.RoleToResourceAccessGranted import RoleToResourceAccessGranted
+        DomainPublishedEvents.addEventForPublishing(RoleToResourceAccessGranted(role=role, resource=resource))
+        if resource.type() == 'realm':
+            from src.domain_model.policy.RoleToRealmAssigned import RoleToRealmAssigned
+            DomainPublishedEvents.addEventForPublishing(RoleToRealmAssigned(role=role, realm=resource))
         self._repo.grantAccessRoleToResource(role=role, resource=resource)
 
     @debugLogger
     def revokeRoleToResourceAccess(self, role: Role, resource: Resource):
-        from src.domain_model.policy.RoleToResourceAccessRevoked import (
-            RoleToResourceAccessRevoked,
-        )
-
-        DomainPublishedEvents.addEventForPublishing(
-            RoleToResourceAccessRevoked(role=role, resource=resource)
-        )
+        from src.domain_model.policy.RoleToResourceAccessRevoked import RoleToResourceAccessRevoked
+        DomainPublishedEvents.addEventForPublishing(RoleToResourceAccessRevoked(role=role, resource=resource))
+        if resource.type() == 'realm':
+            from src.domain_model.policy.RoleToRealmAssignmentRevoked import RoleToRealmAssignmentRevoked
+            DomainPublishedEvents.addEventForPublishing(RoleToRealmAssignmentRevoked(role=role, realm=resource))
         self._repo.revokeRoleToResourceAccess(role=role, resource=resource)
 
     @debugLogger
@@ -221,12 +217,7 @@ class PolicyService:
         from src.domain_model.policy.PermissionToPermissionContextAssignmentRevoked import (
             PermissionToPermissionContextAssignmentRevoked,
         )
-
         DomainPublishedEvents.addEventForPublishing(
-            PermissionToPermissionContextAssignmentRevoked(
-                permission=permission, permissionContext=permissionContext
-            )
-        )
-        self._repo.revokePermissionToPermissionContextAssignment(
-            permission=permission, permissionContext=permissionContext
-        )
+            PermissionToPermissionContextAssignmentRevoked(permission=permission, permissionContext=permissionContext))
+        self._repo.revokePermissionToPermissionContextAssignment(permission=permission,
+                                                                 permissionContext=permissionContext)
