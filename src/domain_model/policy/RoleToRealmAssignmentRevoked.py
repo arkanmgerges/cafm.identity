@@ -15,5 +15,8 @@ c4model|cb|identity:ComponentQueue(identity__domainmodel_event__RoleToRealmAssig
 
 class RoleToRealmAssignmentRevoked(DomainEvent):
     def __init__(self, role: Role, realm: Resource):
-        super().__init__(id=str(uuid4()), name=CommonEventConstant.ROLE_TO_REALM_ASSIGNMENT_REVOKED.value)
-        self._data = {'role_id': role.id(), 'realm_id': realm.id()}
+        super().__init__(
+            id=str(uuid4()),
+            name=CommonEventConstant.ROLE_TO_REALM_ASSIGNMENT_REVOKED.value,
+        )
+        self._data = {"role_id": role.id(), "realm_id": realm.id()}

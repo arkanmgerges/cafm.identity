@@ -102,7 +102,7 @@ def serve():
     add_AuthzAppServiceServicer_to_server(AuthzAppServiceListener(), server)
     port = "[::]:9999"
     server.add_insecure_port(port)
-    logger.info(f"Identity server started/restarted on port {port}")
+    logger.info(f"Identity microservice grpc server started/restarted on port {port}")
     server.start()
 
     # try:
