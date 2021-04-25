@@ -21,6 +21,7 @@ from src.port_adapter.messaging.common.TransactionalProducer import (
     TransactionalProducer,
 )
 from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
+from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.resource.logging.logger import logger
 
 
@@ -198,7 +199,11 @@ class IdentityCommandListener:
             if handler.canHandle(name):
                 self.targetsOnSuccess = handler.targetsOnSuccess()
                 self.targetsOnException = handler.targetsOnException()
-                result = handler.handleCommand(messageData=messageData)
+                result = None
+                if name == CommonCommandConstant.PROCESS_BULK.value:
+                    result = handler.handleCommand(messageData=messageData, extraData={'handlers': self._handlers})
+                else:
+                    result = handler.handleCommand(messageData=messageData)
                 return {"data": "", "metadata": metadata} if result is None else result
         return None
 
@@ -225,7 +230,7 @@ class IdentityCommandListener:
         )
         for handlerStr in handlers:
             m = importlib.import_module(handlerStr)
-            handlerCls = getattr(m, handlerStr[handlerStr.rfind(".") + 1 :])
+            handlerCls = getattr(m, handlerStr[handlerStr.rfind(".") + 1:])
             handler = handlerCls()
             self._handlers.append(handler)
 

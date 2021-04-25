@@ -21,11 +21,12 @@ class Handler(ABC):
         """
 
     @abstractmethod
-    def handleCommand(self, messageData: dict) -> dict:
+    def handleCommand(self, messageData: dict, extraData: dict) -> dict:
         """Handle the command
 
         Args:
             messageData (dict): The associated data for the command to handle
+            extraData (dict): Extra data if it is applicable
 
         Returns:
             dict: The result of the handler

@@ -23,7 +23,7 @@ class RevokeAssignmentRoleToUserGroupHandler(Handler):
     def canHandle(self, name: str) -> bool:
         return name == self._commandConstant.value
 
-    def handleCommand(self, messageData: dict) -> dict:
+    def handleCommand(self, messageData: dict, extraData: dict = None) -> dict:
         name = messageData["name"]
         data = messageData["data"]
         metadata = messageData["metadata"]
