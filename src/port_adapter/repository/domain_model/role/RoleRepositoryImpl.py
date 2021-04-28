@@ -231,7 +231,7 @@ class RoleRepositoryImpl(RoleRepository):
             raise RoleDoesNotExistException(f"role id: {id}")
 
         return Role.createFrom(
-            id=result[0]["id"], name=result[0]["name"], title=result[0]["title"]
+            id=result[0]["id"], name=result[0]["name"], title=result[0]["title"] if "title" in result[0] else ""
         )
 
     @debugLogger
@@ -272,13 +272,14 @@ class RoleRepositoryImpl(RoleRepository):
     @debugLogger
     def rolesTrees(
         self,
+        token: str,
         tokenData: TokenData,
         roleAccessPermissionDataList: List[RoleAccessPermissionData],
     ) -> List[RoleAccessPermissionData]:
         logger.debug(
             f"[{RoleRepositoryImpl.rolesTrees.__qualname__}] Received tokenData: {tokenData}, roleAccessPermissionDataList: {roleAccessPermissionDataList}"
         )
-        result = self._policyService.rolesTrees(tokenData, roleAccessPermissionDataList)
+        result = self._policyService.rolesTrees(token, tokenData, roleAccessPermissionDataList)
 
         if result is None or len(result) == 0:
             return []

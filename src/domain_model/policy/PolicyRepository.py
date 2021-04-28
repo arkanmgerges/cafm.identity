@@ -297,12 +297,14 @@ class PolicyRepository(ABC):
     @abstractmethod
     def rolesTrees(
         self,
+        token: str = "",
         tokenData: TokenData = None,
         roleAccessPermissionData: List[RoleAccessPermissionData] = None,
     ) -> List[RoleAccessPermissionData]:
         """Get trees of the roles that is filtered by the allowed permissions
 
         Args:
+            token (str): token
             tokenData (TokenData): Token data that has information about the user/role
             roleAccessPermissionData (RoleAccessPermissionData): Role with permission data and access tree
 
@@ -326,4 +328,19 @@ class PolicyRepository(ABC):
 
         Returns:
             RoleAccessPermissionData: A role access permission data that has possibly filtered access tree
+        """
+
+    @abstractmethod
+    def persistRolesTreesCache(self, rolesTrees: List[RoleAccessPermissionData], token: str, ttl: int = 300) -> None:
+        """Save roles trees
+
+        Args:
+            rolesTrees (List[RoleAccessPermissionData]): Roles Trees with permission data and access tree
+            token (str): token
+            ttl (int): time to live measured in seconds, if the ttl is -1 then the token will be persisted forever
+        """
+
+    @abstractmethod
+    def deleteRolesTreesCache(self) -> None:
+        """Delete all roles trees cached in redis
         """

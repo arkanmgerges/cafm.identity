@@ -130,10 +130,11 @@ class PolicyControllerService:
     @debugLogger
     def rolesTrees(
         self,
+        token: str = "",
         tokenData: TokenData = None,
         roleAccessPermissionData: List[RoleAccessPermissionData] = None,
     ) -> List[RoleAccessPermissionData]:
-        return self._policyRepo.rolesTrees(tokenData, roleAccessPermissionData)
+        return self._policyRepo.rolesTrees(token, tokenData, roleAccessPermissionData)
 
     @debugLogger
     def roleTree(
