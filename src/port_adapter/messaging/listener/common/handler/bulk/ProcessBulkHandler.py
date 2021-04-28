@@ -37,6 +37,7 @@ class ProcessBulkHandler(Handler):
         # The is the final result of all the data items in the dataDict["data"]
         resultList = []
         handlers = extraData["handlers"]
+        exceptions = []
         # Get the data item from the 'data' key
         for dataItem in dataDict["data"]:
             # Test each handler if it can handle the command
@@ -46,7 +47,7 @@ class ProcessBulkHandler(Handler):
                 if not handler.canHandle(
                     CommonCommandConstant.PROCESS_BULK.value
                 ) and handler.canHandle(requestData["command"]):
-                    resultList.append(self.handleData(dataItem, handler, metadata))
+                    resultList.append(self.handleData(dataItem, handler, metadata, exceptions))
 
         return {
             "name": self._commandConstant.value,
@@ -55,7 +56,7 @@ class ProcessBulkHandler(Handler):
             "metadata": metadataDict,
         }
 
-    def handleData(self, dataItem, handler, metadata):
+    def handleData(self, dataItem, handler, metadata, exceptions):
         requestData = dataItem["_request_data"]
         command = requestData["command"]
         commandData = requestData["command_data"]
@@ -74,8 +75,8 @@ class ProcessBulkHandler(Handler):
                 return dataItem
             except DomainModelException as e:
                 # Add the reason for the failure
-                result = {"reason": {"message": e.message, "code": e.code}}
-                dataItem["result"] = result
+                exceptions.append({"reason": {"message": e.message, "code": e.code}})
+                dataItem['exceptions'] = exceptions
                 return dataItem
             except Exception as e:
                 # Loop continuously and print the error
