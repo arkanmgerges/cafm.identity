@@ -165,6 +165,7 @@ class RoleApplicationService:
             tokenData=tokenData
         )
         return self._roleRepository.rolesTrees(
+            token=token,
             tokenData=tokenData,
             roleAccessPermissionDataList=roleAccessPermissionDataList,
         )

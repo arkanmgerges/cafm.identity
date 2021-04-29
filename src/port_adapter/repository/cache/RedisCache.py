@@ -20,6 +20,9 @@ class RedisCache:
             self._cacheSessionPrefix = os.getenv(
                 "CAFM_IDENTITY_REDIS_SESSION_KEY_PREFIX", "cafm.identity.session."
             )
+            self._cacheRolesTreesKeyPrefix = os.getenv(
+                "CAFM_IDENTITY_REDIS_ROLES_TREES_KEY_PREFIX", "cafm.identity.roles.trees."
+            )
             self._refreshTokenTtl = int(
                 os.getenv("CAFM_IDENTITY_USER_AUTH_TTL_IN_SECONDS", 300)
             )
@@ -39,3 +42,6 @@ class RedisCache:
 
     def refreshTokenTtl(self):
         return self._refreshTokenTtl
+
+    def rolesTreesKeyPrefix(self):
+        return self._cacheRolesTreesKeyPrefix

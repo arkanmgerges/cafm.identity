@@ -83,12 +83,14 @@ class RoleRepository(ABC):
 
     def rolesTrees(
         self,
+        token: str,
         tokenData: TokenData,
         roleAccessPermissionDataList: List[RoleAccessPermissionData],
     ) -> List[RoleAccessPermissionData]:
         """Get list of the trees of the roles based on the owned roles that the user has
 
         Args:
+            token (str): token
             tokenData (TokenData): A token data object
             roleAccessPermissionDataList (List[RoleAccessPermissionData]): List of role access permissions
 

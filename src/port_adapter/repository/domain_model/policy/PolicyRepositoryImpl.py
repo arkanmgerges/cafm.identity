@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import os
+import pickle
 from collections import defaultdict
 from random import randint
 from typing import List, Any, Dict
@@ -61,6 +62,7 @@ from src.domain_model.user.User import User
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
+from src.port_adapter.repository.cache.RedisCache import RedisCache
 
 
 class PolicyRepositoryImpl(PolicyRepository):
@@ -77,6 +79,37 @@ class PolicyRepositoryImpl(PolicyRepository):
                 f"[{PolicyRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}"
             )
             raise Exception(f"Could not connect to the db, message: {e}")
+
+        try:
+            import src.port_adapter.AppDi as AppDi
+
+            cache = AppDi.instance.get(RedisCache)
+            self._cache = cache.client()
+            self._cacheRolesTreesKeyPrefix = cache.rolesTreesKeyPrefix()
+        except Exception as e:
+            raise Exception(
+                f"[{PolicyRepositoryImpl.__init__.__qualname__}] Could not connect to the redis, message: {e}"
+            )
+
+    @debugLogger
+    def persistRolesTreesCache(self, rolesTrees: List[RoleAccessPermissionData], token: str, ttl: int = -1) -> None:
+        pickled = pickle.dumps(rolesTrees)
+        self._cache.setex(f"{self._cacheRolesTreesKeyPrefix}{token}", ttl, pickled)
+
+    @debugLogger
+    def rolesTreesInCacheExists(self, token: str) -> bool:
+        return self._cache.exists(f"{self._cacheRolesTreesKeyPrefix}{token}") == 1
+
+    @debugLogger
+    def getRolesTreesFromCache(self, token: str) -> List[RoleAccessPermissionData]:
+        return pickle.loads(self._cache.get(f"{self._cacheRolesTreesKeyPrefix}{token}"))
+
+    @debugLogger
+    def deleteRolesTreesCache(self) -> None:
+        generator = self._cache.scan_iter(f"{self._cacheRolesTreesKeyPrefix}*")
+        listKeys = list(generator)
+        for key in listKeys:
+            self._cache.delete(key)
 
     @debugLogger
     def allTreeByRoleName(self, roleName: str) -> List[Any]:
@@ -185,6 +218,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         bindVars = {"fromId": userDocId, "toId": roleDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+        self.deleteRolesTreesCache()
+
     @debugLogger
     def revokeRoleFromUser(self, role: Role, user: User) -> None:
         userDocId = self.userDocumentId(user)
@@ -213,6 +248,8 @@ class PolicyRepositoryImpl(PolicyRepository):
             aql, bindVars=bindVars, rawResults=True
         )
         _ = queryResult.result
+
+        self.deleteRolesTreesCache()
 
     @debugLogger
     def assignmentRoleToUser(self, roleDocId, userDocId) -> List:
@@ -258,6 +295,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         bindVars = {"fromId": userGroupDocId, "toId": roleDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+        self.deleteRolesTreesCache()
+
     @debugLogger
     def revokeRoleFromUserGroup(self, role: Role, userGroup: UserGroup) -> None:
         userGroupDocId = self.userGroupDocumentId(userGroup)
@@ -286,6 +325,8 @@ class PolicyRepositoryImpl(PolicyRepository):
             aql, bindVars=bindVars, rawResults=True
         )
         _ = queryResult.result
+
+        self.deleteRolesTreesCache()
 
     @debugLogger
     def assignmentRoleToUserGroup(self, roleDocId, userGroupDocId) -> List:
@@ -331,6 +372,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         bindVars = {"fromId": userGroupDocId, "toId": userDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+        self.deleteRolesTreesCache()
+
     @debugLogger
     def revokeUserFromUserGroup(self, user: User, userGroup: UserGroup) -> None:
         userGroupDocId = self.userGroupDocumentId(userGroup)
@@ -359,6 +402,8 @@ class PolicyRepositoryImpl(PolicyRepository):
             aql, bindVars=bindVars, rawResults=True
         )
         _ = queryResult.result
+
+        self.deleteRolesTreesCache()
 
     @debugLogger
     def assignmentUserToUserGroup(self, userDocId, userGroupDocId) -> List:
@@ -403,6 +448,8 @@ class PolicyRepositoryImpl(PolicyRepository):
                 """
         bindVars = {"fromId": roleDocId, "toId": permissionDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+        self.deleteRolesTreesCache()
 
     @debugLogger
     def permissionDocumentId(self, permission: Permission):
@@ -501,6 +548,8 @@ class PolicyRepositoryImpl(PolicyRepository):
             )
             _ = queryResult.result
 
+        self.deleteRolesTreesCache()
+
         logger.debug(
             f"[{PolicyRepositoryImpl.revokeRoleFromUserGroup.__qualname__}] Revoke assignment of role with id: {role.id()} to permission with id: {permission.id()}"
         )
@@ -533,6 +582,8 @@ class PolicyRepositoryImpl(PolicyRepository):
                 """
         bindVars = {"fromId": permissionDocId, "toId": permissionContextDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+        self.deleteRolesTreesCache()
 
     @debugLogger
     def assignmentPermissionToPermissionContext(
@@ -592,6 +643,8 @@ class PolicyRepositoryImpl(PolicyRepository):
             )
             _ = queryResult.result
 
+        self.deleteRolesTreesCache()
+
         logger.debug(
             f"[{PolicyRepositoryImpl.revokeRoleFromUserGroup.__qualname__}] Revoke assignment permission with id: {permission.id()} to permission context with id: {permissionContext.id()}"
         )
@@ -628,6 +681,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         }
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+        self.deleteRolesTreesCache()
+
     @debugLogger
     def revokeRoleToResourceAccess(self, role: Role, resource: Resource) -> None:
         resourceDocId = self.resourceDocumentId(resource)
@@ -656,6 +711,8 @@ class PolicyRepositoryImpl(PolicyRepository):
             aql, bindVars=bindVars, rawResults=True
         )
         _ = queryResult.result
+
+        self.deleteRolesTreesCache()
 
     @debugLogger
     def accessRoleToResource(
@@ -734,6 +791,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         }
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
+        self.deleteRolesTreesCache()
+
     @debugLogger
     def revokeAssignmentResourceToResource(
         self, resourceSrc: Resource, resourceDst: Resource
@@ -765,6 +824,8 @@ class PolicyRepositoryImpl(PolicyRepository):
             aql, bindVars=bindVars, rawResults=True
         )
         _ = queryResult.result
+
+        self.deleteRolesTreesCache()
 
     @debugLogger
     def assignmentResourceToResource(self, resourceSrcDocId, resourceDstDocId) -> List:
@@ -847,11 +908,27 @@ class PolicyRepositoryImpl(PolicyRepository):
     @debugLogger
     def rolesTrees(
         self,
+        token: str = "",
         tokenData: TokenData = None,
         roleAccessPermissionDataList: List[RoleAccessPermissionData] = None,
     ) -> List[RoleAccessPermissionData]:
         roles = tokenData.roles()
-        doFilter = True
+        doFilter = False
+        if self.rolesTreesInCacheExists(token=token):
+            return self.getRolesTreesFromCache(token=token)
+        else:
+            rolesTrees = self.getRolesTrees(
+                roles=roles,
+                doFilter=doFilter,
+                roleAccessPermissionDataList=roleAccessPermissionDataList,
+                tokenData=tokenData)
+
+            self.persistRolesTreesCache(rolesTrees=rolesTrees, token=token, ttl=int(os.getenv("CAFM_IDENTITY_ROLES_TREES_TTL_IN_SECONDS", 300)))
+
+            return rolesTrees
+
+    @debugLogger
+    def getRolesTrees(self, roles, doFilter, roleAccessPermissionDataList, tokenData):
         if TokenService.isSuperAdmin(
             tokenData=tokenData
         ) or self._hasReadAllRolesTreesInPermissionContext(
@@ -864,7 +941,6 @@ class PolicyRepositoryImpl(PolicyRepository):
 
             queryResult = self._db.AQLQuery(aql, rawResults=True)
             roles = queryResult.result[0]["items"]
-            doFilter = False
 
         return self._roleTreeListOf(roles, roleAccessPermissionDataList, doFilter)
 
