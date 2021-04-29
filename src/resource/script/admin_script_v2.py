@@ -2,7 +2,11 @@
 @author: Mohammad M. Mohammad<mmdii@develoop.run>
 """
 import sys
+import uuid
+from copy import copy
 from typing import List
+
+from pyArango.connection import Connection
 
 sys.path.append("../../../")
 
@@ -65,36 +69,65 @@ def create_permission_with_permission_contexts_for_api_endpoints():
         json=dict(token=token),
     )
 
-
 def persistPermissionWithPermissionContexts(
     apiPermissionWithContexts, hashedKeys, token
 ):
+    permissionContextDataList = []
+    permissionDataList = []
+    permissionToPermissionContextDataList = []
     for item in apiPermissionWithContexts:
         if item["create_permission_context"]:
             hashedKey = hashedKeyByKey(
                 key=item["permission_context"]["path"], hashedKeys=hashedKeys
             )
             if hashedKey is not None:
-                try:
-                    # Persist permission context
-                    data = item["permission_context"]
-                    data["hash_code"] = hashedKey
-                    dataItem = {"type": "api_resource_type", "data": data}
-                    permContextId = persistPermissionContext(data=dataItem, token=token)
+                permissionContextId = _generateUuid3ByString(hashedKey)
+                data = item["permission_context"]
+                data["hash_code"] = hashedKey
+                permissionContextDataList.append({"_key": permissionContextId, "id": permissionContextId, "type": "api_resource_type", "data": data})
 
-                    # Persist permission
-                    permissionsDataItem = item["permissions"]
-                    for permissionDataItem in permissionsDataItem:
-                        permId = persistPermission(data=permissionDataItem, token=token)
-                        # Link permission to permission context
-                        assignPermissionToPermissionContext(
-                            permissionId=permId,
-                            permissionContextId=permContextId,
-                            token=token,
-                        )
-                except Exception as e:
-                    click.echo(click.style(f"{e}", fg="red"))
+                permissionsDataItem = item["permissions"]
+                for permissionDataItem in permissionsDataItem:
+                    permissionId = _generateUuid3ByString(permissionDataItem["name"])
+                    permissionDataItem["id"] = permissionId
+                    permissionDataItem["_key"] = permissionId
+                    permissionDataList.append(permissionDataItem)
 
+                    # Link permission to permission context
+                    forId = _generateUuid3ByString(f'{permissionId}{permissionContextId}')
+                    permissionToPermissionContextDataList.append({
+                        "_key": forId,
+                        "_from": f'permission/{permissionId}',
+                        "_to": f'permission_context/{permissionContextId}',
+                        "_from_type": "permission",
+                        "_to_type": "permission_context"
+                    })
+
+    try:
+        connection = _dbClientConnection()
+        db = connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', 'cafm-identity')]
+        permissionCollection = db['permission']
+        permissionContextCollection = db['permission_context']
+        forCollection = db['for']
+        forCollection.bulkSave(docs=permissionToPermissionContextDataList, onDuplicate='replace')
+        permissionContextCollection.bulkSave(docs=permissionContextDataList, onDuplicate='replace')
+        permissionCollection.bulkSave(docs=permissionDataList, onDuplicate='replace')
+    except Exception as e:
+        click.echo(click.style(f"{e}", fg="red"))
+
+def _generateUuid3ByString(string) -> str:
+    return str(uuid.uuid3(uuid.NAMESPACE_URL, string))
+
+def _dbClientConnection():
+    try:
+        connection = Connection(
+            arangoURL=os.getenv("CAFM_IDENTITY_ARANGODB_URL", ""),
+            username=os.getenv("CAFM_IDENTITY_ARANGODB_USERNAME", ""),
+            password=os.getenv("CAFM_IDENTITY_ARANGODB_PASSWORD", ""),
+        )
+        return connection
+    except Exception as e:
+        raise Exception(f"Could not connect to the db, message: {e}")
 
 def assignPermissionToPermissionContext(permissionId, permissionContextId, token):
     click.echo(
@@ -209,7 +242,8 @@ def apiPermissionWithContextList(
                 found = True
                 break
         if not found:
-            apiPermissionContextToBeCreated = appRoute
+            apiPermissionContextToBeCreated = copy(appRoute)
+            apiPermissionContextToBeCreated['name'] = appRoute['path']
 
         # Check for permissions
         for method in appRoute["methods"]:
