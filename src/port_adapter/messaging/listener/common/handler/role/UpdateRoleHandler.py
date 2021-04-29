@@ -37,11 +37,18 @@ class UpdateRoleHandler(Handler):
             raise UnAuthorizedException()
 
         appService.updateRole(
-            id=dataDict["role_id"], name=dataDict["name"], token=metadataDict["token"]
+            id=dataDict["role_id"],
+            name=dataDict["name"],
+            title=dataDict["title"],
+            token=metadataDict["token"],
         )
         return {
             "name": self._commandConstant.value,
             "created_on": DateTimeHelper.utcNow(),
-            "data": {"role_id": dataDict["role_id"], "name": dataDict["name"]},
+            "data": {
+                "role_id": dataDict["role_id"],
+                "name": dataDict["name"],
+                "title": dataDict["title"],
+            },
             "metadata": metadataDict,
         }
