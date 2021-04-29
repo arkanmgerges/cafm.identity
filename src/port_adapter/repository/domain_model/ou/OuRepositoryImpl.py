@@ -18,6 +18,8 @@ from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissio
 from src.domain_model.resource.exception.CodeExceptionConstant import (
     CodeExceptionConstant,
 )
+from src.domain_model.resource.exception.DomainModelException import DomainModelException
+from src.domain_model.resource.exception.InvalidValueException import InvalidValueException
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import (
     ObjectCouldNotBeDeletedException,
 )
@@ -91,7 +93,7 @@ class OuRepositoryImpl(OuRepository):
                 let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                 if (res.length == 0) {
                     p = params['resource']
-                    res = db.resource.insert({id: p['id'], name: p['name'], type: p['type']});
+                    res = db.resource.insert({_key: p['id'], id: p['id'], name: p['name'], type: p['type']});
                     fromDocId = res['_id'];
                     p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
                     db._query(queryLink, p).execute();
@@ -115,11 +117,14 @@ class OuRepositoryImpl(OuRepository):
             "toTypeRole": PermissionContextConstant.ROLE.value,
             "OBJECT_ALREADY_EXIST_CODE": CodeExceptionConstant.OBJECT_ALREADY_EXIST.value,
         }
-        self._db.transaction(
-            collections={"write": ["resource", "owned_by"]},
-            action=actionFunction,
-            params=params,
-        )
+        try:
+            self._db.transaction(
+                collections={"write": ["resource", "owned_by"]},
+                action=actionFunction,
+                params=params,
+            )
+        except Exception as e:
+            raise InvalidValueException(message=e.message)
 
     @debugLogger
     def deleteOu(self, obj: Ou, tokenData: TokenData = None):

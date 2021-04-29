@@ -68,7 +68,7 @@ class PermissionRepositoryImpl(PermissionRepository):
                 let res = db.permission.byExample({id: params['permission']['id']}).toArray();
                 if (res.length == 0) {
                     p = params['permission']
-                    res = db.permission.insert({id: p['id'], name: p['name'], allowed_actions: p['allowed_actions'], denied_actions: p['denied_actions']});
+                    res = db.permission.insert({_key: p['id'], id: p['id'], name: p['name'], allowed_actions: p['allowed_actions'], denied_actions: p['denied_actions']});
                 } else {
                     let err = new Error(`Could not create permission, ${params['permission']['id']} is already exist`);
                     err.errorNum = params['OBJECT_ALREADY_EXIST_CODE'];

@@ -91,7 +91,7 @@ class RoleRepositoryImpl(RoleRepository):
                 let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                 if (res.length == 0) {
                     p = params['resource']
-                    res = db.resource.insert({id: p['id'], name: p['name'], title: p['title'],type: p['type']});
+                    res = db.resource.insert({_key: p['id'], id: p['id'], name: p['name'], title: p['title'],type: p['type']});
                     fromDocId = res['_id'];
                     p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
                     db._query(queryLink, p).execute();

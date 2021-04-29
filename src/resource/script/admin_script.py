@@ -68,7 +68,7 @@ def init_db():
         for colName in collections:
             if not dbConnection.hasCollection(colName):
                 dbConnection.createCollection(
-                    name=colName, keyOptions={"type": "autoincrement"}
+                    name=colName, keyOptions={"type": "uuid", "allowUserKeys": True}
                 )
 
         # Create edges
@@ -79,7 +79,7 @@ def init_db():
                 dbConnection.createCollection(
                     className="Edges",
                     name=edgeName,
-                    keyOptions={"type": "autoincrement"},
+                    keyOptions={"type": "uuid", "allowUserKeys": True},
                 )
 
         # Add permission contexts

@@ -73,7 +73,7 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
                 let res = db.permission_context.byExample({id: params['permission_context']['id'], type: params['permission_context']['type']}).toArray();
                 if (res.length == 0) {
                     p = params['permission_context']
-                    res = db.permission_context.insert({id: p['id'], data: p['data'], type: p['type']});
+                    res = db.permission_context.insert({_key: p['id'], id: p['id'], data: p['data'], type: p['type']});
                 } else {
                     let err = new Error(`Could not create permission context, ${params['permission_context']['id']} is already exist`);
                     err.errorNum = params['OBJECT_ALREADY_EXIST_CODE'];
