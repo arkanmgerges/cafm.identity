@@ -29,7 +29,7 @@ message UserGroupAppService_userGroupsRequest {
 
 message UserGroupAppService_userGroupsResponse {
   repeated UserGroup userGroups = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 message UserGroupAppService_newIdRequest {}

@@ -29,7 +29,7 @@ message RealmAppService_realmsRequest {
 
 message RealmAppService_realmsResponse {
   repeated Realm realms = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 message RealmAppService_newIdRequest {}

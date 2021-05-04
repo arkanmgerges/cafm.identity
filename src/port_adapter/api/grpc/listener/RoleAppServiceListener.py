@@ -129,12 +129,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
                 response.roles.add(
                     id=role.id(), type=role.type(), name=role.name(), title=role.title()
                 )
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             logger.debug(
                 f"[{RoleAppServiceListener.roles.__qualname__}] - response: {response}"
             )
             return RoleAppService_rolesResponse(
-                roles=response.roles, itemCount=response.itemCount
+                roles=response.roles, totalItemCount=response.totalItemCount
             )
         except RoleDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

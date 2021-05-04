@@ -128,12 +128,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
                 response.realms.add(
                     id=realm.id(), name=realm.name(), realmType=realm.realmType()
                 )
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             logger.debug(
                 f"[{RealmAppServiceListener.realms.__qualname__}] - response: {response}"
             )
             return RealmAppService_realmsResponse(
-                realms=response.realms, itemCount=response.itemCount
+                realms=response.realms, totalItemCount=response.totalItemCount
             )
         except RealmDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

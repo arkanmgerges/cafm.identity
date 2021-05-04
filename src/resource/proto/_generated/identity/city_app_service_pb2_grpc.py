@@ -15,20 +15,20 @@ class CityAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.cityById = channel.unary_unary(
-            "/cafm.identity.country.CityAppService/cityById",
-            request_serializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdRequest.SerializeToString,
-            response_deserializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdResponse.FromString,
-        )
+                '/cafm.identity.country.CityAppService/cityById',
+                request_serializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdRequest.SerializeToString,
+                response_deserializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdResponse.FromString,
+                )
         self.cities = channel.unary_unary(
-            "/cafm.identity.country.CityAppService/cities",
-            request_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesRequest.SerializeToString,
-            response_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesResponse.FromString,
-        )
+                '/cafm.identity.country.CityAppService/cities',
+                request_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesRequest.SerializeToString,
+                response_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesResponse.FromString,
+                )
         self.citiesByStateId = channel.unary_unary(
-            "/cafm.identity.country.CityAppService/citiesByStateId",
-            request_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdRequest.SerializeToString,
-            response_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdResponse.FromString,
-        )
+                '/cafm.identity.country.CityAppService/citiesByStateId',
+                request_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdRequest.SerializeToString,
+                response_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdResponse.FromString,
+                )
 
 
 class CityAppServiceServicer(object):
@@ -37,133 +37,96 @@ class CityAppServiceServicer(object):
     def cityById(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def cities(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def citiesByStateId(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_CityAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "cityById": grpc.unary_unary_rpc_method_handler(
-            servicer.cityById,
-            request_deserializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdRequest.FromString,
-            response_serializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdResponse.SerializeToString,
-        ),
-        "cities": grpc.unary_unary_rpc_method_handler(
-            servicer.cities,
-            request_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesRequest.FromString,
-            response_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesResponse.SerializeToString,
-        ),
-        "citiesByStateId": grpc.unary_unary_rpc_method_handler(
-            servicer.citiesByStateId,
-            request_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdRequest.FromString,
-            response_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdResponse.SerializeToString,
-        ),
+            'cityById': grpc.unary_unary_rpc_method_handler(
+                    servicer.cityById,
+                    request_deserializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdRequest.FromString,
+                    response_serializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdResponse.SerializeToString,
+            ),
+            'cities': grpc.unary_unary_rpc_method_handler(
+                    servicer.cities,
+                    request_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesRequest.FromString,
+                    response_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesResponse.SerializeToString,
+            ),
+            'citiesByStateId': grpc.unary_unary_rpc_method_handler(
+                    servicer.citiesByStateId,
+                    request_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdRequest.FromString,
+                    response_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "cafm.identity.country.CityAppService", rpc_method_handlers
-    )
+            'cafm.identity.country.CityAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class CityAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def cityById(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def cityById(request,
             target,
-            "/cafm.identity.country.CityAppService/cityById",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.country.CityAppService/cityById',
             identity_dot_city__app__service__pb2.CityAppService_cityByIdRequest.SerializeToString,
             identity_dot_city__app__service__pb2.CityAppService_cityByIdResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def cities(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def cities(request,
             target,
-            "/cafm.identity.country.CityAppService/cities",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.country.CityAppService/cities',
             identity_dot_city__app__service__pb2.CityAppService_citiesRequest.SerializeToString,
             identity_dot_city__app__service__pb2.CityAppService_citiesResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def citiesByStateId(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def citiesByStateId(request,
             target,
-            "/cafm.identity.country.CityAppService/citiesByStateId",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.country.CityAppService/citiesByStateId',
             identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdRequest.SerializeToString,
             identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

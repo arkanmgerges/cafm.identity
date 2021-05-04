@@ -130,12 +130,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
                     # postalCode=user.postalCode(),
                     # avatarImage=user.avatarImage()
                 )
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             logger.debug(
                 f"[{UserAppServiceListener.users.__qualname__}] - response: {response}"
             )
             return UserAppService_usersResponse(
-                users=response.users, itemCount=response.itemCount
+                users=response.users, totalItemCount=response.totalItemCount
             )
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

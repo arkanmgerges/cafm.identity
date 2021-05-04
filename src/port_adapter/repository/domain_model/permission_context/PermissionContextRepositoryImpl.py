@@ -206,9 +206,9 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
         )
 
         if result is None or len(result["items"]) == 0:
-            return {"items": [], "itemCount": 0}
+            return {"items": [], "totalItemCount": 0}
         items = result["items"]
-        itemCount = len(items)
+        totalItemCount = len(items)
         items = items[resultFrom : resultFrom + resultSize]
 
         return {
@@ -216,5 +216,5 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
                 PermissionContext.createFrom(id=x["id"], type=x["type"], data=x["data"])
                 for x in items
             ],
-            "itemCount": itemCount,
+            "totalItemCount": totalItemCount,
         }

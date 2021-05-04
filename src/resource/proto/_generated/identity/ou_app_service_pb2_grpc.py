@@ -15,25 +15,25 @@ class OuAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.ouByName = channel.unary_unary(
-            "/cafm.identity.ou.OuAppService/ouByName",
-            request_serializer=identity_dot_ou__app__service__pb2.OuAppService_ouByNameRequest.SerializeToString,
-            response_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ouByNameResponse.FromString,
-        )
+                '/cafm.identity.ou.OuAppService/ouByName',
+                request_serializer=identity_dot_ou__app__service__pb2.OuAppService_ouByNameRequest.SerializeToString,
+                response_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ouByNameResponse.FromString,
+                )
         self.ouById = channel.unary_unary(
-            "/cafm.identity.ou.OuAppService/ouById",
-            request_serializer=identity_dot_ou__app__service__pb2.OuAppService_ouByIdRequest.SerializeToString,
-            response_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ouByIdResponse.FromString,
-        )
+                '/cafm.identity.ou.OuAppService/ouById',
+                request_serializer=identity_dot_ou__app__service__pb2.OuAppService_ouByIdRequest.SerializeToString,
+                response_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ouByIdResponse.FromString,
+                )
         self.ous = channel.unary_unary(
-            "/cafm.identity.ou.OuAppService/ous",
-            request_serializer=identity_dot_ou__app__service__pb2.OuAppService_ousRequest.SerializeToString,
-            response_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ousResponse.FromString,
-        )
+                '/cafm.identity.ou.OuAppService/ous',
+                request_serializer=identity_dot_ou__app__service__pb2.OuAppService_ousRequest.SerializeToString,
+                response_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ousResponse.FromString,
+                )
         self.newId = channel.unary_unary(
-            "/cafm.identity.ou.OuAppService/newId",
-            request_serializer=identity_dot_ou__app__service__pb2.OuAppService_newIdRequest.SerializeToString,
-            response_deserializer=identity_dot_ou__app__service__pb2.OuAppService_newIdResponse.FromString,
-        )
+                '/cafm.identity.ou.OuAppService/newId',
+                request_serializer=identity_dot_ou__app__service__pb2.OuAppService_newIdRequest.SerializeToString,
+                response_deserializer=identity_dot_ou__app__service__pb2.OuAppService_newIdResponse.FromString,
+                )
 
 
 class OuAppServiceServicer(object):
@@ -42,173 +42,124 @@ class OuAppServiceServicer(object):
     def ouByName(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def ouById(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def ous(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def newId(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_OuAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "ouByName": grpc.unary_unary_rpc_method_handler(
-            servicer.ouByName,
-            request_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ouByNameRequest.FromString,
-            response_serializer=identity_dot_ou__app__service__pb2.OuAppService_ouByNameResponse.SerializeToString,
-        ),
-        "ouById": grpc.unary_unary_rpc_method_handler(
-            servicer.ouById,
-            request_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ouByIdRequest.FromString,
-            response_serializer=identity_dot_ou__app__service__pb2.OuAppService_ouByIdResponse.SerializeToString,
-        ),
-        "ous": grpc.unary_unary_rpc_method_handler(
-            servicer.ous,
-            request_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ousRequest.FromString,
-            response_serializer=identity_dot_ou__app__service__pb2.OuAppService_ousResponse.SerializeToString,
-        ),
-        "newId": grpc.unary_unary_rpc_method_handler(
-            servicer.newId,
-            request_deserializer=identity_dot_ou__app__service__pb2.OuAppService_newIdRequest.FromString,
-            response_serializer=identity_dot_ou__app__service__pb2.OuAppService_newIdResponse.SerializeToString,
-        ),
+            'ouByName': grpc.unary_unary_rpc_method_handler(
+                    servicer.ouByName,
+                    request_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ouByNameRequest.FromString,
+                    response_serializer=identity_dot_ou__app__service__pb2.OuAppService_ouByNameResponse.SerializeToString,
+            ),
+            'ouById': grpc.unary_unary_rpc_method_handler(
+                    servicer.ouById,
+                    request_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ouByIdRequest.FromString,
+                    response_serializer=identity_dot_ou__app__service__pb2.OuAppService_ouByIdResponse.SerializeToString,
+            ),
+            'ous': grpc.unary_unary_rpc_method_handler(
+                    servicer.ous,
+                    request_deserializer=identity_dot_ou__app__service__pb2.OuAppService_ousRequest.FromString,
+                    response_serializer=identity_dot_ou__app__service__pb2.OuAppService_ousResponse.SerializeToString,
+            ),
+            'newId': grpc.unary_unary_rpc_method_handler(
+                    servicer.newId,
+                    request_deserializer=identity_dot_ou__app__service__pb2.OuAppService_newIdRequest.FromString,
+                    response_serializer=identity_dot_ou__app__service__pb2.OuAppService_newIdResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "cafm.identity.ou.OuAppService", rpc_method_handlers
-    )
+            'cafm.identity.ou.OuAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class OuAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def ouByName(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def ouByName(request,
             target,
-            "/cafm.identity.ou.OuAppService/ouByName",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.ou.OuAppService/ouByName',
             identity_dot_ou__app__service__pb2.OuAppService_ouByNameRequest.SerializeToString,
             identity_dot_ou__app__service__pb2.OuAppService_ouByNameResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def ouById(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def ouById(request,
             target,
-            "/cafm.identity.ou.OuAppService/ouById",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.ou.OuAppService/ouById',
             identity_dot_ou__app__service__pb2.OuAppService_ouByIdRequest.SerializeToString,
             identity_dot_ou__app__service__pb2.OuAppService_ouByIdResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def ous(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def ous(request,
             target,
-            "/cafm.identity.ou.OuAppService/ous",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.ou.OuAppService/ous',
             identity_dot_ou__app__service__pb2.OuAppService_ousRequest.SerializeToString,
             identity_dot_ou__app__service__pb2.OuAppService_ousResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def newId(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def newId(request,
             target,
-            "/cafm.identity.ou.OuAppService/newId",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.ou.OuAppService/newId',
             identity_dot_ou__app__service__pb2.OuAppService_newIdRequest.SerializeToString,
             identity_dot_ou__app__service__pb2.OuAppService_newIdResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

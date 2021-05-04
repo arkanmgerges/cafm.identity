@@ -66,7 +66,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
                 resultFrom=request.resultFrom, resultSize=resultSize, order=orderData
             )
             response = CountryAppService_countriesResponse()
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             for country in result["items"]:
                 response.countries.add(
                     id=country.id(),
@@ -152,7 +152,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
                 order=orderData,
             )
             response = CountryAppService_citiesByCountryIdResponse()
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             for city in result["items"]:
                 response.cities.add(
                     id=city.id(),
@@ -247,7 +247,7 @@ class CountryAppServiceListener(CountryAppServiceServicer):
                 order=orderData,
             )
             response = CountryAppService_statesByCountryIdResponse()
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             for state in result["items"]:
                 response.states.add(id=state.id(), name=state.name())
             logger.debug(

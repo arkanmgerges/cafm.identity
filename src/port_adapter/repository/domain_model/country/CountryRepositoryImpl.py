@@ -67,9 +67,9 @@ class CountryRepositoryImpl(CountryRepository):
         result = queryResult.result[0]
 
         if result is None or len(result["items"]) == 0:
-            return {"items": [], "itemCount": 0}
+            return {"items": [], "totalItemCount": 0}
         items = result["items"]
-        itemCount = len(items)
+        totalItemCount = len(items)
         items = items[resultFrom : resultFrom + resultSize]
         return {
             "items": [
@@ -84,7 +84,7 @@ class CountryRepositoryImpl(CountryRepository):
                 )
                 for x in items
             ],
-            "itemCount": itemCount,
+            "totalItemCount": totalItemCount,
         }
 
     @debugLogger
@@ -150,9 +150,9 @@ class CountryRepositoryImpl(CountryRepository):
         result = queryResult.result[0]
 
         if result is None or len(result["items"]) == 0:
-            return {"items": [], "itemCount": 0}
+            return {"items": [], "totalItemCount": 0}
         items = result["items"]
-        itemCount = len(items)
+        totalItemCount = len(items)
         items = items[resultFrom : resultFrom + resultSize]
 
         return {
@@ -176,7 +176,7 @@ class CountryRepositoryImpl(CountryRepository):
                 )
                 for x in items
             ],
-            "itemCount": itemCount,
+            "totalItemCount": totalItemCount,
         }
 
     @debugLogger
@@ -254,14 +254,14 @@ class CountryRepositoryImpl(CountryRepository):
         )
         result = queryResult.result[0]
         if result is None or len(result["items"]) == 0:
-            return {"items": [], "itemCount": 0}
+            return {"items": [], "totalItemCount": 0}
         items = []
         duplicate = []
         for item in result["items"]:
             if item["subdivision_1_iso_code"] not in duplicate:
                 items.append(item)
                 duplicate.append(item["subdivision_1_iso_code"])
-        itemCount = len(items)
+        totalItemCount = len(items)
         items = items[resultFrom : resultFrom + resultSize]
 
         return {
@@ -271,5 +271,5 @@ class CountryRepositoryImpl(CountryRepository):
                 )
                 for x in items
             ],
-            "itemCount": itemCount,
+            "totalItemCount": totalItemCount,
         }

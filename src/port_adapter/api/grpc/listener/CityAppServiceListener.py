@@ -105,7 +105,7 @@ class CityAppServiceListener(CityAppServiceServicer):
                 resultFrom=request.resultFrom, resultSize=resultSize, order=orderData
             )
             response = CityAppService_citiesResponse()
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             for city in result["items"]:
                 response.cities.add(
                     id=city.id(),
@@ -156,7 +156,7 @@ class CityAppServiceListener(CityAppServiceServicer):
                 order=orderData,
             )
             response = CityAppService_citiesResponse()
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             for city in result["items"]:
                 response.cities.add(
                     id=city.id(),

@@ -29,7 +29,7 @@ message ProjectAppService_projectsRequest {
 
 message ProjectAppService_projectsResponse {
   repeated Project projects = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 message ProjectAppService_newIdRequest {}

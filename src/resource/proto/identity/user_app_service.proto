@@ -30,7 +30,7 @@ message UserAppService_usersRequest {
 
 message UserAppService_usersResponse {
   repeated User users = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 message UserAppService_newIdRequest {}

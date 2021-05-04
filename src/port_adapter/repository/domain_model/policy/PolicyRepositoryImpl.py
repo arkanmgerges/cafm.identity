@@ -1085,7 +1085,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             filteredItems = self._filterItems(
                 result["items"], roleAccessPermissionData, resourceType
             )
-        return {"items": filteredItems, "itemCount": len(filteredItems)}
+        return {"items": filteredItems, "totalItemCount": len(filteredItems)}
 
     @debugLogger
     def _filterRoleAccessPermissionDataItems(

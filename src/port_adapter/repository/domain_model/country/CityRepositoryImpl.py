@@ -66,9 +66,9 @@ class CityRepositoryImpl(CityRepository):
         result = queryResult.result[0]
 
         if result is None or len(result["items"]) == 0:
-            return {"items": [], "itemCount": 0}
+            return {"items": [], "totalItemCount": 0}
         items = result["items"]
-        itemCount = result["count"][0]
+        totalItemCount = result["count"][0]
         # items = items[resultFrom:resultFrom + resultSize]
 
         returnItems = []
@@ -95,7 +95,7 @@ class CityRepositoryImpl(CityRepository):
                     isInEuropeanUnion=x["is_in_european_union"],
                 )
             )
-        return {"items": returnItems, "itemCount": itemCount}
+        return {"items": returnItems, "totalItemCount": totalItemCount}
 
     @debugLogger
     def cityById(self, id: str) -> City:
@@ -169,9 +169,9 @@ class CityRepositoryImpl(CityRepository):
         result = queryResult.result[0]
 
         if result is None or len(result["items"]) == 0:
-            return {"items": [], "itemCount": 0}
+            return {"items": [], "totalItemCount": 0}
         items = result["items"]
-        itemCount = len(items)
+        totalItemCount = len(items)
         items = items[resultFrom : resultFrom + resultSize]
 
         returnItems = []
@@ -198,4 +198,4 @@ class CityRepositoryImpl(CityRepository):
                     isInEuropeanUnion=x["is_in_european_union"],
                 )
             )
-        return {"items": returnItems, "itemCount": itemCount}
+        return {"items": returnItems, "totalItemCount": totalItemCount}

@@ -128,12 +128,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             response = UserGroupAppService_userGroupsResponse()
             for userGroup in result["items"]:
                 response.userGroups.add(id=userGroup.id(), name=userGroup.name())
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             logger.debug(
                 f"[{UserGroupAppServiceListener.userGroups.__qualname__}] - response: {response}"
             )
             return UserGroupAppService_userGroupsResponse(
-                userGroups=response.userGroups, itemCount=response.itemCount
+                userGroups=response.userGroups, totalItemCount=response.totalItemCount
             )
         except UserGroupDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

@@ -15,35 +15,35 @@ class RoleAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.roleByName = channel.unary_unary(
-            "/cafm.identity.role.RoleAppService/roleByName",
-            request_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleByNameRequest.SerializeToString,
-            response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleByNameResponse.FromString,
-        )
+                '/cafm.identity.role.RoleAppService/roleByName',
+                request_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleByNameRequest.SerializeToString,
+                response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleByNameResponse.FromString,
+                )
         self.roleById = channel.unary_unary(
-            "/cafm.identity.role.RoleAppService/roleById",
-            request_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleByIdRequest.SerializeToString,
-            response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleByIdResponse.FromString,
-        )
+                '/cafm.identity.role.RoleAppService/roleById',
+                request_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleByIdRequest.SerializeToString,
+                response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleByIdResponse.FromString,
+                )
         self.roles = channel.unary_unary(
-            "/cafm.identity.role.RoleAppService/roles",
-            request_serializer=identity_dot_role__app__service__pb2.RoleAppService_rolesRequest.SerializeToString,
-            response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_rolesResponse.FromString,
-        )
+                '/cafm.identity.role.RoleAppService/roles',
+                request_serializer=identity_dot_role__app__service__pb2.RoleAppService_rolesRequest.SerializeToString,
+                response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_rolesResponse.FromString,
+                )
         self.rolesTrees = channel.unary_unary(
-            "/cafm.identity.role.RoleAppService/rolesTrees",
-            request_serializer=identity_dot_role__app__service__pb2.RoleAppService_rolesTreesRequest.SerializeToString,
-            response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_rolesTreesResponse.FromString,
-        )
+                '/cafm.identity.role.RoleAppService/rolesTrees',
+                request_serializer=identity_dot_role__app__service__pb2.RoleAppService_rolesTreesRequest.SerializeToString,
+                response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_rolesTreesResponse.FromString,
+                )
         self.roleTree = channel.unary_unary(
-            "/cafm.identity.role.RoleAppService/roleTree",
-            request_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleTreeRequest.SerializeToString,
-            response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleTreeResponse.FromString,
-        )
+                '/cafm.identity.role.RoleAppService/roleTree',
+                request_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleTreeRequest.SerializeToString,
+                response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleTreeResponse.FromString,
+                )
         self.newId = channel.unary_unary(
-            "/cafm.identity.role.RoleAppService/newId",
-            request_serializer=identity_dot_role__app__service__pb2.RoleAppService_newIdRequest.SerializeToString,
-            response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_newIdResponse.FromString,
-        )
+                '/cafm.identity.role.RoleAppService/newId',
+                request_serializer=identity_dot_role__app__service__pb2.RoleAppService_newIdRequest.SerializeToString,
+                response_deserializer=identity_dot_role__app__service__pb2.RoleAppService_newIdResponse.FromString,
+                )
 
 
 class RoleAppServiceServicer(object):
@@ -52,253 +52,180 @@ class RoleAppServiceServicer(object):
     def roleByName(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def roleById(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def roles(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def rolesTrees(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def roleTree(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def newId(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_RoleAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "roleByName": grpc.unary_unary_rpc_method_handler(
-            servicer.roleByName,
-            request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleByNameRequest.FromString,
-            response_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleByNameResponse.SerializeToString,
-        ),
-        "roleById": grpc.unary_unary_rpc_method_handler(
-            servicer.roleById,
-            request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleByIdRequest.FromString,
-            response_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleByIdResponse.SerializeToString,
-        ),
-        "roles": grpc.unary_unary_rpc_method_handler(
-            servicer.roles,
-            request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_rolesRequest.FromString,
-            response_serializer=identity_dot_role__app__service__pb2.RoleAppService_rolesResponse.SerializeToString,
-        ),
-        "rolesTrees": grpc.unary_unary_rpc_method_handler(
-            servicer.rolesTrees,
-            request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_rolesTreesRequest.FromString,
-            response_serializer=identity_dot_role__app__service__pb2.RoleAppService_rolesTreesResponse.SerializeToString,
-        ),
-        "roleTree": grpc.unary_unary_rpc_method_handler(
-            servicer.roleTree,
-            request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleTreeRequest.FromString,
-            response_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleTreeResponse.SerializeToString,
-        ),
-        "newId": grpc.unary_unary_rpc_method_handler(
-            servicer.newId,
-            request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_newIdRequest.FromString,
-            response_serializer=identity_dot_role__app__service__pb2.RoleAppService_newIdResponse.SerializeToString,
-        ),
+            'roleByName': grpc.unary_unary_rpc_method_handler(
+                    servicer.roleByName,
+                    request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleByNameRequest.FromString,
+                    response_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleByNameResponse.SerializeToString,
+            ),
+            'roleById': grpc.unary_unary_rpc_method_handler(
+                    servicer.roleById,
+                    request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleByIdRequest.FromString,
+                    response_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleByIdResponse.SerializeToString,
+            ),
+            'roles': grpc.unary_unary_rpc_method_handler(
+                    servicer.roles,
+                    request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_rolesRequest.FromString,
+                    response_serializer=identity_dot_role__app__service__pb2.RoleAppService_rolesResponse.SerializeToString,
+            ),
+            'rolesTrees': grpc.unary_unary_rpc_method_handler(
+                    servicer.rolesTrees,
+                    request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_rolesTreesRequest.FromString,
+                    response_serializer=identity_dot_role__app__service__pb2.RoleAppService_rolesTreesResponse.SerializeToString,
+            ),
+            'roleTree': grpc.unary_unary_rpc_method_handler(
+                    servicer.roleTree,
+                    request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_roleTreeRequest.FromString,
+                    response_serializer=identity_dot_role__app__service__pb2.RoleAppService_roleTreeResponse.SerializeToString,
+            ),
+            'newId': grpc.unary_unary_rpc_method_handler(
+                    servicer.newId,
+                    request_deserializer=identity_dot_role__app__service__pb2.RoleAppService_newIdRequest.FromString,
+                    response_serializer=identity_dot_role__app__service__pb2.RoleAppService_newIdResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "cafm.identity.role.RoleAppService", rpc_method_handlers
-    )
+            'cafm.identity.role.RoleAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class RoleAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def roleByName(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def roleByName(request,
             target,
-            "/cafm.identity.role.RoleAppService/roleByName",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.role.RoleAppService/roleByName',
             identity_dot_role__app__service__pb2.RoleAppService_roleByNameRequest.SerializeToString,
             identity_dot_role__app__service__pb2.RoleAppService_roleByNameResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def roleById(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def roleById(request,
             target,
-            "/cafm.identity.role.RoleAppService/roleById",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.role.RoleAppService/roleById',
             identity_dot_role__app__service__pb2.RoleAppService_roleByIdRequest.SerializeToString,
             identity_dot_role__app__service__pb2.RoleAppService_roleByIdResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def roles(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def roles(request,
             target,
-            "/cafm.identity.role.RoleAppService/roles",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.role.RoleAppService/roles',
             identity_dot_role__app__service__pb2.RoleAppService_rolesRequest.SerializeToString,
             identity_dot_role__app__service__pb2.RoleAppService_rolesResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def rolesTrees(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def rolesTrees(request,
             target,
-            "/cafm.identity.role.RoleAppService/rolesTrees",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.role.RoleAppService/rolesTrees',
             identity_dot_role__app__service__pb2.RoleAppService_rolesTreesRequest.SerializeToString,
             identity_dot_role__app__service__pb2.RoleAppService_rolesTreesResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def roleTree(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def roleTree(request,
             target,
-            "/cafm.identity.role.RoleAppService/roleTree",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.role.RoleAppService/roleTree',
             identity_dot_role__app__service__pb2.RoleAppService_roleTreeRequest.SerializeToString,
             identity_dot_role__app__service__pb2.RoleAppService_roleTreeResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def newId(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def newId(request,
             target,
-            "/cafm.identity.role.RoleAppService/newId",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.role.RoleAppService/newId',
             identity_dot_role__app__service__pb2.RoleAppService_newIdRequest.SerializeToString,
             identity_dot_role__app__service__pb2.RoleAppService_newIdResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

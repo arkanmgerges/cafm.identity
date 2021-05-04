@@ -120,12 +120,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             response = OuAppService_ousResponse()
             for ou in result["items"]:
                 response.ous.add(id=ou.id(), name=ou.name())
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             logger.debug(
                 f"[{OuAppServiceListener.ous.__qualname__}] - response: {response}"
             )
             return OuAppService_ousResponse(
-                ous=response.ous, itemCount=response.itemCount
+                ous=response.ous, totalItemCount=response.totalItemCount
             )
         except OuDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

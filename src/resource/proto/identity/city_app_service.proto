@@ -21,7 +21,7 @@ message CityAppService_citiesRequest {
 
 message CityAppService_citiesResponse {
   repeated City cities = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 message CityAppService_citiesByStateIdRequest {
@@ -33,7 +33,7 @@ message CityAppService_citiesByStateIdRequest {
 
 message CityAppService_citiesByStateIdResponse {
   repeated City cities = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 service CityAppService {
   rpc cityById (CityAppService_cityByIdRequest) returns (CityAppService_cityByIdResponse) {}

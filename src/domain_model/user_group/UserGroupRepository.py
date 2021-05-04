@@ -79,5 +79,5 @@ class UserGroupRepository(ABC):
             order (List[dict]): A list of order e.g. [{'orderBy': 'name', 'direction': 'asc'}, {'orderBy': 'age', 'direction': 'desc'}]
 
         Returns:
-            dict: A dict that has {"items": [], "itemCount": 0}
+            dict: A dict that has {"items": [], "totalItemCount": 0}
         """

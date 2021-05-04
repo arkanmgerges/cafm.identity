@@ -23,7 +23,7 @@ message CountryAppService_countriesRequest {
 
 message CountryAppService_countriesResponse {
   repeated Country countries = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 message CountryAppService_citiesByCountryIdRequest {
@@ -35,7 +35,7 @@ message CountryAppService_citiesByCountryIdRequest {
 
 message CountryAppService_citiesByCountryIdResponse {
   repeated City cities = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 message CountryAppService_cityByCountryIdRequest {
@@ -56,7 +56,7 @@ message CountryAppService_statesByCountryIdRequest {
 
 message CountryAppService_statesByCountryIdResponse {
   repeated State states = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 service CountryAppService {

@@ -128,12 +128,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             response = ProjectAppService_projectsResponse()
             for project in result["items"]:
                 response.projects.add(id=project.id(), name=project.name())
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             logger.debug(
                 f"[{ProjectAppServiceListener.projects.__qualname__}] - response: {response}"
             )
             return ProjectAppService_projectsResponse(
-                projects=response.projects, itemCount=response.itemCount
+                projects=response.projects, totalItemCount=response.totalItemCount
             )
         except ProjectDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

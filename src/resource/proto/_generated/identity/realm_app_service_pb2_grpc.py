@@ -15,25 +15,25 @@ class RealmAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.realmByName = channel.unary_unary(
-            "/cafm.identity.realm.RealmAppService/realmByName",
-            request_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByNameRequest.SerializeToString,
-            response_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByNameResponse.FromString,
-        )
+                '/cafm.identity.realm.RealmAppService/realmByName',
+                request_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByNameRequest.SerializeToString,
+                response_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByNameResponse.FromString,
+                )
         self.realmById = channel.unary_unary(
-            "/cafm.identity.realm.RealmAppService/realmById",
-            request_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByIdRequest.SerializeToString,
-            response_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByIdResponse.FromString,
-        )
+                '/cafm.identity.realm.RealmAppService/realmById',
+                request_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByIdRequest.SerializeToString,
+                response_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByIdResponse.FromString,
+                )
         self.realms = channel.unary_unary(
-            "/cafm.identity.realm.RealmAppService/realms",
-            request_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsRequest.SerializeToString,
-            response_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsResponse.FromString,
-        )
+                '/cafm.identity.realm.RealmAppService/realms',
+                request_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsRequest.SerializeToString,
+                response_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsResponse.FromString,
+                )
         self.newId = channel.unary_unary(
-            "/cafm.identity.realm.RealmAppService/newId",
-            request_serializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdRequest.SerializeToString,
-            response_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdResponse.FromString,
-        )
+                '/cafm.identity.realm.RealmAppService/newId',
+                request_serializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdRequest.SerializeToString,
+                response_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdResponse.FromString,
+                )
 
 
 class RealmAppServiceServicer(object):
@@ -42,173 +42,124 @@ class RealmAppServiceServicer(object):
     def realmByName(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def realmById(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def realms(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def newId(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_RealmAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "realmByName": grpc.unary_unary_rpc_method_handler(
-            servicer.realmByName,
-            request_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByNameRequest.FromString,
-            response_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByNameResponse.SerializeToString,
-        ),
-        "realmById": grpc.unary_unary_rpc_method_handler(
-            servicer.realmById,
-            request_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByIdRequest.FromString,
-            response_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByIdResponse.SerializeToString,
-        ),
-        "realms": grpc.unary_unary_rpc_method_handler(
-            servicer.realms,
-            request_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsRequest.FromString,
-            response_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsResponse.SerializeToString,
-        ),
-        "newId": grpc.unary_unary_rpc_method_handler(
-            servicer.newId,
-            request_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdRequest.FromString,
-            response_serializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdResponse.SerializeToString,
-        ),
+            'realmByName': grpc.unary_unary_rpc_method_handler(
+                    servicer.realmByName,
+                    request_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByNameRequest.FromString,
+                    response_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByNameResponse.SerializeToString,
+            ),
+            'realmById': grpc.unary_unary_rpc_method_handler(
+                    servicer.realmById,
+                    request_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByIdRequest.FromString,
+                    response_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmByIdResponse.SerializeToString,
+            ),
+            'realms': grpc.unary_unary_rpc_method_handler(
+                    servicer.realms,
+                    request_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsRequest.FromString,
+                    response_serializer=identity_dot_realm__app__service__pb2.RealmAppService_realmsResponse.SerializeToString,
+            ),
+            'newId': grpc.unary_unary_rpc_method_handler(
+                    servicer.newId,
+                    request_deserializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdRequest.FromString,
+                    response_serializer=identity_dot_realm__app__service__pb2.RealmAppService_newIdResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "cafm.identity.realm.RealmAppService", rpc_method_handlers
-    )
+            'cafm.identity.realm.RealmAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class RealmAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def realmByName(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def realmByName(request,
             target,
-            "/cafm.identity.realm.RealmAppService/realmByName",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.realm.RealmAppService/realmByName',
             identity_dot_realm__app__service__pb2.RealmAppService_realmByNameRequest.SerializeToString,
             identity_dot_realm__app__service__pb2.RealmAppService_realmByNameResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def realmById(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def realmById(request,
             target,
-            "/cafm.identity.realm.RealmAppService/realmById",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.realm.RealmAppService/realmById',
             identity_dot_realm__app__service__pb2.RealmAppService_realmByIdRequest.SerializeToString,
             identity_dot_realm__app__service__pb2.RealmAppService_realmByIdResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def realms(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def realms(request,
             target,
-            "/cafm.identity.realm.RealmAppService/realms",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.realm.RealmAppService/realms',
             identity_dot_realm__app__service__pb2.RealmAppService_realmsRequest.SerializeToString,
             identity_dot_realm__app__service__pb2.RealmAppService_realmsResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def newId(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def newId(request,
             target,
-            "/cafm.identity.realm.RealmAppService/newId",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.realm.RealmAppService/newId',
             identity_dot_realm__app__service__pb2.RealmAppService_newIdRequest.SerializeToString,
             identity_dot_realm__app__service__pb2.RealmAppService_newIdResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

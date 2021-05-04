@@ -42,7 +42,7 @@ message RoleAppService_rolesRequest {
 
 message RoleAppService_rolesResponse {
   repeated Role roles = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 message RoleAppService_newIdRequest {}

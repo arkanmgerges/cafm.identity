@@ -134,12 +134,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
                     p.allowedActions.append(allowedAction)
                 for deniedAction in permission.deniedActions():
                     p.deniedActions.append(deniedAction)
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             logger.debug(
                 f"[{PermissionAppServiceListener.permissions.__qualname__}] - response: {response}"
             )
             return PermissionAppService_permissionsResponse(
-                permissions=response.permissions, itemCount=response.itemCount
+                permissions=response.permissions, totalItemCount=response.totalItemCount
             )
         except PermissionDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

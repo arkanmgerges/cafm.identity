@@ -29,7 +29,7 @@ message OuAppService_ousRequest {
 
 message OuAppService_ousResponse {
   repeated Ou ous = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 message OuAppService_newIdRequest {}

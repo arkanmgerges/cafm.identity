@@ -21,7 +21,7 @@ message PermissionContextAppService_permissionContextsRequest {
 
 message PermissionContextAppService_permissionContextsResponse {
   repeated PermissionContext permissionContexts = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 message PermissionContextAppService_newIdRequest {}

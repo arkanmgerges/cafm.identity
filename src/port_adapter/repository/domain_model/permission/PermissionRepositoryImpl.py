@@ -227,9 +227,9 @@ class PermissionRepositoryImpl(PermissionRepository):
         )
 
         if result is None or len(result["items"]) == 0:
-            return {"items": [], "itemCount": 0}
+            return {"items": [], "totalItemCount": 0}
         items = result["items"]
-        itemCount = len(items)
+        totalItemCount = len(items)
         items = items[resultFrom : resultFrom + resultSize]
         objectItems = []
         for x in items:
@@ -243,4 +243,4 @@ class PermissionRepositoryImpl(PermissionRepository):
                     deniedActions=deniedActions,
                 )
             )
-        return {"items": objectItems, "itemCount": itemCount}
+        return {"items": objectItems, "totalItemCount": totalItemCount}

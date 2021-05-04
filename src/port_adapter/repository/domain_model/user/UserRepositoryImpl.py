@@ -329,9 +329,9 @@ class UserRepositoryImpl(UserRepository):
         )
 
         if result is None or len(result["items"]) == 0:
-            return {"items": [], "itemCount": 0}
+            return {"items": [], "totalItemCount": 0}
         items = result["items"]
-        itemCount = len(items)
+        totalItemCount = len(items)
         items = items[resultFrom : resultFrom + resultSize]
         return {
             "items": [
@@ -342,5 +342,5 @@ class UserRepositoryImpl(UserRepository):
                 )
                 for x in items
             ],
-            "itemCount": itemCount,
+            "totalItemCount": totalItemCount,
         }

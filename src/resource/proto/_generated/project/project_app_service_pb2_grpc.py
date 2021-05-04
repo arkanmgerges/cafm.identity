@@ -15,20 +15,20 @@ class ProjectAppServiceStub(object):
             channel: A grpc.Channel.
         """
         self.projectByName = channel.unary_unary(
-            "/cafm.project.project.ProjectAppService/projectByName",
-            request_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectByNameRequest.SerializeToString,
-            response_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectByNameResponse.FromString,
-        )
+                '/cafm.project.project.ProjectAppService/projectByName',
+                request_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectByNameRequest.SerializeToString,
+                response_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectByNameResponse.FromString,
+                )
         self.projectById = channel.unary_unary(
-            "/cafm.project.project.ProjectAppService/projectById",
-            request_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectByIdRequest.SerializeToString,
-            response_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectByIdResponse.FromString,
-        )
+                '/cafm.project.project.ProjectAppService/projectById',
+                request_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectByIdRequest.SerializeToString,
+                response_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectByIdResponse.FromString,
+                )
         self.projects = channel.unary_unary(
-            "/cafm.project.project.ProjectAppService/projects",
-            request_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectsRequest.SerializeToString,
-            response_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectsResponse.FromString,
-        )
+                '/cafm.project.project.ProjectAppService/projects',
+                request_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectsRequest.SerializeToString,
+                response_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectsResponse.FromString,
+                )
 
 
 class ProjectAppServiceServicer(object):
@@ -37,133 +37,96 @@ class ProjectAppServiceServicer(object):
     def projectByName(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def projectById(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def projects(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_ProjectAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "projectByName": grpc.unary_unary_rpc_method_handler(
-            servicer.projectByName,
-            request_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectByNameRequest.FromString,
-            response_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectByNameResponse.SerializeToString,
-        ),
-        "projectById": grpc.unary_unary_rpc_method_handler(
-            servicer.projectById,
-            request_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectByIdRequest.FromString,
-            response_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectByIdResponse.SerializeToString,
-        ),
-        "projects": grpc.unary_unary_rpc_method_handler(
-            servicer.projects,
-            request_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectsRequest.FromString,
-            response_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectsResponse.SerializeToString,
-        ),
+            'projectByName': grpc.unary_unary_rpc_method_handler(
+                    servicer.projectByName,
+                    request_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectByNameRequest.FromString,
+                    response_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectByNameResponse.SerializeToString,
+            ),
+            'projectById': grpc.unary_unary_rpc_method_handler(
+                    servicer.projectById,
+                    request_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectByIdRequest.FromString,
+                    response_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectByIdResponse.SerializeToString,
+            ),
+            'projects': grpc.unary_unary_rpc_method_handler(
+                    servicer.projects,
+                    request_deserializer=project_dot_project__app__service__pb2.ProjectAppService_projectsRequest.FromString,
+                    response_serializer=project_dot_project__app__service__pb2.ProjectAppService_projectsResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "cafm.project.project.ProjectAppService", rpc_method_handlers
-    )
+            'cafm.project.project.ProjectAppService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class ProjectAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def projectByName(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def projectByName(request,
             target,
-            "/cafm.project.project.ProjectAppService/projectByName",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.project.project.ProjectAppService/projectByName',
             project_dot_project__app__service__pb2.ProjectAppService_projectByNameRequest.SerializeToString,
             project_dot_project__app__service__pb2.ProjectAppService_projectByNameResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def projectById(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def projectById(request,
             target,
-            "/cafm.project.project.ProjectAppService/projectById",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.project.project.ProjectAppService/projectById',
             project_dot_project__app__service__pb2.ProjectAppService_projectByIdRequest.SerializeToString,
             project_dot_project__app__service__pb2.ProjectAppService_projectByIdResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def projects(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_unary(
-            request,
+    def projects(request,
             target,
-            "/cafm.project.project.ProjectAppService/projects",
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.project.project.ProjectAppService/projects',
             project_dot_project__app__service__pb2.ProjectAppService_projectsRequest.SerializeToString,
             project_dot_project__app__service__pb2.ProjectAppService_projectsResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -108,13 +108,13 @@ class PermissionContextAppServiceListener(PermissionContextAppServiceServicer):
                     type=permissionContext.type(),
                     data=json.dumps(permissionContext.data()),
                 )
-            response.itemCount = result["itemCount"]
+            response.totalItemCount = result["totalItemCount"]
             logger.debug(
                 f"[{PermissionContextAppServiceListener.permissionContexts.__qualname__}] - response: {response}"
             )
             return PermissionContextAppService_permissionContextsResponse(
                 permissionContexts=response.permissionContexts,
-                itemCount=response.itemCount,
+                totalItemCount=response.totalItemCount,
             )
         except PermissionContextDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)

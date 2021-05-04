@@ -29,7 +29,7 @@ message PermissionAppService_permissionsRequest {
 
 message PermissionAppService_permissionsResponse {
   repeated Permission permissions = 1;
-  int32 itemCount = 2;
+  int32 totalItemCount = 2;
 }
 
 message PermissionAppService_newIdRequest {}
