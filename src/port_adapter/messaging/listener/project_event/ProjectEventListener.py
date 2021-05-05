@@ -10,6 +10,7 @@ from src.domain_model.resource.exception.DomainModelException import (
 )
 from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.port_adapter.messaging.listener.common.CommonListener import CommonListener
+from src.port_adapter.messaging.listener.common.ProcessHandleData import ProcessHandleData
 from src.resource.logging.logger import logger
 
 
@@ -29,7 +30,10 @@ class ProjectEventListener(CommonListener):
             consumerTopicList=[os.getenv("CAFM_PROJECT_EVENT_TOPIC", "")],
         )
 
-    def _processHandledResult(self, producer, consumer, handledResult, messageData):
+    def _processHandledResult(self, processHandleData: ProcessHandleData):
+        handledResult = processHandleData.handledResult
+        messageData = processHandleData.messageData
+        producer = processHandleData.producer
         try:
             if handledResult is None:  # Consume the offset since there is no handler for it
                 logger.info(
@@ -69,19 +73,12 @@ class ProjectEventListener(CommonListener):
                 schema=IdentityCommand.get_schema(),
             )
 
-            for target in self.targetsOnSuccess:
-                res = target(
-                    messageData=messageData,
-                    creatorServiceName=self._creatorServiceName,
-                    resultData=handledResult["data"],
-                )
-                producer.produce(obj=res["obj"], schema=res["schema"])
+            processHandleData.isSuccess = True
         except DomainModelException as e:
             logger.warn(e)
-            for target in self.targetsOnException:
-                res = target(messageData, e, self._creatorServiceName)
-                producer.produce(obj=res["obj"], schema=res["schema"])
             DomainPublishedEvents.cleanup()
+            processHandleData.isSuccess = False
+            processHandleData.exception = e
         except Exception as e:
             DomainPublishedEvents.cleanup()
             # todo send to delayed topic and make isMessageProcessed = True

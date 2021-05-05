@@ -18,6 +18,8 @@ from src.port_adapter.messaging.common.TransactionalProducer import (
     TransactionalProducer,
 )
 from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
+from src.port_adapter.messaging.listener.common.ProcessHandleData import ProcessHandleData
+from src.port_adapter.messaging.listener.common.handler.Handler import Handler
 from src.resource.logging.logger import logger
 
 
@@ -104,10 +106,9 @@ class CommonListener:
                     logger.info(f"value: {message.value()}")
 
                     messageData = message.value()
-                    logger.debug(
-                        f"[{CommonListener._process.__qualname__}] received message data = {messageData}"
-                    )
+                    logger.debug(f"[{CommonListener._process.__qualname__}] received message data = {messageData}")
 
+                    processHandleDataList: List[ProcessHandleData] = []
                     for handler in self._handlers:
                         name = messageData["name"]
                         metadata = messageData["metadata"]
@@ -116,43 +117,69 @@ class CommonListener:
                             isMessageProcessed = False
                             while not isMessageProcessed:
                                 try:
-                                    handledResult = self._handleCommand(
-                                        handler=handler, messageData=messageData
-                                    )
-                                    self._processHandledResult(
+                                    handledResult = self._handleCommand(handler=handler, messageData=messageData)
+                                    processHandleData = ProcessHandleData(
                                         producer=producer,
                                         consumer=consumer,
                                         handledResult=handledResult,
                                         messageData=messageData,
+                                        handler=handler,
                                     )
+                                    self._processHandledResult(processHandleData=processHandleData)
+                                    processHandleDataList.append(processHandleData)
                                     isMessageProcessed = True
                                 except Exception as e:
+                                    logger.error(e)
                                     sleep(1)
+                    for processHandleDataItem in processHandleDataList:
+                        if processHandleDataItem.isSuccess:
+                            self._handleTargetsOnSuccess(processHandleData=processHandleDataItem)
+                        elif not processHandleDataItem.isSuccess:
+                            self._handleTargetsOnException(processHandleData=processHandleDataItem)
+
                     producer.sendOffsetsToTransaction(consumer)
                     producer.commitTransaction()
                     producer.beginTransaction()
         except KeyboardInterrupt:
             logger.info(f"[{CommonListener._process.__qualname__}] Aborted by user")
         except SystemExit:
-            logger.info(
-                f"[{CommonListener._process.__qualname__}] Shutting down the process"
-            )
+            logger.info(f"[{CommonListener._process.__qualname__}] Shutting down the process")
         finally:
             producer.abortTransaction()
             # Close down consumer to commit final offsets.
             consumer.close()
 
+    def _handleTargetsOnSuccess(self, processHandleData: ProcessHandleData):
+        handler: Handler = processHandleData.handler
+        messageData = processHandleData.messageData
+        handledResult = processHandleData.handledResult
+        producer = processHandleData.producer
+        for target in handler.targetsOnSuccess():
+            res = target(
+                messageData=messageData,
+                creatorServiceName=self._creatorServiceName,
+                resultData=handledResult["data"],
+            )
+            producer.produce(obj=res["obj"], schema=res["schema"])
+
+    def _handleTargetsOnException(self, processHandleData: ProcessHandleData):
+        handler = processHandleData.handler
+        messageData = processHandleData.messageData
+        e = processHandleData.exception
+        producer = processHandleData.producer
+        for target in handler.targetsOnException():
+            res = target(messageData, e, self._creatorServiceName)
+            producer.produce(obj=res["obj"], schema=res["schema"])
+
     @abstractmethod
-    def _processHandledResult(self, producer, consumer, handledResult, messageData):
+    def _processHandledResult(self, processHandleData: ProcessHandleData):
         pass
 
     def _handleCommand(self, handler, messageData: dict):
         name = messageData["name"]
         metadata = messageData["metadata"]
         if name == CommonCommandConstant.PROCESS_BULK.value:
-            result = handler.handleCommand(
-                messageData=messageData, extraData={"handlers": self._handlers}
-            )
+            result = handler.handleCommand(messageData=messageData, extraData={"handlers": self._handlers})
         else:
             result = handler.handleCommand(messageData=messageData)
         return {"data": "", "metadata": metadata} if result is None else result
