@@ -5,6 +5,7 @@ from copy import copy
 from enum import Enum
 from typing import List
 
+from src.domain_model.common.HasToMap import HasToMap
 from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.resource.logging.logger import logger
 
@@ -24,7 +25,7 @@ class PermissionAction(Enum):
     REVOKE = "revoke"
 
 
-class Permission:
+class Permission(HasToMap):
     def __init__(
         self,
         id: str = None,

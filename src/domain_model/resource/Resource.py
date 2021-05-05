@@ -3,8 +3,10 @@
 """
 from uuid import uuid4
 
+from src.domain_model.common.HasToMap import HasToMap
 
-class Resource:
+
+class Resource(HasToMap):
     def __init__(self, id: str = None, type: str = ""):
         self._id = str(uuid4()) if id is None else id
         self._type = type

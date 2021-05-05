@@ -1,12 +1,12 @@
 """
     @author: Mohammad S. moso<moso@develoop.run>
 """
-
+from src.domain_model.common.HasToMap import HasToMap
 from src.domain_model.resource.Resource import Resource
 from src.resource.logging.logger import logger
 
 
-class State(Resource):
+class State(Resource, HasToMap):
     def __init__(self, id: str, name: str = ""):
         super().__init__(id=id, type="state")
 

@@ -3,11 +3,12 @@
 """
 from uuid import uuid4
 
+from src.domain_model.common.HasToMap import HasToMap
 from src.domain_model.resource.Resource import Resource
 from src.resource.logging.logger import logger
 
 
-class Country(Resource):
+class Country(Resource, HasToMap):
     def __init__(
         self,
         id: int = "",

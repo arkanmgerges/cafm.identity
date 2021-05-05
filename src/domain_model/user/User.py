@@ -5,6 +5,7 @@ import re
 from copy import copy
 from uuid import uuid4
 
+from src.domain_model.common.HasToMap import HasToMap
 from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.exception.InvalidValueException import (
@@ -13,7 +14,7 @@ from src.domain_model.resource.exception.InvalidValueException import (
 from src.resource.logging.logger import logger
 
 
-class User(Resource):
+class User(Resource, HasToMap):
     ONE_TIME_PASSWORD_TAG = "###ABC_ZYX_1_TIME_PASS"
 
     def __init__(

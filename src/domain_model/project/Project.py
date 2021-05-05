@@ -3,6 +3,7 @@
 """
 from copy import copy
 
+from src.domain_model.common.HasToMap import HasToMap
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.resource.logging.logger import logger
@@ -13,7 +14,7 @@ from src.resource.logging.logger import logger
 from uuid import uuid4
 
 
-class Project(Resource):
+class Project(Resource, HasToMap):
     def __init__(self, id: str = None, name=""):
         anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type="project")

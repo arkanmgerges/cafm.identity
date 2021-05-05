@@ -2,13 +2,12 @@
     @author: Mohammad S. moso<moso@develoop.run>
 """
 
-from uuid import uuid4
-
+from src.domain_model.common.HasToMap import HasToMap
 from src.domain_model.resource.Resource import Resource
 from src.resource.logging.logger import logger
 
 
-class City(Resource):
+class City(Resource, HasToMap):
     def __init__(
         self,
         id: int,
@@ -109,7 +108,5 @@ class City(Resource):
 
     def __eq__(self, other):
         if not isinstance(other, City):
-            raise NotImplementedError(
-                f"other: {other} can not be compared with City class"
-            )
+            raise NotImplementedError(f"other: {other} can not be compared with City class")
         return self.id() == other.id()
