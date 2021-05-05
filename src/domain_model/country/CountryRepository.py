@@ -92,3 +92,25 @@ class CountryRepository(ABC):
         Returns:
             dict: A dict that has {"items": [], "totalItemCount": 0}
         """
+
+    @abstractmethod
+    def citiesByCountryIdAndStateId(
+        self,
+        countryId: int,
+        stateId: str,
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
+        """Get list of cities by country id and state id
+
+        Args:
+            countryId (int): The id of the country to fetch the states
+            stateId (str): The id of the state to fetch the states
+            resultFrom (int): The start offset of the result item
+            resultSize (int): The size of the items in the result
+            order (List[dict]): A list of order e.g. [{'orderBy': 'name', 'direction': 'asc'}, {'orderBy': 'age', 'direction': 'desc'}]
+
+        Returns:
+            dict: A dict that has {"items": [], "totalItemCount": 0}
+        """

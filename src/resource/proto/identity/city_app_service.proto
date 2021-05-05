@@ -24,19 +24,7 @@ message CityAppService_citiesResponse {
   int32 totalItemCount = 2;
 }
 
-message CityAppService_citiesByStateIdRequest {
-  int32 resultFrom = 1;
-  int32 resultSize = 2;
-  repeated cafm.common.order.Order order = 3;
-  string id = 4;
-}
-
-message CityAppService_citiesByStateIdResponse {
-  repeated City cities = 1;
-  int32 totalItemCount = 2;
-}
 service CityAppService {
   rpc cityById (CityAppService_cityByIdRequest) returns (CityAppService_cityByIdResponse) {}
   rpc cities (CityAppService_citiesRequest) returns (CityAppService_citiesResponse) {}
-  rpc citiesByStateId (CityAppService_citiesByStateIdRequest) returns (CityAppService_citiesByStateIdResponse) {}
 }

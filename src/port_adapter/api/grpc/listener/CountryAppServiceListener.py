@@ -24,7 +24,7 @@ from src.resource.proto._generated.identity.country_app_service_pb2 import (
     CountryAppService_countryByIdResponse,
     CountryAppService_cityByCountryIdResponse,
     CountryAppService_citiesByCountryIdResponse,
-    CountryAppService_statesByCountryIdResponse,
+    CountryAppService_statesByCountryIdResponse, CountryAppService_citiesByCountryIdAndStateIdResponse,
 )
 from src.resource.proto._generated.identity.country_app_service_pb2_grpc import (
     CountryAppServiceServicer,
@@ -258,3 +258,49 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details("Un Authorized")
             return CountryAppService_statesByCountryIdResponse()
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def citiesByCountryIdAndStateId(self, request, context):
+        try:
+            metadata = context.invocation_metadata()
+            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            logger.debug(
+                f"[{CountryAppServiceListener.citiesByCountryIdAndStateId.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}"
+            )
+            appService: CountryApplicationService = AppDi.instance.get(CountryApplicationService)
+
+            orderData = [
+                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
+            ]
+            result: dict = appService.citiesByCountryIdAndStateId(
+                countryId=request.countryId,
+                stateId=request.stateId,
+                resultFrom=request.resultFrom,
+                resultSize=resultSize,
+                order=orderData,
+            )
+            response = CountryAppService_citiesByCountryIdAndStateIdResponse()
+            response.totalItemCount = result["totalItemCount"]
+            for city in result["items"]:
+                response.cities.add(
+                    id=city.id(),
+                    localeCode=city.localeCode(),
+                    continentCode=city.continentCode(),
+                    continentName=city.continentName(),
+                    countryIsoCode=city.countryIsoCode(),
+                    countryName=city.countryName(),
+                    subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
+                    subdivisionOneIsoName=city.subdivisionOneIsoName(),
+                    cityName=city.cityName(),
+                    timeZone=city.timeZone(),
+                    isInEuropeanUnion=city.isInEuropeanUnion(),
+                )
+            logger.debug(
+                f"[{CountryApplicationService.citiesByCountryIdAndStateId.__qualname__}] - response: {response}"
+            )
+            return response
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details("Un Authorized")
+            return CountryAppService_citiesByCountryIdAndStateIdResponse()

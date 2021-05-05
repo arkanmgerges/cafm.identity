@@ -33,19 +33,13 @@ class CountryRepositoryImpl(CountryRepository):
             )
             self._db = self._connection[os.getenv("CAFM_IDENTITY_ARANGODB_DB_NAME", "")]
             self._helperRepo: HelperRepository = AppDi.instance.get(HelperRepository)
-            self._policyService: PolicyControllerService = AppDi.instance.get(
-                PolicyControllerService
-            )
+            self._policyService: PolicyControllerService = AppDi.instance.get(PolicyControllerService)
         except Exception as e:
-            logger.warn(
-                f"[{CountryRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}"
-            )
+            logger.warn(f"[{CountryRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}")
             raise Exception(f"Could not connect to the db, message: {e}")
 
     @debugLogger
-    def countries(
-        self, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None
-    ) -> dict:
+    def countries(self, resultFrom: int = 0, resultSize: int = 100, order: List[dict] = None) -> dict:
         sortData = ""
         if order is not None:
             for item in order:
@@ -96,14 +90,10 @@ class CountryRepositoryImpl(CountryRepository):
                 RETURN d
         """
         bindVars = {"id": id}
-        queryResult: AQLQuery = self._db.AQLQuery(
-            aql, bindVars=bindVars, rawResults=True
-        )
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
-            logger.debug(
-                f"[{CountryRepositoryImpl.countryById.__qualname__}] country id: {id}"
-            )
+            logger.debug(f"[{CountryRepositoryImpl.countryById.__qualname__}] country id: {id}")
             raise CountryDoesNotExistException(f"country id: {id}")
         return Country.createFrom(
             id=result[0]["geoname_id"],
@@ -144,9 +134,7 @@ class CountryRepositoryImpl(CountryRepository):
             aql = aql.replace("#sortData", "")
 
         bindVars = {"id": id}
-        queryResult: AQLQuery = self._db.AQLQuery(
-            aql, bindVars=bindVars, rawResults=True
-        )
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result[0]
 
         if result is None or len(result["items"]) == 0:
@@ -164,12 +152,8 @@ class CountryRepositoryImpl(CountryRepository):
                     continentName=x["continent_name"],
                     countryIsoCode=x["country_iso_code"],
                     countryName=x["country_name"],
-                    subdivisionOneIsoCode=x["subdivision_1_iso_code"]
-                    if "subdivision_1_iso_code" in x
-                    else "",
-                    subdivisionOneIsoName=x["subdivision_1_name"]
-                    if "subdivision_1_name" in x
-                    else "",
+                    subdivisionOneIsoCode=x["subdivision_1_iso_code"] if "subdivision_1_iso_code" in x else "",
+                    subdivisionOneIsoName=x["subdivision_1_name"] if "subdivision_1_name" in x else "",
                     cityName=x["city_name"],
                     timeZone=x["time_zone"],
                     isInEuropeanUnion=x["is_in_european_union"],
@@ -192,18 +176,14 @@ class CountryRepositoryImpl(CountryRepository):
         """
 
         bindVars = {"countryID": countryId, "cityID": cityId}
-        queryResult: AQLQuery = self._db.AQLQuery(
-            aql, bindVars=bindVars, rawResults=True
-        )
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
 
         if len(result) == 0:
             logger.debug(
                 f"[{CountryRepositoryImpl.cityByCountryId.__qualname__}] country id: {countryId}, city id: {cityId}"
             )
-            raise CountryDoesNotExistException(
-                f"country id: {countryId}, city id: {cityId}"
-            )
+            raise CountryDoesNotExistException(f"country id: {countryId}, city id: {cityId}")
 
         return City.createFrom(
             id=result[0]["geoname_id"],
@@ -249,9 +229,7 @@ class CountryRepositoryImpl(CountryRepository):
             aql = aql.replace("#sortData", "")
 
         bindVars = {"id": id}
-        queryResult: AQLQuery = self._db.AQLQuery(
-            aql, bindVars=bindVars, rawResults=True
-        )
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result[0]
         if result is None or len(result["items"]) == 0:
             return {"items": [], "totalItemCount": 0}
@@ -266,10 +244,70 @@ class CountryRepositoryImpl(CountryRepository):
 
         return {
             "items": [
-                State.createFrom(
-                    id=str(x["subdivision_1_iso_code"]), name=x["subdivision_1_name"]
-                )
-                for x in items
+                State.createFrom(id=str(x["subdivision_1_iso_code"]), name=x["subdivision_1_name"]) for x in items
             ],
             "totalItemCount": totalItemCount,
         }
+
+    def citiesByCountryIdAndStateId(
+        self,
+        countryId: int,
+        stateId: str,
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
+        sortData = ""
+        if order is not None:
+            for item in order:
+                sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
+            sortData = sortData[2:]
+
+        aql = """
+            Let countryIsoCode = (
+                FOR doc in country
+                    FILTER doc.geoname_id == @countryId
+                    RETURN doc.country_iso_code
+            )
+            LET cities = (FOR doc IN city
+                        FILTER doc.subdivision_1_iso_code == @stateId AND
+                               doc.country_iso_code == countryIsoCode[0]
+                            #sortData 
+                            RETURN doc)
+            RETURN {items: cities}
+        """
+        if sortData != "":
+            aql = aql.replace("#sortData", f"SORT {sortData}")
+        else:
+            aql = aql.replace("#sortData", "")
+        bindVars = {"countryId": countryId, "stateId": stateId}
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result[0]
+
+        if result is None or len(result["items"]) == 0:
+            return {"items": [], "totalItemCount": 0}
+        items = result["items"]
+        totalItemCount = len(items)
+        items = items[resultFrom: resultFrom + resultSize]
+
+        returnItems = []
+        for x in items:
+            cityName = x["city_name"] if "city_name" in x else ""
+            subdivisionOneIsoCode = x["subdivision_1_iso_code"] if "subdivision_1_iso_code" in x else ""
+            subdivisionOneIsoName = x["subdivision_1_name"] if "subdivision_1_name" in x else ""
+            returnItems.append(
+                City.createFrom(
+                    id=x["geoname_id"],
+                    localeCode=x["locale_code"],
+                    continentCode=x["continent_code"],
+                    cityName=cityName,
+                    subdivisionOneIsoCode=subdivisionOneIsoCode,
+                    subdivisionOneIsoName=subdivisionOneIsoName,
+                    continentName=x["continent_name"],
+                    countryIsoCode=x["country_iso_code"],
+                    countryName=x["country_name"],
+                    timeZone=x["time_zone"],
+                    isInEuropeanUnion=x["is_in_european_union"],
+                )
+            )
+        return {"items": returnItems, "totalItemCount": totalItemCount}

@@ -29,14 +29,3 @@ class CityApplicationService:
         resource = self._cityRepository.cityById(id=id)
         return resource
 
-    @debugLogger
-    def citiesByStateId(
-        self,
-        id: str = "",
-        resultFrom: int = 0,
-        resultSize: int = 100,
-        order: List[dict] = None,
-    ) -> dict:
-        return self._cityRepository.citiesByStateId(
-            id=id, resultFrom=resultFrom, resultSize=resultSize, order=order
-        )

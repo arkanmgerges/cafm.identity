@@ -24,11 +24,6 @@ class CityAppServiceStub(object):
                 request_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesRequest.SerializeToString,
                 response_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesResponse.FromString,
                 )
-        self.citiesByStateId = channel.unary_unary(
-                '/cafm.identity.country.CityAppService/citiesByStateId',
-                request_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdRequest.SerializeToString,
-                response_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdResponse.FromString,
-                )
 
 
 class CityAppServiceServicer(object):
@@ -46,12 +41,6 @@ class CityAppServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def citiesByStateId(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
 
 def add_CityAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -64,11 +53,6 @@ def add_CityAppServiceServicer_to_server(servicer, server):
                     servicer.cities,
                     request_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesRequest.FromString,
                     response_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesResponse.SerializeToString,
-            ),
-            'citiesByStateId': grpc.unary_unary_rpc_method_handler(
-                    servicer.citiesByStateId,
-                    request_deserializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdRequest.FromString,
-                    response_serializer=identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -111,22 +95,5 @@ class CityAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.country.CityAppService/cities',
             identity_dot_city__app__service__pb2.CityAppService_citiesRequest.SerializeToString,
             identity_dot_city__app__service__pb2.CityAppService_citiesResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def citiesByStateId(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.country.CityAppService/citiesByStateId',
-            identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdRequest.SerializeToString,
-            identity_dot_city__app__service__pb2.CityAppService_citiesByStateIdResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
