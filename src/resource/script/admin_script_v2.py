@@ -21,7 +21,7 @@ from time import sleep
 load_dotenv()
 
 baseURL = os.getenv("API_URL")
-microserviceNamePatternCompiled = re.compile("/v[0-9]/(.+)?/")
+microserviceNamePatternCompiled = re.compile("/v[0-9]/([^/]+)?/")
 
 
 @click.group()
@@ -178,7 +178,7 @@ def persistPermission(data, token):
     return checkForResult(token, resp.json()["request_id"], checkForID=True, resultIdName="permission_id")
 
 
-def hashedKeyByKey(key, hashedKeys) -> Optional[str, None]:
+def hashedKeyByKey(key, hashedKeys) -> Optional[str]:
     if "hashed_keys" in hashedKeys:
         for item in hashedKeys["hashed_keys"]:
             if item["key"] == key:
@@ -246,8 +246,8 @@ def apiPermissionWithContextList(apiPermissionContexts, appRoutesJsonResponse, p
             elif method == "get":
                 method = "read"
             found = False
+            microserviceName = _extractMicroserviceName(appRoute["path"])
             for permission in permissionList:
-                microserviceName = _extractMicroserviceName(appRoute["path"])
                 microserviceName = microserviceName if microserviceName is not None else "default"
                 if permission["name"] == f'api:{method}:{microserviceName}:{appRoute["name"]}':
                     found = True
@@ -255,7 +255,7 @@ def apiPermissionWithContextList(apiPermissionContexts, appRoutesJsonResponse, p
             if not found:
                 apiPermissionsToBeCreated.append(
                     {
-                        "name": f'api:{method}:{appRoute["name"]}',
+                        "name": f'api:{method}:{microserviceName}:{appRoute["name"]}',
                         "allowed_actions": [method.lower()],
                         "denied_actions": [],
                     }

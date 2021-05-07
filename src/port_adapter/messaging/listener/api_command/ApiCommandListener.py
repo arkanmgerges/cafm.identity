@@ -3,15 +3,20 @@
 """
 import json
 import os
+from time import sleep
 
 from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.resource.exception.DomainModelException import (
     DomainModelException,
 )
+from src.port_adapter.messaging.common.model.ApiCommand import ApiCommand
+from src.port_adapter.messaging.common.model.ApiFailedCommandHandle import ApiFailedCommandHandle
 from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
 from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.common.CommonListener import CommonListener
 from src.port_adapter.messaging.listener.common.ProcessHandleData import ProcessHandleData
+from src.port_adapter.messaging.listener.common.resource.exception.FailedMessageHandleException import \
+    FailedMessageHandleException
 from src.resource.logging.logger import logger
 
 
@@ -24,8 +29,8 @@ class ApiCommandListener(CommonListener):
 
     def run(self):
         self._process(
-            consumerGroupId=os.getenv("CAFM_IDENTITY_CONSUMER_GROUP_API_CMD_NAME", ""),
-            consumerTopicList=[os.getenv("CAFM_API_COMMAND_TOPIC", "")],
+            consumerGroupId=os.getenv("CAFM_IDENTITY_CONSUMER_GROUP_API_CMD_NAME", "cafm.identity.consumer-group.api.cmd"),
+            consumerTopicList=[os.getenv("CAFM_API_COMMAND_TOPIC", "cafm.api.cmd")],
         )
 
     def _processHandledResult(self, processHandleData: ProcessHandleData):
@@ -57,8 +62,6 @@ class ApiCommandListener(CommonListener):
                 }
             )
 
-            processHandleData.isSuccess = True
-
             # Produce the domain events
             logger.debug(f"[{ApiCommandListener.run.__qualname__}] get postponed events from the event publisher")
             domainEvents = DomainPublishedEvents.postponedEvents()
@@ -67,9 +70,9 @@ class ApiCommandListener(CommonListener):
             # event in the messaging system
             evtExternal = []
             if (
-                len(external) > 0
-                and "name" in external[0]
-                and external[0]["name"] != CommonCommandConstant.PROCESS_BULK.value
+                    len(external) > 0
+                    and "name" in external[0]
+                    and external[0]["name"] != CommonCommandConstant.PROCESS_BULK.value
             ):
                 evtExternal = external
 
@@ -91,19 +94,70 @@ class ApiCommandListener(CommonListener):
                 )
 
             logger.debug(f"[{ApiCommandListener.run.__qualname__}] cleanup event publisher")
+            processHandleData.isSuccess = True
             DomainPublishedEvents.cleanup()
 
         except DomainModelException as e:
             logger.warn(e)
             DomainPublishedEvents.cleanup()
-            processHandleData.isSuccess = False
             processHandleData.exception = e
+            processHandleData.isSuccess = False
 
         except Exception as e:
+            # Send the failed message to the failed topic
             DomainPublishedEvents.cleanup()
-            # todo send to delayed topic and make isMessageProcessed = True
+            isMessageProduced = False
             logger.error(e)
-            raise e
+            while not isMessageProduced:
+                try:
+                    self._produceToFailedTopic(processHandleData=processHandleData)
+                    isMessageProduced = True
+                except Exception as e:
+                    logger.error(e)
+                    sleep(1)
+            raise FailedMessageHandleException(message=f"Failed message: {processHandleData.messageData}")
+
+    def _processHandleCommand(self, processHandleData: ProcessHandleData):
+        try:
+            return super()._handleCommand(processHandleData=processHandleData)
+        except DomainModelException as e:
+            logger.warn(e)
+            DomainPublishedEvents.cleanup()
+            processHandleData.exception = e
+            processHandleData.isSuccess = False
+        except Exception as e:
+            # Send the failed message to the failed topic
+            DomainPublishedEvents.cleanup()
+            isMessageProduced = False
+            logger.error(e)
+            while not isMessageProduced:
+                try:
+                    self._produceToFailedTopic(processHandleData=processHandleData)
+                    isMessageProduced = True
+                except Exception as e:
+                    logger.error(e)
+                    sleep(1)
+            raise FailedMessageHandleException(message=f"Failed message: {processHandleData.messageData}")
+
+    def _produceToFailedTopic(self, processHandleData: ProcessHandleData):
+        messageData = processHandleData.messageData
+        producer = processHandleData.producer
+        consumer = processHandleData.consumer
+
+        producer.produce(
+            obj=ApiFailedCommandHandle(
+                id=messageData["id"],
+                creatorServiceName=self._creatorServiceName,
+                name=messageData["name"],
+                metadata=messageData["metadata"],
+                data=messageData["data"],
+                createdOn=messageData["created_on"],
+            ),
+            schema=ApiCommand.get_schema(),
+        )
+        producer.sendOffsetsToTransaction(consumer)
+        producer.commitTransaction()
+        producer.beginTransaction()
 
 
 ApiCommandListener().run()

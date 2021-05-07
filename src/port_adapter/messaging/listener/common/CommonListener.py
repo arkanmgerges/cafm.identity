@@ -6,7 +6,6 @@ import importlib
 import os
 import signal
 from abc import abstractmethod
-from time import sleep
 from typing import List
 
 from confluent_kafka.cimpl import KafkaError
@@ -20,15 +19,15 @@ from src.port_adapter.messaging.common.TransactionalProducer import (
 from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.common.ProcessHandleData import ProcessHandleData
 from src.port_adapter.messaging.listener.common.handler.Handler import Handler
+from src.port_adapter.messaging.listener.common.resource.exception.FailedMessageHandleException import \
+    FailedMessageHandleException
 from src.resource.logging.logger import logger
 
 
 class CommonListener:
     def __init__(self, creatorServiceName, handlersPath):
         self._handlers = []
-        self._creatorServiceName = os.getenv(
-            "CAFM_PROJECT_SERVICE_NAME", "cafm.identity"
-        )
+        self._creatorServiceName = creatorServiceName
         self._cafmApiServiceName = os.getenv("CAFM_API_SERVICE_NAME", "cafm.api")
         self._addHandlers(handlersPath)
         self.targetsOnSuccess = []
@@ -108,38 +107,35 @@ class CommonListener:
                     messageData = message.value()
                     logger.debug(f"[{CommonListener._process.__qualname__}] received message data = {messageData}")
 
-                    processHandleDataList: List[ProcessHandleData] = []
-                    for handler in self._handlers:
-                        name = messageData["name"]
-                        metadata = messageData["metadata"]
+                    try:
+                        processHandleDataList: List[ProcessHandleData] = []
+                        for handler in self._handlers:
+                            name = messageData["name"]
 
-                        if handler.canHandle(name):
-                            isMessageProcessed = False
-                            while not isMessageProcessed:
-                                try:
-                                    handledResult = self._handleCommand(handler=handler, messageData=messageData)
-                                    processHandleData = ProcessHandleData(
-                                        producer=producer,
-                                        consumer=consumer,
-                                        handledResult=handledResult,
-                                        messageData=messageData,
-                                        handler=handler,
-                                    )
-                                    self._processHandledResult(processHandleData=processHandleData)
-                                    processHandleDataList.append(processHandleData)
-                                    isMessageProcessed = True
-                                except Exception as e:
-                                    logger.error(e)
-                                    sleep(1)
-                    for processHandleDataItem in processHandleDataList:
-                        if processHandleDataItem.isSuccess:
-                            self._handleTargetsOnSuccess(processHandleData=processHandleDataItem)
-                        elif not processHandleDataItem.isSuccess:
-                            self._handleTargetsOnException(processHandleData=processHandleDataItem)
+                            if handler.canHandle(name):
+                                processHandleData = ProcessHandleData(
+                                    producer=producer,
+                                    consumer=consumer,
+                                    handledResult=None,
+                                    messageData=messageData,
+                                    handler=handler,
+                                )
+                                processHandleData.handledResult = self._processHandleCommand(processHandleData=processHandleData)
+                                self._processHandledResult(processHandleData=processHandleData)
+                                processHandleDataList.append(processHandleData)
 
-                    producer.sendOffsetsToTransaction(consumer)
-                    producer.commitTransaction()
-                    producer.beginTransaction()
+                        for processHandleDataItem in processHandleDataList:
+                            if processHandleDataItem.isSuccess:
+                                self._handleTargetsOnSuccess(processHandleData=processHandleDataItem)
+                            elif not processHandleDataItem.isSuccess:
+                                self._handleTargetsOnException(processHandleData=processHandleDataItem)
+
+                        producer.sendOffsetsToTransaction(consumer)
+                        producer.commitTransaction()
+                        producer.beginTransaction()
+                    except FailedMessageHandleException as e:
+                        logger.error(f'Failed messaged handle, {CommonListener._process.__qualname__}: {e}')
+
         except KeyboardInterrupt:
             logger.info(f"[{CommonListener._process.__qualname__}] Aborted by user")
         except SystemExit:
@@ -165,7 +161,7 @@ class CommonListener:
     def _handleTargetsOnException(self, processHandleData: ProcessHandleData):
         handler = processHandleData.handler
         messageData = processHandleData.messageData
-        e = processHandleData.exception
+        e = processHandleData.exception if not None else f'Exception error for message data: {processHandleData.messageData}'
         producer = processHandleData.producer
         for target in handler.targetsOnException():
             res = target(messageData, e, self._creatorServiceName)
@@ -175,7 +171,13 @@ class CommonListener:
     def _processHandledResult(self, processHandleData: ProcessHandleData):
         pass
 
-    def _handleCommand(self, handler, messageData: dict):
+    @abstractmethod
+    def _processHandleCommand(self, processHandleData: ProcessHandleData):
+        pass
+
+    def _handleCommand(self, processHandleData: ProcessHandleData):
+        messageData = processHandleData.messageData
+        handler = processHandleData.handler
         name = messageData["name"]
         metadata = messageData["metadata"]
         if name == CommonCommandConstant.PROCESS_BULK.value:
@@ -183,3 +185,4 @@ class CommonListener:
         else:
             result = handler.handleCommand(messageData=messageData)
         return {"data": "", "metadata": metadata} if result is None else result
+

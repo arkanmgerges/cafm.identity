@@ -1,0 +1,34 @@
+{
+ "namespace": "cafm.project",
+ "type": "record",
+ "name": "Command",
+ "doc": "Command to be created for the project",
+ "fields": [
+    {
+        "name": "external",
+        "type": {
+            "type": "array",
+            "items": {
+                "type": "record",
+                "name": "data",
+                "fields": [
+                     {"name": "id", "type": "string", "doc": "The identity of the command"},
+                     {"name": "name",  "type": "string", "default": "", "doc": "The name of the command"},
+                     {"name": "version",  "type": "int", "default": 1, "doc": "The version of this message"},
+                     {"name": "metadata",  "type": "string", "default": "", "doc": "The metadata of the command"},
+                     {"name": "data",  "type": "string", "default": "", "doc": "The data of the command"},
+                     {"name": "creator_service_name",  "type": "string", "default": "", "doc": "The service who created the command"},
+                     {"name": "created_on",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this command got created"}
+                ]
+            }
+        }
+    },
+    {"name": "id", "type": "string", "doc": "The identity of the command"},
+    {"name": "name",  "type": "string", "default": "", "doc": "The name of the command"},
+    {"name": "version",  "type": "int", "default": 1, "doc": "The version of this message"},
+    {"name": "metadata",  "type": "string", "default": "", "doc": "The metadata of the command"},
+    {"name": "data",  "type": "string", "default": "", "doc": "The data of the command"},
+    {"name": "creator_service_name",  "type": "string", "default": "", "doc": "The service who created the command"},
+    {"name": "created_on",  "type": "long", "logicalType": "timestamp-millis", "doc": "EPOCH millis Timestamp when this command got created"}
+ ]
+}

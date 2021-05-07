@@ -3,15 +3,20 @@
 """
 import json
 import os
+from time import sleep
 
 from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.resource.exception.DomainModelException import (
     DomainModelException,
 )
+from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
+from src.port_adapter.messaging.common.model.IdentityFailedCommandHandle import IdentityFailedCommandHandle
 from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.common.CommonListener import CommonListener
 from src.port_adapter.messaging.listener.common.ProcessHandleData import ProcessHandleData
+from src.port_adapter.messaging.listener.common.resource.exception.FailedMessageHandleException import \
+    FailedMessageHandleException
 from src.resource.logging.logger import logger
 
 
@@ -65,9 +70,9 @@ class IdentityCommandListener(CommonListener):
             # event in the messaging system
             evtExternal = []
             if (
-                len(external) > 0
-                and "name" in external[0]
-                and external[0]["name"] != CommonCommandConstant.PROCESS_BULK.value
+                    len(external) > 0
+                    and "name" in external[0]
+                    and external[0]["name"] != CommonCommandConstant.PROCESS_BULK.value
             ):
                 evtExternal = external
 
@@ -89,20 +94,85 @@ class IdentityCommandListener(CommonListener):
                 )
 
             logger.debug(f"[{IdentityCommandListener.run.__qualname__}] cleanup event publisher")
-            DomainPublishedEvents.cleanup()
             processHandleData.isSuccess = True
+            DomainPublishedEvents.cleanup()
 
         except DomainModelException as e:
             logger.warn(e)
             DomainPublishedEvents.cleanup()
-            processHandleData.isSuccess = False
             processHandleData.exception = e
+            processHandleData.isSuccess = False
 
         except Exception as e:
+            # Send the failed message to the failed topic
             DomainPublishedEvents.cleanup()
-            # todo send to delayed topic and make isMessageProcessed = True
+            isMessageProduced = False
             logger.error(e)
-            raise e
+            while not isMessageProduced:
+                try:
+                    self._produceToFailedTopic(processHandleData=processHandleData)
+                    isMessageProduced = True
+                except Exception as e:
+                    logger.error(e)
+                    sleep(1)
+            raise FailedMessageHandleException(message=f"Failed message: {processHandleData.messageData}")
+
+    def _processHandleCommand(self, processHandleData: ProcessHandleData):
+        try:
+            return super()._handleCommand(processHandleData=processHandleData)
+        except DomainModelException as e:
+            logger.warn(e)
+            DomainPublishedEvents.cleanup()
+            processHandleData.exception = e
+            processHandleData.isSuccess = False
+        except Exception as e:
+            # Send the failed message to the failed topic
+            DomainPublishedEvents.cleanup()
+            isMessageProduced = False
+            logger.error(e)
+            while not isMessageProduced:
+                try:
+                    self._produceToFailedTopic(processHandleData=processHandleData)
+                    isMessageProduced = True
+                except Exception as e:
+                    logger.error(e)
+                    sleep(1)
+            raise FailedMessageHandleException(message=f"Failed message: {processHandleData.messageData}")
+
+    def _produceToFailedTopic(self, processHandleData: ProcessHandleData):
+        messageData = processHandleData.messageData
+        producer = processHandleData.producer
+        consumer = processHandleData.consumer
+
+        external = []
+        if "external" in messageData:
+            external = messageData["external"]
+        external.append(
+            {
+                "id": messageData["id"],
+                "creator_service_name": messageData["creator_service_name"],
+                "name": messageData["name"],
+                "version": messageData["version"],
+                "metadata": messageData["metadata"],
+                "data": messageData["data"],
+                "created_on": messageData["created_on"],
+            }
+        )
+        producer.produce(
+            obj=IdentityFailedCommandHandle(
+                id=messageData["id"],
+                creatorServiceName=self._creatorServiceName,
+                name=messageData["name"],
+                metadata=messageData["metadata"],
+                data=messageData["data"],
+                createdOn=messageData["created_on"],
+                external=external,
+            ),
+            schema=IdentityCommand.get_schema(),
+        )
+        producer.sendOffsetsToTransaction(consumer)
+        producer.commitTransaction()
+        producer.beginTransaction()
 
 
 IdentityCommandListener().run()

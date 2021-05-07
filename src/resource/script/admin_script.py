@@ -1,7 +1,6 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-import csv
 import sys
 from time import sleep
 
@@ -38,10 +37,11 @@ def cli():
 @cli.command(help="Initialize a database")
 def ttt():
     connection = dbClientConnection()
-    db = connection['cafm-identity']
-    resource = db['resource']
-    res = resource.bulkSave(docs=[{'name': 1}, {'name': 2}])
+    db = connection["cafm-identity"]
+    resource = db["resource"]
+    res = resource.bulkSave(docs=[{"name": 1}, {"name": 2}])
     print(res)
+
 
 @cli.command(help="Initialize a database")
 def init_db():
@@ -75,9 +75,7 @@ def init_db():
         ]
         for colName in collections:
             if not dbConnection.hasCollection(colName):
-                dbConnection.createCollection(
-                    name=colName, keyOptions={"type": "uuid", "allowUserKeys": True}
-                )
+                dbConnection.createCollection(name=colName, keyOptions={"type": "uuid", "allowUserKeys": True})
 
         # Create edges
         click.echo(click.style(f"Create edges:", fg="green"))
@@ -152,9 +150,7 @@ def init_db():
                     "name": f'{action}_{pc["data"]["name"]}',
                     "type": "permission",
                 }
-                queryResult = dbConnection.AQLQuery(
-                    aql, bindVars=bindVars, rawResults=True
-                )
+                queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
         # Fetch all permissions
         aql = """
@@ -187,9 +183,7 @@ def init_db():
                 )
             if rtId is not None:
                 bindVars = {"fromId": perm["_id"], "toId": rtId}
-                queryResult = dbConnection.AQLQuery(
-                    aql, bindVars=bindVars, rawResults=True
-                )
+                queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
     except Exception as e:
         click.echo(click.style(str(e), fg="red"))
@@ -316,15 +310,11 @@ def build_resource_tree_from_file(file_name):
             roleDocId = resourceDocId(db, role["name"], "role")
             for permission in role["permissions"]:
                 permDocId = permissionDocId(db, permission["name"])
-                assignParentToChildResource(
-                    db, roleDocId, permDocId, "role", "permission"
-                )
+                assignParentToChildResource(db, roleDocId, permDocId, "role", "permission")
             # Assign access for the role to the tree
             for treeNode in role["access"]:
                 docId = resourceDocId(db, treeNode["name"], treeNode["type"])
-                assignRoleAccessToResource(
-                    db, roleDocId, docId, "role", treeNode["type"]
-                )
+                assignRoleAccessToResource(db, roleDocId, docId, "role", treeNode["type"])
 
             # Assign role to user
             assignParentToChildResource(db, userDocId, roleDocId, "user", "role")
@@ -344,9 +334,7 @@ def addNode(db=None, parent=None, children=None):
 
         childDocId = resourceDocId(db, childNode["name"], childNode["type"])
         if parent is not None:
-            assignParentToChildResource(
-                db, parentDocId, childDocId, parent["type"], childNode["type"]
-            )
+            assignParentToChildResource(db, parentDocId, childDocId, parent["type"], childNode["type"])
 
 
 # def addNode(db, node):
@@ -459,10 +447,15 @@ def createUser(db, id, email, password):
 @cli.command(help="Initialize kafka topics and schema registries")
 def init_kafka_topics_and_schemas():
     # Create topics
-    requiredTopics = ["cafm.identity.cmd", "cafm.identity.evt"]
-    click.echo(
-        click.style(f"Initializing kafka topics and schema registries", fg="green")
-    )
+    requiredTopics = [
+        "cafm.identity.cmd",
+        "cafm.identity.evt",
+        "cafm.identity.api-failed-cmd-handle",
+        "cafm.identity.failed-cmd-handle",
+        "cafm.identity.failed-evt-handle",
+        "cafm.identity.project-failed-evt-handle",
+    ]
+    click.echo(click.style(f"Initializing kafka topics and schema registries", fg="green"))
     newTopics = []
     admin = AdminClient({"bootstrap.servers": os.getenv("MESSAGE_BROKER_SERVERS", "")})
     installedTopics = admin.list_topics().topics.keys()
@@ -472,9 +465,7 @@ def init_kafka_topics_and_schemas():
             newTopics.append(
                 NewTopic(
                     requiredTopic,
-                    num_partitions=int(
-                        os.getenv("KAFKA_PARTITIONS_COUNT_PER_TOPIC", 1)
-                    ),
+                    num_partitions=int(os.getenv("KAFKA_PARTITIONS_COUNT_PER_TOPIC", 1)),
                     replication_factor=1,
                 )
             )
@@ -486,32 +477,20 @@ def init_kafka_topics_and_schemas():
                 f.result()  # The result itself is None
                 click.echo(click.style("Topic {} created".format(topic), fg="green"))
             except Exception as e:
-                click.echo(
-                    click.style(f"Failed to create topic {topic}: {e}", fg="red")
-                )
+                click.echo(click.style(f"Failed to create topic {topic}: {e}", fg="red"))
 
     # Create schemas
-    c = CachedSchemaRegistryClient(
-        {"url": os.getenv("MESSAGE_SCHEMA_REGISTRY_URL", "")}
-    )
+    c = CachedSchemaRegistryClient({"url": os.getenv("MESSAGE_SCHEMA_REGISTRY_URL", "")})
     requiredSchemas = [
         {"name": "cafm.identity.Command", "schema": IdentityCommand.get_schema()},
         {"name": "cafm.identity.Event", "schema": IdentityEvent.get_schema()},
     ]
     newSchemas = []
     for requiredSchema in requiredSchemas:
-        click.echo(
-            click.style(
-                f'Verify if schema {requiredSchema["name"]} is available', fg="green"
-            )
-        )
+        click.echo(click.style(f'Verify if schema {requiredSchema["name"]} is available', fg="green"))
         r = c.get_latest_schema(subject=f'{requiredSchema["name"]}')
         if r[0] is None:
-            click.echo(
-                click.style(
-                    f'Schema {requiredSchema["name"]} will be created', fg="green"
-                )
-            )
+            click.echo(click.style(f'Schema {requiredSchema["name"]} will be created', fg="green"))
             newSchemas.append(requiredSchema)
     [c.register(schema["name"], schema["schema"]) for schema in newSchemas]
 
@@ -519,7 +498,14 @@ def init_kafka_topics_and_schemas():
 @cli.command(help="Drop kafka topics and schema registries")
 def drop_kafka_topics_and_schemas():
     # Delete topics
-    topics = ["cafm.identity.cmd", "cafm.identity.evt"]
+    topics = [
+        "cafm.identity.cmd",
+        "cafm.identity.evt",
+        "cafm.identity.api-failed-cmd-handle",
+        "cafm.identity.failed-cmd-handle",
+        "cafm.identity.failed-evt-handle",
+        "cafm.identity.project-failed-evt-handle",
+    ]
     click.echo(click.style(f"Dropping kafka topics and schema registries", fg="green"))
     admin = AdminClient({"bootstrap.servers": os.getenv("MESSAGE_BROKER_SERVERS", "")})
     fs = admin.delete_topics(topics, operation_timeout=30)
@@ -532,9 +518,7 @@ def drop_kafka_topics_and_schemas():
 
     # Delete schemas
     schemas = ["cafm.identity.Command", "cafm.identity.Event"]
-    c = CachedSchemaRegistryClient(
-        {"url": os.getenv("MESSAGE_SCHEMA_REGISTRY_URL", "")}
-    )
+    c = CachedSchemaRegistryClient({"url": os.getenv("MESSAGE_SCHEMA_REGISTRY_URL", "")})
     [c.delete_subject(schema) for schema in schemas]
 
 
@@ -549,17 +533,13 @@ def check_schema_registry_readiness():
         try:
             counter -= 1
             click.echo(click.style("Sending a request ...", fg="green", bold=True))
-            c = CachedSchemaRegistryClient(
-                {"url": os.getenv("MESSAGE_SCHEMA_REGISTRY_URL", "")}
-            )
+            c = CachedSchemaRegistryClient({"url": os.getenv("MESSAGE_SCHEMA_REGISTRY_URL", "")})
             c.get_latest_schema(subject="test")
             click.echo(click.style("Schema registry is ready", fg="green", bold=True))
             exit(0)
         except Exception as e:
             click.echo(click.style(f"Error thrown ... {e}", fg="red"))
-            click.echo(
-                click.style(f"Sleep {sleepPeriod} seconds ...", fg="green", bold=True)
-            )
+            click.echo(click.style(f"Sleep {sleepPeriod} seconds ...", fg="green", bold=True))
             click.echo(click.style(f"Remaining retries: {counter}", fg="green"))
             sleepPeriod += 3
             sleep(sleepPeriod)
@@ -589,9 +569,7 @@ def check_redis_readiness():
             sleep(sleepPeriod)
         except Exception as e:
             click.echo(click.style(f"Error thrown ... {e}", fg="red"))
-            click.echo(
-                click.style(f"Sleep {sleepPeriod} seconds ...", fg="green", bold=True)
-            )
+            click.echo(click.style(f"Sleep {sleepPeriod} seconds ...", fg="green", bold=True))
             click.echo(click.style(f"Remaining retries: {counter}", fg="green"))
             sleepPeriod += 3
             sleep(sleepPeriod)
