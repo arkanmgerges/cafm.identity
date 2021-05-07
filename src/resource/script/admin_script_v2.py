@@ -3,24 +3,25 @@
 """
 import sys
 import uuid
-from copy import copy
-from typing import List
+import os
+import yaml
+import click
+import re
+import requests
 
+from copy import copy
 from pyArango.connection import Connection
+from typing import List, Optional
 
 sys.path.append("../../../")
 
-import os
 from dotenv import load_dotenv
-
-import yaml
-import click
-import requests
 from time import sleep
 
 load_dotenv()
 
 baseURL = os.getenv("API_URL")
+microserviceNamePatternCompiled = re.compile("/v[0-9]/(.+)?/")
 
 
 @click.group()
@@ -30,11 +31,7 @@ def cli():
 
 @cli.command(help="Create permission with permission contexts for the api endpoints")
 def create_permission_with_permission_contexts_for_api_endpoints():
-    click.echo(
-        click.style(
-            f"Creating permission with permission contexts and linking them", fg="green"
-        )
-    )
+    click.echo(click.style(f"Creating permission with permission contexts and linking them", fg="green"))
     token = getAccessToken()
     # Get all app routes
     appRoutesJsonResponse = appRouteList()
@@ -43,9 +40,7 @@ def create_permission_with_permission_contexts_for_api_endpoints():
     # Get all permissions
     permissionList = permissions(token)
 
-    apiPermissionContexts = list(
-        filter(lambda x: "api_resource_type" in x["type"], permissionContextList)
-    )
+    apiPermissionContexts = list(filter(lambda x: "api_resource_type" in x["type"], permissionContextList))
     apiPermissionWithContexts = apiPermissionWithContextList(
         apiPermissionContexts, appRoutesJsonResponse, permissionList
     )
@@ -53,7 +48,6 @@ def create_permission_with_permission_contexts_for_api_endpoints():
     persistPermissionWithPermissionContexts(
         apiPermissionWithContexts=apiPermissionWithContexts,
         hashedKeys=hashedKeys,
-        token=token,
     )
     click.echo(
         click.style(
@@ -69,22 +63,21 @@ def create_permission_with_permission_contexts_for_api_endpoints():
         json=dict(token=token),
     )
 
-def persistPermissionWithPermissionContexts(
-    apiPermissionWithContexts, hashedKeys, token
-):
+
+def persistPermissionWithPermissionContexts(apiPermissionWithContexts, hashedKeys):
     permissionContextDataList = []
     permissionDataList = []
     permissionToPermissionContextDataList = []
     for item in apiPermissionWithContexts:
         if item["create_permission_context"]:
-            hashedKey = hashedKeyByKey(
-                key=item["permission_context"]["path"], hashedKeys=hashedKeys
-            )
+            hashedKey = hashedKeyByKey(key=item["permission_context"]["path"], hashedKeys=hashedKeys)
             if hashedKey is not None:
                 permissionContextId = _generateUuid3ByString(hashedKey)
                 data = item["permission_context"]
                 data["hash_code"] = hashedKey
-                permissionContextDataList.append({"_key": permissionContextId, "id": permissionContextId, "type": "api_resource_type", "data": data})
+                permissionContextDataList.append(
+                    {"_key": permissionContextId, "id": permissionContextId, "type": "api_resource_type", "data": data}
+                )
 
                 permissionsDataItem = item["permissions"]
                 for permissionDataItem in permissionsDataItem:
@@ -94,29 +87,33 @@ def persistPermissionWithPermissionContexts(
                     permissionDataList.append(permissionDataItem)
 
                     # Link permission to permission context
-                    forId = _generateUuid3ByString(f'{permissionId}{permissionContextId}')
-                    permissionToPermissionContextDataList.append({
-                        "_key": forId,
-                        "_from": f'permission/{permissionId}',
-                        "_to": f'permission_context/{permissionContextId}',
-                        "_from_type": "permission",
-                        "_to_type": "permission_context"
-                    })
+                    forId = _generateUuid3ByString(f"{permissionId}{permissionContextId}")
+                    permissionToPermissionContextDataList.append(
+                        {
+                            "_key": forId,
+                            "_from": f"permission/{permissionId}",
+                            "_to": f"permission_context/{permissionContextId}",
+                            "_from_type": "permission",
+                            "_to_type": "permission_context",
+                        }
+                    )
 
     try:
         connection = _dbClientConnection()
-        db = connection[os.getenv('CAFM_IDENTITY_ARANGODB_DB_NAME', 'cafm-identity')]
-        permissionCollection = db['permission']
-        permissionContextCollection = db['permission_context']
-        forCollection = db['for']
-        forCollection.bulkSave(docs=permissionToPermissionContextDataList, onDuplicate='replace')
-        permissionContextCollection.bulkSave(docs=permissionContextDataList, onDuplicate='replace')
-        permissionCollection.bulkSave(docs=permissionDataList, onDuplicate='replace')
+        db = connection[os.getenv("CAFM_IDENTITY_ARANGODB_DB_NAME", "cafm-identity")]
+        permissionCollection = db["permission"]
+        permissionContextCollection = db["permission_context"]
+        forCollection = db["for"]
+        forCollection.bulkSave(docs=permissionToPermissionContextDataList, onDuplicate="replace")
+        permissionContextCollection.bulkSave(docs=permissionContextDataList, onDuplicate="replace")
+        permissionCollection.bulkSave(docs=permissionDataList, onDuplicate="replace")
     except Exception as e:
         click.echo(click.style(f"{e}", fg="red"))
 
+
 def _generateUuid3ByString(string) -> str:
     return str(uuid.uuid3(uuid.NAMESPACE_URL, string))
+
 
 def _dbClientConnection():
     try:
@@ -128,6 +125,7 @@ def _dbClientConnection():
         return connection
     except Exception as e:
         raise Exception(f"Could not connect to the db, message: {e}")
+
 
 def assignPermissionToPermissionContext(permissionId, permissionContextId, token):
     click.echo(
@@ -177,12 +175,10 @@ def persistPermission(data, token):
         json=dict(data),
     )
     resp.raise_for_status()
-    return checkForResult(
-        token, resp.json()["request_id"], checkForID=True, resultIdName="permission_id"
-    )
+    return checkForResult(token, resp.json()["request_id"], checkForID=True, resultIdName="permission_id")
 
 
-def hashedKeyByKey(key, hashedKeys) -> str:
+def hashedKeyByKey(key, hashedKeys) -> Optional[str, None]:
     if "hashed_keys" in hashedKeys:
         for item in hashedKeys["hashed_keys"]:
             if item["key"] == key:
@@ -199,9 +195,7 @@ def extractKeys(apiPermissionWithContexts) -> List[dict]:
 
 
 def hashKeys(keys):
-    resp = requests.post(
-        baseURL + "/v1/util/route/hash_keys", json=dict(unhashed_keys={"keys": keys})
-    )
+    resp = requests.post(baseURL + "/v1/util/route/hash_keys", json=dict(unhashed_keys={"keys": keys}))
     return resp.json()
 
 
@@ -227,9 +221,7 @@ def build_resource_tree_from_file(file_name):
         click.echo(click.style(f"{e}", fg="red"))
 
 
-def apiPermissionWithContextList(
-    apiPermissionContexts, appRoutesJsonResponse, permissionList
-):
+def apiPermissionWithContextList(apiPermissionContexts, appRoutesJsonResponse, permissionList):
     apiPermissionWithContexts = []
     for appRoute in appRoutesJsonResponse["routes"]:
         apiPermissionContextToBeCreated = None
@@ -243,7 +235,7 @@ def apiPermissionWithContextList(
                 break
         if not found:
             apiPermissionContextToBeCreated = copy(appRoute)
-            apiPermissionContextToBeCreated['name'] = appRoute['path']
+            apiPermissionContextToBeCreated["name"] = appRoute["path"]
 
         # Check for permissions
         for method in appRoute["methods"]:
@@ -255,7 +247,9 @@ def apiPermissionWithContextList(
                 method = "read"
             found = False
             for permission in permissionList:
-                if permission["name"] == f'api:{method}:{appRoute["name"]}':
+                microserviceName = _extractMicroserviceName(appRoute["path"])
+                microserviceName = microserviceName if microserviceName is not None else "default"
+                if permission["name"] == f'api:{method}:{microserviceName}:{appRoute["name"]}':
                     found = True
                     break
             if not found:
@@ -273,13 +267,20 @@ def apiPermissionWithContextList(
 
         apiPermissionWithContexts.append(
             {
-                "create_permission_context": apiPermissionContextToBeCreated
-                is not None,
+                "create_permission_context": apiPermissionContextToBeCreated is not None,
                 "permission_context": apiPermissionContextToBeCreated,
                 "permissions": apiPermissionsToBeCreated,
             }
         )
     return apiPermissionWithContexts
+
+
+def _extractMicroserviceName(routePath):
+    m = microserviceNamePatternCompiled.search(routePath)
+    if m.group(1):
+        return m.group(1)
+    else:
+        return None
 
 
 def appRouteList():
