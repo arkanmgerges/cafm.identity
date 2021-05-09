@@ -32,6 +32,7 @@ class Permission(HasToMap):
         name: str = "",
         allowedActions: List[str] = None,
         deniedActions: List[str] = None,
+        skipValidation: bool = False,
     ):
         self._id = str(uuid4()) if id is None else id
         self._name = name
@@ -46,8 +47,9 @@ class Permission(HasToMap):
         publishEvent: bool = False,
         allowedActions: List[str] = None,
         deniedActions: List[str] = None,
+        skipValidation: bool = False,
     ):
-        permission = Permission(id, name, allowedActions, deniedActions)
+        permission = Permission(id, name, allowedActions, deniedActions, skipValidation=skipValidation)
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import (
                 DomainPublishedEvents,

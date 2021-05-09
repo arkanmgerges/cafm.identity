@@ -26,7 +26,10 @@ from src.domain_model.policy.request_context_data.PermissionContextDataRequest i
 from src.domain_model.policy.request_context_data.ResourceTypeContextDataRequest import (
     ResourceTypeContextDataRequest,
 )
+from src.domain_model.resource.exception.DomainModelException import DomainModelException
+from src.domain_model.resource.exception.ProcessBulkDomainException import ProcessBulkDomainException
 from src.domain_model.token.TokenService import TokenService
+from src.domain_model.util.DomainModelAttributeValidator import DomainModelAttributeValidator
 from src.resource.logging.decorator import debugLogger
 
 
@@ -129,6 +132,69 @@ class PermissionContextApplicationService:
         )
 
     @debugLogger
+    def bulkCreate(self, objListParams: List[dict], token: str = ""):
+        objList = []
+        exceptions = []
+        for objListParamsItem in objListParams:
+            try:
+                DomainModelAttributeValidator.validate(domainModelObject=self.constructObject(skipValidation=True),
+                                                       attributeDictionary=objListParamsItem)
+                objList.append(
+                    self.constructObject(id=objListParamsItem["permission_context_id"], type=objListParamsItem["type"], data=objListParamsItem["data"]))
+            except DomainModelException as e:
+                exceptions.append({"reason": {"message": e.message, "code": e.code}})
+        _ = TokenService.tokenDataFromToken(token=token)
+        try:
+            self._permissionContextService.bulkCreate(objList=objList)
+            if len(exceptions) > 0:
+                raise ProcessBulkDomainException(messages=exceptions)
+        except DomainModelException as e:
+            exceptions.append({"reason": {"message": e.message, "code": e.code}})
+            raise ProcessBulkDomainException(messages=exceptions)
+
+    @debugLogger
+    def bulkDelete(self, objListParams: List[dict], token: str = ""):
+        objList = []
+        exceptions = []
+        for objListParamsItem in objListParams:
+            try:
+                DomainModelAttributeValidator.validate(domainModelObject=self.constructObject(skipValidation=True),
+                                                       attributeDictionary=objListParamsItem)
+                objList.append(self.constructObject(id=objListParamsItem["permission_context_id"], skipValidation=True))
+            except DomainModelException as e:
+                exceptions.append({"reason": {"message": e.message, "code": e.code}})
+        _ = TokenService.tokenDataFromToken(token=token)
+        try:
+            self._permissionContextService.bulkDelete(objList=objList)
+            if len(exceptions) > 0:
+                raise ProcessBulkDomainException(messages=exceptions)
+        except DomainModelException as e:
+            exceptions.append({"reason": {"message": e.message, "code": e.code}})
+            raise ProcessBulkDomainException(messages=exceptions)
+
+    @debugLogger
+    def bulkUpdate(self, objListParams: List[dict], token: str = ""):
+        objList = []
+        exceptions = []
+        for objListParamsItem in objListParams:
+            try:
+                DomainModelAttributeValidator.validate(domainModelObject=self.constructObject(skipValidation=True),
+                                                       attributeDictionary=objListParamsItem)
+                oldObject: PermissionContext = self._permissionContextRepository.permissionContextById(id=objListParamsItem["permission_context_id"])
+                newObject = self.constructObject(id=objListParamsItem["permission_context_id"], type=objListParamsItem["type"], data=objListParamsItem["data"], _sourceObject=oldObject)
+                objList.append((newObject, oldObject), )
+            except DomainModelException as e:
+                exceptions.append({"reason": {"message": e.message, "code": e.code}})
+        _ = TokenService.tokenDataFromToken(token=token)
+        try:
+            self._permissionContextService.bulkUpdate(objList=objList)
+            if len(exceptions) > 0:
+                raise ProcessBulkDomainException(messages=exceptions)
+        except DomainModelException as e:
+            exceptions.append({"reason": {"message": e.message, "code": e.code}})
+            raise ProcessBulkDomainException(messages=exceptions)
+
+    @debugLogger
     def permissionContextById(self, id: str, token: str = ""):
         permissionContext = self._permissionContextRepository.permissionContextById(
             id=id
@@ -170,6 +236,27 @@ class PermissionContextApplicationService:
 
     @debugLogger
     def constructObject(
-        self, id: str = None, type: str = "", data: dict = None
+        self, id: str = None, type: str = "", data: dict = None, skipValidation: bool = False,
     ) -> PermissionContext:
-        return PermissionContext.createFrom(id=id, type=type, data=data)
+        return PermissionContext.createFrom(id=id, type=type, data=data, skipValidation=skipValidation)
+
+    @debugLogger
+    def constructObject(
+            self,
+            id: str = None,
+            type: str = "",
+            data: dict = None,
+            _sourceObject: PermissionContext = None,
+            skipValidation: bool = False,
+    ) -> PermissionContext:
+        if _sourceObject is not None:
+            return PermissionContext.createFrom(
+                id=id,
+                type=type if type is not None else _sourceObject.type(),
+                data=data if data is not None else _sourceObject.data(),
+                skipValidation=skipValidation,
+            )
+        else:
+            return PermissionContext.createFrom(
+            id=id, type=type, data=data, skipValidation=skipValidation,
+        )

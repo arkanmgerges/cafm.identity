@@ -11,6 +11,26 @@ from src.domain_model.token.TokenData import TokenData
 
 class PermissionContextRepository(ABC):
     @abstractmethod
+    def bulkSave(self, objList: List[PermissionContext], tokenData: TokenData):
+        """Bulk save permission context list
+
+        Args:
+            objList (List[PermissionContext]): The permission context list that needs to be saved
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
+    def bulkDelete(self, objList: List[PermissionContext], tokenData: TokenData):
+        """Bulk delete permission context list
+
+        Args:
+            objList (List[PermissionContext]): The permission context list that needs to be deleted
+            tokenData (TokenData): Token data that has info about the token
+
+        """
+
+    @abstractmethod
     def save(self, obj: PermissionContext, tokenData: TokenData):
         """Save permission context
 

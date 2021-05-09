@@ -37,7 +37,7 @@ class PermissionContextConstant(Enum):
 
 class PermissionContext(HasToMap):
     def __init__(
-        self, id: str = None, type: str = "permission_context", data: dict = None
+        self, id: str = None, type: str = "permission_context", data: dict = None, skipValidation: bool = False,
     ):
         self._id = str(uuid4()) if id is None else id
         self._type = type
@@ -56,8 +56,9 @@ class PermissionContext(HasToMap):
         type: str = "",
         data: dict = None,
         publishEvent: bool = False,
+        skipValidation: bool = False,
     ):
-        permissionContext = PermissionContext(id=id, type=type, data=data)
+        permissionContext = PermissionContext(id=id, type=type, data=data, skipValidation=skipValidation)
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import (
                 DomainPublishedEvents,

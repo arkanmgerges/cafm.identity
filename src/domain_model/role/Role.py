@@ -15,7 +15,7 @@ from uuid import uuid4
 
 
 class Role(Resource, HasToMap):
-    def __init__(self, id: str = None, name="", title: str = ""):
+    def __init__(self, id: str = None, name="", title: str = "", skipValidation: bool = False):
         anId = str(uuid4()) if id is None or id == "" else id
         super().__init__(id=anId, type="role")
         self._name = name
@@ -23,9 +23,9 @@ class Role(Resource, HasToMap):
 
     @classmethod
     def createFrom(
-        cls, id: str = None, name="", title: str = "", publishEvent: bool = False
+        cls, id: str = None, name="", title: str = "", publishEvent: bool = False, skipValidation: bool = False
     ):
-        role = Role(id, name, title)
+        role = Role(id, name, title, skipValidation=skipValidation)
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import (
                 DomainPublishedEvents,

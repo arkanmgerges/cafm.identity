@@ -1,8 +1,6 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-from typing import List
-
 from src.domain_model.common.HasToMap import HasToMap
 from src.domain_model.resource.exception.InvalidAttributeException import InvalidAttributeException
 

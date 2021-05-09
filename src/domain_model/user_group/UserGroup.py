@@ -11,14 +11,14 @@ from src.resource.logging.logger import logger
 
 
 class UserGroup(Resource, HasToMap):
-    def __init__(self, id: str = None, name=None):
+    def __init__(self, id: str = None, name=None, skipValidation: bool = False):
         anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type="user_group")
         self._name = name
 
     @classmethod
-    def createFrom(cls, id: str = None, name=None, publishEvent: bool = False):
-        userGroup = UserGroup(id, name)
+    def createFrom(cls, id: str = None, name=None, publishEvent: bool = False, skipValidation: bool = False):
+        userGroup = UserGroup(id, name, skipValidation=skipValidation)
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import (
                 DomainPublishedEvents,

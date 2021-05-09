@@ -15,14 +15,14 @@ from uuid import uuid4
 
 
 class Project(Resource, HasToMap):
-    def __init__(self, id: str = None, name=""):
+    def __init__(self, id: str = None, name="", skipValidation: bool = False):
         anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type="project")
         self._name = name
 
     @classmethod
-    def createFrom(cls, id: str = None, name="", publishEvent: bool = False):
-        project = Project(id, name)
+    def createFrom(cls, id: str = None, name="", publishEvent: bool = False, skipValidation: bool = False,):
+        project = Project(id, name, skipValidation=skipValidation)
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import (
                 DomainPublishedEvents,

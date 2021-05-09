@@ -57,37 +57,42 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
             raise Exception(f"Could not connect to the db, message: {e}")
 
     @debugLogger
-    def save(self, obj: PermissionContext, tokenData: TokenData = None):
-        try:
-            user = self.permissionContextById(id=obj.id())
-            if user != obj:
-                self.updatePermissionContext(obj=obj, tokenData=tokenData)
-        except PermissionContextDoesNotExistException as _e:
-            self.createPermissionContext(obj=obj, tokenData=tokenData)
+    def bulkSave(self, objList: List[PermissionContext], tokenData: TokenData = None):
+        self._upsertPermissionContexts(objList=objList, tokenData=tokenData)
 
     @debugLogger
-    def createPermissionContext(self, obj: PermissionContext, tokenData: TokenData):
+    def bulkDelete(
+            self, objList: List[PermissionContext], tokenData: TokenData = None
+    ) -> None:
+        self._deletePermissionContexts(objList=objList)
+
+    @debugLogger
+    def save(self, obj: PermissionContext, tokenData: TokenData = None):
+        self._upsertPermissionContexts(objList=[obj], tokenData=tokenData)
+
+    @debugLogger
+    def _upsertPermissionContexts(self, objList: List[PermissionContext], tokenData: TokenData):
         actionFunction = """
             function (params) {                                            
                 let db = require('@arangodb').db;
-                let res = db.permission_context.byExample({id: params['permission_context']['id'], type: params['permission_context']['type']}).toArray();
-                if (res.length == 0) {
-                    p = params['permission_context']
-                    res = db.permission_context.insert({_key: p['id'], id: p['id'], data: p['data'], type: p['type']});
-                } else {
-                    let err = new Error(`Could not create permission context, ${params['permission_context']['id']} is already exist`);
-                    err.errorNum = params['OBJECT_ALREADY_EXIST_CODE'];
-                    throw err;
-                }
+                let objList = params['permissionContextList'];
+                for (let index in objList) {
+                    res = db.permission_context.insert(
+                        {
+                            _key: objList[index].id,
+                            id: objList[index].id,
+                            type: objList[index].type,
+                            data: objList[index].data
+                        }, {"overwrite": true});
+                }                
             }
         """
         params = {
-            "permission_context": {
+            "permissionContextList": list(map(lambda obj: {
                 "id": obj.id(),
-                "data": obj.data(),
                 "type": obj.type(),
-            },
-            "OBJECT_ALREADY_EXIST_CODE": CodeExceptionConstant.OBJECT_ALREADY_EXIST.value,
+                "data": obj.data()
+            }, objList))
         }
         self._db.transaction(
             collections={"write": ["permission_context"]},
@@ -96,66 +101,9 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
         )
 
     @debugLogger
-    def updatePermissionContext(
-        self, obj: PermissionContext, tokenData: TokenData
-    ) -> None:
-        repoObj = self.permissionContextById(obj.id())
-        if repoObj != obj:
-            aql = """
-                FOR d IN permission_context
-                    FILTER d.id == @id
-                    UPDATE d WITH {data: @data, type: @type} IN permission_context
-            """
-
-            bindVars = {"id": obj.id(), "data": obj.data(), "type": obj.type()}
-            logger.debug(
-                f"[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] - Update permission context with id: {obj.id()}"
-            )
-            queryResult: AQLQuery = self._db.AQLQuery(
-                aql, bindVars=bindVars, rawResults=True
-            )
-            _ = queryResult.result
-
-            # Check if it is updated
-            repoObj = self.permissionContextById(obj.id())
-            if repoObj != obj:
-                logger.warn(
-                    f"[{PermissionContextRepositoryImpl.updatePermissionContext.__qualname__}] The object permission context: {obj} could not be updated in the database"
-                )
-                raise ObjectCouldNotBeUpdatedException(f"permission context: {obj}")
-
-    @debugLogger
-    def deletePermissionContext(
-        self, obj: PermissionContext, tokenData: TokenData = None
-    ):
+    def deletePermissionContext(self, obj: PermissionContext, tokenData: TokenData = None):
         try:
-            actionFunction = """
-                function (params) {                                            
-                    let db = require('@arangodb').db;
-                    let res = db.permission_context.byExample({id: params['permission_context']['id'], type: params['permission_context']['type'], data: params['permission_context']['data']}).toArray();
-                    if (res.length != 0) {
-                        let doc = res[0];
-                        db.permission_context.remove(doc);
-                    } else {
-                        let err = new Error(`Could not delete permission context, ${params['permission_context']['id']}, it does not exist`);
-                        err.errorNum = params['OBJECT_DOES_NOT_EXIST_CODE'];
-                        throw err;
-                    }
-                }
-            """
-            params = {
-                "permission_context": {
-                    "id": obj.id(),
-                    "data": obj.data(),
-                    "type": obj.type(),
-                },
-                "OBJECT_DOES_NOT_EXIST_CODE": CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value,
-            }
-            self._db.transaction(
-                collections={"write": ["permission_context", "owned_by"]},
-                action=actionFunction,
-                params=params,
-            )
+            self._deletePermissionContexts(objList=[obj])
         except Exception as e:
             print(e)
             self.permissionContextById(obj.id())
@@ -164,6 +112,25 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
             )
             raise ObjectCouldNotBeDeletedException(f"permission context id: {obj.id()}")
 
+    def _deletePermissionContexts(self, objList: List[PermissionContext]):
+        actionFunction = """
+            function (params) {                                            
+                let db = require('@arangodb').db;
+                let idList = params['permissionContextIdList'];
+                db.permission_context.removeByKeys(idList);
+                for (let index in idList) {
+                    db.for.removeByExample({_to: `permission_context/${idList[index]}`});
+                }
+            }
+        """
+        params = {
+            "permissionContextIdList": list(map(lambda obj: obj.id(), objList))
+        }
+        self._db.transaction(
+            collections={"write": ["permission_context", "for"]},
+            action=actionFunction,
+            params=params,
+        )
     @debugLogger
     def permissionContextById(self, id: str) -> PermissionContext:
         aql = """

@@ -52,103 +52,55 @@ class PermissionRepositoryImpl(PermissionRepository):
             raise Exception(f"Could not connect to the db, message: {e}")
 
     @debugLogger
-    def save(self, obj: Permission, tokenData: TokenData = None):
-        try:
-            user = self.permissionById(id=obj.id())
-            if user != obj:
-                self.updatePermission(obj=obj, tokenData=tokenData)
-        except PermissionDoesNotExistException as _e:
-            self.createPermission(obj=obj, tokenData=tokenData)
+    def bulkSave(self, objList: List[Permission], tokenData: TokenData = None):
+        self._upsertPermissions(objList=objList, tokenData=tokenData)
 
     @debugLogger
-    def createPermission(self, obj: Permission, tokenData: TokenData):
+    def bulkDelete(
+            self, objList: List[Permission], tokenData: TokenData = None
+    ) -> None:
+        self._deletePermissions(objList=objList)
+
+    @debugLogger
+    def save(self, obj: Permission, tokenData: TokenData = None):
+        self._upsertPermissions(objList=[obj], tokenData=tokenData)
+
+    @debugLogger
+    def _upsertPermissions(self, objList: List[Permission], tokenData: TokenData):
         actionFunction = """
             function (params) {                                            
                 let db = require('@arangodb').db;
-                let res = db.permission.byExample({id: params['permission']['id']}).toArray();
-                if (res.length == 0) {
-                    p = params['permission']
-                    res = db.permission.insert({_key: p['id'], id: p['id'], name: p['name'], allowed_actions: p['allowed_actions'], denied_actions: p['denied_actions']});
-                } else {
-                    let err = new Error(`Could not create permission, ${params['permission']['id']} is already exist`);
-                    err.errorNum = params['OBJECT_ALREADY_EXIST_CODE'];
-                    throw err;
-                }
+                let objList = params['permissionList'];
+                for (let index in objList) {
+                    res = db.permission.insert(
+                        {
+                            _key: objList[index].id,
+                            id: objList[index].id,
+                            name: objList[index].name,
+                            allowed_actions: objList[index].allowed_actions,
+                            denied_actions: objList[index].denied_actions
+                        }, {"overwrite": true});
+                }                
             }
         """
         params = {
-            "permission": {
+            "permissionList": list(map(lambda obj: {
                 "id": obj.id(),
                 "name": obj.name(),
                 "allowed_actions": obj.allowedActions(),
                 "denied_actions": obj.deniedActions(),
-            },
-            "OBJECT_ALREADY_EXIST_CODE": CodeExceptionConstant.OBJECT_ALREADY_EXIST.value,
+            }, objList))
         }
         self._db.transaction(
-            collections={"write": ["permission", "owned_by"]},
+            collections={"write": ["permission"]},
             action=actionFunction,
             params=params,
         )
 
     @debugLogger
-    def updatePermission(self, obj: Permission, tokenData: TokenData) -> None:
-        repoObj = self.permissionById(obj.id())
-        if repoObj != obj:
-            aql = """
-                FOR d IN permission
-                    FILTER d.id == @id
-                    UPDATE d WITH {name: @name, allowed_actions: @allowed_actions, denied_actions: @denied_actions} IN permission
-            """
-
-            bindVars = {
-                "id": obj.id(),
-                "name": obj.name(),
-                "allowed_actions": obj.allowedActions(),
-                "denied_actions": obj.deniedActions(),
-            }
-            logger.debug(
-                f"[{PermissionRepositoryImpl.updatePermission.__qualname__}] - Update permission with id: {obj.id()}"
-            )
-            queryResult: AQLQuery = self._db.AQLQuery(
-                aql, bindVars=bindVars, rawResults=True
-            )
-            _ = queryResult.result
-
-            # Check if it is updated
-            repoObj = self.permissionById(obj.id())
-            if repoObj != obj:
-                logger.warn(
-                    f"[{PermissionRepositoryImpl.updatePermission.__qualname__}] The object permission: {obj} could not be updated in the database"
-                )
-                raise ObjectCouldNotBeUpdatedException(f"permission: {obj}")
-
-    @debugLogger
     def deletePermission(self, obj: Permission, tokenData: TokenData = None):
         try:
-            actionFunction = """
-                function (params) {                                            
-                    let db = require('@arangodb').db;
-                    let res = db.permission.byExample({id: params['permission']['id']}).toArray();
-                    if (res.length != 0) {
-                        let doc = res[0];
-                        db.permission.remove(doc);
-                    } else {
-                        let err = new Error(`Could not delete resource, ${params['permission']['id']}, it does not exist`);
-                        err.errorNum = params['OBJECT_DOES_NOT_EXIST_CODE'];
-                        throw err;
-                    }
-                }
-            """
-            params = {
-                "permission": {"id": obj.id(), "name": obj.name()},
-                "OBJECT_DOES_NOT_EXIST_CODE": CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value,
-            }
-            self._db.transaction(
-                collections={"write": ["permission", "owned_by"]},
-                action=actionFunction,
-                params=params,
-            )
+            self._deletePermissions(objList=[obj])
         except Exception as e:
             print(e)
             self.permissionById(obj.id())
@@ -156,6 +108,32 @@ class PermissionRepositoryImpl(PermissionRepository):
                 f"[{PermissionRepositoryImpl.deletePermission.__qualname__}] Object could not be found exception for permission id: {obj.id()}"
             )
             raise ObjectCouldNotBeDeletedException(f"permission id: {obj.id()}")
+
+    def _deletePermissions(self, objList: List[Permission]):
+        actionFunction = """
+            function (params) {                                            
+                let db = require('@arangodb').db;
+                let idList = params['permissionIdList'];
+                db.permission.removeByKeys(idList);
+                // Delete from the 'for' collection
+                for (let index in idList) {
+                    db.for.removeByExample({_from: `permission/${idList[index]}`});
+                }
+                // Delete from the 'has' collection
+                for (let index in idList) {
+                    db.has.removeByExample({_to: `permission/${idList[index]}`});
+                }
+            }
+        """
+        params = {
+            "permissionIdList": list(map(lambda obj: obj.id(), objList))
+        }
+        self._db.transaction(
+            collections={"write": ["permission", "for", "has"]},
+            action=actionFunction,
+            params=params,
+        )
+
 
     @debugLogger
     def permissionByName(self, name: str) -> Permission:
