@@ -6,6 +6,7 @@ import json
 import src.port_adapter.AppDi as AppDi
 from src.application.PermissionApplicationService import PermissionApplicationService
 from src.application.PermissionContextApplicationService import PermissionContextApplicationService
+from src.application.PolicyApplicationService import PolicyApplicationService
 from src.domain_model.resource.exception.DomainModelException import (
     DomainModelException,
 )
@@ -39,7 +40,6 @@ class ProcessBulkHandler(Handler):
         totalItemCount = dataDict["total_item_count"]
         try:
             # The is the final result of all the data items in the dataDict["data"]
-            requestParamsList = []
             dataDict["data"].sort(key=self._sortKeyByCommand)
             batchedDataItems = self._batchSimilar(dataDict["data"])
             for batchedDataCommand, batchedDataValue in batchedDataItems.items():
@@ -57,6 +57,14 @@ class ProcessBulkHandler(Handler):
                         appService.bulkUpdate(objListParams=requestParamsList, token=metadataDict["token"])
                     elif commandMethod == "delete":
                         appService.bulkDelete(objListParams=requestParamsList, token=metadataDict["token"])
+                    elif commandMethod == "assign":
+                        if entityName == 'permission_to_permission_context':
+                            appService.bulkAssignPermissionToPermissionContext(
+                                objListParams=requestParamsList, token=metadataDict["token"])
+                    elif commandMethod == "remove":
+                        if entityName == 'permission_to_permission_context_assignment':
+                            appService.bulkRemovePermissionToPermissionContextAssignment(
+                                objListParams=requestParamsList, token=metadataDict["token"])
             return {
                 "name": self._commandConstant.value,
                 "created_on": DateTimeHelper.utcNow(),
@@ -89,9 +97,11 @@ class ProcessBulkHandler(Handler):
             'create': 0,
             'update': 1,
             'assign': 2,
-            'delete': 3
+            'revoke': 3,
+            'remove': 3,
+            'delete': 4
         }
-        return switcher.get(commandMethod, 4)
+        return switcher.get(commandMethod, 5)
 
     def _batchSimilar(self, data):
         # The key will be the command like 'create_unit' and the value is the details of the command
@@ -108,6 +118,8 @@ class ProcessBulkHandler(Handler):
             # 'project': ProjectApplicationService,
             # 'role': RoleApplicationService,
             # 'user': UserApplicationService,
+            "permission_to_permission_context": PolicyApplicationService,
+            "permission_to_permission_context_assignment": PolicyApplicationService,
             "permission": PermissionApplicationService,
             "permission_context": PermissionContextApplicationService,
         }

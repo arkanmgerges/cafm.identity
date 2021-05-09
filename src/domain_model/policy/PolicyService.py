@@ -1,6 +1,8 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+from typing import List, Tuple
+
 from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
 from src.domain_model.permission.Permission import Permission
 from src.domain_model.permission_context.PermissionContext import PermissionContext
@@ -57,6 +59,32 @@ class PolicyService:
             RoleToPermissionAssignmentRevoked(role=role, permission=permission)
         )
         self._repo.revokeRoleToPermissionAssignment(role=role, permission=permission)
+
+    @debugLogger
+    def bulkAssignPermissionToPermissionContext(self, objList: List[dict]):
+        self._repo.bulkAssignPermissionToPermissionContext(objList=objList)
+        for objListItem in objList:
+            from src.domain_model.policy.PermissionToPermissionContextAssigned import (
+                PermissionToPermissionContextAssigned,
+            )
+            DomainPublishedEvents.addEventForPublishing(
+                PermissionToPermissionContextAssigned(
+                    permission=objListItem["permission"], permissionContext=objListItem["permission_context"]
+                )
+            )
+
+    @debugLogger
+    def bulkRemovePermissionToPermissionContextAssignment(self, objList: List[dict]):
+        self._repo.bulkRemovePermissionToPermissionContextAssignment(objList=objList)
+        for objListItem in objList:
+            from src.domain_model.policy.PermissionToPermissionContextAssignmentRevoked import (
+                PermissionToPermissionContextAssignmentRevoked,
+            )
+            DomainPublishedEvents.addEventForPublishing(
+                PermissionToPermissionContextAssignmentRevoked(
+                    permission=objListItem["permission"], permissionContext=objListItem["permission_context"]
+                )
+            )
 
     @debugLogger
     def grantAccessRoleToResource(self, role: Role, resource: Resource):

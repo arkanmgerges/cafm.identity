@@ -16,6 +16,30 @@ from src.domain_model.user_group.UserGroup import UserGroup
 
 class PolicyRepository(ABC):
     @abstractmethod
+    def bulkAssignPermissionToPermissionContext(self, objList: List[dict]):
+        """Bulk assign permission to permission context
+
+        Args:
+            objList (List[dict]): A list of dictionary that contains 'permission' and 'permission_context' as keys
+                                  and the values are objects of `Permission <src.domain_model.permission.Permission>`
+                                  and `PermissionContext <src.domain_model.permission_context.PermissionContext`
+                                  respectively
+
+        """
+
+    @abstractmethod
+    def bulkRemovePermissionToPermissionContextAssignment(self, objList: List[dict]):
+        """Bulk revoke permission to permission context assignment
+
+        Args:
+            objList (List[dict]): A list of dictionary that contains 'permission' and 'permission_context' as keys
+                                  and the values are objects of `Permission <src.domain_model.permission.Permission>`
+                                  and `PermissionContext <src.domain_model.permission_context.PermissionContext`
+                                  respectively
+
+        """
+
+    @abstractmethod
     def allTreeByRoleName(self, roleName: str) -> List[Any]:
         """Retrieve all the connection by role name
 
@@ -109,9 +133,7 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def revokeRoleToPermissionAssignment(
-        self, role: Role, permission: Permission
-    ) -> None:
+    def revokeRoleToPermissionAssignment(self, role: Role, permission: Permission) -> None:
         """Revoke a role from a permission
 
         Args:
@@ -123,9 +145,7 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def assignPermissionToPermissionContext(
-        self, permission: Permission, permissionContext: PermissionContext
-    ) -> None:
+    def assignPermissionToPermissionContext(self, permission: Permission, permissionContext: PermissionContext) -> None:
         """Assign permission to a permission context
 
         Args:
@@ -175,9 +195,7 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def assignResourceToResource(
-        self, resourceSrc: Resource, resourceDst: Resource
-    ) -> None:
+    def assignResourceToResource(self, resourceSrc: Resource, resourceDst: Resource) -> None:
         """Make an assignment from a resource to another resource
 
         Args:
@@ -189,9 +207,7 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def revokeAssignmentResourceToResource(
-        self, resourceSrc: Resource, resourceDst: Resource
-    ) -> None:
+    def revokeAssignmentResourceToResource(self, resourceSrc: Resource, resourceDst: Resource) -> None:
         """Revoke assignment from a resource to another resource
 
         Args:
@@ -342,5 +358,4 @@ class PolicyRepository(ABC):
 
     @abstractmethod
     def deleteRolesTreesCache(self) -> None:
-        """Delete all roles trees cached in redis
-        """
+        """Delete all roles trees cached in redis"""

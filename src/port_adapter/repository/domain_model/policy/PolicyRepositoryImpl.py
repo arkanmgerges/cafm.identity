@@ -555,6 +555,62 @@ class PolicyRepositoryImpl(PolicyRepository):
         )
 
     @debugLogger
+    def bulkAssignPermissionToPermissionContext(self, objList: List[dict]):
+        actionFunction = """
+                    function (params) {                                            
+                        let db = require('@arangodb').db;
+                        let objList = params['permissionAndPermissionContextIdList'];
+                        for (let index in objList) {
+                            let res = db.for.byExample({_from: `permission/${objList[index].permission_id}`,
+                                                       _to: `permission_context/${objList[index].permission_context_id}`}).toArray();
+                            if (res.length == 0) {
+                                db.for.insert({
+                                    _from_type: "permission",
+                                    _to_type: "permission_context",
+                                    _from: `permission/${objList[index].permission_id}`,
+                                    _to: `permission_context/${objList[index].permission_context_id}`
+                                }, {"overwrite": true});
+                            }
+                        }
+                    }
+                """
+        params = {
+            "permissionAndPermissionContextIdList": list(map(lambda obj: {
+                "permission_id": obj['permission'].id(),
+                "permission_context_id": obj['permission_context'].id()
+            }, objList))
+        }
+        self._db.transaction(
+            collections={"write": ["for"]},
+            action=actionFunction,
+            params=params,
+        )
+
+    @debugLogger
+    def bulkRemovePermissionToPermissionContextAssignment(self, objList: List[dict]):
+        actionFunction = """
+                    function (params) {                                            
+                        let db = require('@arangodb').db;
+                        let objList = params['permissionAndPermissionContextIdList'];
+                        for (let index in objList) {
+                            db.for.removeByExample({_from: `permission/${objList[index].permission_id}`,
+                                                       _to: `permission_context/${objList[index].permission_context_id}`});                            
+                        }
+                    }
+                """
+        params = {
+            "permissionAndPermissionContextIdList": list(map(lambda obj: {
+                "permission_id": obj['permission'].id(),
+                "permission_context_id": obj['permission_context'].id()
+            }, objList))
+        }
+        self._db.transaction(
+            collections={"write": ["for"]},
+            action=actionFunction,
+            params=params,
+        )
+
+    @debugLogger
     def assignPermissionToPermissionContext(
         self, permission: Permission, permissionContext: PermissionContext
     ) -> None:
