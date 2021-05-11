@@ -10,71 +10,71 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - name: Checkout repository code
-      uses: actions/checkout@v2
+      - name: Checkout repository code
+        uses: actions/checkout@v2
 
-    - name: Notify Slack
-      if: success()
-      id: slack
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      uses: voxmedia/github-action-slack-notify-build@v1
-      with:
-        channel: infra-ci-cafm
-        status: STARTED
-        color: warning
+      - name: Notify Slack
+        if: success()
+        id: slack
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          channel: infra-ci-cafm
+          status: STARTED
+          color: warning
 
-    - name: Verify that we can build the Docker image
-      run: |
-        docker build \
-          -t cafm-identity:local \
-          -f ${GITHUB_WORKSPACE}/.pkg/local/docker/Dockerfile \
-          ${GITHUB_WORKSPACE}
+      - name: Verify that we can build the Docker image
+        run: |
+          docker build \
+            -t cafm-identity:local \
+            -f ${GITHUB_WORKSPACE}/.pkg/local/docker/Dockerfile \
+            ${GITHUB_WORKSPACE}
 
-    - name: Run tests inside the built image
-      run: |
-        docker run --rm cafm-identity:local pytest /app/test
+      - name: Run tests inside the built image
+        run: |
+          docker run --rm cafm-identity:local pytest /app/test
 
-    - name: Deploy to the-bull
-      uses: fifsky/ssh-action@master
-      with:
-        command: |
-          ssh-add -D
-          ssh-add ~/.ssh/id_rsa_identity
-          docker-compose -f ~/cafm.identity/.pkg/local/docker/docker-compose.yaml -p cafm-identity down --rmi local --remove-orphans
-          git -C ~/cafm.identity pull
-          cd ~/cafm.identity
-          docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-identity up --build -d
-          ssh-add -D
-        host: ${{ secrets.SSH_HOSTNAME }}
-        port: ${{ secrets.SSH_PORT }}
-        user: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        args: "-tt"
+      - name: Deploy to the-bull
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            ssh-add -D
+            ssh-add ~/.ssh/id_rsa_identity
+            docker-compose -f ~/cafm.identity/.pkg/local/docker/docker-compose.yaml -p cafm-identity down --rmi local --remove-orphans
+            git -C ~/cafm.identity pull
+            cd ~/cafm.identity
+            docker-compose -f .pkg/local/docker/docker-compose.yaml -p cafm-identity up --build -d
+            ssh-add -D
+          host: ${{ secrets.SSH_HOSTNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          user: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          args: "-tt"
 
-    - name: Notify Slack success
-      if: success()
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      uses: voxmedia/github-action-slack-notify-build@v1
-      with:
-        message_id: ${{ steps.slack.outputs.message_id }}
-        channel: infra-ci-cafm
-        status: SUCCESS
-        color: good
+      - name: Notify Slack success
+        if: success()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          message_id: ${{ steps.slack.outputs.message_id }}
+          channel: infra-ci-cafm
+          status: SUCCESS
+          color: good
 
-    - name: Notify Slack failure
-      if: failure()
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      uses: voxmedia/github-action-slack-notify-build@v1
-      with:
-        message_id: ${{ steps.slack.outputs.message_id }}
-        channel: infra-ci-cafm
-        status: FAILED
-        color: danger
+      - name: Notify Slack failure
+        if: failure()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          message_id: ${{ steps.slack.outputs.message_id }}
+          channel: infra-ci-cafm
+          status: FAILED
+          color: danger
 
-    - name: Logout from Amazon ECR
-      if: always()
-      run: |
-        docker logout ${{ steps.login-ecr.outputs.registry }}
+      - name: Logout from Amazon ECR
+        if: always()
+        run: |
+          docker logout ${{ steps.login-ecr.outputs.registry }}
