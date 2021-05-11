@@ -49,9 +49,6 @@ class UpdatePermissionContextHandler(Handler):
         return {
             "name": self._commandConstant.value,
             "created_on": DateTimeHelper.utcNow(),
-            "data": {
-                "permission_context_id": dataDict["permission_context_id"],
-                "name": dataDict["name"],
-            },
+            "data": dataDict,
             "metadata": metadataDict,
         }
