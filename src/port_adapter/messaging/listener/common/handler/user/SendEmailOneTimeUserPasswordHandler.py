@@ -54,6 +54,6 @@ class SendEmailOneTimeUserPasswordHandler(Handler):
         return {
             "name": self._commandConstant.value,
             "created_on": DateTimeHelper.utcNow(),
-            "data": {"user_id": obj.id(), "email": obj.email()},
+            "data": obj.toMap(),
             "metadata": metadataDict,
         }

@@ -11,6 +11,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import (
 from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.common.handler.Handler import Handler
 from src.resource.common.DateTimeHelper import DateTimeHelper
+from src.resource.common.Util import Util
 from src.resource.logging.logger import logger
 
 
@@ -35,20 +36,12 @@ class GrantRoleToAccessResourceHandler(Handler):
         if "token" not in metadataDict:
             raise UnAuthorizedException()
 
-        appService: PolicyApplicationService = AppDi.instance.get(
-            PolicyApplicationService
-        )
-        appService.grantAccessRoleToResource(
-            roleId=dataDict["role_id"],
-            resourceId=dataDict["resource_id"],
-            token=metadataDict["token"],
-        )
+        appService: PolicyApplicationService = AppDi.instance.get(PolicyApplicationService)
+
+        appService.grantAccessRoleToResource(**Util.snakeCaseToLowerCameCaseDict(dataDict), token=metadataDict["token"])
         return {
             "name": self._commandConstant.value,
             "created_on": DateTimeHelper.utcNow(),
-            "data": {
-                "role_id": dataDict["role_id"],
-                "resource_id": dataDict["resource_id"],
-            },
+            "data": dataDict,
             "metadata": metadataDict,
         }

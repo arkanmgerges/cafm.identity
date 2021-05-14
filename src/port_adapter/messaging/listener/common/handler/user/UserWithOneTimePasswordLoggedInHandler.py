@@ -38,6 +38,6 @@ class UserWithOneTimePasswordLoggedInHandler(Handler):
         return {
             "name": self._commandConstant.value,
             "created_on": DateTimeHelper.utcNow(),
-            "data": {"user_id": dataDict["user_id"]},
+            "data": dataDict,
             "metadata": metadataDict,
         }

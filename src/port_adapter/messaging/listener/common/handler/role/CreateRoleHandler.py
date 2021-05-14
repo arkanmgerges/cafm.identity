@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
+from copy import copy
 
 import src.port_adapter.AppDi as AppDi
 from src.application.RoleApplicationService import RoleApplicationService
@@ -11,6 +12,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import (
 from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.common.handler.Handler import Handler
 from src.resource.common.DateTimeHelper import DateTimeHelper
+from src.resource.common.Util import Util
 from src.resource.logging.logger import logger
 
 
@@ -36,16 +38,13 @@ class CreateRoleHandler(Handler):
         if "token" not in metadataDict:
             raise UnAuthorizedException()
 
-        id = dataDict["role_id"] if "role_id" in dataDict else None
-        obj = appService.createRole(
-            id=id,
-            name=dataDict["name"],
-            title=dataDict["title"],
-            token=metadataDict["token"],
-        )
+        data = copy(dataDict)
+        dataDict["id"] = dataDict.pop("role_id")
+        appService.createRole(**Util.snakeCaseToLowerCameCaseDict(dataDict), token=metadataDict["token"])
+
         return {
             "name": self._commandConstant.value,
             "created_on": DateTimeHelper.utcNow(),
-            "data": {"role_id": obj.id(), "name": obj.name(), "title": obj.title()},
+            "data": data,
             "metadata": metadataDict,
         }

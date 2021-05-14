@@ -48,9 +48,6 @@ class RevokeAssignmentResourceToResourceHandler(Handler):
         return {
             "name": self._commandConstant.value,
             "created_on": DateTimeHelper.utcNow(),
-            "data": {
-                "src_resource_id": dataDict["src_resource_id"],
-                "dst_resource_id": dataDict["dst_resource_id"],
-            },
+            "data": dataDict,
             "metadata": metadataDict,
         }

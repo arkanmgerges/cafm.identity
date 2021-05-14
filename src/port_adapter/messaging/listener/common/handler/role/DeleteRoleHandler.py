@@ -2,6 +2,7 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
+from copy import copy
 
 import src.port_adapter.AppDi as AppDi
 from src.application.RoleApplicationService import RoleApplicationService
@@ -11,6 +12,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import (
 from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.common.handler.Handler import Handler
 from src.resource.common.DateTimeHelper import DateTimeHelper
+from src.resource.common.Util import Util
 from src.resource.logging.logger import logger
 
 
@@ -36,10 +38,13 @@ class DeleteRoleHandler(Handler):
         if "token" not in metadataDict:
             raise UnAuthorizedException()
 
-        appService.deleteRole(id=dataDict["role_id"], token=metadataDict["token"])
+        data = copy(dataDict)
+        dataDict["id"] = dataDict.pop("role_id")
+        appService.deleteRole(**Util.snakeCaseToLowerCameCaseDict(dataDict), token=metadataDict["token"])
+
         return {
             "name": self._commandConstant.value,
             "created_on": DateTimeHelper.utcNow(),
-            "data": {"role_id": dataDict["role_id"]},
+            "data": data,
             "metadata": metadataDict,
         }
