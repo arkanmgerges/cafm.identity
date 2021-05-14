@@ -154,7 +154,7 @@ class UserApplicationService:
             order=order,
         )
 
-    def generateUserOneTimePassword(self, userId: str, token: str = ""):
+    def generateUserOneTimePassword(self, userId: str, token: str = "", **_kwargs):
         resource: User = self._userRepository.userById(id=userId)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessPermissionData = self._authzService.roleAccessPermissionsData(
