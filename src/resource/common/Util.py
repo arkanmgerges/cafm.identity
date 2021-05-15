@@ -26,20 +26,20 @@ class Util:
         return result
 
     @staticmethod
-    def _capitalizeFirstLetter(string: str):
-        return string[0].upper() + string[1:]
-
-    @staticmethod
     def snakeCaseToLowerCameCaseString(string: str) -> str:
         components = string.split("_")
-        return components[0] + "".join(x.title() for x in components[1:])
+        return components[0] + "".join(Util._capitalizeFirstLetter(x) for x in components[1:])
 
     @staticmethod
     def snakeCaseToUpperCameCaseString(string: str) -> str:
         components = string.split("_")
-        return "".join(x.title() for x in components)
+        return "".join(Util._capitalizeFirstLetter(x) for x in components)
 
     @staticmethod
     def snakeCaseToLowerSpacedWordsString(string: str) -> str:
         components = string.split("_")
         return " ".join(x.lower() for x in components)
+
+    @staticmethod
+    def _capitalizeFirstLetter(string: str):
+        return string[0].upper() + string[1:]
