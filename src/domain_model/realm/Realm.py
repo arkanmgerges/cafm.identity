@@ -29,6 +29,7 @@ class Realm(Resource, HasToMap):
         realmType: str = None,
         publishEvent: bool = False,
         skipValidation: bool = False,
+        **_kwargs,
     ):
         logger.debug(
             f"[{Realm.createFrom.__qualname__}] - Create Realm with name: {name} and id: {id}"

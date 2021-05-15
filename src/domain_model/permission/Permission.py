@@ -48,6 +48,7 @@ class Permission(HasToMap):
         allowedActions: List[str] = None,
         deniedActions: List[str] = None,
         skipValidation: bool = False,
+        **_kwargs,
     ):
         permission = Permission(id, name, allowedActions, deniedActions, skipValidation=skipValidation)
         if publishEvent:

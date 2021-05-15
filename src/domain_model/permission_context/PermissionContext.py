@@ -57,6 +57,7 @@ class PermissionContext(HasToMap):
         data: dict = None,
         publishEvent: bool = False,
         skipValidation: bool = False,
+        **_kwargs,
     ):
         permissionContext = PermissionContext(id=id, type=type, data=data, skipValidation=skipValidation)
         if publishEvent:

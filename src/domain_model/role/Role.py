@@ -23,7 +23,8 @@ class Role(Resource, HasToMap):
 
     @classmethod
     def createFrom(
-        cls, id: str = None, name="", title: str = "", publishEvent: bool = False, skipValidation: bool = False
+        cls, id: str = None, name="", title: str = "", publishEvent: bool = False, skipValidation: bool = False,
+            **_kwargs,
     ):
         role = Role(id, name, title, skipValidation=skipValidation)
         if publishEvent:

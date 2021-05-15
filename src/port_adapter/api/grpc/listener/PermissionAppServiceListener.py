@@ -185,9 +185,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
         response.permission.id = obj.id()
         response.permission.name = obj.name()
         for allowedAction in obj.allowedActions():
-            response.allowedActions.append(allowedAction)
+            response.permission.allowedActions.append(allowedAction)
         for deniedAction in obj.deniedActions():
-            response.deniedActions.append(deniedAction)
+            response.permission.deniedActions.append(deniedAction)
 
     @debugLogger
     def _token(self, context) -> str:

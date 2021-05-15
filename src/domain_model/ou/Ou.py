@@ -17,7 +17,7 @@ class Ou(Resource, HasToMap):
         self._name = name
 
     @classmethod
-    def createFrom(cls, id: str = None, name=None, publishEvent: bool = False):
+    def createFrom(cls, id: str = None, name=None, publishEvent: bool = False, **_kwargs):
         ou = Ou(id, name)
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import (

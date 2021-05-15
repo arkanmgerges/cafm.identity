@@ -40,6 +40,7 @@ class User(Resource, HasToMap):
         password: str = "",
         publishEvent: bool = False,
         skipValidation: bool = False,
+        **_kwargs,
     ):
         logger.debug(f"[{User.createFrom.__qualname__}] - with name {email}")
         user = User(
