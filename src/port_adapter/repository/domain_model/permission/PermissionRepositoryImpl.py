@@ -183,6 +183,7 @@ class PermissionRepositoryImpl(PermissionRepository):
             id=result[0]["id"],
             name=result[0]["name"],
             allowedActions=result[0]["allowed_actions"],
+            deniedActions=result[0]["denied_actions"],
         )
 
     @debugLogger

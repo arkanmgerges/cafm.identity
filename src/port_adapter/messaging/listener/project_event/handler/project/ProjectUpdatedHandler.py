@@ -20,7 +20,7 @@ class ProjectUpdatedHandler(Handler):
     def canHandle(self, name: str) -> bool:
         return name == CommonEventConstant.PROJECT_UPDATED.value
 
-    def handleCommand(self, messageData: dict) -> dict:
+    def handleCommand(self, messageData: dict, extraData: dict = None) -> dict:
         data = messageData["data"]
         tmpDataDict = json.loads(data)
         old = tmpDataDict["old"]

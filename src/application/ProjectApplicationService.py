@@ -57,7 +57,7 @@ class ProjectApplicationService:
         )
 
     @debugLogger
-    def updateProject(self, id: str, name: str, token: str = ""):
+    def updateProject(self, id: str, name: str, token: str = "", **_keyword):
         obj: Project = self.constructObject(id=id, name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[
