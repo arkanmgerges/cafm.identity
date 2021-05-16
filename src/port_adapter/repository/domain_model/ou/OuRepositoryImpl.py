@@ -18,7 +18,6 @@ from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissio
 from src.domain_model.resource.exception.CodeExceptionConstant import (
     CodeExceptionConstant,
 )
-from src.domain_model.resource.exception.DomainModelException import DomainModelException
 from src.domain_model.resource.exception.InvalidValueException import InvalidValueException
 from src.domain_model.resource.exception.ObjectCouldNotBeDeletedException import (
     ObjectCouldNotBeDeletedException,
@@ -47,13 +46,9 @@ class OuRepositoryImpl(OuRepository):
             )
             self._db = self._connection[os.getenv("CAFM_IDENTITY_ARANGODB_DB_NAME", "")]
             self._helperRepo: HelperRepository = AppDi.instance.get(HelperRepository)
-            self._policyService: PolicyControllerService = AppDi.instance.get(
-                PolicyControllerService
-            )
+            self._policyService: PolicyControllerService = AppDi.instance.get(PolicyControllerService)
         except Exception as e:
-            logger.warn(
-                f"[{OuRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}"
-            )
+            logger.warn(f"[{OuRepositoryImpl.__init__.__qualname__}] Could not connect to the db, message: {e}")
             raise Exception(f"Could not connect to the db, message: {e}")
 
     @debugLogger
@@ -156,11 +151,19 @@ class OuRepositoryImpl(OuRepository):
                 "resource": {"id": obj.id(), "name": obj.name(), "type": obj.type()},
                 "OBJECT_DOES_NOT_EXIST_CODE": CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value,
             }
+
+            from src.domain_model.policy.PolicyRepository import PolicyRepository
+
+            policyRepo: PolicyRepository = AppDi.instance.get(PolicyRepository)
+            policyRepo.deleteRolesTreesCache()
             self._db.transaction(
                 collections={"write": ["resource", "owned_by", "has"]},
                 action=actionFunction,
                 params=params,
             )
+            from src.domain_model.policy.PolicyRepository import PolicyRepository
+            policyRepo: PolicyRepository = AppDi.instance.get(PolicyRepository)
+            policyRepo.deleteRolesTreesCache()
         except Exception as e:
             self.ouById(obj.id())
             logger.debug(
@@ -182,12 +185,8 @@ class OuRepositoryImpl(OuRepository):
                 "id": obj.id(),
                 "name": repoObj.name() if obj.name() is None else obj.name(),
             }
-            logger.debug(
-                f"[{OuRepositoryImpl.updateOu.__qualname__}] - Update ou with id: {obj.id()}"
-            )
-            queryResult: AQLQuery = self._db.AQLQuery(
-                aql, bindVars=bindVars, rawResults=True
-            )
+            logger.debug(f"[{OuRepositoryImpl.updateOu.__qualname__}] - Update ou with id: {obj.id()}")
+            queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
             _ = queryResult.result
 
             # Check if it is updated
@@ -207,9 +206,7 @@ class OuRepositoryImpl(OuRepository):
         """
 
         bindVars = {"name": name}
-        queryResult: AQLQuery = self._db.AQLQuery(
-            aql, bindVars=bindVars, rawResults=True
-        )
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
             logger.debug(f"[{OuRepositoryImpl.ouByName.__qualname__}] {name}")
@@ -226,9 +223,7 @@ class OuRepositoryImpl(OuRepository):
         """
 
         bindVars = {"id": id}
-        queryResult: AQLQuery = self._db.AQLQuery(
-            aql, bindVars=bindVars, rawResults=True
-        )
+        queryResult: AQLQuery = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result
         if len(result) == 0:
             logger.debug(f"[{OuRepositoryImpl.ouById.__qualname__}] ou id: {id}")

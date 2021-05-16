@@ -133,7 +133,9 @@ class PermissionRepositoryImpl(PermissionRepository):
             action=actionFunction,
             params=params,
         )
-
+        from src.domain_model.policy.PolicyRepository import PolicyRepository
+        policyRepo: PolicyRepository = AppDi.instance.get(PolicyRepository)
+        policyRepo.deleteRolesTreesCache()
 
     @debugLogger
     def permissionByName(self, name: str) -> Permission:

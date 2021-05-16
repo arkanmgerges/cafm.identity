@@ -180,6 +180,9 @@ class UserGroupRepositoryImpl(UserGroupRepository):
                 action=actionFunction,
                 params=params,
             )
+            from src.domain_model.policy.PolicyRepository import PolicyRepository
+            policyRepo: PolicyRepository = AppDi.instance.get(PolicyRepository)
+            policyRepo.deleteRolesTreesCache()
         except Exception as e:
             print(e)
             self.userGroupById(obj.id())

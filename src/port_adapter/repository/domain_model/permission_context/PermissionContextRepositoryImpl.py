@@ -131,6 +131,10 @@ class PermissionContextRepositoryImpl(PermissionContextRepository):
             action=actionFunction,
             params=params,
         )
+        from src.domain_model.policy.PolicyRepository import PolicyRepository
+        policyRepo: PolicyRepository = AppDi.instance.get(PolicyRepository)
+        policyRepo.deleteRolesTreesCache()
+
     @debugLogger
     def permissionContextById(self, id: str) -> PermissionContext:
         aql = """
