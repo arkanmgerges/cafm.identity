@@ -155,9 +155,13 @@ class UserGroupRepositoryImpl(UserGroupRepository):
                     let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                     if (res.length != 0) {
                         let doc = res[0];
-                        let edges = db.owned_by.outEdges(doc._id);   
+                        let edges = db.owned_by.edges(doc._id);   
                         for (let i = 0; i < edges.length; i++) {
                             db.owned_by.remove(edges[i]);
+                        }
+                        edges = db.has.edges(doc._id);   
+                        for (let i = 0; i < edges.length; i++) {
+                            db.has.remove(edges[i]);
                         }
                         db.resource.remove(doc);
                     } else {
@@ -172,7 +176,7 @@ class UserGroupRepositoryImpl(UserGroupRepository):
                 "OBJECT_DOES_NOT_EXIST_CODE": CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value,
             }
             self._db.transaction(
-                collections={"write": ["resource", "owned_by"]},
+                collections={"write": ["resource", "owned_by", "has"]},
                 action=actionFunction,
                 params=params,
             )
