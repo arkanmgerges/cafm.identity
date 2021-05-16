@@ -35,15 +35,6 @@ def cli():
 
 
 @cli.command(help="Initialize a database")
-def ttt():
-    connection = dbClientConnection()
-    db = connection["cafm-identity"]
-    resource = db["resource"]
-    res = resource.bulkSave(docs=[{"name": 1}, {"name": 2}])
-    print(res)
-
-
-@cli.command(help="Initialize a database")
 def init_db():
     click.echo(click.style("Initialized the database", fg="green", bold=True))
     try:

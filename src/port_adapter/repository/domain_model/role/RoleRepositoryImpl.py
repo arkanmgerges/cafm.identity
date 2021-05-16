@@ -171,6 +171,10 @@ class RoleRepositoryImpl(RoleRepository):
                         for (let i = 0; i < edges.length; i++) {
                             db.has.remove(edges[i]);
                         }
+                        edges = db.access.edges(doc._id);   
+                        for (let i = 0; i < edges.length; i++) {
+                            db.access.remove(edges[i]);
+                        }
                         db.resource.remove(doc);
                     } else {
                         let err = new Error(`Could not delete resource, ${params['resource']['id']}, it does not exist`);
@@ -184,7 +188,7 @@ class RoleRepositoryImpl(RoleRepository):
                 "OBJECT_DOES_NOT_EXIST_CODE": CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value,
             }
             self._db.transaction(
-                collections={"write": ["resource", "owned_by", "has"]},
+                collections={"write": ["resource", "owned_by", "has", "access"]},
                 action=actionFunction,
                 params=params,
             )

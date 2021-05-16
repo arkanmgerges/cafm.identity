@@ -139,6 +139,10 @@ class OuRepositoryImpl(OuRepository):
                         for (let i = 0; i < edges.length; i++) {
                             db.has.remove(edges[i]);
                         }
+                        edges = db.access.edges(doc._id);   
+                        for (let i = 0; i < edges.length; i++) {
+                            db.access.remove(edges[i]);
+                        }
                         db.resource.remove(doc);
                     } else {
                         let err = new Error(`Could not delete resource, ${params['resource']['id']}, it does not exist`);
@@ -157,7 +161,7 @@ class OuRepositoryImpl(OuRepository):
             policyRepo: PolicyRepository = AppDi.instance.get(PolicyRepository)
             policyRepo.deleteRolesTreesCache()
             self._db.transaction(
-                collections={"write": ["resource", "owned_by", "has"]},
+                collections={"write": ["resource", "owned_by", "has", "access"]},
                 action=actionFunction,
                 params=params,
             )
