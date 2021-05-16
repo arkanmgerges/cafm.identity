@@ -140,6 +140,10 @@ class OuRepositoryImpl(OuRepository):
                         for (let i = 0; i < edges.length; i++) {
                             db.owned_by.remove(edges[i]);
                         }
+                        edges = db.has.edges(doc._id);   
+                        for (let i = 0; i < edges.length; i++) {
+                            db.has.remove(edges[i]);
+                        }
                         db.resource.remove(doc);
                     } else {
                         let err = new Error(`Could not delete resource, ${params['resource']['id']}, it does not exist`);
@@ -153,15 +157,14 @@ class OuRepositoryImpl(OuRepository):
                 "OBJECT_DOES_NOT_EXIST_CODE": CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value,
             }
             self._db.transaction(
-                collections={"write": ["resource", "owned_by"]},
+                collections={"write": ["resource", "owned_by", "has"]},
                 action=actionFunction,
                 params=params,
             )
         except Exception as e:
-            print(e)
             self.ouById(obj.id())
             logger.debug(
-                f"[{OuRepositoryImpl.deleteOu.__qualname__}] Object could not be found exception for ou id: {obj.id()}"
+                f"[{OuRepositoryImpl.deleteOu.__qualname__}] Object could not be found exception for ou id: {obj.id()}, exception: {e}"
             )
             raise ObjectCouldNotBeDeletedException(f"ou id: {obj.id()}")
 

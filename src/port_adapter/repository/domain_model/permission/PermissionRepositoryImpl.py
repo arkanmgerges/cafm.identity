@@ -182,8 +182,8 @@ class PermissionRepositoryImpl(PermissionRepository):
         return Permission.createFrom(
             id=result[0]["id"],
             name=result[0]["name"],
-            allowedActions=result[0]["allowed_actions"],
-            deniedActions=result[0]["denied_actions"],
+            allowedActions=result[0]["allowed_actions"] if 'allowed_actions' in result[0] else [],
+            deniedActions=result[0]["denied_actions"] if 'denied_actions' in result[0] else [],
         )
 
     @debugLogger

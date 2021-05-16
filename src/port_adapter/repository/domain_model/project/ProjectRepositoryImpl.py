@@ -165,6 +165,10 @@ class ProjectRepositoryImpl(ProjectRepository):
                         for (let i = 0; i < edges.length; i++) {
                             db.owned_by.remove(edges[i]);
                         }
+                        edges = db.has.edges(doc._id);   
+                        for (let i = 0; i < edges.length; i++) {
+                            db.has.remove(edges[i]);
+                        }
                         db.resource.remove(doc);
                     } else {
                         let err = new Error(`Could not delete resource, ${params['resource']['id']}, it does not exist`);
@@ -178,7 +182,7 @@ class ProjectRepositoryImpl(ProjectRepository):
                 "OBJECT_DOES_NOT_EXIST_CODE": CodeExceptionConstant.OBJECT_DOES_NOT_EXIST.value,
             }
             self._db.transaction(
-                collections={"write": ["resource", "owned_by"]},
+                collections={"write": ["resource", "owned_by", "has"]},
                 action=actionFunction,
                 params=params,
             )

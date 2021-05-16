@@ -101,7 +101,7 @@ def init_db():
         for permissionContextResourceName in permissionContextResourceNames:
             aql = """
                         UPSERT {data: {name: @resourceTypeName}}
-                            INSERT {id: @id, type: @type, data: @data}
+                            INSERT {_key: @id, id: @id, type: @type, data: @data}
                             UPDATE {data: @data}
                           IN permission_context
                         """
@@ -140,7 +140,7 @@ def init_db():
             for pc in permissionContextsResult:
                 aql = """
                         UPSERT {name: @name, type: @type}
-                            INSERT {id: @id, name: @name, type: @type, allowed_actions: ["#allowedAction"]}
+                            INSERT {_key: @id, id: @id, name: @name, type: @type, allowed_actions: ["#allowedAction"], denied_actions: []}
                             UPDATE {name: @name}
                           IN permission
                         """
