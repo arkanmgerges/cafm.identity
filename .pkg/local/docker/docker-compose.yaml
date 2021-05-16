@@ -19,13 +19,7 @@ services:
 
   cafm-identity-api-cmd:
     image: cafm-identity:local
-    entrypoint:
-      [
-        "hupper",
-        "python",
-        "-m",
-        "src.port_adapter.messaging.listener.api_command.ApiCommandListener",
-      ]
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.api_command.ApiCommandListener"]
     working_dir: /app
     env_file:
       - ../../../.env
@@ -38,13 +32,7 @@ services:
 
   cafm-identity-cmd:
     image: cafm-identity:local
-    entrypoint:
-      [
-        "hupper",
-        "python",
-        "-m",
-        "src.port_adapter.messaging.listener.identity_command.IdentityCommandListener",
-      ]
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.identity_command.IdentityCommandListener"]
     working_dir: /app
     env_file:
       - ../../../.env
@@ -57,13 +45,7 @@ services:
 
   cafm-identity-project-evt:
     image: cafm-identity:local
-    entrypoint:
-      [
-        "hupper",
-        "python",
-        "-m",
-        "src.port_adapter.messaging.listener.project_event.ProjectEventListener",
-      ]
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.project_event.ProjectEventListener"]
     working_dir: /app
     env_file:
       - ../../../.env
@@ -76,13 +58,7 @@ services:
 
   cafm-identity-identity-evt:
     image: cafm-identity:local
-    entrypoint:
-      [
-        "hupper",
-        "python",
-        "-m",
-        "src.port_adapter.messaging.listener.identity_event.IdentityEventListener",
-      ]
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.identity_event.IdentityEventListener"]
     working_dir: /app
     env_file:
       - ../../../.env
@@ -95,13 +71,7 @@ services:
 
   cafm-identity-api-failed-cmd-handle:
     image: cafm-identity:local
-    entrypoint:
-      [
-        "hupper",
-        "python",
-        "-m",
-        "src.port_adapter.messaging.listener.api_command.ApiFailedCommandHandleListener",
-      ]
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.api_command.ApiFailedCommandHandleListener"]
     working_dir: /app
     env_file:
       - ../../../.env
@@ -114,13 +84,7 @@ services:
 
   cafm-identity-failed-cmd-handle:
     image: cafm-identity:local
-    entrypoint:
-      [
-        "hupper",
-        "python",
-        "-m",
-        "src.port_adapter.messaging.listener.identity_command.IdentityFailedCommandHandleListener",
-      ]
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.identity_command.IdentityFailedCommandHandleListener"]
     working_dir: /app
     env_file:
       - ../../../.env
@@ -133,13 +97,7 @@ services:
 
   cafm-identity-failed-evt-handle:
     image: cafm-identity:local
-    entrypoint:
-      [
-        "hupper",
-        "python",
-        "-m",
-        "src.port_adapter.messaging.listener.identity_event.IdentityFailedEventHandleListener",
-      ]
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.identity_event.IdentityFailedEventHandleListener"]
     working_dir: /app
     env_file:
       - ../../../.env
@@ -152,13 +110,7 @@ services:
 
   cafm-identity-project-failed-evt-handle:
     image: cafm-identity:local
-    entrypoint:
-      [
-        "hupper",
-        "python",
-        "-m",
-        "src.port_adapter.messaging.listener.project_event.ProjectFailedEventHandleListener",
-      ]
+    entrypoint: ["hupper", "python", "-m", "src.port_adapter.messaging.listener.project_event.ProjectFailedEventHandleListener"]
     working_dir: /app
     env_file:
       - ../../../.env
