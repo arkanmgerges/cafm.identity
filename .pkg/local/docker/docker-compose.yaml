@@ -172,7 +172,7 @@ services:
   cafm-identity-script:
     image: cafm-identity:local
     command: >
-      bash -c "python -m src.resource.script.admin_script check-schema-registry-readiness &&
+      bash -c "python -m src.resource.script.admin_script_v2 check-schema-registry-readiness &&
       python -m src.resource.script.admin_script check-redis-readiness &&
       python -m src.resource.script.admin_script init-kafka-topics-and-schemas
       && python -m src.resource.script.admin_script init-db

@@ -29,6 +29,38 @@ def cli():
     pass
 
 
+@cli.command(help="Check that schema registry is ready")
+def check_schema_registry_readiness():
+    click.echo(click.style("[Schema Registry] Check readiness", fg="green"))
+
+    from confluent_kafka.avro import CachedSchemaRegistryClient
+
+    config = {"url": os.getenv("MESSAGE_SCHEMA_REGISTRY_URL", "")}
+    counter = 15
+    seconds = 10
+
+    while counter > 0:
+        try:
+            counter = counter - 1
+
+            click.echo(click.style("[Schema Registry] Sending request ...", fg="green"))
+            registryClient = CachedSchemaRegistryClient(config)
+            registryClient.get_latest_schema(subject="test")
+            raise Exception("To be tested")
+            click.echo(click.style("[Schema Registry] Ready", fg="green"))
+
+            exit(0)
+        except Exception as e:
+            click.echo(click.style(f"[Schema Registry] Error: {e}", fg="red"))
+            click.echo(click.style(f"[Schema Registry] Retry in {seconds}s"))
+            click.echo(click.style(f"[Schema Registry] Remaining retries {counter}/15"))
+            sleep(seconds)
+
+            seconds += 3
+
+    exit(1)
+
+
 @cli.command(help="Create permission with permission contexts for the api endpoints")
 def create_permission_with_permission_contexts_for_api_endpoints():
     click.echo(
