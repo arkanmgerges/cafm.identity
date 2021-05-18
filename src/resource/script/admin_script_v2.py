@@ -22,6 +22,8 @@ from pyArango.users import Users
 from confluent_kafka.admin import AdminClient, NewTopic
 
 
+from src.resource.script.helpers.arango.client import ArangoClient
+
 from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
 
@@ -383,6 +385,49 @@ def create_arango_db_user(email, password, database_name):
             exit(1)
 
     exit(0)
+
+
+@cli.command(help="Create user and assign super admin role")
+@click.argument("email")
+@click.argument("password")
+@click.argument("database_name")
+def assign_user_super_admin_role(email, password, database_name):
+    click.echo(
+        click.style(f"[Arango] Create user and assign super_admin role", fg="green")
+    )
+
+    arangoClient = ArangoClient()
+    conn = arangoClient.getConnection()
+
+    db = conn[database_name]
+
+    name = "super_admin"
+    arangoClient.createOrUpdateRole(
+        db=db,
+        roleName=name,
+        roleTitle="Super Admin",
+    )
+    arangoClient.createOrUpdateUser(
+        db=db,
+        email=email,
+        password=password,
+    )
+
+    roleDocId = arangoClient.getResourceDocId(db, nameOrEmail=name, type="role")
+    if roleDocId is None:
+        raise Exception("[Arango] Something went wrong with role resource")
+
+    userDocId = arangoClient.getResourceDocId(db, nameOrEmail=email, type="user")
+    if userDocId is None:
+        raise Exception("[Arango] Something went wrong with user resource")
+
+    arangoClient.createOrUpdateHasEdge(
+        db=db,
+        fromId=userDocId,
+        toId=roleDocId,
+        fromType="user",
+        toType="role",
+    )
 
 
 def dbClientConnection():
