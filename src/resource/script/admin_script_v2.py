@@ -46,7 +46,6 @@ def check_schema_registry_readiness():
             click.echo(click.style("[Schema Registry] Sending request ...", fg="green"))
             registryClient = CachedSchemaRegistryClient(config)
             registryClient.get_latest_schema(subject="test")
-            raise Exception("To be tested")
             click.echo(click.style("[Schema Registry] Ready", fg="green"))
 
             exit(0)
