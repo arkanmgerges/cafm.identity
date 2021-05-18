@@ -54,7 +54,45 @@ def check_schema_registry_readiness():
             click.echo(click.style(f"[Schema Registry] Retry in {seconds}s"))
             click.echo(click.style(f"[Schema Registry] Remaining retries {counter}/15"))
             sleep(seconds)
+            seconds += 3
 
+    exit(1)
+
+
+@cli.command(help="Check that redis is ready")
+def check_redis_readiness():
+    click.echo(click.style("[Redis] Check readiness", fg="green"))
+
+    import redis
+
+    config = {
+        "host": os.getenv("CAFM_IDENTITY_REDIS_HOST", "localhost"),
+        "port": os.getenv("CAFM_IDENTITY_REDIS_PORT", 6379),
+    }
+    counter = 15
+    seconds = 10
+
+    while counter > 0:
+        try:
+            cache: redis.client.Redis = redis.Redis(**config)
+            click.echo(click.style("[Redis] Client created", fg="green"))
+
+            cache.setex("test_redis_key", 10, "test")
+            click.echo(click.style("[Redis] Test entry added", fg="green"))
+
+            if cache.exists("test_redis_key"):
+                click.echo(click.style("[Redis] Test entry found", fg="green"))
+                click.echo(click.style("[Redis] Ready", fg="green"))
+                exit(0)
+
+            click.echo(click.style(f"[Redis] Entry not found", fg="yellow"))
+            click.echo(click.style(f"[Redis] Sleep {seconds}s", fg="green"))
+            sleep(seconds)
+            seconds += 3
+        except Exception as e:
+            click.echo(click.style(f"[Redis] Error: {e}", fg="red"))
+            click.echo(click.style(f"[Redis] Sleep {seconds}s", fg="green"))
+            sleep(seconds)
             seconds += 3
 
     exit(1)

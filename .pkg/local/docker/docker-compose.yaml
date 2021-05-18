@@ -173,7 +173,7 @@ services:
     image: cafm-identity:local
     command: >
       bash -c "python -m src.resource.script.admin_script_v2 check-schema-registry-readiness &&
-      python -m src.resource.script.admin_script check-redis-readiness &&
+      python -m src.resource.script.admin_script_v2 check-redis-readiness &&
       python -m src.resource.script.admin_script init-kafka-topics-and-schemas
       && python -m src.resource.script.admin_script init-db
       && python -m src.resource.script.admin_script create-user ${ADMIN_EMAIL:-admin@local.me} ${ADMIN_PASSWORD:-1234} ${DB_NAME:-cafm-identity}
