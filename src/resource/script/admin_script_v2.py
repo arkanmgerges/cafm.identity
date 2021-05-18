@@ -16,7 +16,11 @@ from typing import List, Optional
 
 
 from confluent_kafka.avro import CachedSchemaRegistryClient
+from pyArango.connection import Connection
+from pyArango.query import AQLQuery
+from pyArango.users import Users
 from confluent_kafka.admin import AdminClient, NewTopic
+
 
 from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
@@ -178,6 +182,181 @@ def init_schema_registry():
         )
 
     exit(0)
+
+
+@cli.command(help="Initialize Arango database")
+def init_arango_db():
+    click.echo(click.style("[Arango] Init database", fg="green"))
+
+    dbName = os.getenv("CAFM_IDENTITY_ARANGODB_DB_NAME", None)
+    if dbName is None:
+        raise Exception("Database name {CAFM_IDENTITY_ARANGODB_DB_NAME} is not set")
+
+    try:
+        conn = dbClientConnection()
+
+        counter = 30
+        seconds = 3
+        while counter > 0:
+            counter -= 1
+            if conn.hasDatabase(dbName):
+                click.echo(click.style(f"[Arango] {dbName} is available", fg="green"))
+                break
+
+            conn.createDatabase(name=dbName)
+            conn.reload()
+            click.echo(click.style(f"[Arango] {dbName} was created", fg="green"))
+            sleep(seconds)
+            seconds += 3
+
+        db = conn[dbName]
+
+        click.echo(click.style(f"[Arango] Creating collections ..."))
+        collectionNames = [
+            "resource",
+            "permission",
+            "permission_context",
+            "country",
+            "city",
+        ]
+        for name in collectionNames:
+            if db.hasCollection(name):
+                click.echo(click.style(f"[Arango] Collection {name} already exists"))
+                continue
+
+            db.createCollection(
+                name=name, keyOptions={"type": "uuid", "allowUserKeys": True}
+            )
+            click.echo(click.style(f"[Arango] Collection {name} was created"))
+
+        click.echo(click.style(f"[Arango] Creating edges ..."))
+        edgeNames = ["has", "for", "access", "owned_by"]
+        for name in edgeNames:
+            if db.hasCollection(name):
+                click.echo(click.style(f"[Arango] Edge {name} already exists"))
+                continue
+
+            db.createCollection(
+                className="Edges",
+                name=name,
+                keyOptions={"type": "uuid", "allowUserKeys": True},
+            )
+            click.echo(click.style(f"[Arango] Edge {name} was created"))
+
+        # click.echo(click.style(f"[Arango] Creating default permission contexts ..."))
+        # permissionContextResourceNames = [
+        #     "realm",
+        #     "ou",
+        #     "project",
+        #     "user",
+        #     "role",
+        #     "user_group",
+        # ]
+        # for permissionContextResourceName in permissionContextResourceNames:
+        #     aql = """
+        #                 UPSERT {data: {name: @resourceTypeName}}
+        #                     INSERT {_key: @id, id: @id, type: @type, data: @data}
+        #                     UPDATE {data: @data}
+        #                   IN permission_context
+        #                 """
+
+        #     bindVars = {
+        #         "id": str(uuid.uuid4()),
+        #         "type": "resource_type",
+        #         "resourceTypeName": permissionContextResourceName,
+        #         "data": {
+        #             "name": permissionContextResourceName,
+        #             "type": "resource_type",
+        #         },
+        #     }
+        #     queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+        # click.echo(
+        #     click.style(
+        #         f"[Arango] Creating default permissions for permission contexts ..."
+        #     )
+        # )
+        # # Add default permissions (this was added later in code. It will read the already created permission contexts and
+        # # create permissions for them)
+        # # Fetch all permission contexts
+        # aql = """
+        #     FOR pc IN permission_context
+        #         RETURN pc
+        # """
+        # permissionContextsQueryResult = db.AQLQuery(aql, rawResults=True)
+        # permissionContextsResult = []
+        # for r in permissionContextsQueryResult:
+        #     permissionContextsResult.append(r)
+
+        # # Create permissions with names '<action>_<permission_context>' like read_ou, create_realm ...etc
+        # click.echo(
+        #     click.style(
+        #         f"[Arango] Create permissions with names linked to permission contexts"
+        #     )
+        # )
+        # for action in ["create", "read", "update", "delete"]:
+        #     for pc in permissionContextsResult:
+        #         aql = """
+        #                 UPSERT {name: @name, type: @type}
+        #                     INSERT {_key: @id, id: @id, name: @name, type: @type, allowed_actions: ["#allowedAction"], denied_actions: []}
+        #                     UPDATE {name: @name}
+        #                   IN permission
+        #                 """
+        #         aql = aql.replace("#allowedAction", action)
+        #         bindVars = {
+        #             "id": str(uuid.uuid4()),
+        #             "name": f'{action}_{pc["data"]["name"]}',
+        #             "type": "permission",
+        #         }
+        #         queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+        # click.echo(click.style(f"[Arango] Fetch all permissions"))
+        # aql = """
+        #     FOR p IN permission
+        #         RETURN p
+        # """
+        # permissionsResult = db.AQLQuery(aql, rawResults=True)
+
+        # click.echo(click.style(f"[Arango] Link permissions to permission contexts"))
+        # for perm in permissionsResult:
+        #     aql = """
+        #         UPSERT {_from: @fromId, _to: @toId}
+        #             INSERT {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
+        #             UPDATE {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
+        #           IN `for`
+        #         """
+        #     rtName = perm["name"][perm["name"].find("_") + 1 :]
+        #     rtId = None
+        #     for pc in permissionContextsResult:
+        #         if pc["data"]["name"] == rtName:
+        #             rtId = pc["_id"]
+        #             break
+        #     if rtId is None:
+        #         click.echo(click.style(f"rtId is none for {rtName}", fg="red"))
+
+        #     if rtId is not None:
+        #         bindVars = {"fromId": perm["_id"], "toId": rtId}
+        #         queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+
+    except Exception as e:
+        click.echo(click.style(f"[Arango] Something went wrong", fg="yellow"))
+        click.echo(click.style(f"[Arango] Error {e}", fg="red"))
+        exit(1)
+
+    exit(0)
+
+
+def dbClientConnection():
+    config = {
+        "arangoURL": os.getenv("CAFM_IDENTITY_ARANGODB_URL", ""),
+        "username": os.getenv("CAFM_IDENTITY_ARANGODB_USERNAME", ""),
+        "password": os.getenv("CAFM_IDENTITY_ARANGODB_PASSWORD", ""),
+    }
+    try:
+        connection = Connection(**config)
+        return connection
+    except Exception as e:
+        raise Exception(f"Could not connect to the db, message: {e}")
 
 
 @cli.command(help="Create permission with permission contexts for the api endpoints")
