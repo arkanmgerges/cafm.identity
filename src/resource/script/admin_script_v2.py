@@ -8,10 +8,18 @@ import yaml
 import click
 import re
 import requests
+import redis
 
 from copy import copy
 from pyArango.connection import Connection
 from typing import List, Optional
+
+
+from confluent_kafka.avro import CachedSchemaRegistryClient
+from confluent_kafka.admin import AdminClient, NewTopic
+
+from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
+from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
 
 sys.path.append("../../../")
 
@@ -33,8 +41,6 @@ def cli():
 def check_schema_registry_readiness():
     click.echo(click.style("[Schema Registry] Check readiness", fg="green"))
 
-    from confluent_kafka.avro import CachedSchemaRegistryClient
-
     config = {"url": os.getenv("MESSAGE_SCHEMA_REGISTRY_URL", "")}
     counter = 15
     seconds = 10
@@ -44,8 +50,8 @@ def check_schema_registry_readiness():
             counter = counter - 1
 
             click.echo(click.style("[Schema Registry] Sending request ...", fg="green"))
-            registryClient = CachedSchemaRegistryClient(config)
-            registryClient.get_latest_schema(subject="test")
+            srClient = CachedSchemaRegistryClient(config)
+            srClient.get_latest_schema(subject="test")
             click.echo(click.style("[Schema Registry] Ready", fg="green"))
 
             exit(0)
@@ -62,8 +68,6 @@ def check_schema_registry_readiness():
 @cli.command(help="Check that redis is ready")
 def check_redis_readiness():
     click.echo(click.style("[Redis] Check readiness", fg="green"))
-
-    import redis
 
     config = {
         "host": os.getenv("CAFM_IDENTITY_REDIS_HOST", "localhost"),
@@ -96,6 +100,84 @@ def check_redis_readiness():
             seconds += 3
 
     exit(1)
+
+
+@cli.command(help="Initialize Kafka topics")
+def init_kafka_topics():
+    click.echo(click.style("[Kafka] Init topics", fg="green"))
+
+    config = {"bootstrap.servers": os.getenv("MESSAGE_BROKER_SERVERS", "")}
+    adminClient = AdminClient(config)
+    click.echo(click.style("[Kafka] Client created", fg="green"))
+
+    installedTopics = adminClient.list_topics().topics.keys()
+    requiredTopics = [
+        "cafm.identity.cmd",
+        "cafm.identity.evt",
+        "cafm.identity.api-failed-cmd-handle",
+        "cafm.identity.failed-cmd-handle",
+        "cafm.identity.failed-evt-handle",
+        "cafm.identity.project-failed-evt-handle",
+    ]
+    newTopics = [
+        NewTopic(
+            requiredTopic,
+            num_partitions=int(os.getenv("KAFKA_PARTITIONS_COUNT_PER_TOPIC", 1)),
+            replication_factor=1,
+        )
+        for requiredTopic in requiredTopics
+        if requiredTopic not in installedTopics
+    ]
+
+    if len(newTopics) > 0:
+        kafkaFuture = adminClient.create_topics(newTopics)
+        for topicName, topicFuture in kafkaFuture.items():
+            counter = 5
+            seconds = 5
+            while counter > 0:
+                try:
+                    counter -= 1
+                    topicFuture.result()
+                    click.echo(click.style(f"[Kafka] Topic {topicName} created"))
+                except Exception as e:
+                    click.echo(click.style(f"[Kafka] Failed to create {topicName}"))
+                    click.echo(click.style(f"[Kafka] Error {e}", fg="red"))
+                    click.echo(click.style(f"[Kafka] Retry in {seconds}s", fg="red"))
+                    sleep(seconds)
+    else:
+        click.echo(click.style(f"[Kafka] All topics already exist"))
+
+
+@cli.command(help="Initialize Schema Registry")
+def init_schema_registry():
+    click.echo(click.style("[Schema Registry] Init", fg="green"))
+
+    config = {"url": os.getenv("MESSAGE_SCHEMA_REGISTRY_URL", "")}
+    srClient = CachedSchemaRegistryClient(config)
+    click.echo(click.style("[Schema Registry] Client created", fg="green"))
+
+    requiredSchemas = [
+        {"name": "cafm.identity.Command", "schema": IdentityCommand.get_schema()},
+        {"name": "cafm.identity.Event", "schema": IdentityEvent.get_schema()},
+    ]
+    newSchemas = []
+
+    for schema in requiredSchemas:
+        s = srClient.get_latest_schema(subject=schema["name"])
+        if s[0] is None:
+            newSchemas.append(schema)
+        else:
+            click.echo(
+                click.style(f'[Schema Registry] Schema {schema["name"]} already exists')
+            )
+
+    for schema in newSchemas:
+        srClient.register(schema["name"], schema["schema"])
+        click.echo(
+            click.style(f'[Schema Registry] Schema {schema["name"]} was created')
+        )
+
+    exit(0)
 
 
 @cli.command(help="Create permission with permission contexts for the api endpoints")
