@@ -391,7 +391,7 @@ def create_arango_db_user(email, password, database_name):
 @click.argument("email")
 @click.argument("password")
 @click.argument("database_name")
-def assign_user_super_admin_role(email, password, database_name):
+def create_arango_resource_user_with_super_admin_role(email, password, database_name):
     click.echo(
         click.style(f"[Arango] Create user and assign super_admin role", fg="green")
     )
