@@ -31,7 +31,11 @@ def cli():
 
 @cli.command(help="Create permission with permission contexts for the api endpoints")
 def create_permission_with_permission_contexts_for_api_endpoints():
-    click.echo(click.style(f"Creating permission with permission contexts and linking them", fg="green"))
+    click.echo(
+        click.style(
+            f"Creating permission with permission contexts and linking them", fg="green"
+        )
+    )
     token = getAccessToken()
     # Get all app routes
     appRoutesJsonResponse = appRouteList()
@@ -40,7 +44,9 @@ def create_permission_with_permission_contexts_for_api_endpoints():
     # Get all permissions
     permissionList = permissions(token)
 
-    apiPermissionContexts = list(filter(lambda x: "api_resource_type" in x["type"], permissionContextList))
+    apiPermissionContexts = list(
+        filter(lambda x: "api_resource_type" in x["type"], permissionContextList)
+    )
     apiPermissionWithContexts = apiPermissionWithContextList(
         apiPermissionContexts, appRoutesJsonResponse, permissionList
     )
@@ -70,13 +76,20 @@ def persistPermissionWithPermissionContexts(apiPermissionWithContexts, hashedKey
     permissionToPermissionContextDataList = []
     for item in apiPermissionWithContexts:
         if item["create_permission_context"]:
-            hashedKey = hashedKeyByKey(key=item["permission_context"]["path"], hashedKeys=hashedKeys)
+            hashedKey = hashedKeyByKey(
+                key=item["permission_context"]["path"], hashedKeys=hashedKeys
+            )
             if hashedKey is not None:
                 permissionContextId = _generateUuid3ByString(hashedKey)
                 data = item["permission_context"]
                 data["hash_code"] = hashedKey
                 permissionContextDataList.append(
-                    {"_key": permissionContextId, "id": permissionContextId, "type": "api_resource_type", "data": data}
+                    {
+                        "_key": permissionContextId,
+                        "id": permissionContextId,
+                        "type": "api_resource_type",
+                        "data": data,
+                    }
                 )
 
                 permissionsDataItem = item["permissions"]
@@ -87,7 +100,9 @@ def persistPermissionWithPermissionContexts(apiPermissionWithContexts, hashedKey
                     permissionDataList.append(permissionDataItem)
 
                     # Link permission to permission context
-                    forId = _generateUuid3ByString(f"{permissionId}{permissionContextId}")
+                    forId = _generateUuid3ByString(
+                        f"{permissionId}{permissionContextId}"
+                    )
                     permissionToPermissionContextDataList.append(
                         {
                             "_key": forId,
@@ -104,8 +119,12 @@ def persistPermissionWithPermissionContexts(apiPermissionWithContexts, hashedKey
         permissionCollection = db["permission"]
         permissionContextCollection = db["permission_context"]
         forCollection = db["for"]
-        forCollection.bulkSave(docs=permissionToPermissionContextDataList, onDuplicate="replace")
-        permissionContextCollection.bulkSave(docs=permissionContextDataList, onDuplicate="replace")
+        forCollection.bulkSave(
+            docs=permissionToPermissionContextDataList, onDuplicate="replace"
+        )
+        permissionContextCollection.bulkSave(
+            docs=permissionContextDataList, onDuplicate="replace"
+        )
         permissionCollection.bulkSave(docs=permissionDataList, onDuplicate="replace")
     except Exception as e:
         click.echo(click.style(f"{e}", fg="red"))
@@ -175,7 +194,9 @@ def persistPermission(data, token):
         json=dict(data),
     )
     resp.raise_for_status()
-    return checkForResult(token, resp.json()["request_id"], checkForID=True, resultIdName="permission_id")
+    return checkForResult(
+        token, resp.json()["request_id"], checkForID=True, resultIdName="permission_id"
+    )
 
 
 def hashedKeyByKey(key, hashedKeys) -> Optional[str]:
@@ -195,7 +216,9 @@ def extractKeys(apiPermissionWithContexts) -> List[dict]:
 
 
 def hashKeys(keys):
-    resp = requests.post(baseURL + "/v1/util/route/hash_keys", json=dict(unhashed_keys={"keys": keys}))
+    resp = requests.post(
+        baseURL + "/v1/util/route/hash_keys", json=dict(unhashed_keys={"keys": keys})
+    )
     return resp.json()
 
 
@@ -221,7 +244,9 @@ def build_resource_tree_from_file(file_name):
         click.echo(click.style(f"{e}", fg="red"))
 
 
-def apiPermissionWithContextList(apiPermissionContexts, appRoutesJsonResponse, permissionList):
+def apiPermissionWithContextList(
+    apiPermissionContexts, appRoutesJsonResponse, permissionList
+):
     apiPermissionWithContexts = []
     for appRoute in appRoutesJsonResponse["routes"]:
         apiPermissionContextToBeCreated = None
@@ -248,8 +273,13 @@ def apiPermissionWithContextList(apiPermissionContexts, appRoutesJsonResponse, p
             found = False
             microserviceName = _extractMicroserviceName(appRoute["path"])
             for permission in permissionList:
-                microserviceName = microserviceName if microserviceName is not None else "default"
-                if permission["name"] == f'api:{method}:{microserviceName}:{appRoute["name"]}':
+                microserviceName = (
+                    microserviceName if microserviceName is not None else "default"
+                )
+                if (
+                    permission["name"]
+                    == f'api:{method}:{microserviceName}:{appRoute["name"]}'
+                ):
                     found = True
                     break
             if not found:
@@ -267,7 +297,8 @@ def apiPermissionWithContextList(apiPermissionContexts, appRoutesJsonResponse, p
 
         apiPermissionWithContexts.append(
             {
-                "create_permission_context": apiPermissionContextToBeCreated is not None,
+                "create_permission_context": apiPermissionContextToBeCreated
+                is not None,
                 "permission_context": apiPermissionContextToBeCreated,
                 "permissions": apiPermissionsToBeCreated,
             }
