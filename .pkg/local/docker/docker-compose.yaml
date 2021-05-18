@@ -177,7 +177,7 @@ services:
       && python -m src.resource.script.admin_script_v2 init-kafka-topics
       && python -m src.resource.script.admin_script_v2 init-schema-registry
       && python -m src.resource.script.admin_script_v2 init-arango-db
-      && python -m src.resource.script.admin_script create-user ${ADMIN_EMAIL:-admin@local.me} ${ADMIN_PASSWORD:-1234} ${DB_NAME:-cafm-identity}
+      && python -m src.resource.script.admin_script_v2 create-arango-db-user ${ADMIN_EMAIL:-admin@local.me} ${ADMIN_PASSWORD:-1234} ${DB_NAME:-cafm-identity}
       && python -m src.resource.script.admin_script assign-user-super-admin-role ${ADMIN_EMAIL:-admin@local.me} ${ADMIN_PASSWORD:-1234} ${DB_NAME:-cafm-identity}
       && python -m src.resource.script.admin_script build-resource-tree-from-file ${TREE_FILE:-src/resource/script/__test_tree.yaml.sample}
       && python -m src.resource.script.admin_script_v2 create-permission-with-permission-contexts-for-api-endpoints"

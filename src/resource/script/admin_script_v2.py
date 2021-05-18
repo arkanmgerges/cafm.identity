@@ -346,6 +346,45 @@ def init_arango_db():
     exit(0)
 
 
+@cli.command(help="Create an admin user for Arango database")
+@click.argument("email")
+@click.argument("password")
+@click.argument("database_name")
+def create_arango_db_user(email, password, database_name):
+    click.echo(
+        click.style(
+            f"[Arango] Creating an admin user with username: {email} for the database: {database_name}",
+            fg="green",
+        )
+    )
+
+    conn = dbClientConnection()
+    users = Users(connection=conn)
+    click.echo(click.style("[Arango] Current users fetched", fg="green"))
+
+    user = None
+    try:
+        user = users.fetchUser(username=email)
+        click.echo(click.style(f"[Arango] User {email} fetched", fg="green"))
+    except Exception as e:
+        click.echo(click.style(f"[Arango] No user {email} fetched", fg="yellow"))
+
+    # Create User
+    if user is None:
+        try:
+            user = users.createUser(email, password)
+            user.save()
+            click.echo(click.style(f"[Arango] User {email} created", fg="green"))
+
+            user.setPermissions(dbName=database_name, access=True)
+            click.echo(click.style(f"[Arango] Permissions set for {email}", fg="green"))
+        except Exception as e:
+            click.echo(click.style(f"[Arango] Error: {e}", fg="red"))
+            exit(1)
+
+    exit(0)
+
+
 def dbClientConnection():
     config = {
         "arangoURL": os.getenv("CAFM_IDENTITY_ARANGODB_URL", ""),
