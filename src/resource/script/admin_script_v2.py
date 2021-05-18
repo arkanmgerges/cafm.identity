@@ -37,6 +37,8 @@ load_dotenv()
 baseURL = os.getenv("API_URL")
 microserviceNamePatternCompiled = re.compile("/v[0-9]/([^/]+)?/")
 
+arangoClient = ArangoClient()
+
 
 @click.group()
 def cli():
@@ -195,7 +197,7 @@ def init_arango_db():
         raise Exception("Database name {CAFM_IDENTITY_ARANGODB_DB_NAME} is not set")
 
     try:
-        conn = dbClientConnection()
+        conn = arangoClient.getConnection()
 
         counter = 30
         seconds = 3
@@ -360,7 +362,8 @@ def create_arango_db_user(email, password, database_name):
         )
     )
 
-    conn = dbClientConnection()
+    conn = arangoClient.getConnection()
+
     users = Users(connection=conn)
     click.echo(click.style("[Arango] Current users fetched", fg="green"))
 
@@ -396,7 +399,6 @@ def create_arango_resource_user_with_super_admin_role(email, password, database_
         click.style(f"[Arango] Create user and assign super_admin role", fg="green")
     )
 
-    arangoClient = ArangoClient()
     conn = arangoClient.getConnection()
 
     db = conn[database_name]
@@ -428,19 +430,6 @@ def create_arango_resource_user_with_super_admin_role(email, password, database_
         fromType="user",
         toType="role",
     )
-
-
-def dbClientConnection():
-    config = {
-        "arangoURL": os.getenv("CAFM_IDENTITY_ARANGODB_URL", ""),
-        "username": os.getenv("CAFM_IDENTITY_ARANGODB_USERNAME", ""),
-        "password": os.getenv("CAFM_IDENTITY_ARANGODB_PASSWORD", ""),
-    }
-    try:
-        connection = Connection(**config)
-        return connection
-    except Exception as e:
-        raise Exception(f"Could not connect to the db, message: {e}")
 
 
 @cli.command(help="Create permission with permission contexts for the api endpoints")
