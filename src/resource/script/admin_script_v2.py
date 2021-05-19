@@ -23,6 +23,8 @@ from confluent_kafka.admin import AdminClient, NewTopic
 
 
 from src.resource.script.helpers.arango.client import ArangoClient
+from src.resource.script.helpers.cafm_api.client import CAFMClient
+from src.resource.script.helpers.tree.parser import TreeParser
 
 from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
@@ -37,7 +39,23 @@ load_dotenv()
 baseURL = os.getenv("API_URL")
 microserviceNamePatternCompiled = re.compile("/v[0-9]/([^/]+)?/")
 
-arangoClient = ArangoClient()
+arangoClient = ArangoClient(
+    dict(
+        arangoURL=os.getenv("CAFM_IDENTITY_ARANGODB_URL", ""),
+        username=os.getenv("CAFM_IDENTITY_ARANGODB_USERNAME", ""),
+        password=os.getenv("CAFM_IDENTITY_ARANGODB_PASSWORD", ""),
+    )
+)
+
+cafmClient = CAFMClient(
+    dict(
+        email=os.getenv("ADMIN_EMAIL", None),
+        password=os.getenv("ADMIN_PASSWORD", None),
+        base_url=os.getenv("API_URL"),
+    )
+)
+
+treeParser = TreeParser(cafmClient=cafmClient)
 
 
 @click.group()
@@ -247,100 +265,100 @@ def init_arango_db():
             )
             click.echo(click.style(f"[Arango] Edge {name} was created"))
 
-        # click.echo(click.style(f"[Arango] Creating default permission contexts ..."))
-        # permissionContextResourceNames = [
-        #     "realm",
-        #     "ou",
-        #     "project",
-        #     "user",
-        #     "role",
-        #     "user_group",
-        # ]
-        # for permissionContextResourceName in permissionContextResourceNames:
-        #     aql = """
-        #                 UPSERT {data: {name: @resourceTypeName}}
-        #                     INSERT {_key: @id, id: @id, type: @type, data: @data}
-        #                     UPDATE {data: @data}
-        #                   IN permission_context
-        #                 """
+        click.echo(click.style(f"[Arango] Creating default permission contexts ..."))
+        permissionContextResourceNames = [
+            "realm",
+            "ou",
+            "project",
+            "user",
+            "role",
+            "user_group",
+        ]
+        for permissionContextResourceName in permissionContextResourceNames:
+            aql = """
+                        UPSERT {data: {name: @resourceTypeName}}
+                            INSERT {_key: @id, id: @id, type: @type, data: @data}
+                            UPDATE {data: @data}
+                          IN permission_context
+                        """
 
-        #     bindVars = {
-        #         "id": str(uuid.uuid4()),
-        #         "type": "resource_type",
-        #         "resourceTypeName": permissionContextResourceName,
-        #         "data": {
-        #             "name": permissionContextResourceName,
-        #             "type": "resource_type",
-        #         },
-        #     }
-        #     queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            bindVars = {
+                "id": str(uuid.uuid4()),
+                "type": "resource_type",
+                "resourceTypeName": permissionContextResourceName,
+                "data": {
+                    "name": permissionContextResourceName,
+                    "type": "resource_type",
+                },
+            }
+            queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
-        # click.echo(
-        #     click.style(
-        #         f"[Arango] Creating default permissions for permission contexts ..."
-        #     )
-        # )
-        # # Add default permissions (this was added later in code. It will read the already created permission contexts and
-        # # create permissions for them)
-        # # Fetch all permission contexts
-        # aql = """
-        #     FOR pc IN permission_context
-        #         RETURN pc
-        # """
-        # permissionContextsQueryResult = db.AQLQuery(aql, rawResults=True)
-        # permissionContextsResult = []
-        # for r in permissionContextsQueryResult:
-        #     permissionContextsResult.append(r)
+        click.echo(
+            click.style(
+                f"[Arango] Creating default permissions for permission contexts ..."
+            )
+        )
+        # Add default permissions (this was added later in code. It will read the already created permission contexts and
+        # create permissions for them)
+        # Fetch all permission contexts
+        aql = """
+            FOR pc IN permission_context
+                RETURN pc
+        """
+        permissionContextsQueryResult = db.AQLQuery(aql, rawResults=True)
+        permissionContextsResult = []
+        for r in permissionContextsQueryResult:
+            permissionContextsResult.append(r)
 
-        # # Create permissions with names '<action>_<permission_context>' like read_ou, create_realm ...etc
-        # click.echo(
-        #     click.style(
-        #         f"[Arango] Create permissions with names linked to permission contexts"
-        #     )
-        # )
-        # for action in ["create", "read", "update", "delete"]:
-        #     for pc in permissionContextsResult:
-        #         aql = """
-        #                 UPSERT {name: @name, type: @type}
-        #                     INSERT {_key: @id, id: @id, name: @name, type: @type, allowed_actions: ["#allowedAction"], denied_actions: []}
-        #                     UPDATE {name: @name}
-        #                   IN permission
-        #                 """
-        #         aql = aql.replace("#allowedAction", action)
-        #         bindVars = {
-        #             "id": str(uuid.uuid4()),
-        #             "name": f'{action}_{pc["data"]["name"]}',
-        #             "type": "permission",
-        #         }
-        #         queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        # Create permissions with names '<action>_<permission_context>' like read_ou, create_realm ...etc
+        click.echo(
+            click.style(
+                f"[Arango] Create permissions with names linked to permission contexts"
+            )
+        )
+        for action in ["create", "read", "update", "delete"]:
+            for pc in permissionContextsResult:
+                aql = """
+                        UPSERT {name: @name, type: @type}
+                            INSERT {_key: @id, id: @id, name: @name, type: @type, allowed_actions: ["#allowedAction"], denied_actions: []}
+                            UPDATE {name: @name}
+                          IN permission
+                        """
+                aql = aql.replace("#allowedAction", action)
+                bindVars = {
+                    "id": str(uuid.uuid4()),
+                    "name": f'{action}_{pc["data"]["name"]}',
+                    "type": "permission",
+                }
+                queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
-        # click.echo(click.style(f"[Arango] Fetch all permissions"))
-        # aql = """
-        #     FOR p IN permission
-        #         RETURN p
-        # """
-        # permissionsResult = db.AQLQuery(aql, rawResults=True)
+        click.echo(click.style(f"[Arango] Fetch all permissions"))
+        aql = """
+            FOR p IN permission
+                RETURN p
+        """
+        permissionsResult = db.AQLQuery(aql, rawResults=True)
 
-        # click.echo(click.style(f"[Arango] Link permissions to permission contexts"))
-        # for perm in permissionsResult:
-        #     aql = """
-        #         UPSERT {_from: @fromId, _to: @toId}
-        #             INSERT {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
-        #             UPDATE {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
-        #           IN `for`
-        #         """
-        #     rtName = perm["name"][perm["name"].find("_") + 1 :]
-        #     rtId = None
-        #     for pc in permissionContextsResult:
-        #         if pc["data"]["name"] == rtName:
-        #             rtId = pc["_id"]
-        #             break
-        #     if rtId is None:
-        #         click.echo(click.style(f"rtId is none for {rtName}", fg="red"))
+        click.echo(click.style(f"[Arango] Link permissions to permission contexts"))
+        for perm in permissionsResult:
+            aql = """
+                UPSERT {_from: @fromId, _to: @toId}
+                    INSERT {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
+                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
+                  IN `for`
+                """
+            rtName = perm["name"][perm["name"].find("_") + 1 :]
+            rtId = None
+            for pc in permissionContextsResult:
+                if pc["data"]["name"] == rtName:
+                    rtId = pc["_id"]
+                    break
+            if rtId is None:
+                click.echo(click.style(f"rtId is none for {rtName}", fg="red"))
 
-        #     if rtId is not None:
-        #         bindVars = {"fromId": perm["_id"], "toId": rtId}
-        #         queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            if rtId is not None:
+                bindVars = {"fromId": perm["_id"], "toId": rtId}
+                queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
     except Exception as e:
         click.echo(click.style(f"[Arango] Something went wrong", fg="yellow"))
@@ -626,25 +644,46 @@ def hashKeys(keys):
 
 
 @cli.command(help="Create user from file")
-@click.argument("file_name")
-def build_resource_tree_from_file(file_name):
-    try:
-        token = getAccessToken()
-        with open(f"{file_name}", "r") as f:
-            fileData = yaml.safe_load(f)
+@click.argument("filename")
+def build_resource_tree_from_file(filename):
+    click.echo(click.style(f"[Resources] Build from tree", fg="green"))
 
-        # Parse access tree
-        for realm in fileData["realms"]:
-            realmName = realm["name"]
-            createRealm(token, realmName, realm["type"])
-            for role in realm["roles"]:
-                roleId = createRole(token, role["name"], role["title"])
-                for user in role["users"]:
-                    userId = createUser(token, user["email"])
-                    setPassword(token, userId, user["password"])
-                    assignUserToRole(token, roleId, userId)
+    with open(f"{filename}", "r") as f:
+        data = yaml.safe_load(f)
+        click.echo(
+            click.style(f"[Resources] Read data from file {filename}", fg="green")
+        )
+
+    try:
+        click.echo(click.style(f"[Build] Resource trees", fg="green"))
+        resourceTrees = data["resource_trees"]
+        for resourceTreeName in resourceTrees:
+            resourceTree = resourceTrees[resourceTreeName]
+            click.echo(click.style(f"[Build] Resource Tree {resourceTreeName}"))
+            treeParser.parseResourceTree(parent=resourceTree)
+
+        click.echo(click.style(f"[Build] Permission trees", fg="green"))
+        permissionTrees = data["permission_trees"]
+        for permissionTreeName in permissionTrees:
+            permissionTree = permissionTrees[permissionTreeName]
+            treeParser.parsePermissionTree(permissionTree)
+
+        click.echo(click.style(f"[Build] Role trees", fg="green"))
+        roleTrees = data["role_trees"]
+        for roleTreeName in roleTrees:
+            roleTree = roleTrees[roleTreeName]
+            treeParser.parseRoleTree(roleTree)
+
+        click.echo(click.style(f"[Build] User trees", fg="green"))
+        userTrees = data["user_trees"]
+        for userTreeName in userTrees:
+            userTree = userTrees[userTreeName]
+            treeParser.parseUserTree(userTree)
+
     except Exception as e:
+        click.echo(click.style(f"Error: {sys._getframe().f_code.co_name}", fg="red"))
         click.echo(click.style(f"{e}", fg="red"))
+        exit(1)
 
 
 def apiPermissionWithContextList(

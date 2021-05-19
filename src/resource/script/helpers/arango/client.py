@@ -8,12 +8,8 @@ from pyArango.query import AQLQuery
 
 
 class ArangoClient:
-    def __init__(self, config=None):
-        self.config = config or {
-            "arangoURL": os.getenv("CAFM_IDENTITY_ARANGODB_URL", ""),
-            "username": os.getenv("CAFM_IDENTITY_ARANGODB_USERNAME", ""),
-            "password": os.getenv("CAFM_IDENTITY_ARANGODB_PASSWORD", ""),
-        }
+    def __init__(self, config):
+        self.config = config
         self.connection = None
 
     def getConnection(self):
