@@ -199,6 +199,7 @@ class RealmRepositoryImpl(RealmRepository):
                 params=params,
             )
             from src.domain_model.policy.PolicyRepository import PolicyRepository
+
             policyRepo: PolicyRepository = AppDi.instance.get(PolicyRepository)
             policyRepo.deleteRolesTreesCache()
         except Exception as e:
@@ -280,7 +281,16 @@ class RealmRepositoryImpl(RealmRepository):
         items = result["items"]
         totalItemCount = len(items)
         items = items[resultFrom : resultFrom + resultSize]
+
         return {
-            "items": [Realm.createFrom(id=x["id"], name=x["name"]) for x in items],
+            "items": [
+                Realm.createFrom(
+                    id=x["id"],
+                    name=x["name"],
+                    realmType=x["realm_type"] if "realm_type" in x else "",
+                    #   realmType=x["realm_type"] # TODO: to be replaced with after data is cleaned
+                )
+                for x in items
+            ],
             "totalItemCount": totalItemCount,
         }
