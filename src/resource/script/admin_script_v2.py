@@ -22,9 +22,9 @@ from pyArango.users import Users
 from confluent_kafka.admin import AdminClient, NewTopic
 
 
-from src.resource.script.helpers.arango.client import ArangoClient
-from src.resource.script.helpers.cafm_api.client import CAFMClient
-from src.resource.script.helpers.tree.parser import TreeParser
+from src.resource.script.helper.arango.client import ArangoClient
+from src.resource.script.helper.cafm_api.client import CAFMClient
+from src.resource.script.helper.tree.parser import TreeParser
 
 from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
