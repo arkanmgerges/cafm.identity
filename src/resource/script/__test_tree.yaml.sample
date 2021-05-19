@@ -41,16 +41,16 @@ resource_trees:
     realm_type: provider
     children:
       - resource_type: ou
-        name: ou_2
+        name: "Global Worth"
         children:
           - resource_type: project
-            name: project_2
+            name: "Pipera 21"
             children: []
       - resource_type: ou
-        name: ou_3
+        name: "Amazon"
         children:
           - resource_type: project
-            name: project_3
+            name: "Vlaicu 13"
             children: []
 
 permission_trees:
@@ -84,15 +84,48 @@ role_trees:
     title: "Role 2 (from tree) "
     permissions: [*ref_perm_tree_1]
     access: [*ref_tree_1]
+  role_3: &ref_role_3
+    name: super_admin
+    title: "Super Admin"
+    access: [*ref_tree_2]
+  role_4: &ref_role_4
+    name: admin
+    title: "Admin"
+  role_5: &ref_role_5
+    name: coordinator
+    title: "Coordinator"
+  role_7: &ref_role_7
+    name: project_manager
+    title: "Project Manager"
+  role_8: &ref_role_8
+    name: assistant_project_manager
+    title: "Assistant Project Manager"
+  role_9: &ref_role_9
+    name: tehnician
+    title: "Technician"
+  role_10: &ref_role_10
+    name: procurment
+    title: "Procurement"
+
 
 user_trees:
   user_0: &ref_user_0
     email: user_1@local.me
     password: '1234'
     roles: [*ref_role_0, *ref_role_1]
-
   user_1: &ref_user_1
     email: admin2@local.me
     password: '1234'
     roles: [*ref_role_2]
-
+  user_2: &ref_user_2
+    email: admin@coral.com
+    password: 'superC@FM'
+    roles: [*ref_role_3]
+  user_3: &ref_user_3
+    email: admin@globalworth.com
+    password: 'superC@FM'
+    roles: [*ref_role_3]
+  user_4: &ref_user_4
+    email: admin@amazon.com
+    password: 'superC@FM'
+    roles: [*ref_role_3]

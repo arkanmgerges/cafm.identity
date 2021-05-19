@@ -143,12 +143,13 @@ class CAFMClient:
         )
         resp.raise_for_status()
 
-        realm_id = self.checkForResults(
+        realmId = self.checkForResults(
             requestId=resp.json()["request_id"],
             checkForId=True,
             resultIdName="realm_id",
         )
-        return realm_id
+        click.echo(click.style(f"[cafm-api] Created realm {name}:{realmId}"))
+        return realmId
 
     def ensureRealmExistence(self, name, realmType):
         """Reads or create realm with name and type
@@ -190,7 +191,6 @@ class CAFMClient:
         return None
 
     def createOu(self, name):
-        click.echo(click.style(f"[cafm-api] Creating ou {name}", fg="green"))
         resp = requests.post(
             self._baseUrl + "/v1/identity/ous",
             headers=dict(Authorization="Bearer " + self.getAccessToken()),
@@ -203,9 +203,7 @@ class CAFMClient:
             checkForId=True,
             resultIdName="ou_id",
         )
-        click.echo(
-            click.style(f"[cafm-api] Ou {name} created with id {ouId}", fg="green")
-        )
+        click.echo(click.style(f"[cafm-api] Created ou {name}:{ouId}"))
         return ouId
 
     def ensureOuExistence(self, name):
@@ -261,9 +259,7 @@ class CAFMClient:
             checkForId=True,
             resultIdName="project_id",
         )
-        click.echo(
-            click.style(f"[cafm-api] Project {name} created with id {projectId}")
-        )
+        click.echo(click.style(f"[cafm-api] Created project {name}:{projectId}"))
         return projectId
 
     def ensureProjectExistence(self, name):
@@ -293,10 +289,7 @@ class CAFMClient:
             ignoreIfExists=ignoreExistence,
         )
         click.echo(
-            click.style(
-                f"[cafm-api] Assignment resource: {fromId} to resource: {toId}",
-                fg="green",
-            )
+            click.style(f"[cafm-api] Assignment resource: {fromId} to resource: {toId}")
         )
 
     def createAssignmentRoleToPermission(
@@ -315,8 +308,7 @@ class CAFMClient:
         )
         click.echo(
             click.style(
-                f"[cafm-api] Assignment role: {roleId} to permission: {permissionId}",
-                fg="green",
+                f"[cafm-api] Assignment role: {roleId} to permission: {permissionId}"
             )
         )
 
@@ -335,8 +327,7 @@ class CAFMClient:
 
         click.echo(
             click.style(
-                f"[cafm-api] Access from role: {roleId} to resource: {resourceId}",
-                fg="green",
+                f"[cafm-api] Access from role: {roleId} to resource: {resourceId}"
             )
         )
 
@@ -349,14 +340,11 @@ class CAFMClient:
         resp.raise_for_status()
 
         self.checkForResults(
-            resp.json()["request_id"],
+            requestId=resp.json()["request_id"],
             ignoreIfExists=ignoreExistence,
         )
         click.echo(
-            click.style(
-                f"[cafm-api] Assignment role: {roleId} to user: {userId}",
-                fg="green",
-            )
+            click.style(f"[cafm-api] Assignment role: {roleId} to user: {userId}")
         )
 
     # end assignments region
@@ -382,7 +370,7 @@ class CAFMClient:
         roles = resp.json()["roles"]
         return roles
 
-    def find_role_by_name(self, name):
+    def findRoleByName(self, name):
         roles = self.readRoles()
         rolesFound = list(filter(lambda r: r["name"] == name, roles))
         if len(rolesFound) > 0:
@@ -406,11 +394,11 @@ class CAFMClient:
             checkForId=True,
             resultIdName="role_id",
         )
+        click.echo(click.style(f"[cafm-api] Created role {name}:{roleId}"))
         return roleId
 
     def ensureRoleExistence(self, name, title):
-        role = self.find_role_by_name(name)
-
+        role = self.findRoleByName(name)
         if role is not None:
             roleId = role["id"]
             click.echo(click.style(f"[cafm-api] Found role {roleId}"))
@@ -453,7 +441,7 @@ class CAFMClient:
             checkForId=True,
             resultIdName="user_id",
         )
-        click.echo(click.style(f"[cafm-api] User created with id {userId}"))
+        click.echo(click.style(f"[cafm-api] Created user {email}:{userId}"))
         return userId
 
     def setUserPassword(self, userId, password):
@@ -467,7 +455,7 @@ class CAFMClient:
         self.checkForResults(
             requestId=resp.json()["request_id"],
         )
-        click.echo(click.style(f"[cafm-api] User updated with password:{password}"))
+        click.echo(click.style(f"[cafm-api] Updated user with password:{password}"))
 
     def ensureUserExistence(self, email):
         user = self.findUserByEmail(email)

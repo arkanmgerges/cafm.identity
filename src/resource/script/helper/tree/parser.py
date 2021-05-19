@@ -56,18 +56,11 @@ class TreeParser:
             resourceId = self.cafmClient.ensureProjectExistence(name=node["name"])
             node["id"] = resourceId
             return node
-        # if node["resource_type"] == "user":
-        #     pass
-        # if node["resource_type"] == "role":
-        #     pass
-
-        pass
 
     # end resource tree region
 
     # region permission tree
     def parsePermissionTree(self, parent):
-        # click.echo(click.style(f"[Tree Parser] - [Permission Tree] - {parent}"))
         if parent["tree_type"] == "collection":
             permissions = self.parsePermissionsCollection(parent["children"])
             parent["permissions"] = permissions
@@ -79,12 +72,10 @@ class TreeParser:
             return parent
 
     def parsePermissionsCollection(self, permissions):
-        click.echo(click.style(f"[Tree Parser] - [parsePermissionsCollection]"))
         permissionNames = list(map(lambda item: item["name"], permissions))
         return self.checkPermissionsExistence(permissionNames)
 
     def parsePermissionsAggregation(self, permissionTrees):
-        click.echo(click.style(f"[Tree Parser] - [parsePermissionsAggregation]"))
         aggregatedPermissions = []
         for tree in permissionTrees:
             children = tree["children"]
@@ -117,51 +108,37 @@ class TreeParser:
         roleTree["id"] = roleId
 
         # Role permissions
-        permissionsTrees = roleTree["permissions"]
-        for permissionsTree in permissionsTrees:
-            permissions = permissionsTree["permissions"]
-            for permission in permissions:
-                permissionId = permission["id"]
-                self.cafmClient.createAssignmentRoleToPermission(
-                    roleId,
-                    permissionId=permissionId,
-                    ignoreExistence=True,
-                )
-                click.echo(
-                    click.style(
-                        f"\n\n[Role Tree] - Ensure assignment from role {roleId} to permission {permissionId}"
+        if "permissions" in roleTree:
+            permissionsTrees = roleTree["permissions"]
+            for permissionsTree in permissionsTrees:
+                permissions = permissionsTree["permissions"]
+                for permission in permissions:
+                    permissionId = permission["id"]
+                    self.cafmClient.createAssignmentRoleToPermission(
+                        roleId,
+                        permissionId=permissionId,
+                        ignoreExistence=True,
                     )
-                )
 
         # Role access
-        accessableResourceTrees = roleTree["access"]
-        for resourceTree in accessableResourceTrees:
-            resourceId = resourceTree["id"]
-            self.cafmClient.createAccessRoleToResource(
-                roleId=roleId, resourceId=resourceId, ignoreExistence=True
-            )
-            click.echo(
-                click.style(
-                    f"[Role Tree] - Ensure access from role {roleId} to resource {resourceId}"
+        if "access" in roleTree:
+            accessableResourceTrees = roleTree["access"]
+            for resourceTree in accessableResourceTrees:
+                resourceId = resourceTree["id"]
+                self.cafmClient.createAccessRoleToResource(
+                    roleId=roleId, resourceId=resourceId, ignoreExistence=True
                 )
-            )
-
-        pass
 
     def parseUserTree(self, userTree):
         userId = self.cafmClient.ensureUserExistence(email=userTree["email"])
         self.cafmClient.setUserPassword(userId=userId, password=userTree["password"])
 
-        userRoleTrees = userTree["roles"]
-        for roleTree in userRoleTrees:
-            roleId = roleTree["id"]
-            self.cafmClient.createAssignmentRoleToUser(
-                roleId=roleId,
-                userId=userId,
-                ignoreExistence=True,
-            )
-            click.echo(
-                click.style(
-                    f"[User Tree] - Ensure assignment from role {roleId} to user {userId}"
+        if "roles" in userTree:
+            userRoleTrees = userTree["roles"]
+            for roleTree in userRoleTrees:
+                roleId = roleTree["id"]
+                self.cafmClient.createAssignmentRoleToUser(
+                    roleId=roleId,
+                    userId=userId,
+                    ignoreExistence=True,
                 )
-            )
