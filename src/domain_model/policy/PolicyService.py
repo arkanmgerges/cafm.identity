@@ -67,9 +67,11 @@ class PolicyService:
             from src.domain_model.policy.PermissionToPermissionContextAssigned import (
                 PermissionToPermissionContextAssigned,
             )
+
             DomainPublishedEvents.addEventForPublishing(
                 PermissionToPermissionContextAssigned(
-                    permission=objListItem["permission"], permissionContext=objListItem["permission_context"]
+                    permission=objListItem["permission"],
+                    permissionContext=objListItem["permission_context"],
                 )
             )
 
@@ -80,9 +82,11 @@ class PolicyService:
             from src.domain_model.policy.PermissionToPermissionContextAssignmentRevoked import (
                 PermissionToPermissionContextAssignmentRevoked,
             )
+
             DomainPublishedEvents.addEventForPublishing(
                 PermissionToPermissionContextAssignmentRevoked(
-                    permission=objListItem["permission"], permissionContext=objListItem["permission_context"]
+                    permission=objListItem["permission"],
+                    permissionContext=objListItem["permission_context"],
                 )
             )
 
@@ -100,6 +104,14 @@ class PolicyService:
 
             DomainPublishedEvents.addEventForPublishing(
                 RoleToRealmAssigned(role=role, realm=resource)
+            )
+        elif resource.type() == "project":
+            from src.domain_model.policy.RoleToProjectAssigned import (
+                RoleToProjectAssigned,
+            )
+
+            DomainPublishedEvents.addEventForPublishing(
+                RoleToProjectAssigned(role=role, project=resource)
             )
         self._repo.grantAccessRoleToResource(role=role, resource=resource)
 
@@ -119,6 +131,14 @@ class PolicyService:
 
             DomainPublishedEvents.addEventForPublishing(
                 RoleToRealmAssignmentRevoked(role=role, realm=resource)
+            )
+        elif resource.type() == "project":
+            from src.domain_model.policy.RoleToProjectAssignmentRevoked import (
+                RoleToProjectAssignmentRevoked,
+            )
+
+            DomainPublishedEvents.addEventForPublishing(
+                RoleToProjectAssignmentRevoked(role=role, project=resource)
             )
         self._repo.revokeRoleToResourceAccess(role=role, resource=resource)
 
