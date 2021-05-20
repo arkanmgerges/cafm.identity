@@ -1,5 +1,7 @@
 """
 @author: Mohammad M. Mohammad<mmdii@develoop.run>
+@collaborator: Alex Brebu<alexandru.brebu@digitalmob.ro>
+@collaborator: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import sys
 import uuid
@@ -8,6 +10,7 @@ import yaml
 import click
 import re
 import requests
+import json
 import redis
 
 from copy import copy
@@ -475,6 +478,7 @@ def create_permission_with_permission_contexts_for_api_endpoints():
     persistPermissionWithPermissionContexts(
         apiPermissionWithContexts=apiPermissionWithContexts,
         hashedKeys=hashedKeys,
+        token=token,
     )
     click.echo(
         click.style(
@@ -491,64 +495,89 @@ def create_permission_with_permission_contexts_for_api_endpoints():
     )
 
 
-def persistPermissionWithPermissionContexts(apiPermissionWithContexts, hashedKeys):
+def persistPermissionWithPermissionContexts(
+    apiPermissionWithContexts, hashedKeys, token
+):
     permissionContextDataList = []
     permissionDataList = []
     permissionToPermissionContextDataList = []
+    bulkData = []
+
     for item in apiPermissionWithContexts:
         if item["create_permission_context"]:
             hashedKey = hashedKeyByKey(
                 key=item["permission_context"]["path"], hashedKeys=hashedKeys
             )
             if hashedKey is not None:
-                permissionContextId = _generateUuid3ByString(hashedKey)
                 data = item["permission_context"]
                 data["hash_code"] = hashedKey
-                permissionContextDataList.append(
-                    {
-                        "_key": permissionContextId,
-                        "id": permissionContextId,
-                        "type": "api_resource_type",
-                        "data": data,
-                    }
+                bulkData.append(
+                    dict(
+                        create_permission_context=dict(
+                            data=dict(type="api_resource_type", data=data)
+                        )
+                    )
                 )
-
                 permissionsDataItem = item["permissions"]
                 for permissionDataItem in permissionsDataItem:
-                    permissionId = _generateUuid3ByString(permissionDataItem["name"])
-                    permissionDataItem["id"] = permissionId
-                    permissionDataItem["_key"] = permissionId
                     permissionDataList.append(permissionDataItem)
-
-                    # Link permission to permission context
-                    forId = _generateUuid3ByString(
-                        f"{permissionId}{permissionContextId}"
+                    bulkData.append(
+                        dict(create_permission=dict(data=permissionDataItem))
                     )
-                    permissionToPermissionContextDataList.append(
-                        {
-                            "_key": forId,
-                            "_from": f"permission/{permissionId}",
-                            "_to": f"permission_context/{permissionContextId}",
-                            "_from_type": "permission",
-                            "_to_type": "permission_context",
-                        }
-                    )
-
     try:
-        connection = _dbClientConnection()
-        db = connection[os.getenv("CAFM_IDENTITY_ARANGODB_DB_NAME", "cafm-identity")]
-        permissionCollection = db["permission"]
-        permissionContextCollection = db["permission_context"]
-        forCollection = db["for"]
-        forCollection.bulkSave(
-            docs=permissionToPermissionContextDataList, onDuplicate="replace"
-        )
-        permissionContextCollection.bulkSave(
-            docs=permissionContextDataList, onDuplicate="replace"
-        )
-        permissionCollection.bulkSave(docs=permissionDataList, onDuplicate="replace")
+        if len(bulkData) > 0:
+            requestId = bulkRequest(token, dict(data=bulkData))
+            result = checkForResult(token, requestId, returnResualt=True)
+            # Link permission to permission context
+            bulkContectionData = mapPermissionToPermissionContext(
+                apiPermissionWithContexts, result
+            )
+            if len(bulkContectionData) > 0:
+                requestId = bulkRequest(token, dict(data=bulkContectionData))
+                checkForResult(token, requestId)
     except Exception as e:
         click.echo(click.style(f"{e}", fg="red"))
+
+
+def mapPermissionToPermissionContext(apiPermissionWithContexts, bulkResponse):
+    permissionToPermissionContextMap = []
+    for item in apiPermissionWithContexts:
+        if item["create_permission_context"]:
+            permissionContextId = findIdByNameInResponse(
+                item["permission_context"]["name"], bulkResponse
+            )
+            if permissionContextId is not None:
+                for permission in item["permissions"]:
+                    permissionId = findIdByNameInResponse(
+                        permission["name"], bulkResponse
+                    )
+                    if permissionId is not None:
+                        permissionToPermissionContextMap.append(
+                            dict(
+                                assign_permission_to_permission_context=dict(
+                                    data=dict(
+                                        permission_id=permissionId,
+                                        permission_context_id=permissionContextId,
+                                    )
+                                )
+                            )
+                        )
+
+    return permissionToPermissionContextMap
+
+
+def findIdByNameInResponse(name, bulkResponse):
+    for item in bulkResponse["items"]:
+        data = item["data"]
+        if data["command"] == "create_permission_context":
+            data = data["command_data"]
+            if data["data"]["name"] == name:
+                return data["permission_context_id"]
+        elif data["command"] == "create_permission":
+            data = data["command_data"]
+            if data["name"] == name:
+                return data["permission_id"]
+    return None
 
 
 def _generateUuid3ByString(string) -> str:
@@ -771,6 +800,17 @@ def permissionContexts(token: str) -> List[dict]:
     return permissionContextsJsonResponse["permission_contexts"]
 
 
+def bulkRequest(token: str, body) -> str:
+    bulkResponse = requests.post(
+        baseURL + "/v1/common/_bulk",
+        headers=dict(Authorization="Bearer " + token),
+        json=dict(body=body),
+    )
+    bulkResponse.raise_for_status()
+    bulkResponse = bulkResponse.json()
+    return bulkResponse["request_id"]
+
+
 def permissions(token: str) -> List[dict]:
     permissionsResponse = requests.get(
         baseURL + "/v1/identity/permissions?result_size=10000",
@@ -848,7 +888,9 @@ def assignUserToRole(token, roleID, userID):
     checkForResult(token, resp.json()["request_id"])
 
 
-def checkForResult(token, requestId, checkForID=False, resultIdName=None):
+def checkForResult(
+    token, requestId, checkForID=False, resultIdName=None, returnResualt=False
+):
     for i in range(50):
         sleep(0.3)
         isSuccessful = requests.get(
@@ -870,6 +912,8 @@ def checkForResult(token, requestId, checkForID=False, resultIdName=None):
                         return result["items"][0][resultIdName]
                     else:
                         return result[resultIdName]
+                elif returnResualt:
+                    return result
                 else:
                     return
             else:
