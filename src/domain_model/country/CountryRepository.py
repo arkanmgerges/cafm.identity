@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from src.domain_model.country.City import City
+from src.domain_model.country.State import State
 from src.domain_model.country.Country import Country
 
 
@@ -71,6 +72,23 @@ class CountryRepository(ABC):
 
         :raises:
             `CountryDoesNotExistException <src.domain_model.resource.exception.CountryDoesNotExistException>` Raise an exception if the city does not exist
+        """
+
+    @abstractmethod
+    def stateByCountryIdAndStateId(
+        self, countryId: int = 0, stateId: str = ""
+    ) -> State:
+        """Get state by country id and state id
+
+        Args:
+            countryId (int): The id of the country
+            stateId (str): The id of the state
+
+        Returns:
+            State: State object
+
+        :raises:
+            `StateDoesNotExistException <src.domain_model.resource.exception.StateDoesNotExistException>` Raise an exception if the state does not exist
         """
 
     @abstractmethod

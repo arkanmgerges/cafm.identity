@@ -16,6 +16,9 @@ from src.domain_model.policy.PolicyControllerService import PolicyControllerServ
 from src.domain_model.resource.exception.CountryDoesNotExistException import (
     CountryDoesNotExistException,
 )
+from src.domain_model.resource.exception.StateDoesNotExistException import (
+    StateDoesNotExistException,
+)
 from src.port_adapter.repository.domain_model.helper.HelperRepository import (
     HelperRepository,
 )
@@ -273,6 +276,44 @@ class CountryRepositoryImpl(CountryRepository):
             ],
             "totalItemCount": totalItemCount,
         }
+
+    @debugLogger
+    def stateByCountryIdAndStateId(self, countryId: int, stateId: str) -> State:
+        aql = """
+            FOR u IN country 
+                FOR c IN city 
+                    FILTER u.country_iso_code == c.country_iso_code 
+                    FILTER u.geoname_id == @countryId 
+                    FILTER c.subdivision_1_iso_code == @stateId
+                    RETURN c
+        """
+
+        bindVars = {"countryId": countryId, "stateId": stateId}
+        queryResult: AQLQuery = self._db.AQLQuery(
+            aql, bindVars=bindVars, rawResults=True
+        )
+        result = queryResult.result
+
+        if len(result) == 0:
+            logger.debug(
+                f"[{CountryRepositoryImpl.stateByCountryIdAndStateId.__qualname__}] country id: {countryId}, state id: {stateId}"
+            )
+            raise StateDoesNotExistException(
+                f"country id: {countryId}, state id: {stateId}"
+            )
+
+        if len(result) > 1:
+            logger.debug(
+                f"[{CountryRepositoryImpl.stateByCountryIdAndStateId.__qualname__}] country id: {countryId}, state id: {stateId}"
+            )
+            raise Exception(
+                f"Multiple states found for country id: {countryId}, state id: {stateId}."
+            )
+
+        return State.createFrom(
+            id=str(result[0]["subdivision_1_iso_code"]),
+            name=result[0]["subdivision_1_name"],
+        )
 
     def citiesByCountryIdAndStateId(
         self,

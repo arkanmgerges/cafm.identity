@@ -48,6 +48,13 @@ class CountryApplicationService:
         )
 
     @debugLogger
+    def stateByCountryIdAndStateId(self, countryId: int = 0, stateId: str = ""):
+        return self._countryRepository.stateByCountryIdAndStateId(
+            countryId=countryId,
+            stateId=stateId,
+        )
+
+    @debugLogger
     def statesByCountryId(
         self,
         id: int,
@@ -69,5 +76,9 @@ class CountryApplicationService:
         order: List[dict] = None,
     ) -> dict:
         return self._countryRepository.citiesByCountryIdAndStateId(
-            countryId=countryId, stateId=stateId, resultFrom=resultFrom, resultSize=resultSize, order=order
+            countryId=countryId,
+            stateId=stateId,
+            resultFrom=resultFrom,
+            resultSize=resultSize,
+            order=order,
         )
