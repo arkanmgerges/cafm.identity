@@ -1,6 +1,6 @@
-### CAFM - Project
+### CAFM - Identity
 
-This is a microservice that is responsible for managing the project and access.
+This is a microservice that is responsible for managing the identity and access.
 
 ### Local Development
 ##### Requirements: 
