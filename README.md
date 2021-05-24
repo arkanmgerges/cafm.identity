@@ -94,3 +94,8 @@ To start the services, run `docker-compose -f .pkg/local/docker/docker-compose.y
 
 ## Overview diagram about the architecture (C4 Model)
 ![system_c4model](https://github.com/DigitalMOB2/cafm.identity/raw/master/src/resource/graph_data/system_c4model.svg)
+
+## Github page for the repository
+[1]: https://arkanmgerges.github.io/cafm.identity
+[2]: https://github.com/DigitalMOB2/cafm.identity/raw/master/src/resource/img/page.png
+[![alt text image][2]][1]
