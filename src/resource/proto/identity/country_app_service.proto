@@ -47,6 +47,15 @@ message CountryAppService_cityByCountryIdResponse {
   City city = 1;
 }
 
+message CountryAppService_stateByCountryIdAndStateIdRequest {
+  int32 countryId = 1;
+  string stateId = 2;
+}
+
+message CountryAppService_stateByCountryIdAndStateIdResponse {
+  State state = 1;
+}
+
 message CountryAppService_statesByCountryIdRequest {
   int32 id = 1;
   int32 resultFrom = 2;
@@ -77,6 +86,7 @@ service CountryAppService {
   rpc countries (CountryAppService_countriesRequest) returns (CountryAppService_countriesResponse) {}
   rpc citiesByCountryId (CountryAppService_citiesByCountryIdRequest) returns (CountryAppService_citiesByCountryIdResponse) {}
   rpc cityByCountryId (CountryAppService_cityByCountryIdRequest) returns (CountryAppService_cityByCountryIdResponse) {}
+  rpc stateByCountryIdAndStateId (CountryAppService_stateByCountryIdAndStateIdRequest) returns (CountryAppService_stateByCountryIdAndStateIdResponse) {}
   rpc statesByCountryId (CountryAppService_statesByCountryIdRequest) returns (CountryAppService_statesByCountryIdResponse) {}
   rpc citiesByCountryIdAndStateId (CountryAppService_citiesByCountryIdAndStateIdRequest) returns (CountryAppService_citiesByCountryIdAndStateIdResponse) {}
 }

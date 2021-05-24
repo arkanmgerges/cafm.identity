@@ -14,17 +14,23 @@ from src.domain_model.token.TokenService import TokenService
 from src.domain_model.resource.exception.CountryDoesNotExistException import (
     CountryDoesNotExistException,
 )
+from src.domain_model.resource.exception.StateDoesNotExistException import (
+    StateDoesNotExistException,
+)
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.domain_model.country.Country import Country
 from src.domain_model.country.City import City
+from src.domain_model.country.State import State
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.country_app_service_pb2 import (
     CountryAppService_countriesResponse,
     CountryAppService_countryByIdResponse,
     CountryAppService_cityByCountryIdResponse,
+    CountryAppService_stateByCountryIdAndStateIdResponse,
     CountryAppService_citiesByCountryIdResponse,
-    CountryAppService_statesByCountryIdResponse, CountryAppService_citiesByCountryIdAndStateIdResponse,
+    CountryAppService_statesByCountryIdResponse,
+    CountryAppService_citiesByCountryIdAndStateIdResponse,
 )
 from src.resource.proto._generated.identity.country_app_service_pb2_grpc import (
     CountryAppServiceServicer,
@@ -220,6 +226,45 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             return CountryAppService_cityByCountryIdResponse()
 
     """
+    c4model|cb|identity:Component(identity__grpc__CountryAppServiceListener__stateByCountryIdAndStateId, "Get state by country id and state id", "grpc listener", "Get a state by country id and state id")
+    """
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def stateByCountryIdAndStateId(self, request, context):
+        try:
+            metadata = context.invocation_metadata()
+            logger.debug(
+                f"[{CountryAppServiceListener.stateByCountryIdAndStateId.__qualname__}] - metadata: {metadata}\n\t \ "
+                f"country id: {request.countryId}, state id: {request.stateId}"
+            )
+            countryAppService: CountryApplicationService = AppDi.instance.get(
+                CountryApplicationService
+            )
+
+            state: State = countryAppService.stateByCountryIdAndStateId(
+                countryId=request.countryId,
+                stateId=request.stateId,
+            )
+
+            response = CountryAppService_stateByCountryIdAndStateIdResponse()
+            response.state.id = state.id()
+            response.state.name = state.name()
+
+            logger.debug(
+                f"[{CountryApplicationService.stateByCountryIdAndStateId.__qualname__}] - response: {response}"
+            )
+            return response
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details("Un Authorized")
+            return CountryAppService_stateByCountryIdAndStateIdResponse()
+        except StateDoesNotExistException:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("country does not exist")
+            return CountryAppService_stateByCountryIdAndStateIdResponse()
+
+    """
     c4model|cb|identity:Component(identity__grpc__CountryAppServiceListener__statesByCountryId, "Get states by country id", "grpc listener", "Get a states by country id")
     """
 
@@ -268,12 +313,14 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             logger.debug(
                 f"[{CountryAppServiceListener.citiesByCountryIdAndStateId.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}"
             )
-            appService: CountryApplicationService = AppDi.instance.get(CountryApplicationService)
+            countryAppService: CountryApplicationService = AppDi.instance.get(
+                CountryApplicationService
+            )
 
             orderData = [
                 {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
             ]
-            result: dict = appService.citiesByCountryIdAndStateId(
+            result: dict = countryAppService.citiesByCountryIdAndStateId(
                 countryId=request.countryId,
                 stateId=request.stateId,
                 resultFrom=request.resultFrom,
