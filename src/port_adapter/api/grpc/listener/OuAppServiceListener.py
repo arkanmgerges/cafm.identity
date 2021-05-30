@@ -16,6 +16,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import (
     UnAuthorizedException,
 )
 from src.domain_model.token.TokenService import TokenService
+from src.port_adapter.api.grpc.listener.BaseListener import BaseListener
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
@@ -30,7 +31,7 @@ from src.resource.proto._generated.identity.ou_app_service_pb2_grpc import (
 )
 
 
-class OuAppServiceListener(OuAppServiceServicer):
+class OuAppServiceListener(OuAppServiceServicer, BaseListener):
     """The listener function implements the rpc call as described in the .proto file"""
 
     def __init__(self):
@@ -46,14 +47,9 @@ class OuAppServiceListener(OuAppServiceServicer):
     def newId(self, request, context):
         try:
             token = self._token(context)
-            metadata = context.invocation_metadata()
-            claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
-                else None
-            )
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
-                f"[{OuAppServiceListener.newId.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                f"[{OuAppServiceListener.newId.__qualname__}] - claims: {claims}\n\t \
                     token: {token}"
             )
             appService: OuApplicationService = AppDi.instance.get(OuApplicationService)
@@ -67,9 +63,7 @@ class OuAppServiceListener(OuAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def ouByName(self, request, context):
         try:
-            ouAppService: OuApplicationService = AppDi.instance.get(
-                OuApplicationService
-            )
+            ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
             token = self._token(context)
             ou: Ou = ouAppService.ouByName(name=request.name, token=token)
             response = OuAppService_ouByNameResponse()
@@ -92,25 +86,17 @@ class OuAppServiceListener(OuAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def ous(self, request, context):
         try:
-            metadata = context.invocation_metadata()
+            token = self._token(context)
             resultSize = request.resultSize if request.resultSize >= 0 else 10
-            claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
-                else None
-            )
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             token = self._token(context)
             logger.debug(
-                f"[{OuAppServiceListener.ous.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                f"[{OuAppServiceListener.ous.__qualname__}] - claims: {claims}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             )
-            ouAppService: OuApplicationService = AppDi.instance.get(
-                OuApplicationService
-            )
+            ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
 
-            orderData = [
-                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
-            ]
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
             result: dict = ouAppService.ous(
                 resultFrom=request.resultFrom,
                 resultSize=resultSize,
@@ -121,12 +107,8 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             for ou in result["items"]:
                 response.ous.add(id=ou.id(), name=ou.name())
             response.totalItemCount = result["totalItemCount"]
-            logger.debug(
-                f"[{OuAppServiceListener.ous.__qualname__}] - response: {response}"
-            )
-            return OuAppService_ousResponse(
-                ous=response.ous, totalItemCount=response.totalItemCount
-            )
+            logger.debug(f"[{OuAppServiceListener.ous.__qualname__}] - response: {response}")
+            return OuAppService_ousResponse(ous=response.ous, totalItemCount=response.totalItemCount)
         except OuDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("No ous found")
@@ -144,14 +126,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
     @OpenTelemetry.grpcTraceOTel
     def ouById(self, request, context):
         try:
-            ouAppService: OuApplicationService = AppDi.instance.get(
-                OuApplicationService
-            )
+            ouAppService: OuApplicationService = AppDi.instance.get(OuApplicationService)
             token = self._token(context)
             ou: Ou = ouAppService.ouById(id=request.id, token=token)
-            logger.debug(
-                f"[{OuAppServiceListener.ouById.__qualname__}] - response: {ou}"
-            )
+            logger.debug(f"[{OuAppServiceListener.ouById.__qualname__}] - response: {ou}")
             response = OuAppService_ouByIdResponse()
             self._addObjectToResponse(obj=ou, response=response)
             return response
@@ -171,7 +149,4 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
     @debugLogger
     def _token(self, context) -> str:
-        metadata = context.invocation_metadata()
-        if "token" in metadata[0]:
-            return metadata[0].value
-        return ""
+        return super()._token(context=context)

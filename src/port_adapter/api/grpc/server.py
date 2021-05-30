@@ -5,7 +5,9 @@ from concurrent import futures
 import random
 
 import grpc
+from grpc_reflection.v1alpha import reflection
 
+import src.resource.proto._generated
 import src.port_adapter.AppDi as AppDi
 from src.port_adapter.api.grpc.listener.AuthAppServiceListener import (
     AuthAppServiceListener,
@@ -100,6 +102,24 @@ def serve():
     add_OuAppServiceServicer_to_server(OuAppServiceListener(), server)
     add_AuthAppServiceServicer_to_server(AuthAppServiceListener(), server)
     add_AuthzAppServiceServicer_to_server(AuthzAppServiceListener(), server)
+
+    SERVICE_NAMES = (
+        src.resource.proto._generated.identity.user_app_service_pb2.DESCRIPTOR.services_by_name['UserAppService'].full_name,
+        src.resource.proto._generated.identity.role_app_service_pb2.DESCRIPTOR.services_by_name['RoleAppService'].full_name,
+        src.resource.proto._generated.identity.user_group_app_service_pb2.DESCRIPTOR.services_by_name['UserGroupAppService'].full_name,
+        src.resource.proto._generated.identity.country_app_service_pb2.DESCRIPTOR.services_by_name['CountryAppService'].full_name,
+        src.resource.proto._generated.identity.city_app_service_pb2.DESCRIPTOR.services_by_name['CityAppService'].full_name,
+        src.resource.proto._generated.identity.permission_context_app_service_pb2.DESCRIPTOR.services_by_name['PermissionContextAppService'].full_name,
+        src.resource.proto._generated.identity.permission_app_service_pb2.DESCRIPTOR.services_by_name['PermissionAppService'].full_name,
+        src.resource.proto._generated.identity.project_app_service_pb2.DESCRIPTOR.services_by_name['ProjectAppService'].full_name,
+        src.resource.proto._generated.identity.realm_app_service_pb2.DESCRIPTOR.services_by_name['RealmAppService'].full_name,
+        src.resource.proto._generated.identity.ou_app_service_pb2.DESCRIPTOR.services_by_name['OuAppService'].full_name,
+        src.resource.proto._generated.identity.auth_app_service_pb2.DESCRIPTOR.services_by_name['AuthAppService'].full_name,
+        src.resource.proto._generated.identity.authz_app_service_pb2.DESCRIPTOR.services_by_name['AuthzAppService'].full_name,
+        reflection.SERVICE_NAME,
+    )
+    reflection.enable_server_reflection(SERVICE_NAMES, server)
+
     port = "[::]:9999"
     server.add_insecure_port(port)
     logger.info(f"Identity microservice grpc server started/restarted on port {port}")

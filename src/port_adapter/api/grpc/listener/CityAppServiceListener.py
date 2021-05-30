@@ -46,13 +46,8 @@ class CityAppServiceListener(CityAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def cityById(self, request, context):
         try:
-            metadata = context.invocation_metadata()
-            logger.debug(
-                f"[{CityAppServiceListener.cityById.__qualname__}] - metadata: {metadata}\n\t id: {request.id}"
-            )
-            cityAppService: CityApplicationService = AppDi.instance.get(
-                CityApplicationService
-            )
+            logger.debug(f"[{CityAppServiceListener.cityById.__qualname__}] - id: {request.id}")
+            cityAppService: CityApplicationService = AppDi.instance.get(CityApplicationService)
 
             city: City = cityAppService.cityById(id=request.id)
 
@@ -68,9 +63,7 @@ class CityAppServiceListener(CityAppServiceServicer):
             response.city.cityName = city.cityName()
             response.city.timeZone = city.timeZone()
             response.city.isInEuropeanUnion = city.isInEuropeanUnion()
-            logger.debug(
-                f"[{CityAppServiceListener.cityById.__qualname__}] - response: {response}"
-            )
+            logger.debug(f"[{CityAppServiceListener.cityById.__qualname__}] - response: {response}")
             return response
         except CountryDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -89,21 +82,14 @@ class CityAppServiceListener(CityAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def cities(self, request, context):
         try:
-            metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize >= 0 else 10
             logger.debug(
-                f"[{CityAppServiceListener.cities.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}"
+                f"[{CityAppServiceListener.cities.__qualname__}] - resultFrom: {request.resultFrom}, resultSize: {resultSize}"
             )
-            cityAppService: CityApplicationService = AppDi.instance.get(
-                CityApplicationService
-            )
+            cityAppService: CityApplicationService = AppDi.instance.get(CityApplicationService)
 
-            orderData = [
-                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
-            ]
-            result: dict = cityAppService.cities(
-                resultFrom=request.resultFrom, resultSize=resultSize, order=orderData
-            )
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            result: dict = cityAppService.cities(resultFrom=request.resultFrom, resultSize=resultSize, order=orderData)
             response = CityAppService_citiesResponse()
             response.totalItemCount = result["totalItemCount"]
             for city in result["items"]:
@@ -120,9 +106,7 @@ class CityAppServiceListener(CityAppServiceServicer):
                     timeZone=city.timeZone(),
                     isInEuropeanUnion=city.isInEuropeanUnion(),
                 )
-            logger.debug(
-                f"[{CityApplicationService.cities.__qualname__}] - response: {response}"
-            )
+            logger.debug(f"[{CityApplicationService.cities.__qualname__}] - response: {response}")
             return response
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)

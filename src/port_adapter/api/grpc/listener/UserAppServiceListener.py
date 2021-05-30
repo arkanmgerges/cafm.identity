@@ -16,6 +16,7 @@ from src.domain_model.resource.exception.UserDoesNotExistException import (
 )
 from src.domain_model.token.TokenService import TokenService
 from src.domain_model.user.User import User
+from src.port_adapter.api.grpc.listener.BaseListener import BaseListener
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
@@ -30,7 +31,7 @@ from src.resource.proto._generated.identity.user_app_service_pb2_grpc import (
 )
 
 
-class UserAppServiceListener(UserAppServiceServicer):
+class UserAppServiceListener(UserAppServiceServicer, BaseListener):
     """The listener function implements the rpc call as described in the .proto file"""
 
     def __init__(self):
@@ -46,19 +47,12 @@ class UserAppServiceListener(UserAppServiceServicer):
     def newId(self, request, context):
         try:
             token = self._token(context)
-            metadata = context.invocation_metadata()
-            claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
-                else None
-            )
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
-                f"[{UserAppServiceListener.newId.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                f"[{UserAppServiceListener.newId.__qualname__}] - claims: {claims}\n\t \
                     token: {token}"
             )
-            appService: UserApplicationService = AppDi.instance.get(
-                UserApplicationService
-            )
+            appService: UserApplicationService = AppDi.instance.get(UserApplicationService)
             return UserAppService_newIdResponse(id=appService.newId())
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
@@ -69,12 +63,8 @@ class UserAppServiceListener(UserAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def userByNameAndPassword(self, request, context):
         try:
-            userAppService: UserApplicationService = AppDi.instance.get(
-                UserApplicationService
-            )
-            user: User = userAppService.userByEmailAndPassword(
-                email=request.email, password=request.password
-            )
+            userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
+            user: User = userAppService.userByEmailAndPassword(email=request.email, password=request.password)
             response = UserAppService_userByEmailAndPasswordResponse()
             self._addObjectToResponse(obj=user, response=response)
             return response
@@ -95,25 +85,16 @@ class UserAppServiceListener(UserAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def users(self, request, context):
         try:
-            token = self._token(context)
-            metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize >= 0 else 10
-            claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
-                else None
-            )
+            token = self._token(context)
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
-                f"[{UserAppServiceListener.users.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                f"[{UserAppServiceListener.users.__qualname__}] - claims: {claims}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             )
-            userAppService: UserApplicationService = AppDi.instance.get(
-                UserApplicationService
-            )
+            userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
 
-            orderData = [
-                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
-            ]
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
             result: dict = userAppService.users(
                 resultFrom=request.resultFrom,
                 resultSize=resultSize,
@@ -131,12 +112,8 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
                     # avatarImage=user.avatarImage()
                 )
             response.totalItemCount = result["totalItemCount"]
-            logger.debug(
-                f"[{UserAppServiceListener.users.__qualname__}] - response: {response}"
-            )
-            return UserAppService_usersResponse(
-                users=response.users, totalItemCount=response.totalItemCount
-            )
+            logger.debug(f"[{UserAppServiceListener.users.__qualname__}] - response: {response}")
+            return UserAppService_usersResponse(users=response.users, totalItemCount=response.totalItemCount)
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("No users found")
@@ -155,13 +132,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
     def userById(self, request, context):
         try:
             token = self._token(context)
-            userAppService: UserApplicationService = AppDi.instance.get(
-                UserApplicationService
-            )
+            userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
             user: User = userAppService.userById(id=request.id, token=token)
-            logger.debug(
-                f"[{UserAppServiceListener.userById.__qualname__}] - response: {user}"
-            )
+            logger.debug(f"[{UserAppServiceListener.userById.__qualname__}] - response: {user}")
             response = UserAppService_userByIdResponse()
             self._addObjectToResponse(obj=user, response=response)
             return response
@@ -181,7 +154,4 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
     @debugLogger
     def _token(self, context) -> str:
-        metadata = context.invocation_metadata()
-        if "token" in metadata[0]:
-            return metadata[0].value
-        return ""
+        return super()._token(context=context)

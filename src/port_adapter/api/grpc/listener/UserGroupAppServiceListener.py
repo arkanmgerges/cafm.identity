@@ -16,6 +16,7 @@ from src.domain_model.resource.exception.UserGroupDoesNotExistException import (
 )
 from src.domain_model.token.TokenService import TokenService
 from src.domain_model.user_group.UserGroup import UserGroup
+from src.port_adapter.api.grpc.listener.BaseListener import BaseListener
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
@@ -30,7 +31,7 @@ from src.resource.proto._generated.identity.user_group_app_service_pb2_grpc impo
 )
 
 
-class UserGroupAppServiceListener(UserGroupAppServiceServicer):
+class UserGroupAppServiceListener(UserGroupAppServiceServicer, BaseListener):
     """The listener function implements the rpc call as described in the .proto file"""
 
     def __init__(self):
@@ -46,14 +47,13 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
     def newId(self, request, context):
         try:
             token = self._token(context)
-            metadata = context.invocation_metadata()
             claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
+                self._tokenService.claimsFromToken(token=token)
+                if "token" != ""
                 else None
             )
             logger.debug(
-                f"[{UserGroupAppServiceListener.newId.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                f"[{UserGroupAppServiceListener.newId.__qualname__}] - claims: {claims}\n\t \
                     token: {token}"
             )
             appService: UserGroupApplicationService = AppDi.instance.get(
@@ -100,16 +100,15 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def userGroups(self, request, context):
         try:
-            token = self._token(context)
-            metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize >= 0 else 10
+            token = self._token(context)
             claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
+                self._tokenService.claimsFromToken(token=token)
+                if "token" != ""
                 else None
             )
             logger.debug(
-                f"[{UserGroupAppServiceListener.userGroups.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                f"[{UserGroupAppServiceListener.userGroups.__qualname__}] - claims: {claims}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             )
             userGroupAppService: UserGroupApplicationService = AppDi.instance.get(
@@ -181,7 +180,4 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
     @debugLogger
     def _token(self, context) -> str:
-        metadata = context.invocation_metadata()
-        if "token" in metadata[0]:
-            return metadata[0].value
-        return ""
+        return super()._token(context=context)

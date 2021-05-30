@@ -16,6 +16,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import (
     UnAuthorizedException,
 )
 from src.domain_model.token.TokenService import TokenService
+from src.port_adapter.api.grpc.listener.BaseListener import BaseListener
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
@@ -30,7 +31,7 @@ from src.resource.proto._generated.identity.project_app_service_pb2_grpc import 
 )
 
 
-class ProjectAppServiceListener(ProjectAppServiceServicer):
+class ProjectAppServiceListener(ProjectAppServiceServicer, BaseListener):
     """The listener function implements the rpc call as described in the .proto file"""
 
     def __init__(self):
@@ -46,19 +47,12 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
     def newId(self, request, context):
         try:
             token = self._token(context)
-            metadata = context.invocation_metadata()
-            claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
-                else None
-            )
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
-                f"[{ProjectAppServiceListener.newId.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                f"[{ProjectAppServiceListener.newId.__qualname__}] - claims: {claims}\n\t \
                     token: {token}"
             )
-            appService: ProjectApplicationService = AppDi.instance.get(
-                ProjectApplicationService
-            )
+            appService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
             return ProjectAppService_newIdResponse(id=appService.newId())
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
@@ -70,12 +64,8 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
     def projectByName(self, request, context):
         try:
             token = self._token(context)
-            projectAppService: ProjectApplicationService = AppDi.instance.get(
-                ProjectApplicationService
-            )
-            project: Project = projectAppService.projectByName(
-                name=request.name, token=token
-            )
+            projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
+            project: Project = projectAppService.projectByName(name=request.name, token=token)
             response = ProjectAppService_projectByNameResponse()
             self._addObjectToResponse(obj=project, response=response)
             return response
@@ -100,25 +90,16 @@ class ProjectAppServiceListener(ProjectAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def projects(self, request, context):
         try:
-            token = self._token(context)
-            metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize >= 0 else 10
-            claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
-                else None
-            )
+            token = self._token(context)
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
-                f"[{ProjectAppServiceListener.projects.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                f"[{ProjectAppServiceListener.projects.__qualname__}] - claims: {claims}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             )
-            projectAppService: ProjectApplicationService = AppDi.instance.get(
-                ProjectApplicationService
-            )
+            projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
 
-            orderData = [
-                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
-            ]
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
             result: dict = projectAppService.projects(
                 resultFrom=request.resultFrom,
                 resultSize=resultSize,
@@ -129,9 +110,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             for project in result["items"]:
                 response.projects.add(id=project.id(), name=project.name())
             response.totalItemCount = result["totalItemCount"]
-            logger.debug(
-                f"[{ProjectAppServiceListener.projects.__qualname__}] - response: {response}"
-            )
+            logger.debug(f"[{ProjectAppServiceListener.projects.__qualname__}] - response: {response}")
             return ProjectAppService_projectsResponse(
                 projects=response.projects, totalItemCount=response.totalItemCount
             )
@@ -153,13 +132,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
     def projectById(self, request, context):
         try:
             token = self._token(context)
-            projectAppService: ProjectApplicationService = AppDi.instance.get(
-                ProjectApplicationService
-            )
+            projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
             project: Project = projectAppService.projectById(id=request.id, token=token)
-            logger.debug(
-                f"[{ProjectAppServiceListener.projectById.__qualname__}] - response: {project}"
-            )
+            logger.debug(f"[{ProjectAppServiceListener.projectById.__qualname__}] - response: {project}")
             response = ProjectAppService_projectByIdResponse()
             self._addObjectToResponse(obj=project, response=response)
             return response
@@ -179,7 +154,4 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
     @debugLogger
     def _token(self, context) -> str:
-        metadata = context.invocation_metadata()
-        if "token" in metadata[0]:
-            return metadata[0].value
-        return ""
+        return super()._token(context=context)

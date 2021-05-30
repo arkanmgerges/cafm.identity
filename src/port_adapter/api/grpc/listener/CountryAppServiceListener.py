@@ -7,21 +7,21 @@ import grpc
 
 import src.port_adapter.AppDi as AppDi
 from src.application.CountryApplicationService import CountryApplicationService
-from src.domain_model.resource.exception.UnAuthorizedException import (
-    UnAuthorizedException,
-)
-from src.domain_model.token.TokenService import TokenService
+from src.domain_model.country.City import City
+from src.domain_model.country.Country import Country
+from src.domain_model.country.State import State
 from src.domain_model.resource.exception.CountryDoesNotExistException import (
     CountryDoesNotExistException,
 )
 from src.domain_model.resource.exception.StateDoesNotExistException import (
     StateDoesNotExistException,
 )
+from src.domain_model.resource.exception.UnAuthorizedException import (
+    UnAuthorizedException,
+)
+from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
-from src.domain_model.country.Country import Country
-from src.domain_model.country.City import City
-from src.domain_model.country.State import State
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.country_app_service_pb2 import (
     CountryAppService_countriesResponse,
@@ -56,10 +56,10 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def countries(self, request, context):
         try:
-            metadata = context.invocation_metadata()
+
             resultSize = request.resultSize if request.resultSize >= 0 else 10
             logger.debug(
-                f"[{CountryAppServiceListener.countries.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}"
+                f"[{CountryAppServiceListener.countries.__qualname__}] - resultFrom: {request.resultFrom}, resultSize: {resultSize}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
                 CountryApplicationService
@@ -100,9 +100,9 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def countryById(self, request, context):
         try:
-            metadata = context.invocation_metadata()
+
             logger.debug(
-                f"[{CountryAppServiceListener.countryById.__qualname__}] - metadata: {metadata}\n\t id: {request.id}"
+                f"[{CountryAppServiceListener.countryById.__qualname__}] - id: {request.id}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
                 CountryApplicationService
@@ -138,10 +138,10 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def citiesByCountryId(self, request, context):
         try:
-            metadata = context.invocation_metadata()
+
             resultSize = request.resultSize if request.resultSize >= 0 else 10
             logger.debug(
-                f"[{CountryAppServiceListener.citiesByCountryId.__qualname__}] - metadata: {metadata}\n\t \ "
+                f"[{CountryAppServiceListener.citiesByCountryId.__qualname__}] - \ "
                 f"id: {request.id},resultFrom: {request.resultFrom}, resultSize: {resultSize}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
@@ -190,9 +190,8 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def cityByCountryId(self, request, context):
         try:
-            metadata = context.invocation_metadata()
             logger.debug(
-                f"[{CountryAppServiceListener.cityByCountryId.__qualname__}] - metadata: {metadata}\n\t \ "
+                f"[{CountryAppServiceListener.cityByCountryId.__qualname__}] - \ "
                 f"country id: {request.countryId},city id: {request.cityId}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
@@ -233,9 +232,8 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def stateByCountryIdAndStateId(self, request, context):
         try:
-            metadata = context.invocation_metadata()
             logger.debug(
-                f"[{CountryAppServiceListener.stateByCountryIdAndStateId.__qualname__}] - metadata: {metadata}\n\t \ "
+                f"[{CountryAppServiceListener.stateByCountryIdAndStateId.__qualname__}] - \ "
                 f"country id: {request.countryId}, state id: {request.stateId}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
@@ -272,10 +270,9 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def statesByCountryId(self, request, context):
         try:
-            metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize >= 0 else 10
             logger.debug(
-                f"[{CountryAppServiceListener.statesByCountryId.__qualname__}] - metadata: {metadata}\n\t \ "
+                f"[{CountryAppServiceListener.statesByCountryId.__qualname__}] - \ "
                 f"id: {request.id},resultFrom: {request.resultFrom}, resultSize: {resultSize}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
@@ -308,10 +305,9 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def citiesByCountryIdAndStateId(self, request, context):
         try:
-            metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize >= 0 else 10
             logger.debug(
-                f"[{CountryAppServiceListener.citiesByCountryIdAndStateId.__qualname__}] - metadata: {metadata}\n\t resultFrom: {request.resultFrom}, resultSize: {resultSize}"
+                f"[{CountryAppServiceListener.citiesByCountryIdAndStateId.__qualname__}] - resultFrom: {request.resultFrom}, resultSize: {resultSize}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
                 CountryApplicationService

@@ -19,6 +19,7 @@ from src.domain_model.resource.exception.UnAuthorizedException import (
 )
 from src.domain_model.role.Role import Role
 from src.domain_model.token.TokenService import TokenService
+from src.port_adapter.api.grpc.listener.BaseListener import BaseListener
 from src.resource.logging.decorator import debugLogger
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
@@ -34,7 +35,7 @@ from src.resource.proto._generated.identity.role_app_service_pb2_grpc import (
 )
 
 
-class RoleAppServiceListener(RoleAppServiceServicer):
+class RoleAppServiceListener(RoleAppServiceServicer, BaseListener):
     """The listener function implements the rpc call as described in the .proto file"""
 
     def __init__(self):
@@ -50,19 +51,12 @@ class RoleAppServiceListener(RoleAppServiceServicer):
     def newId(self, request, context):
         try:
             token = self._token(context)
-            metadata = context.invocation_metadata()
-            claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
-                else None
-            )
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
-                f"[{RoleAppServiceListener.newId.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                f"[{RoleAppServiceListener.newId.__qualname__}] - claims: {claims}\n\t \
                     token: {token}"
             )
-            appService: RoleApplicationService = AppDi.instance.get(
-                RoleApplicationService
-            )
+            appService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
             return RoleAppService_newIdResponse(id=appService.newId())
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
@@ -74,9 +68,7 @@ class RoleAppServiceListener(RoleAppServiceServicer):
     def roleByName(self, request, context):
         try:
             token = self._token(context)
-            roleAppService: RoleApplicationService = AppDi.instance.get(
-                RoleApplicationService
-            )
+            roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
             role: Role = roleAppService.roleByName(name=request.name, token=token)
             response = RoleAppService_roleByNameResponse()
             self._addObjectToResponse(obj=role, response=response)
@@ -98,26 +90,17 @@ class RoleAppServiceListener(RoleAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def roles(self, request, context):
         try:
-            token = self._token(context)
-            metadata = context.invocation_metadata()
             resultSize = request.resultSize if request.resultSize >= 0 else 10
-            claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
-                else None
-            )
+            token = self._token(context)
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
-                f"[{RoleAppServiceListener.roles.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t \
+                f"[{RoleAppServiceListener.roles.__qualname__}] - claims: {claims}\n\t \
 resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             )
             logger.debug(f"request: {request}")
-            roleAppService: RoleApplicationService = AppDi.instance.get(
-                RoleApplicationService
-            )
+            roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
 
-            orderData = [
-                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
-            ]
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
             result: dict = roleAppService.roles(
                 resultFrom=request.resultFrom,
                 resultSize=resultSize,
@@ -126,16 +109,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             )
             response = RoleAppService_rolesResponse()
             for role in result["items"]:
-                response.roles.add(
-                    id=role.id(), type=role.type(), name=role.name(), title=role.title()
-                )
+                response.roles.add(id=role.id(), type=role.type(), name=role.name(), title=role.title())
             response.totalItemCount = result["totalItemCount"]
-            logger.debug(
-                f"[{RoleAppServiceListener.roles.__qualname__}] - response: {response}"
-            )
-            return RoleAppService_rolesResponse(
-                roles=response.roles, totalItemCount=response.totalItemCount
-            )
+            logger.debug(f"[{RoleAppServiceListener.roles.__qualname__}] - response: {response}")
+            return RoleAppService_rolesResponse(roles=response.roles, totalItemCount=response.totalItemCount)
         except RoleDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("No roles found")
@@ -154,13 +131,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
     def roleById(self, request, context):
         try:
             token = self._token(context)
-            roleAppService: RoleApplicationService = AppDi.instance.get(
-                RoleApplicationService
-            )
+            roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
             role: Role = roleAppService.roleById(id=request.id, token=token)
-            logger.debug(
-                f"[{RoleAppServiceListener.roleById.__qualname__}] - response: {role}"
-            )
+            logger.debug(f"[{RoleAppServiceListener.roleById.__qualname__}] - response: {role}")
             response = RoleAppService_roleByIdResponse()
             self._addObjectToResponse(obj=role, response=response)
             return response
@@ -174,22 +147,13 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
     def roleTree(self, request, context):
         try:
             token = self._token(context)
-            metadata = context.invocation_metadata()
-            claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
-                else None
-            )
-            logger.debug(
-                f"[{RoleAppServiceListener.roleTree.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t token: {token}"
-            )
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
+            logger.debug(f"[{RoleAppServiceListener.roleTree.__qualname__}] - claims: {claims}\n\t token: {token}")
             logger.debug(f"request: {request}")
-            roleAppService: RoleApplicationService = AppDi.instance.get(
-                RoleApplicationService
-            )
+            roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
 
-            roleAccessPermissionItem: RoleAccessPermissionData = (
-                roleAppService.roleTree(roleId=request.roleId, token=token)
+            roleAccessPermissionItem: RoleAccessPermissionData = roleAppService.roleTree(
+                roleId=request.roleId, token=token
             )
 
             response = RoleAppService_rolesTreesResponse()
@@ -197,18 +161,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             roleAccessPermissionResponse = response.roleAccessPermission.add()
 
             # role
-            self._addObjectToResponse(
-                obj=roleAccessPermissionItem.role, response=roleAccessPermissionResponse
-            )
+            self._addObjectToResponse(obj=roleAccessPermissionItem.role, response=roleAccessPermissionResponse)
 
             # owned by
             if roleAccessPermissionItem.ownedBy is not None:
-                roleAccessPermissionResponse.ownedBy.id = (
-                    roleAccessPermissionItem.ownedBy.id()
-                )
-                roleAccessPermissionResponse.ownedBy.type = (
-                    roleAccessPermissionItem.ownedBy.type()
-                )
+                roleAccessPermissionResponse.ownedBy.id = roleAccessPermissionItem.ownedBy.id()
+                roleAccessPermissionResponse.ownedBy.type = roleAccessPermissionItem.ownedBy.type()
             else:
                 roleAccessPermissionItem.ownedBy = None
 
@@ -230,9 +188,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
                 roleAccessPermissionItem.accessTree,
             )
 
-            logger.debug(
-                f"[{RoleAppServiceListener.roleTree.__qualname__}] - response: {response}"
-            )
+            logger.debug(f"[{RoleAppServiceListener.roleTree.__qualname__}] - response: {response}")
             return response
 
         except RoleDoesNotExistException:
@@ -249,23 +205,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
     def rolesTrees(self, request, context):
         try:
             token = self._token(context)
-            metadata = context.invocation_metadata()
-            claims = (
-                self._tokenService.claimsFromToken(token=metadata[0].value)
-                if "token" in metadata[0]
-                else None
-            )
-            logger.debug(
-                f"[{RoleAppServiceListener.rolesTrees.__qualname__}] - metadata: {metadata}\n\t claims: {claims}\n\t token: {token}"
-            )
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
+            logger.debug(f"[{RoleAppServiceListener.rolesTrees.__qualname__}] - claims: {claims}\n\t token: {token}")
             logger.debug(f"request: {request}")
-            roleAppService: RoleApplicationService = AppDi.instance.get(
-                RoleApplicationService
-            )
+            roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
 
-            result: List[RoleAccessPermissionData] = roleAppService.rolesTrees(
-                token=token
-            )
+            result: List[RoleAccessPermissionData] = roleAppService.rolesTrees(token=token)
 
             response = RoleAppService_rolesTreesResponse()
             for roleAccessPermissionItem in result:
@@ -280,12 +225,8 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
                 # owned by
                 if roleAccessPermissionItem.ownedBy is not None:
-                    roleAccessPermissionResponse.ownedBy.id = (
-                        roleAccessPermissionItem.ownedBy.id()
-                    )
-                    roleAccessPermissionResponse.ownedBy.type = (
-                        roleAccessPermissionItem.ownedBy.type()
-                    )
+                    roleAccessPermissionResponse.ownedBy.id = roleAccessPermissionItem.ownedBy.id()
+                    roleAccessPermissionResponse.ownedBy.type = roleAccessPermissionItem.ownedBy.type()
                 else:
                     roleAccessPermissionItem.ownedBy = None
 
@@ -307,9 +248,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
                     roleAccessPermissionItem.accessTree,
                 )
 
-            logger.debug(
-                f"[{RoleAppServiceListener.rolesTrees.__qualname__}] - response: {response}"
-            )
+            logger.debug(f"[{RoleAppServiceListener.rolesTrees.__qualname__}] - response: {response}")
             return response
 
         except RoleDoesNotExistException:
@@ -329,18 +268,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             self._populateAccessTree(tmp.children, accessNode.children)
 
     @debugLogger
-    def _populatePermissionWithPermissionContexts(
-        self, protoBuf, permissionWithPermissionContexts
-    ):
+    def _populatePermissionWithPermissionContexts(self, protoBuf, permissionWithPermissionContexts):
         for permissionWithPermissionContext in permissionWithPermissionContexts:
             tmp = protoBuf.add()
-            self._populatePermission(
-                tmp.permission, permissionWithPermissionContext.permission
-            )
+            self._populatePermission(tmp.permission, permissionWithPermissionContext.permission)
             for permissionContext in permissionWithPermissionContext.permissionContexts:
-                self._populatePermissionContext(
-                    tmp.permissionContexts.add(), permissionContext
-                )
+                self._populatePermissionContext(tmp.permissionContexts.add(), permissionContext)
 
     @debugLogger
     def _populateData(self, protoBuf, data):
@@ -372,7 +305,4 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
     @debugLogger
     def _token(self, context) -> str:
-        metadata = context.invocation_metadata()
-        if "token" in metadata[0]:
-            return metadata[0].value
-        raise UnAuthorizedException()
+        return super()._token(context=context)
