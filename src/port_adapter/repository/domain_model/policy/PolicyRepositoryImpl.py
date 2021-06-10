@@ -647,9 +647,9 @@ class PolicyRepositoryImpl(PolicyRepository):
     ) -> List:
         # Check if there is a link
         aql = """
-            WITH `for`, `resource`
-            FOR d IN `resource`
-                FILTER d._id == @permissionDocId AND d.type == 'permission'
+            WITH `for`, `permission`
+            FOR d IN `permission`
+                FILTER d._id == @permissionDocId
                 LET r = (
                     FOR v1,e1 IN OUTBOUND d._id `for` FILTER e1._to_type == "permission_context" AND v1._id == @permissionContextDocId
                         RETURN  {"permission_context": v1, "to_permission_context_edge": e1}
@@ -673,7 +673,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         permissionDocId = self.permissionDocumentId(permission)
         permissionContextDocId = self.permissionContextDocumentId(permissionContext)
 
-        # Check if there is any already exist link?
+        # Check if there is any already existing link?
         result = self.assignmentPermissionToPermissionContext(
             permissionDocId, permissionContextDocId
         )
