@@ -100,7 +100,7 @@ class TreeParser:
 
     # end permission tree region
 
-    def parseRoleTree(self, role_tree):
+    def parseRoleTree(self, roleTree):
         roleId = self.cafmClient.ensureRoleExistence(
             name=roleTree["name"],
             title=roleTree["title"],
