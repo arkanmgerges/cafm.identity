@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0border.proto\x12\x11\x63\x61\x66m.common.order\"+\n\x05Order\x12\x0f\n\x07orderBy\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\tb\x06proto3'
+  serialized_pb=b'\n\x0border.proto\x12\x11\x63\x61\x66m.common.order\",\n\x05Order\x12\x10\n\x08order_by\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\tb\x06proto3'
 )
 
 
@@ -34,7 +34,7 @@ _ORDER = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='orderBy', full_name='cafm.common.order.Order.orderBy', index=0,
+      name='order_by', full_name='cafm.common.order.Order.order_by', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -60,7 +60,7 @@ _ORDER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=34,
-  serialized_end=77,
+  serialized_end=78,
 )
 
 DESCRIPTOR.message_types_by_name['Order'] = _ORDER

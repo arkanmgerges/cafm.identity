@@ -9,8 +9,8 @@ import "identity/access_node.proto";
 
 message RoleAccessPermission {
   Role role = 1;
-  repeated permission.PermissionWithPermissionContexts permissionWithPermissionContexts = 2;
-  resource.Resource ownedBy = 3;
-  repeated resource.Resource ownerOf = 4;
-  repeated access_node.AccessNode accessTree = 5;
+  repeated permission.PermissionWithPermissionContexts permission_with_permission_contexts = 2;
+  resource.Resource owned_by = 3;
+  repeated resource.Resource owner_of = 4;
+  repeated access_node.AccessNode access_tree = 5;
 }

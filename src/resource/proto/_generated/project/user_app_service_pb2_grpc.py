@@ -14,13 +14,13 @@ class UserAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.userByEmail = channel.unary_unary(
-                '/cafm.project.user.UserAppService/userByEmail',
+        self.user_by_email = channel.unary_unary(
+                '/cafm.project.user.UserAppService/user_by_email',
                 request_serializer=project_dot_user__app__service__pb2.UserAppService_userByEmailRequest.SerializeToString,
                 response_deserializer=project_dot_user__app__service__pb2.UserAppService_userByEmailResponse.FromString,
                 )
-        self.userById = channel.unary_unary(
-                '/cafm.project.user.UserAppService/userById',
+        self.user_by_id = channel.unary_unary(
+                '/cafm.project.user.UserAppService/user_by_id',
                 request_serializer=project_dot_user__app__service__pb2.UserAppService_userByIdRequest.SerializeToString,
                 response_deserializer=project_dot_user__app__service__pb2.UserAppService_userByIdResponse.FromString,
                 )
@@ -29,18 +29,28 @@ class UserAppServiceStub(object):
                 request_serializer=project_dot_user__app__service__pb2.UserAppService_usersRequest.SerializeToString,
                 response_deserializer=project_dot_user__app__service__pb2.UserAppService_usersResponse.FromString,
                 )
+        self.users_by_organization_id = channel.unary_unary(
+                '/cafm.project.user.UserAppService/users_by_organization_id',
+                request_serializer=project_dot_user__app__service__pb2.UserAppService_usersByOrganizationIdRequest.SerializeToString,
+                response_deserializer=project_dot_user__app__service__pb2.UserAppService_usersByOrganizationIdResponse.FromString,
+                )
+        self.new_id = channel.unary_unary(
+                '/cafm.project.user.UserAppService/new_id',
+                request_serializer=project_dot_user__app__service__pb2.UserAppService_newIdRequest.SerializeToString,
+                response_deserializer=project_dot_user__app__service__pb2.UserAppService_newIdResponse.FromString,
+                )
 
 
 class UserAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def userByEmail(self, request, context):
+    def user_by_email(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def userById(self, request, context):
+    def user_by_id(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -52,16 +62,28 @@ class UserAppServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def users_by_organization_id(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def new_id(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_UserAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'userByEmail': grpc.unary_unary_rpc_method_handler(
-                    servicer.userByEmail,
+            'user_by_email': grpc.unary_unary_rpc_method_handler(
+                    servicer.user_by_email,
                     request_deserializer=project_dot_user__app__service__pb2.UserAppService_userByEmailRequest.FromString,
                     response_serializer=project_dot_user__app__service__pb2.UserAppService_userByEmailResponse.SerializeToString,
             ),
-            'userById': grpc.unary_unary_rpc_method_handler(
-                    servicer.userById,
+            'user_by_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.user_by_id,
                     request_deserializer=project_dot_user__app__service__pb2.UserAppService_userByIdRequest.FromString,
                     response_serializer=project_dot_user__app__service__pb2.UserAppService_userByIdResponse.SerializeToString,
             ),
@@ -69,6 +91,16 @@ def add_UserAppServiceServicer_to_server(servicer, server):
                     servicer.users,
                     request_deserializer=project_dot_user__app__service__pb2.UserAppService_usersRequest.FromString,
                     response_serializer=project_dot_user__app__service__pb2.UserAppService_usersResponse.SerializeToString,
+            ),
+            'users_by_organization_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.users_by_organization_id,
+                    request_deserializer=project_dot_user__app__service__pb2.UserAppService_usersByOrganizationIdRequest.FromString,
+                    response_serializer=project_dot_user__app__service__pb2.UserAppService_usersByOrganizationIdResponse.SerializeToString,
+            ),
+            'new_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.new_id,
+                    request_deserializer=project_dot_user__app__service__pb2.UserAppService_newIdRequest.FromString,
+                    response_serializer=project_dot_user__app__service__pb2.UserAppService_newIdResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -81,7 +113,7 @@ class UserAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def userByEmail(request,
+    def user_by_email(request,
             target,
             options=(),
             channel_credentials=None,
@@ -91,14 +123,14 @@ class UserAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.project.user.UserAppService/userByEmail',
+        return grpc.experimental.unary_unary(request, target, '/cafm.project.user.UserAppService/user_by_email',
             project_dot_user__app__service__pb2.UserAppService_userByEmailRequest.SerializeToString,
             project_dot_user__app__service__pb2.UserAppService_userByEmailResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def userById(request,
+    def user_by_id(request,
             target,
             options=(),
             channel_credentials=None,
@@ -108,7 +140,7 @@ class UserAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.project.user.UserAppService/userById',
+        return grpc.experimental.unary_unary(request, target, '/cafm.project.user.UserAppService/user_by_id',
             project_dot_user__app__service__pb2.UserAppService_userByIdRequest.SerializeToString,
             project_dot_user__app__service__pb2.UserAppService_userByIdResponse.FromString,
             options, channel_credentials,
@@ -128,5 +160,39 @@ class UserAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.project.user.UserAppService/users',
             project_dot_user__app__service__pb2.UserAppService_usersRequest.SerializeToString,
             project_dot_user__app__service__pb2.UserAppService_usersResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def users_by_organization_id(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.project.user.UserAppService/users_by_organization_id',
+            project_dot_user__app__service__pb2.UserAppService_usersByOrganizationIdRequest.SerializeToString,
+            project_dot_user__app__service__pb2.UserAppService_usersByOrganizationIdResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def new_id(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.project.user.UserAppService/new_id',
+            project_dot_user__app__service__pb2.UserAppService_newIdRequest.SerializeToString,
+            project_dot_user__app__service__pb2.UserAppService_newIdResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

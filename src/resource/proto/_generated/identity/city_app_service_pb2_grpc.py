@@ -14,8 +14,8 @@ class CityAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.cityById = channel.unary_unary(
-                '/cafm.identity.country.CityAppService/cityById',
+        self.city_by_id = channel.unary_unary(
+                '/cafm.identity.country.CityAppService/city_by_id',
                 request_serializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdRequest.SerializeToString,
                 response_deserializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdResponse.FromString,
                 )
@@ -29,7 +29,7 @@ class CityAppServiceStub(object):
 class CityAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def cityById(self, request, context):
+    def city_by_id(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -44,8 +44,8 @@ class CityAppServiceServicer(object):
 
 def add_CityAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'cityById': grpc.unary_unary_rpc_method_handler(
-                    servicer.cityById,
+            'city_by_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.city_by_id,
                     request_deserializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdRequest.FromString,
                     response_serializer=identity_dot_city__app__service__pb2.CityAppService_cityByIdResponse.SerializeToString,
             ),
@@ -65,7 +65,7 @@ class CityAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def cityById(request,
+    def city_by_id(request,
             target,
             options=(),
             channel_credentials=None,
@@ -75,7 +75,7 @@ class CityAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.country.CityAppService/cityById',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.country.CityAppService/city_by_id',
             identity_dot_city__app__service__pb2.CityAppService_cityByIdRequest.SerializeToString,
             identity_dot_city__app__service__pb2.CityAppService_cityByIdResponse.FromString,
             options, channel_credentials,

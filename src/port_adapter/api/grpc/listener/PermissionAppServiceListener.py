@@ -44,12 +44,12 @@ class PermissionAppServiceListener(PermissionAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def newId(self, request, context):
+    def new_id(self, request, context):
         try:
             token = self._token(context)
             claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
-                f"[{PermissionAppServiceListener.newId.__qualname__}] - claims: {claims}\n\t \
+                f"[{PermissionAppServiceListener.new_id.__qualname__}] - claims: {claims}\n\t \
                     token: {token}"
             )
             appService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
@@ -61,7 +61,7 @@ class PermissionAppServiceListener(PermissionAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def permissionByName(self, request, context):
+    def permission_by_name(self, request, context):
         try:
             token = self._token(context)
             permissionAppService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
@@ -91,18 +91,18 @@ class PermissionAppServiceListener(PermissionAppServiceServicer, BaseListener):
     def permissions(self, request, context):
         try:
 
-            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            resultSize = request.result_size if request.result_size >= 0 else 10
             token = self._token(context)
             claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
                 f"[{PermissionAppServiceListener.permissions.__qualname__}] - claims: {claims}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
+resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
             )
             permissionAppService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
 
-            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            orderData = [{"orderBy": o.order_by, "direction": o.direction} for o in request.orders]
             result: dict = permissionAppService.permissions(
-                resultFrom=request.resultFrom,
+                resultFrom=request.result_from,
                 resultSize=resultSize,
                 token=token,
                 order=orderData,
@@ -113,13 +113,13 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
                 p.id = permission.id()
                 p.name = permission.name()
                 for allowedAction in permission.allowedActions():
-                    p.allowedActions.append(allowedAction)
+                    p.allowed_actions.append(allowedAction)
                 for deniedAction in permission.deniedActions():
-                    p.deniedActions.append(deniedAction)
-            response.totalItemCount = result["totalItemCount"]
+                    p.denied_actions.append(deniedAction)
+            response.total_item_count = result["totalItemCount"]
             logger.debug(f"[{PermissionAppServiceListener.permissions.__qualname__}] - response: {response}")
             return PermissionAppService_permissionsResponse(
-                permissions=response.permissions, totalItemCount=response.totalItemCount
+                permissions=response.permissions, total_item_count=response.total_item_count
             )
         except PermissionDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -136,12 +136,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def permissionById(self, request, context):
+    def permission_by_id(self, request, context):
         try:
             token = self._token(context)
             permissionAppService: PermissionApplicationService = AppDi.instance.get(PermissionApplicationService)
             permission: Permission = permissionAppService.permissionById(id=request.id, token=token)
-            logger.debug(f"[{PermissionAppServiceListener.permissionById.__qualname__}] - response: {permission}")
+            logger.debug(f"[{PermissionAppServiceListener.permission_by_id.__qualname__}] - response: {permission}")
             response = PermissionAppService_permissionByIdResponse()
             self._addObjectToResponse(obj=permission, response=response)
             return response
@@ -159,9 +159,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
         response.permission.id = obj.id()
         response.permission.name = obj.name()
         for allowedAction in obj.allowedActions():
-            response.permission.allowedActions.append(allowedAction)
+            response.permission.allowed_actions.append(allowedAction)
         for deniedAction in obj.deniedActions():
-            response.permission.deniedActions.append(deniedAction)
+            response.permission.denied_actions.append(deniedAction)
 
     @debugLogger
     def _token(self, context) -> str:

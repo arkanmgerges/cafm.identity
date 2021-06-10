@@ -13,7 +13,7 @@ message AuthzAppService_isAllowedRequest {
 }
 
 message AuthzAppService_isAllowedResponse {
-  bool isAllowed = 1;
+  bool is_allowed = 1;
 }
 
 message AuthzAppService_hashKeysRequest {
@@ -21,10 +21,10 @@ message AuthzAppService_hashKeysRequest {
 }
 
 message AuthzAppService_hashKeysResponse {
-  repeated HashedKey hashedKeys = 1;
+  repeated HashedKey hashed_keys = 1;
 }
 
 service AuthzAppService {
-  rpc isAllowed (AuthzAppService_isAllowedRequest) returns (AuthzAppService_isAllowedResponse) {}
-  rpc hashKeys (AuthzAppService_hashKeysRequest) returns (AuthzAppService_hashKeysResponse) {}
+  rpc is_allowed (AuthzAppService_isAllowedRequest) returns (AuthzAppService_isAllowedResponse) {}
+  rpc hash_keys (AuthzAppService_hashKeysRequest) returns (AuthzAppService_hashKeysResponse) {}
 }

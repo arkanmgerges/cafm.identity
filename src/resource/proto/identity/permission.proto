@@ -5,6 +5,6 @@ package cafm.identity.permission;
 message Permission {
   string id = 1;
   string name = 2;
-  repeated string allowedActions = 3;
-  repeated string deniedActions = 4;
+  repeated string allowed_actions = 3;
+  repeated string denied_actions = 4;
 }

@@ -16,31 +16,31 @@ message CountryAppService_countryByIdResponse {
 }
 
 message CountryAppService_countriesRequest {
-  int32 resultFrom = 1;
-  int32 resultSize = 2;
-  repeated cafm.common.order.Order order = 3;
+  int32 result_from = 1;
+  int32 result_size = 2;
+  repeated cafm.common.order.Order orders = 3;
 }
 
 message CountryAppService_countriesResponse {
   repeated Country countries = 1;
-  int32 totalItemCount = 2;
+  int32 total_item_count = 2;
 }
 
 message CountryAppService_citiesByCountryIdRequest {
   int32 id = 1;
-  int32 resultFrom = 2;
-  int32 resultSize = 3;
-  repeated cafm.common.order.Order order = 4;
+  int32 result_from = 2;
+  int32 result_size = 3;
+  repeated cafm.common.order.Order orders = 4;
 }
 
 message CountryAppService_citiesByCountryIdResponse {
   repeated City cities = 1;
-  int32 totalItemCount = 2;
+  int32 total_item_count = 2;
 }
 
 message CountryAppService_cityByCountryIdRequest {
-  int32 countryId = 1;
-  int32 cityId = 2;
+  int32 country_id = 1;
+  int32 city_id = 2;
 }
 
 message CountryAppService_cityByCountryIdResponse {
@@ -48,8 +48,8 @@ message CountryAppService_cityByCountryIdResponse {
 }
 
 message CountryAppService_stateByCountryIdAndStateIdRequest {
-  int32 countryId = 1;
-  string stateId = 2;
+  int32 country_id = 1;
+  string state_id = 2;
 }
 
 message CountryAppService_stateByCountryIdAndStateIdResponse {
@@ -58,35 +58,35 @@ message CountryAppService_stateByCountryIdAndStateIdResponse {
 
 message CountryAppService_statesByCountryIdRequest {
   int32 id = 1;
-  int32 resultFrom = 2;
-  int32 resultSize = 3;
-  repeated cafm.common.order.Order order = 4;
+  int32 result_from = 2;
+  int32 result_size = 3;
+  repeated cafm.common.order.Order orders = 4;
 }
 
 message CountryAppService_statesByCountryIdResponse {
   repeated State states = 1;
-  int32 totalItemCount = 2;
+  int32 total_item_count = 2;
 }
 
 message CountryAppService_citiesByCountryIdAndStateIdRequest {
-  int32 resultFrom = 1;
-  int32 resultSize = 2;
-  repeated cafm.common.order.Order order = 3;
-  int32 countryId = 4;
-  string stateId = 5;
+  int32 result_from = 1;
+  int32 result_size = 2;
+  repeated cafm.common.order.Order orders = 3;
+  int32 country_id = 4;
+  string state_id = 5;
 }
 
 message CountryAppService_citiesByCountryIdAndStateIdResponse {
   repeated City cities = 1;
-  int32 totalItemCount = 2;
+  int32 total_item_count = 2;
 }
 
 service CountryAppService {
-  rpc countryById (CountryAppService_countryByIdRequest) returns (CountryAppService_countryByIdResponse) {}
+  rpc country_by_id (CountryAppService_countryByIdRequest) returns (CountryAppService_countryByIdResponse) {}
   rpc countries (CountryAppService_countriesRequest) returns (CountryAppService_countriesResponse) {}
-  rpc citiesByCountryId (CountryAppService_citiesByCountryIdRequest) returns (CountryAppService_citiesByCountryIdResponse) {}
-  rpc cityByCountryId (CountryAppService_cityByCountryIdRequest) returns (CountryAppService_cityByCountryIdResponse) {}
-  rpc stateByCountryIdAndStateId (CountryAppService_stateByCountryIdAndStateIdRequest) returns (CountryAppService_stateByCountryIdAndStateIdResponse) {}
-  rpc statesByCountryId (CountryAppService_statesByCountryIdRequest) returns (CountryAppService_statesByCountryIdResponse) {}
-  rpc citiesByCountryIdAndStateId (CountryAppService_citiesByCountryIdAndStateIdRequest) returns (CountryAppService_citiesByCountryIdAndStateIdResponse) {}
+  rpc cities_by_country_id (CountryAppService_citiesByCountryIdRequest) returns (CountryAppService_citiesByCountryIdResponse) {}
+  rpc city_by_country_id (CountryAppService_cityByCountryIdRequest) returns (CountryAppService_cityByCountryIdResponse) {}
+  rpc state_by_country_id_and_state_id (CountryAppService_stateByCountryIdAndStateIdRequest) returns (CountryAppService_stateByCountryIdAndStateIdResponse) {}
+  rpc states_by_country_id (CountryAppService_statesByCountryIdRequest) returns (CountryAppService_statesByCountryIdResponse) {}
+  rpc cities_by_country_id_and_state_id (CountryAppService_citiesByCountryIdAndStateIdRequest) returns (CountryAppService_citiesByCountryIdAndStateIdResponse) {}
 }

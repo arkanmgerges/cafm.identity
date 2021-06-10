@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x19identity/hashed_key.proto\x12\x13\x63\x61\x66m.identity.authz\"*\n\tHashedKey\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x10\n\x08hashCode\x18\x02 \x01(\tb\x06proto3'
+  serialized_pb=b'\n\x19identity/hashed_key.proto\x12\x13\x63\x61\x66m.identity.authz\"+\n\tHashedKey\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x11\n\thash_code\x18\x02 \x01(\tb\x06proto3'
 )
 
 
@@ -41,7 +41,7 @@ _HASHEDKEY = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='hashCode', full_name='cafm.identity.authz.HashedKey.hashCode', index=1,
+      name='hash_code', full_name='cafm.identity.authz.HashedKey.hash_code', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -60,7 +60,7 @@ _HASHEDKEY = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=50,
-  serialized_end=92,
+  serialized_end=93,
 )
 
 DESCRIPTOR.message_types_by_name['HashedKey'] = _HASHEDKEY

@@ -3,6 +3,6 @@ syntax = "proto3";
 package cafm.common.order;
 
 message Order {
-  string orderBy = 1;
+  string order_by = 1;
   string direction = 2;
 }

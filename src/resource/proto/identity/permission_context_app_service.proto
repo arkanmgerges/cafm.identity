@@ -10,18 +10,18 @@ message PermissionContextAppService_permissionContextByIdRequest {
 }
 
 message PermissionContextAppService_permissionContextByIdResponse {
-  PermissionContext permissionContext = 1;
+  PermissionContext permission_context = 1;
 }
 
 message PermissionContextAppService_permissionContextsRequest {
-  int32 resultFrom = 1;
-  int32 resultSize = 2;
-  repeated cafm.common.order.Order order = 3;
+  int32 result_from = 1;
+  int32 result_size = 2;
+  repeated cafm.common.order.Order orders = 3;
 }
 
 message PermissionContextAppService_permissionContextsResponse {
-  repeated PermissionContext permissionContexts = 1;
-  int32 totalItemCount = 2;
+  repeated PermissionContext permission_contexts = 1;
+  int32 total_item_count = 2;
 }
 
 message PermissionContextAppService_newIdRequest {}
@@ -32,7 +32,7 @@ message PermissionContextAppService_newIdResponse {
 
 
 service PermissionContextAppService {
-  rpc permissionContextById (PermissionContextAppService_permissionContextByIdRequest) returns (PermissionContextAppService_permissionContextByIdResponse) {}
-  rpc permissionContexts (PermissionContextAppService_permissionContextsRequest) returns (PermissionContextAppService_permissionContextsResponse) {}
-  rpc newId (PermissionContextAppService_newIdRequest) returns (PermissionContextAppService_newIdResponse) {}  
+  rpc permission_context_by_id (PermissionContextAppService_permissionContextByIdRequest) returns (PermissionContextAppService_permissionContextByIdResponse) {}
+  rpc permission_contexts (PermissionContextAppService_permissionContextsRequest) returns (PermissionContextAppService_permissionContextsResponse) {}
+  rpc new_id (PermissionContextAppService_newIdRequest) returns (PermissionContextAppService_newIdResponse) {}
 }

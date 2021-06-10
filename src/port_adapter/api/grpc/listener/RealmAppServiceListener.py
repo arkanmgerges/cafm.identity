@@ -44,12 +44,12 @@ class RealmAppServiceListener(RealmAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def newId(self, request, context):
+    def new_id(self, request, context):
         try:
             token = self._token(context)
             claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
-                f"[{RealmAppServiceListener.newId.__qualname__}] - claims: {claims}\n\t \
+                f"[{RealmAppServiceListener.new_id.__qualname__}] - claims: {claims}\n\t \
                     token: {token}"
             )
             appService: RealmApplicationService = AppDi.instance.get(RealmApplicationService)
@@ -61,7 +61,7 @@ class RealmAppServiceListener(RealmAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def realmByName(self, request, context):
+    def realm_by_name(self, request, context):
         try:
             token = self._token(context)
             realmAppService: RealmApplicationService = AppDi.instance.get(RealmApplicationService)
@@ -90,28 +90,28 @@ class RealmAppServiceListener(RealmAppServiceServicer, BaseListener):
     @OpenTelemetry.grpcTraceOTel
     def realms(self, request, context):
         try:
-            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            resultSize = request.result_size if request.result_size >= 0 else 10
             token = self._token(context)
             claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
                 f"[{RealmAppServiceListener.realms.__qualname__}] - claims: {claims}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
+resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
             )
             realmAppService: RealmApplicationService = AppDi.instance.get(RealmApplicationService)
 
-            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            orderData = [{"orderBy": o.order_by, "direction": o.direction} for o in request.orders]
             result: dict = realmAppService.realms(
-                resultFrom=request.resultFrom,
+                resultFrom=request.result_from,
                 resultSize=resultSize,
                 token=token,
                 order=orderData,
             )
             response = RealmAppService_realmsResponse()
             for realm in result["items"]:
-                response.realms.add(id=realm.id(), name=realm.name(), realmType=realm.realmType())
-            response.totalItemCount = result["totalItemCount"]
+                response.realms.add(id=realm.id(), name=realm.name(), realm_type=realm.realmType())
+            response.total_item_count = result["totalItemCount"]
             logger.debug(f"[{RealmAppServiceListener.realms.__qualname__}] - response: {response}")
-            return RealmAppService_realmsResponse(realms=response.realms, totalItemCount=response.totalItemCount)
+            return RealmAppService_realmsResponse(realms=response.realms, total_item_count=response.total_item_count)
         except RealmDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("No realms found")
@@ -127,12 +127,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def realmById(self, request, context):
+    def realm_by_id(self, request, context):
         try:
             token = self._token(context)
             realmAppService: RealmApplicationService = AppDi.instance.get(RealmApplicationService)
             realm: Realm = realmAppService.realmById(id=request.id, token=token)
-            logger.debug(f"[{RealmAppServiceListener.realmById.__qualname__}] - response: {realm}")
+            logger.debug(f"[{RealmAppServiceListener.realm_by_id.__qualname__}] - response: {realm}")
             response = RealmAppService_realmByIdResponse()
             self._addObjectToResponse(obj=realm, response=response)
             return response
@@ -149,7 +149,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
     def _addObjectToResponse(self, obj: Realm, response: Any):
         response.realm.id = obj.id()
         response.realm.name = obj.name()
-        response.realm.realmType = obj.realmType()
+        response.realm.realm_type = obj.realmType()
 
     @debugLogger
     def _token(self, context) -> str:

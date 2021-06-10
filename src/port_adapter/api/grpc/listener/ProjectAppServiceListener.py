@@ -44,12 +44,12 @@ class ProjectAppServiceListener(ProjectAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def newId(self, request, context):
+    def new_id(self, request, context):
         try:
             token = self._token(context)
             claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
-                f"[{ProjectAppServiceListener.newId.__qualname__}] - claims: {claims}\n\t \
+                f"[{ProjectAppServiceListener.new_id.__qualname__}] - claims: {claims}\n\t \
                     token: {token}"
             )
             appService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
@@ -61,7 +61,7 @@ class ProjectAppServiceListener(ProjectAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def projectByName(self, request, context):
+    def project_by_name(self, request, context):
         try:
             token = self._token(context)
             projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
@@ -90,18 +90,18 @@ class ProjectAppServiceListener(ProjectAppServiceServicer, BaseListener):
     @OpenTelemetry.grpcTraceOTel
     def projects(self, request, context):
         try:
-            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            resultSize = request.result_size if request.result_size >= 0 else 10
             token = self._token(context)
             claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
                 f"[{ProjectAppServiceListener.projects.__qualname__}] - claims: {claims}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
+resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
             )
             projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
 
-            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.orders]
             result: dict = projectAppService.projects(
-                resultFrom=request.resultFrom,
+                resultFrom=request.result_from,
                 resultSize=resultSize,
                 token=token,
                 order=orderData,
@@ -109,10 +109,10 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
             response = ProjectAppService_projectsResponse()
             for project in result["items"]:
                 response.projects.add(id=project.id(), name=project.name())
-            response.totalItemCount = result["totalItemCount"]
+            response.total_item_count = result["totalItemCount"]
             logger.debug(f"[{ProjectAppServiceListener.projects.__qualname__}] - response: {response}")
             return ProjectAppService_projectsResponse(
-                projects=response.projects, totalItemCount=response.totalItemCount
+                projects=response.projects, total_item_count=response.total_item_count
             )
         except ProjectDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -129,12 +129,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def projectById(self, request, context):
+    def project_by_id(self, request, context):
         try:
             token = self._token(context)
             projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
             project: Project = projectAppService.projectById(id=request.id, token=token)
-            logger.debug(f"[{ProjectAppServiceListener.projectById.__qualname__}] - response: {project}")
+            logger.debug(f"[{ProjectAppServiceListener.project_by_id.__qualname__}] - response: {project}")
             response = ProjectAppService_projectByIdResponse()
             self._addObjectToResponse(obj=project, response=response)
             return response

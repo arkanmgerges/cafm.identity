@@ -44,7 +44,7 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def newId(self, request, context):
+    def new_id(self, request, context):
         try:
             token = self._token(context)
             claims = (
@@ -53,7 +53,7 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer, BaseListener):
                 else None
             )
             logger.debug(
-                f"[{UserGroupAppServiceListener.newId.__qualname__}] - claims: {claims}\n\t \
+                f"[{UserGroupAppServiceListener.new_id.__qualname__}] - claims: {claims}\n\t \
                     token: {token}"
             )
             appService: UserGroupApplicationService = AppDi.instance.get(
@@ -67,7 +67,7 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def userGroupByName(self, request, context):
+    def user_group_by_name(self, request, context):
         try:
             token = self._token(context)
             userGroupAppService: UserGroupApplicationService = AppDi.instance.get(
@@ -98,9 +98,9 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def userGroups(self, request, context):
+    def user_groups(self, request, context):
         try:
-            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            resultSize = request.result_size if request.result_size >= 0 else 10
             token = self._token(context)
             claims = (
                 self._tokenService.claimsFromToken(token=token)
@@ -108,31 +108,31 @@ class UserGroupAppServiceListener(UserGroupAppServiceServicer, BaseListener):
                 else None
             )
             logger.debug(
-                f"[{UserGroupAppServiceListener.userGroups.__qualname__}] - claims: {claims}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
+                f"[{UserGroupAppServiceListener.user_groups.__qualname__}] - claims: {claims}\n\t \
+resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
             )
             userGroupAppService: UserGroupApplicationService = AppDi.instance.get(
                 UserGroupApplicationService
             )
 
             orderData = [
-                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
+                {"orderBy": o.order_by, "direction": o.direction} for o in request.orders
             ]
             result: dict = userGroupAppService.userGroups(
-                resultFrom=request.resultFrom,
+                resultFrom=request.result_from,
                 resultSize=resultSize,
                 token=token,
                 order=orderData,
             )
             response = UserGroupAppService_userGroupsResponse()
             for userGroup in result["items"]:
-                response.userGroups.add(id=userGroup.id(), name=userGroup.name())
-            response.totalItemCount = result["totalItemCount"]
+                response.user_groups.add(id=userGroup.id(), name=userGroup.name())
+            response.total_item_count = result["totalItemCount"]
             logger.debug(
-                f"[{UserGroupAppServiceListener.userGroups.__qualname__}] - response: {response}"
+                f"[{UserGroupAppServiceListener.user_groups.__qualname__}] - response: {response}"
             )
             return UserGroupAppService_userGroupsResponse(
-                userGroups=response.userGroups, totalItemCount=response.totalItemCount
+                user_groups=response.user_groups, total_item_count=response.total_item_count
             )
         except UserGroupDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -149,7 +149,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def userGroupById(self, request, context):
+    def user_group_by_id(self, request, context):
         try:
             token = self._token(context)
             userGroupAppService: UserGroupApplicationService = AppDi.instance.get(
@@ -159,7 +159,7 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
                 id=request.id, token=token
             )
             logger.debug(
-                f"[{UserGroupAppServiceListener.userGroupById.__qualname__}] - response: {userGroup}"
+                f"[{UserGroupAppServiceListener.user_group_by_id.__qualname__}] - response: {userGroup}"
             )
             response = UserGroupAppService_userGroupByIdResponse()
             self._addObjectToResponse(obj=userGroup, response=response)
@@ -175,8 +175,8 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
     @debugLogger
     def _addObjectToResponse(self, obj: UserGroup, response: Any):
-        response.userGroup.id = obj.id()
-        response.userGroup.name = obj.name()
+        response.user_group.id = obj.id()
+        response.user_group.name = obj.name()
 
     @debugLogger
     def _token(self, context) -> str:

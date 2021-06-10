@@ -23,14 +23,14 @@ message UserAppService_userByIdResponse {
 }
 
 message UserAppService_usersRequest {
-  int32 resultFrom = 1;
-  int32 resultSize = 2;
-  repeated cafm.common.order.Order order = 3;
+  int32 result_from = 1;
+  int32 result_size = 2;
+  repeated cafm.common.order.Order orders = 3;
 }
 
 message UserAppService_usersResponse {
   repeated User users = 1;
-  int32 totalItemCount = 2;
+  int32 total_item_count = 2;
 }
 
 message UserAppService_newIdRequest {}
@@ -41,8 +41,8 @@ message UserAppService_newIdResponse {
 
 
 service UserAppService {
-  rpc userByEmailAndPassword (UserAppService_userByEmailAndPasswordRequest) returns (UserAppService_userByEmailAndPasswordResponse) {}
-  rpc userById (UserAppService_userByIdRequest) returns (UserAppService_userByIdResponse) {}
+  rpc user_by_email_and_password (UserAppService_userByEmailAndPasswordRequest) returns (UserAppService_userByEmailAndPasswordResponse) {}
+  rpc user_by_id (UserAppService_userByIdRequest) returns (UserAppService_userByIdResponse) {}
   rpc users (UserAppService_usersRequest) returns (UserAppService_usersResponse) {}
-  rpc newId (UserAppService_newIdRequest) returns (UserAppService_newIdResponse) {}
+  rpc new_id (UserAppService_newIdRequest) returns (UserAppService_newIdResponse) {}
 }

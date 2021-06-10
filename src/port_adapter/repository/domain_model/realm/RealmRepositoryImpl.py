@@ -227,7 +227,8 @@ class RealmRepositoryImpl(RealmRepository):
             logger.debug(f"[{RealmRepositoryImpl.realmByName.__qualname__}] {name}")
             raise RealmDoesNotExistException(name)
 
-        return Realm.createFrom(id=result[0]["id"], name=result[0]["name"])
+        return Realm.createFrom(id=result[0]["id"], name=result[0]["name"],
+                                realmType=result[0]["realm_type"] if "realm_type" in result[0] else "")
 
     @debugLogger
     def realmById(self, id: str) -> Realm:

@@ -14,13 +14,13 @@ class AuthzAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.isAllowed = channel.unary_unary(
-                '/cafm.identity.authz.AuthzAppService/isAllowed',
+        self.is_allowed = channel.unary_unary(
+                '/cafm.identity.authz.AuthzAppService/is_allowed',
                 request_serializer=identity_dot_authz__app__service__pb2.AuthzAppService_isAllowedRequest.SerializeToString,
                 response_deserializer=identity_dot_authz__app__service__pb2.AuthzAppService_isAllowedResponse.FromString,
                 )
-        self.hashKeys = channel.unary_unary(
-                '/cafm.identity.authz.AuthzAppService/hashKeys',
+        self.hash_keys = channel.unary_unary(
+                '/cafm.identity.authz.AuthzAppService/hash_keys',
                 request_serializer=identity_dot_authz__app__service__pb2.AuthzAppService_hashKeysRequest.SerializeToString,
                 response_deserializer=identity_dot_authz__app__service__pb2.AuthzAppService_hashKeysResponse.FromString,
                 )
@@ -29,13 +29,13 @@ class AuthzAppServiceStub(object):
 class AuthzAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def isAllowed(self, request, context):
+    def is_allowed(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def hashKeys(self, request, context):
+    def hash_keys(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -44,13 +44,13 @@ class AuthzAppServiceServicer(object):
 
 def add_AuthzAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'isAllowed': grpc.unary_unary_rpc_method_handler(
-                    servicer.isAllowed,
+            'is_allowed': grpc.unary_unary_rpc_method_handler(
+                    servicer.is_allowed,
                     request_deserializer=identity_dot_authz__app__service__pb2.AuthzAppService_isAllowedRequest.FromString,
                     response_serializer=identity_dot_authz__app__service__pb2.AuthzAppService_isAllowedResponse.SerializeToString,
             ),
-            'hashKeys': grpc.unary_unary_rpc_method_handler(
-                    servicer.hashKeys,
+            'hash_keys': grpc.unary_unary_rpc_method_handler(
+                    servicer.hash_keys,
                     request_deserializer=identity_dot_authz__app__service__pb2.AuthzAppService_hashKeysRequest.FromString,
                     response_serializer=identity_dot_authz__app__service__pb2.AuthzAppService_hashKeysResponse.SerializeToString,
             ),
@@ -65,7 +65,7 @@ class AuthzAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def isAllowed(request,
+    def is_allowed(request,
             target,
             options=(),
             channel_credentials=None,
@@ -75,14 +75,14 @@ class AuthzAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.authz.AuthzAppService/isAllowed',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.authz.AuthzAppService/is_allowed',
             identity_dot_authz__app__service__pb2.AuthzAppService_isAllowedRequest.SerializeToString,
             identity_dot_authz__app__service__pb2.AuthzAppService_isAllowedResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def hashKeys(request,
+    def hash_keys(request,
             target,
             options=(),
             channel_credentials=None,
@@ -92,7 +92,7 @@ class AuthzAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.authz.AuthzAppService/hashKeys',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.authz.AuthzAppService/hash_keys',
             identity_dot_authz__app__service__pb2.AuthzAppService_hashKeysRequest.SerializeToString,
             identity_dot_authz__app__service__pb2.AuthzAppService_hashKeysResponse.FromString,
             options, channel_credentials,

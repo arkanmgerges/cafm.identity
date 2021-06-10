@@ -46,14 +46,14 @@ class AuthAppServiceListener(AuthAppServiceServicer):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def authenticateUserByEmailAndPassword(self, request, context):
+    def authenticate_user_by_email_and_password(self, request, context):
         try:
             # logger.debug(
             # f'request: {request}\n, target: {target}\n, options: {options}\n, channel_credentials: {channel_credentials}\n insecure: {insecure}\n, compression: {compression}\n, wait_for_ready: {wait_for_ready}\n, timeout: {timeout}\n, metadata: {metadata}')
             # for key, value in context.invocation_metadata():
             #     print('Received initial metadata: key=%s value=%s' % (key, value))
             logger.debug(
-                f"[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - receive request with name: {request.email}"
+                f"[{AuthAppServiceListener.authenticate_user_by_email_and_password.__qualname__}] - receive request with name: {request.email}"
             )
             authAppService: AuthenticationApplicationService = AppDi.instance.get(
                 AuthenticationApplicationService
@@ -69,34 +69,34 @@ class AuthAppServiceListener(AuthAppServiceServicer):
                 domainEvents=DomainPublishedEvents.postponedEvents(), token=token
             )
             logger.debug(
-                f"[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - token returned token: {token}"
+                f"[{AuthAppServiceListener.authenticate_user_by_email_and_password.__qualname__}] - token returned token: {token}"
             )
             return AuthAppService_authenticateUserByEmailAndPasswordResponse(
                 token=token
             )
         except InvalidCredentialsException:
             logger.debug(
-                f"[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, {InvalidCredentialsException.__qualname__}"
+                f"[{AuthAppServiceListener.authenticate_user_by_email_and_password.__qualname__}] - exception, {InvalidCredentialsException.__qualname__}"
             )
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("Invalid credentials")
             return AuthAppService_authenticateUserByEmailAndPasswordResponse()
         except UserDoesNotExistException:
             logger.debug(
-                f"[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, {UserDoesNotExistException.__qualname__}"
+                f"[{AuthAppServiceListener.authenticate_user_by_email_and_password.__qualname__}] - exception, {UserDoesNotExistException.__qualname__}"
             )
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("User does not exist")
             return AuthAppService_authenticateUserByEmailAndPasswordResponse()
         except Exception as e:
             logger.warn(
-                f"[{AuthAppServiceListener.authenticateUserByEmailAndPassword.__qualname__}] - exception, Unknown: {e}"
+                f"[{AuthAppServiceListener.authenticate_user_by_email_and_password.__qualname__}] - exception, Unknown: {e}"
             )
             raise e
 
-    # def isAuthenticated(self, request, context):
+    # def is_authenticated(self, request, context):
     #     metadata = context.invocation_metadata()
-    #     logger.debug(f'[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Getting metadata {metadata}')
+    #     logger.debug(f'[{AuthAppServiceListener.is_authenticated.__qualname__}] - Getting metadata {metadata}')
     #     token = metadata[0].value if 'token' in metadata[0] else None
     #     if token is None:
     #         context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -105,7 +105,7 @@ class AuthAppServiceListener(AuthAppServiceServicer):
     #     else:
     #         try:
     #             authAppService: AuthenticationApplicationService = AppDi.instance.get(AuthenticationApplicationService)
-    #             result = authAppService.isAuthenticated(token=token)
+    #             result = authAppService.is_authenticated(token=token)
     #             return AuthAppService_isAuthenticatedResponse(response=result)
     #         except Exception as e:
     #             context.set_code(grpc.StatusCode.ERROR)
@@ -114,17 +114,17 @@ class AuthAppServiceListener(AuthAppServiceServicer):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def isAuthenticated(self, request, context):
+    def is_authenticated(self, request, context):
         try:
             authAppService: AuthenticationApplicationService = AppDi.instance.get(
                 AuthenticationApplicationService
             )
             logger.debug(
-                f"[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Call with token: {request.token}"
+                f"[{AuthAppServiceListener.is_authenticated.__qualname__}] - Call with token: {request.token}"
             )
             result = authAppService.isAuthenticated(token=request.token)
             logger.debug(
-                f"[{AuthAppServiceListener.isAuthenticated.__qualname__}] - Receive response with result: {result}"
+                f"[{AuthAppServiceListener.is_authenticated.__qualname__}] - Receive response with result: {result}"
             )
             return AuthAppService_isAuthenticatedResponse(response=result)
         except Exception as e:

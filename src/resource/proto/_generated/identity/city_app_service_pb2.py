@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1fidentity/city_app_service.proto\x12\x15\x63\x61\x66m.identity.country\x1a\x13identity/city.proto\x1a\x0border.proto\",\n\x1e\x43ityAppService_cityByIdRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"L\n\x1f\x43ityAppService_cityByIdResponse\x12)\n\x04\x63ity\x18\x01 \x01(\x0b\x32\x1b.cafm.identity.country.City\"o\n\x1c\x43ityAppService_citiesRequest\x12\x12\n\nresultFrom\x18\x01 \x01(\x05\x12\x12\n\nresultSize\x18\x02 \x01(\x05\x12\'\n\x05order\x18\x03 \x03(\x0b\x32\x18.cafm.common.order.Order\"d\n\x1d\x43ityAppService_citiesResponse\x12+\n\x06\x63ities\x18\x01 \x03(\x0b\x32\x1b.cafm.identity.country.City\x12\x16\n\x0etotalItemCount\x18\x02 \x01(\x05\x32\x84\x02\n\x0e\x43ityAppService\x12{\n\x08\x63ityById\x12\x35.cafm.identity.country.CityAppService_cityByIdRequest\x1a\x36.cafm.identity.country.CityAppService_cityByIdResponse\"\x00\x12u\n\x06\x63ities\x12\x33.cafm.identity.country.CityAppService_citiesRequest\x1a\x34.cafm.identity.country.CityAppService_citiesResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x1fidentity/city_app_service.proto\x12\x15\x63\x61\x66m.identity.country\x1a\x13identity/city.proto\x1a\x0border.proto\",\n\x1e\x43ityAppService_cityByIdRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"L\n\x1f\x43ityAppService_cityByIdResponse\x12)\n\x04\x63ity\x18\x01 \x01(\x0b\x32\x1b.cafm.identity.country.City\"r\n\x1c\x43ityAppService_citiesRequest\x12\x13\n\x0bresult_from\x18\x01 \x01(\x05\x12\x13\n\x0bresult_size\x18\x02 \x01(\x05\x12(\n\x06orders\x18\x03 \x03(\x0b\x32\x18.cafm.common.order.Order\"f\n\x1d\x43ityAppService_citiesResponse\x12+\n\x06\x63ities\x18\x01 \x03(\x0b\x32\x1b.cafm.identity.country.City\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\x32\x86\x02\n\x0e\x43ityAppService\x12}\n\ncity_by_id\x12\x35.cafm.identity.country.CityAppService_cityByIdRequest\x1a\x36.cafm.identity.country.CityAppService_cityByIdResponse\"\x00\x12u\n\x06\x63ities\x12\x33.cafm.identity.country.CityAppService_citiesRequest\x1a\x34.cafm.identity.country.CityAppService_citiesResponse\"\x00\x62\x06proto3'
   ,
   dependencies=[identity_dot_city__pb2.DESCRIPTOR,order__pb2.DESCRIPTOR,])
 
@@ -101,21 +101,21 @@ _CITYAPPSERVICE_CITIESREQUEST = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='resultFrom', full_name='cafm.identity.country.CityAppService_citiesRequest.resultFrom', index=0,
+      name='result_from', full_name='cafm.identity.country.CityAppService_citiesRequest.result_from', index=0,
       number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='resultSize', full_name='cafm.identity.country.CityAppService_citiesRequest.resultSize', index=1,
+      name='result_size', full_name='cafm.identity.country.CityAppService_citiesRequest.result_size', index=1,
       number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='order', full_name='cafm.identity.country.CityAppService_citiesRequest.order', index=2,
+      name='orders', full_name='cafm.identity.country.CityAppService_citiesRequest.orders', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -134,7 +134,7 @@ _CITYAPPSERVICE_CITIESREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=216,
-  serialized_end=327,
+  serialized_end=330,
 )
 
 
@@ -154,7 +154,7 @@ _CITYAPPSERVICE_CITIESRESPONSE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='totalItemCount', full_name='cafm.identity.country.CityAppService_citiesResponse.totalItemCount', index=1,
+      name='total_item_count', full_name='cafm.identity.country.CityAppService_citiesResponse.total_item_count', index=1,
       number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -172,12 +172,12 @@ _CITYAPPSERVICE_CITIESRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=329,
-  serialized_end=429,
+  serialized_start=332,
+  serialized_end=434,
 )
 
 _CITYAPPSERVICE_CITYBYIDRESPONSE.fields_by_name['city'].message_type = identity_dot_city__pb2._CITY
-_CITYAPPSERVICE_CITIESREQUEST.fields_by_name['order'].message_type = order__pb2._ORDER
+_CITYAPPSERVICE_CITIESREQUEST.fields_by_name['orders'].message_type = order__pb2._ORDER
 _CITYAPPSERVICE_CITIESRESPONSE.fields_by_name['cities'].message_type = identity_dot_city__pb2._CITY
 DESCRIPTOR.message_types_by_name['CityAppService_cityByIdRequest'] = _CITYAPPSERVICE_CITYBYIDREQUEST
 DESCRIPTOR.message_types_by_name['CityAppService_cityByIdResponse'] = _CITYAPPSERVICE_CITYBYIDRESPONSE
@@ -222,12 +222,12 @@ _CITYAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=432,
-  serialized_end=692,
+  serialized_start=437,
+  serialized_end=699,
   methods=[
   _descriptor.MethodDescriptor(
-    name='cityById',
-    full_name='cafm.identity.country.CityAppService.cityById',
+    name='city_by_id',
+    full_name='cafm.identity.country.CityAppService.city_by_id',
     index=0,
     containing_service=None,
     input_type=_CITYAPPSERVICE_CITYBYIDREQUEST,

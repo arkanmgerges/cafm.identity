@@ -8,14 +8,14 @@ import "identity/role_access_permission.proto";
 
 message RoleAppService_rolesTreesRequest {}
 message RoleAppService_rolesTreesResponse {
-  repeated RoleAccessPermission roleAccessPermission = 1;
+  repeated RoleAccessPermission role_access_permission = 1;
 }
 
 message RoleAppService_roleTreeRequest {
-  string roleId = 1;
+  string role_id = 1;
 }
 message RoleAppService_roleTreeResponse {
-  RoleAccessPermission roleAccessPermission = 1;
+  RoleAccessPermission role_access_permission = 1;
 }
 
 message RoleAppService_roleByNameRequest {
@@ -35,14 +35,14 @@ message RoleAppService_roleByIdResponse {
 }
 
 message RoleAppService_rolesRequest {
-  int32 resultFrom = 1;
-  int32 resultSize = 2;
-  repeated cafm.common.order.Order order = 3;
+  int32 result_from = 1;
+  int32 result_size = 2;
+  repeated cafm.common.order.Order orders = 3;
 }
 
 message RoleAppService_rolesResponse {
   repeated Role roles = 1;
-  int32 totalItemCount = 2;
+  int32 total_item_count = 2;
 }
 
 message RoleAppService_newIdRequest {}
@@ -52,10 +52,10 @@ message RoleAppService_newIdResponse {
 }
 
 service RoleAppService {
-  rpc roleByName (RoleAppService_roleByNameRequest) returns (RoleAppService_roleByNameResponse) {}
-  rpc roleById (RoleAppService_roleByIdRequest) returns (RoleAppService_roleByIdResponse) {}
+  rpc role_by_name (RoleAppService_roleByNameRequest) returns (RoleAppService_roleByNameResponse) {}
+  rpc role_by_id (RoleAppService_roleByIdRequest) returns (RoleAppService_roleByIdResponse) {}
   rpc roles (RoleAppService_rolesRequest) returns (RoleAppService_rolesResponse) {}
-  rpc rolesTrees (RoleAppService_rolesTreesRequest) returns (RoleAppService_rolesTreesResponse) {}
-  rpc roleTree (RoleAppService_roleTreeRequest) returns (RoleAppService_roleTreeResponse) {}
-  rpc newId (RoleAppService_newIdRequest) returns (RoleAppService_newIdResponse) {}
+  rpc roles_trees (RoleAppService_rolesTreesRequest) returns (RoleAppService_rolesTreesResponse) {}
+  rpc role_tree (RoleAppService_roleTreeRequest) returns (RoleAppService_roleTreeResponse) {}
+  rpc new_id (RoleAppService_newIdRequest) returns (RoleAppService_newIdResponse) {}
 }

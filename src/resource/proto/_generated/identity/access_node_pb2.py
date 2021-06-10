@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1aidentity/access_node.proto\x12\x19\x63\x61\x66m.identity.access_node\"G\n\x0e\x41\x63\x63\x65ssNodeData\x12\x13\n\x0b\x63ontentType\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontext\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x03 \x01(\t\"~\n\nAccessNode\x12\x37\n\x04\x64\x61ta\x18\x01 \x01(\x0b\x32).cafm.identity.access_node.AccessNodeData\x12\x37\n\x08\x63hildren\x18\x02 \x03(\x0b\x32%.cafm.identity.access_node.AccessNodeb\x06proto3'
+  serialized_pb=b'\n\x1aidentity/access_node.proto\x12\x19\x63\x61\x66m.identity.access_node\"H\n\x0e\x41\x63\x63\x65ssNodeData\x12\x14\n\x0c\x63ontent_type\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontext\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x03 \x01(\t\"~\n\nAccessNode\x12\x37\n\x04\x64\x61ta\x18\x01 \x01(\x0b\x32).cafm.identity.access_node.AccessNodeData\x12\x37\n\x08\x63hildren\x18\x02 \x03(\x0b\x32%.cafm.identity.access_node.AccessNodeb\x06proto3'
 )
 
 
@@ -34,7 +34,7 @@ _ACCESSNODEDATA = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='contentType', full_name='cafm.identity.access_node.AccessNodeData.contentType', index=0,
+      name='content_type', full_name='cafm.identity.access_node.AccessNodeData.content_type', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -67,7 +67,7 @@ _ACCESSNODEDATA = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=57,
-  serialized_end=128,
+  serialized_end=129,
 )
 
 
@@ -105,8 +105,8 @@ _ACCESSNODE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=130,
-  serialized_end=256,
+  serialized_start=131,
+  serialized_end=257,
 )
 
 _ACCESSNODE.fields_by_name['data'].message_type = _ACCESSNODEDATA

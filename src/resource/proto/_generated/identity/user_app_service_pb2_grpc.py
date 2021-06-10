@@ -14,13 +14,13 @@ class UserAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.userByEmailAndPassword = channel.unary_unary(
-                '/cafm.identity.user.UserAppService/userByEmailAndPassword',
+        self.user_by_email_and_password = channel.unary_unary(
+                '/cafm.identity.user.UserAppService/user_by_email_and_password',
                 request_serializer=identity_dot_user__app__service__pb2.UserAppService_userByEmailAndPasswordRequest.SerializeToString,
                 response_deserializer=identity_dot_user__app__service__pb2.UserAppService_userByEmailAndPasswordResponse.FromString,
                 )
-        self.userById = channel.unary_unary(
-                '/cafm.identity.user.UserAppService/userById',
+        self.user_by_id = channel.unary_unary(
+                '/cafm.identity.user.UserAppService/user_by_id',
                 request_serializer=identity_dot_user__app__service__pb2.UserAppService_userByIdRequest.SerializeToString,
                 response_deserializer=identity_dot_user__app__service__pb2.UserAppService_userByIdResponse.FromString,
                 )
@@ -29,8 +29,8 @@ class UserAppServiceStub(object):
                 request_serializer=identity_dot_user__app__service__pb2.UserAppService_usersRequest.SerializeToString,
                 response_deserializer=identity_dot_user__app__service__pb2.UserAppService_usersResponse.FromString,
                 )
-        self.newId = channel.unary_unary(
-                '/cafm.identity.user.UserAppService/newId',
+        self.new_id = channel.unary_unary(
+                '/cafm.identity.user.UserAppService/new_id',
                 request_serializer=identity_dot_user__app__service__pb2.UserAppService_newIdRequest.SerializeToString,
                 response_deserializer=identity_dot_user__app__service__pb2.UserAppService_newIdResponse.FromString,
                 )
@@ -39,13 +39,13 @@ class UserAppServiceStub(object):
 class UserAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def userByEmailAndPassword(self, request, context):
+    def user_by_email_and_password(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def userById(self, request, context):
+    def user_by_id(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -57,7 +57,7 @@ class UserAppServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def newId(self, request, context):
+    def new_id(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -66,13 +66,13 @@ class UserAppServiceServicer(object):
 
 def add_UserAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'userByEmailAndPassword': grpc.unary_unary_rpc_method_handler(
-                    servicer.userByEmailAndPassword,
+            'user_by_email_and_password': grpc.unary_unary_rpc_method_handler(
+                    servicer.user_by_email_and_password,
                     request_deserializer=identity_dot_user__app__service__pb2.UserAppService_userByEmailAndPasswordRequest.FromString,
                     response_serializer=identity_dot_user__app__service__pb2.UserAppService_userByEmailAndPasswordResponse.SerializeToString,
             ),
-            'userById': grpc.unary_unary_rpc_method_handler(
-                    servicer.userById,
+            'user_by_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.user_by_id,
                     request_deserializer=identity_dot_user__app__service__pb2.UserAppService_userByIdRequest.FromString,
                     response_serializer=identity_dot_user__app__service__pb2.UserAppService_userByIdResponse.SerializeToString,
             ),
@@ -81,8 +81,8 @@ def add_UserAppServiceServicer_to_server(servicer, server):
                     request_deserializer=identity_dot_user__app__service__pb2.UserAppService_usersRequest.FromString,
                     response_serializer=identity_dot_user__app__service__pb2.UserAppService_usersResponse.SerializeToString,
             ),
-            'newId': grpc.unary_unary_rpc_method_handler(
-                    servicer.newId,
+            'new_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.new_id,
                     request_deserializer=identity_dot_user__app__service__pb2.UserAppService_newIdRequest.FromString,
                     response_serializer=identity_dot_user__app__service__pb2.UserAppService_newIdResponse.SerializeToString,
             ),
@@ -97,7 +97,7 @@ class UserAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def userByEmailAndPassword(request,
+    def user_by_email_and_password(request,
             target,
             options=(),
             channel_credentials=None,
@@ -107,14 +107,14 @@ class UserAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user.UserAppService/userByEmailAndPassword',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user.UserAppService/user_by_email_and_password',
             identity_dot_user__app__service__pb2.UserAppService_userByEmailAndPasswordRequest.SerializeToString,
             identity_dot_user__app__service__pb2.UserAppService_userByEmailAndPasswordResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def userById(request,
+    def user_by_id(request,
             target,
             options=(),
             channel_credentials=None,
@@ -124,7 +124,7 @@ class UserAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user.UserAppService/userById',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user.UserAppService/user_by_id',
             identity_dot_user__app__service__pb2.UserAppService_userByIdRequest.SerializeToString,
             identity_dot_user__app__service__pb2.UserAppService_userByIdResponse.FromString,
             options, channel_credentials,
@@ -148,7 +148,7 @@ class UserAppService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def newId(request,
+    def new_id(request,
             target,
             options=(),
             channel_credentials=None,
@@ -158,7 +158,7 @@ class UserAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user.UserAppService/newId',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user.UserAppService/new_id',
             identity_dot_user__app__service__pb2.UserAppService_newIdRequest.SerializeToString,
             identity_dot_user__app__service__pb2.UserAppService_newIdResponse.FromString,
             options, channel_credentials,

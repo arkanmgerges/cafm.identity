@@ -3,7 +3,7 @@ syntax = "proto3";
 package cafm.identity.access_node;
 
 message AccessNodeData {
-  string contentType = 1;
+  string content_type = 1;
   string context = 2;
   string content = 3;
 }

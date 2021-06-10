@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package cafm.project.project;
+
+message BuildingLevelRoom {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  int32 index = 4;
+  string building_level_id = 5;
+}

@@ -118,6 +118,7 @@ class RealmApplicationService:
             requestedObject=RequestedAuthzObject(obj=resource),
             tokenData=tokenData,
         )
+        return resource
 
     @debugLogger
     def realmById(self, id: str, token: str = ""):

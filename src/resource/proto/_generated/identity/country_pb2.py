@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x16identity/country.proto\x12\x15\x63\x61\x66m.identity.country\"\x9f\x01\n\x07\x43ountry\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x12\n\nlocaleCode\x18\x02 \x01(\t\x12\x15\n\rcontinentCode\x18\x03 \x01(\t\x12\x15\n\rcontinentName\x18\x04 \x01(\t\x12\x16\n\x0e\x63ountryIsoCode\x18\x05 \x01(\t\x12\x13\n\x0b\x63ountryName\x18\x06 \x01(\t\x12\x19\n\x11isInEuropeanUnion\x18\x07 \x01(\x08\x62\x06proto3'
+  serialized_pb=b'\n\x16identity/country.proto\x12\x15\x63\x61\x66m.identity.country\"\xa8\x01\n\x07\x43ountry\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x13\n\x0blocale_code\x18\x02 \x01(\t\x12\x16\n\x0e\x63ontinent_code\x18\x03 \x01(\t\x12\x16\n\x0e\x63ontinent_name\x18\x04 \x01(\t\x12\x18\n\x10\x63ountry_iso_code\x18\x05 \x01(\t\x12\x14\n\x0c\x63ountry_name\x18\x06 \x01(\t\x12\x1c\n\x14is_in_european_union\x18\x07 \x01(\x08\x62\x06proto3'
 )
 
 
@@ -41,42 +41,42 @@ _COUNTRY = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='localeCode', full_name='cafm.identity.country.Country.localeCode', index=1,
+      name='locale_code', full_name='cafm.identity.country.Country.locale_code', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='continentCode', full_name='cafm.identity.country.Country.continentCode', index=2,
+      name='continent_code', full_name='cafm.identity.country.Country.continent_code', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='continentName', full_name='cafm.identity.country.Country.continentName', index=3,
+      name='continent_name', full_name='cafm.identity.country.Country.continent_name', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='countryIsoCode', full_name='cafm.identity.country.Country.countryIsoCode', index=4,
+      name='country_iso_code', full_name='cafm.identity.country.Country.country_iso_code', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='countryName', full_name='cafm.identity.country.Country.countryName', index=5,
+      name='country_name', full_name='cafm.identity.country.Country.country_name', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='isInEuropeanUnion', full_name='cafm.identity.country.Country.isInEuropeanUnion', index=6,
+      name='is_in_european_union', full_name='cafm.identity.country.Country.is_in_european_union', index=6,
       number=7, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -95,7 +95,7 @@ _COUNTRY = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=50,
-  serialized_end=209,
+  serialized_end=218,
 )
 
 DESCRIPTOR.message_types_by_name['Country'] = _COUNTRY

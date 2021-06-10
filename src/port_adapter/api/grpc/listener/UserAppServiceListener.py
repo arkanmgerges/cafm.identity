@@ -44,12 +44,12 @@ class UserAppServiceListener(UserAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def newId(self, request, context):
+    def new_id(self, request, context):
         try:
             token = self._token(context)
             claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
-                f"[{UserAppServiceListener.newId.__qualname__}] - claims: {claims}\n\t \
+                f"[{UserAppServiceListener.new_id.__qualname__}] - claims: {claims}\n\t \
                     token: {token}"
             )
             appService: UserApplicationService = AppDi.instance.get(UserApplicationService)
@@ -61,7 +61,7 @@ class UserAppServiceListener(UserAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def userByNameAndPassword(self, request, context):
+    def user_by_email_and_password(self, request, context):
         try:
             userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
             user: User = userAppService.userByEmailAndPassword(email=request.email, password=request.password)
@@ -85,18 +85,18 @@ class UserAppServiceListener(UserAppServiceServicer, BaseListener):
     @OpenTelemetry.grpcTraceOTel
     def users(self, request, context):
         try:
-            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            resultSize = request.result_size if request.result_size >= 0 else 10
             token = self._token(context)
             claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
             logger.debug(
                 f"[{UserAppServiceListener.users.__qualname__}] - claims: {claims}\n\t \
-resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
+resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
             )
             userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
 
-            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
+            orderData = [{"orderBy": o.order_by, "direction": o.direction} for o in request.orders]
             result: dict = userAppService.users(
-                resultFrom=request.resultFrom,
+                resultFrom=request.result_from,
                 resultSize=resultSize,
                 token=token,
                 order=orderData,
@@ -111,9 +111,9 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
                     # postalCode=user.postalCode(),
                     # avatarImage=user.avatarImage()
                 )
-            response.totalItemCount = result["totalItemCount"]
+            response.total_item_count = result["totalItemCount"]
             logger.debug(f"[{UserAppServiceListener.users.__qualname__}] - response: {response}")
-            return UserAppService_usersResponse(users=response.users, totalItemCount=response.totalItemCount)
+            return UserAppService_usersResponse(users=response.users, total_item_count=response.total_item_count)
         except UserDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("No users found")
@@ -129,12 +129,12 @@ resultFrom: {request.resultFrom}, resultSize: {resultSize}, token: {token}"
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def userById(self, request, context):
+    def user_by_id(self, request, context):
         try:
             token = self._token(context)
             userAppService: UserApplicationService = AppDi.instance.get(UserApplicationService)
             user: User = userAppService.userById(id=request.id, token=token)
-            logger.debug(f"[{UserAppServiceListener.userById.__qualname__}] - response: {user}")
+            logger.debug(f"[{UserAppServiceListener.user_by_id.__qualname__}] - response: {user}")
             response = UserAppService_userByIdResponse()
             self._addObjectToResponse(obj=user, response=response)
             return response

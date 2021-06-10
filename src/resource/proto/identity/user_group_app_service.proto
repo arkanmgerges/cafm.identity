@@ -10,7 +10,7 @@ message UserGroupAppService_userGroupByNameRequest {
 }
 
 message UserGroupAppService_userGroupByNameResponse {
-  UserGroup userGroup = 1;
+  UserGroup user_group = 1;
 }
 
 message UserGroupAppService_userGroupByIdRequest {
@@ -18,18 +18,18 @@ message UserGroupAppService_userGroupByIdRequest {
 }
 
 message UserGroupAppService_userGroupByIdResponse {
-  UserGroup userGroup = 1;
+  UserGroup user_group = 1;
 }
 
 message UserGroupAppService_userGroupsRequest {
-  int32 resultFrom = 1;
-  int32 resultSize = 2;
-  repeated cafm.common.order.Order order = 3;
+  int32 result_from = 1;
+  int32 result_size = 2;
+  repeated cafm.common.order.Order orders = 3;
 }
 
 message UserGroupAppService_userGroupsResponse {
-  repeated UserGroup userGroups = 1;
-  int32 totalItemCount = 2;
+  repeated UserGroup user_groups = 1;
+  int32 total_item_count = 2;
 }
 
 message UserGroupAppService_newIdRequest {}
@@ -40,8 +40,8 @@ message UserGroupAppService_newIdResponse {
 
 
 service UserGroupAppService {
-  rpc userGroupByName (UserGroupAppService_userGroupByNameRequest) returns (UserGroupAppService_userGroupByNameResponse) {}
-  rpc userGroupById (UserGroupAppService_userGroupByIdRequest) returns (UserGroupAppService_userGroupByIdResponse) {}
-  rpc userGroups (UserGroupAppService_userGroupsRequest) returns (UserGroupAppService_userGroupsResponse) {}
-  rpc newId (UserGroupAppService_newIdRequest) returns (UserGroupAppService_newIdResponse) {}
+  rpc user_group_by_name (UserGroupAppService_userGroupByNameRequest) returns (UserGroupAppService_userGroupByNameResponse) {}
+  rpc user_group_by_id (UserGroupAppService_userGroupByIdRequest) returns (UserGroupAppService_userGroupByIdResponse) {}
+  rpc user_groups (UserGroupAppService_userGroupsRequest) returns (UserGroupAppService_userGroupsResponse) {}
+  rpc new_id (UserGroupAppService_newIdRequest) returns (UserGroupAppService_newIdResponse) {}
 }

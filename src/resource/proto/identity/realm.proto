@@ -5,5 +5,5 @@ package cafm.identity.realm;
 message Realm {
   string id = 1;
   string name = 2;
-  string realmType = 3;
+  string realm_type = 3;
 }

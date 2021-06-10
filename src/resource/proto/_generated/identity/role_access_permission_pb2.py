@@ -23,7 +23,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n%identity/role_access_permission.proto\x12\x12\x63\x61\x66m.identity.role\x1a\x13identity/role.proto\x1a\x32identity/permission_with_permission_contexts.proto\x1a\x17identity/resource.proto\x1a\x1aidentity/access_node.proto\"\xc5\x02\n\x14RoleAccessPermission\x12&\n\x04role\x18\x01 \x01(\x0b\x32\x18.cafm.identity.role.Role\x12\x64\n permissionWithPermissionContexts\x18\x02 \x03(\x0b\x32:.cafm.identity.permission.PermissionWithPermissionContexts\x12\x31\n\x07ownedBy\x18\x03 \x01(\x0b\x32 .cafm.identity.resource.Resource\x12\x31\n\x07ownerOf\x18\x04 \x03(\x0b\x32 .cafm.identity.resource.Resource\x12\x39\n\naccessTree\x18\x05 \x03(\x0b\x32%.cafm.identity.access_node.AccessNodeb\x06proto3'
+  serialized_pb=b'\n%identity/role_access_permission.proto\x12\x12\x63\x61\x66m.identity.role\x1a\x13identity/role.proto\x1a\x32identity/permission_with_permission_contexts.proto\x1a\x17identity/resource.proto\x1a\x1aidentity/access_node.proto\"\xcb\x02\n\x14RoleAccessPermission\x12&\n\x04role\x18\x01 \x01(\x0b\x32\x18.cafm.identity.role.Role\x12g\n#permission_with_permission_contexts\x18\x02 \x03(\x0b\x32:.cafm.identity.permission.PermissionWithPermissionContexts\x12\x32\n\x08owned_by\x18\x03 \x01(\x0b\x32 .cafm.identity.resource.Resource\x12\x32\n\x08owner_of\x18\x04 \x03(\x0b\x32 .cafm.identity.resource.Resource\x12:\n\x0b\x61\x63\x63\x65ss_tree\x18\x05 \x03(\x0b\x32%.cafm.identity.access_node.AccessNodeb\x06proto3'
   ,
   dependencies=[identity_dot_role__pb2.DESCRIPTOR,identity_dot_permission__with__permission__contexts__pb2.DESCRIPTOR,identity_dot_resource__pb2.DESCRIPTOR,identity_dot_access__node__pb2.DESCRIPTOR,])
 
@@ -46,28 +46,28 @@ _ROLEACCESSPERMISSION = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='permissionWithPermissionContexts', full_name='cafm.identity.role.RoleAccessPermission.permissionWithPermissionContexts', index=1,
+      name='permission_with_permission_contexts', full_name='cafm.identity.role.RoleAccessPermission.permission_with_permission_contexts', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='ownedBy', full_name='cafm.identity.role.RoleAccessPermission.ownedBy', index=2,
+      name='owned_by', full_name='cafm.identity.role.RoleAccessPermission.owned_by', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='ownerOf', full_name='cafm.identity.role.RoleAccessPermission.ownerOf', index=3,
+      name='owner_of', full_name='cafm.identity.role.RoleAccessPermission.owner_of', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='accessTree', full_name='cafm.identity.role.RoleAccessPermission.accessTree', index=4,
+      name='access_tree', full_name='cafm.identity.role.RoleAccessPermission.access_tree', index=4,
       number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -86,14 +86,14 @@ _ROLEACCESSPERMISSION = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=188,
-  serialized_end=513,
+  serialized_end=519,
 )
 
 _ROLEACCESSPERMISSION.fields_by_name['role'].message_type = identity_dot_role__pb2._ROLE
-_ROLEACCESSPERMISSION.fields_by_name['permissionWithPermissionContexts'].message_type = identity_dot_permission__with__permission__contexts__pb2._PERMISSIONWITHPERMISSIONCONTEXTS
-_ROLEACCESSPERMISSION.fields_by_name['ownedBy'].message_type = identity_dot_resource__pb2._RESOURCE
-_ROLEACCESSPERMISSION.fields_by_name['ownerOf'].message_type = identity_dot_resource__pb2._RESOURCE
-_ROLEACCESSPERMISSION.fields_by_name['accessTree'].message_type = identity_dot_access__node__pb2._ACCESSNODE
+_ROLEACCESSPERMISSION.fields_by_name['permission_with_permission_contexts'].message_type = identity_dot_permission__with__permission__contexts__pb2._PERMISSIONWITHPERMISSIONCONTEXTS
+_ROLEACCESSPERMISSION.fields_by_name['owned_by'].message_type = identity_dot_resource__pb2._RESOURCE
+_ROLEACCESSPERMISSION.fields_by_name['owner_of'].message_type = identity_dot_resource__pb2._RESOURCE
+_ROLEACCESSPERMISSION.fields_by_name['access_tree'].message_type = identity_dot_access__node__pb2._ACCESSNODE
 DESCRIPTOR.message_types_by_name['RoleAccessPermission'] = _ROLEACCESSPERMISSION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 

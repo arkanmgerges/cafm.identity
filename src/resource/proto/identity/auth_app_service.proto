@@ -26,7 +26,7 @@ message AuthAppService_logoutRequest {
 message AuthAppService_logoutResponse {}
 
 service AuthAppService {
-  rpc authenticateUserByEmailAndPassword (AuthAppService_authenticateUserByEmailAndPasswordRequest) returns (AuthAppService_authenticateUserByEmailAndPasswordResponse) {}
-  rpc isAuthenticated (AuthAppService_isAuthenticatedRequest) returns (AuthAppService_isAuthenticatedResponse) {}
+  rpc authenticate_user_by_email_and_password (AuthAppService_authenticateUserByEmailAndPasswordRequest) returns (AuthAppService_authenticateUserByEmailAndPasswordResponse) {}
+  rpc is_authenticated (AuthAppService_isAuthenticatedRequest) returns (AuthAppService_isAuthenticatedResponse) {}
   rpc logout (AuthAppService_logoutRequest) returns (AuthAppService_logoutResponse) {}
 }

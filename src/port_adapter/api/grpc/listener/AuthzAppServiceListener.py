@@ -29,7 +29,7 @@ class AuthzAppServiceListener(AuthzAppServiceServicer):
         return self.__class__.__name__
 
     @debugLogger
-    def hashKeys(self, request, context):
+    def hash_keys(self, request, context):
         try:
             authzAppService: AuthorizationApplicationService = AppDi.instance.get(
                 AuthorizationApplicationService
@@ -38,13 +38,13 @@ class AuthzAppServiceListener(AuthzAppServiceServicer):
                 keys=[{"key": item.key} for item in request.keys]
             )
             return AuthzAppService_hashKeysResponse(
-                hashedKeys=[
-                    HashedKey(key=item["key"], hashCode=item["hashCode"])
+                hashed_keys=[
+                    HashedKey(key=item["key"], hash_code=item["hashCode"])
                     for item in result
                 ]
             )
         except Exception as e:
             logger.warn(
-                f"[{AuthzAppServiceListener.hashKeys.__qualname__}] - exception, Unknown: {e}"
+                f"[{AuthzAppServiceListener.hash_keys.__qualname__}] - exception, Unknown: {e}"
             )
             raise e

@@ -4,14 +4,14 @@ package cafm.identity.country;
 
 message City {
   int32 id = 1;
-  string localeCode = 2;
-  string continentCode = 3;
-  string continentName = 4;
-  string countryIsoCode = 5;
-  string countryName = 6;
-  string subdivisionOneIsoCode = 7;
-  string subdivisionOneIsoName = 8;
-  string cityName = 9;
-  string timeZone = 10;
-  bool isInEuropeanUnion = 11;
+  string locale_code = 2;
+  string continent_code = 3;
+  string continent_name = 4;
+  string country_iso_code = 5;
+  string country_name = 6;
+  string subdivision_one_iso_code = 7;
+  string subdivision_one_iso_name = 8;
+  string city_name = 9;
+  string time_zone = 10;
+  bool is_in_european_union = 11;
 }

@@ -44,26 +44,26 @@ class CityAppServiceListener(CityAppServiceServicer):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def cityById(self, request, context):
+    def city_by_id(self, request, context):
         try:
-            logger.debug(f"[{CityAppServiceListener.cityById.__qualname__}] - id: {request.id}")
+            logger.debug(f"[{CityAppServiceListener.city_by_id.__qualname__}] - id: {request.id}")
             cityAppService: CityApplicationService = AppDi.instance.get(CityApplicationService)
 
             city: City = cityAppService.cityById(id=request.id)
 
             response = CityAppService_cityByIdResponse()
             response.city.id = city.id()
-            response.city.localeCode = city.localeCode()
-            response.city.continentCode = city.continentCode()
-            response.city.continentName = city.continentName()
-            response.city.countryIsoCode = city.countryIsoCode()
-            response.city.countryName = city.countryName()
-            response.city.subdivisionOneIsoCode = city.subdivisionOneIsoCode()
-            response.city.subdivisionOneIsoName = city.subdivisionOneIsoName()
-            response.city.cityName = city.cityName()
-            response.city.timeZone = city.timeZone()
-            response.city.isInEuropeanUnion = city.isInEuropeanUnion()
-            logger.debug(f"[{CityAppServiceListener.cityById.__qualname__}] - response: {response}")
+            response.city.locale_code = city.localeCode()
+            response.city.continent_code = city.continentCode()
+            response.city.continent_name = city.continentName()
+            response.city.country_iso_code = city.countryIsoCode()
+            response.city.country_name = city.countryName()
+            response.city.subdivision_one_iso_code = city.subdivisionOneIsoCode()
+            response.city.subdivision_one_iso_name = city.subdivisionOneIsoName()
+            response.city.city_name = city.cityName()
+            response.city.time_zone = city.timeZone()
+            response.city.is_in_european_union = city.isInEuropeanUnion()
+            logger.debug(f"[{CityAppServiceListener.city_by_id.__qualname__}] - response: {response}")
             return response
         except CountryDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -82,29 +82,29 @@ class CityAppServiceListener(CityAppServiceServicer):
     @OpenTelemetry.grpcTraceOTel
     def cities(self, request, context):
         try:
-            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            resultSize = request.result_size if request.result_size >= 0 else 10
             logger.debug(
-                f"[{CityAppServiceListener.cities.__qualname__}] - resultFrom: {request.resultFrom}, resultSize: {resultSize}"
+                f"[{CityAppServiceListener.cities.__qualname__}] - resultFrom: {request.result_from}, resultSize: {resultSize}"
             )
             cityAppService: CityApplicationService = AppDi.instance.get(CityApplicationService)
 
-            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.order]
-            result: dict = cityAppService.cities(resultFrom=request.resultFrom, resultSize=resultSize, order=orderData)
+            orderData = [{"orderBy": o.order_by, "direction": o.direction} for o in request.orders]
+            result: dict = cityAppService.cities(resultFrom=request.result_from, resultSize=resultSize, order=orderData)
             response = CityAppService_citiesResponse()
-            response.totalItemCount = result["totalItemCount"]
+            response.total_item_count = result["totalItemCount"]
             for city in result["items"]:
                 response.cities.add(
                     id=city.id(),
-                    localeCode=city.localeCode(),
-                    continentCode=city.continentCode(),
-                    continentName=city.continentName(),
-                    countryIsoCode=city.countryIsoCode(),
-                    countryName=city.countryName(),
-                    subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
-                    subdivisionOneIsoName=city.subdivisionOneIsoName(),
-                    cityName=city.cityName(),
-                    timeZone=city.timeZone(),
-                    isInEuropeanUnion=city.isInEuropeanUnion(),
+                    locale_code=city.localeCode(),
+                    continent_code=city.continentCode(),
+                    continent_name=city.continentName(),
+                    country_iso_code=city.countryIsoCode(),
+                    country_name=city.countryName(),
+                    subdivision_one_iso_code=city.subdivisionOneIsoCode(),
+                    subdivision_one_iso_name=city.subdivisionOneIsoName(),
+                    city_name=city.cityName(),
+                    time_zone=city.timeZone(),
+                    is_in_european_union=city.isInEuropeanUnion(),
                 )
             logger.debug(f"[{CityApplicationService.cities.__qualname__}] - response: {response}")
             return response

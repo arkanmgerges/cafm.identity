@@ -14,13 +14,13 @@ class ProjectAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.projectByName = channel.unary_unary(
-                '/cafm.identity.project.ProjectAppService/projectByName',
+        self.project_by_name = channel.unary_unary(
+                '/cafm.identity.project.ProjectAppService/project_by_name',
                 request_serializer=identity_dot_project__app__service__pb2.ProjectAppService_projectByNameRequest.SerializeToString,
                 response_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_projectByNameResponse.FromString,
                 )
-        self.projectById = channel.unary_unary(
-                '/cafm.identity.project.ProjectAppService/projectById',
+        self.project_by_id = channel.unary_unary(
+                '/cafm.identity.project.ProjectAppService/project_by_id',
                 request_serializer=identity_dot_project__app__service__pb2.ProjectAppService_projectByIdRequest.SerializeToString,
                 response_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_projectByIdResponse.FromString,
                 )
@@ -29,8 +29,8 @@ class ProjectAppServiceStub(object):
                 request_serializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsRequest.SerializeToString,
                 response_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsResponse.FromString,
                 )
-        self.newId = channel.unary_unary(
-                '/cafm.identity.project.ProjectAppService/newId',
+        self.new_id = channel.unary_unary(
+                '/cafm.identity.project.ProjectAppService/new_id',
                 request_serializer=identity_dot_project__app__service__pb2.ProjectAppService_newIdRequest.SerializeToString,
                 response_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_newIdResponse.FromString,
                 )
@@ -39,13 +39,13 @@ class ProjectAppServiceStub(object):
 class ProjectAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def projectByName(self, request, context):
+    def project_by_name(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def projectById(self, request, context):
+    def project_by_id(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -57,7 +57,7 @@ class ProjectAppServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def newId(self, request, context):
+    def new_id(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -66,13 +66,13 @@ class ProjectAppServiceServicer(object):
 
 def add_ProjectAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'projectByName': grpc.unary_unary_rpc_method_handler(
-                    servicer.projectByName,
+            'project_by_name': grpc.unary_unary_rpc_method_handler(
+                    servicer.project_by_name,
                     request_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_projectByNameRequest.FromString,
                     response_serializer=identity_dot_project__app__service__pb2.ProjectAppService_projectByNameResponse.SerializeToString,
             ),
-            'projectById': grpc.unary_unary_rpc_method_handler(
-                    servicer.projectById,
+            'project_by_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.project_by_id,
                     request_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_projectByIdRequest.FromString,
                     response_serializer=identity_dot_project__app__service__pb2.ProjectAppService_projectByIdResponse.SerializeToString,
             ),
@@ -81,8 +81,8 @@ def add_ProjectAppServiceServicer_to_server(servicer, server):
                     request_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsRequest.FromString,
                     response_serializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsResponse.SerializeToString,
             ),
-            'newId': grpc.unary_unary_rpc_method_handler(
-                    servicer.newId,
+            'new_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.new_id,
                     request_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_newIdRequest.FromString,
                     response_serializer=identity_dot_project__app__service__pb2.ProjectAppService_newIdResponse.SerializeToString,
             ),
@@ -97,7 +97,7 @@ class ProjectAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def projectByName(request,
+    def project_by_name(request,
             target,
             options=(),
             channel_credentials=None,
@@ -107,14 +107,14 @@ class ProjectAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/projectByName',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/project_by_name',
             identity_dot_project__app__service__pb2.ProjectAppService_projectByNameRequest.SerializeToString,
             identity_dot_project__app__service__pb2.ProjectAppService_projectByNameResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def projectById(request,
+    def project_by_id(request,
             target,
             options=(),
             channel_credentials=None,
@@ -124,7 +124,7 @@ class ProjectAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/projectById',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/project_by_id',
             identity_dot_project__app__service__pb2.ProjectAppService_projectByIdRequest.SerializeToString,
             identity_dot_project__app__service__pb2.ProjectAppService_projectByIdResponse.FromString,
             options, channel_credentials,
@@ -148,7 +148,7 @@ class ProjectAppService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def newId(request,
+    def new_id(request,
             target,
             options=(),
             channel_credentials=None,
@@ -158,7 +158,7 @@ class ProjectAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/newId',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/new_id',
             identity_dot_project__app__service__pb2.ProjectAppService_newIdRequest.SerializeToString,
             identity_dot_project__app__service__pb2.ProjectAppService_newIdResponse.FromString,
             options, channel_credentials,

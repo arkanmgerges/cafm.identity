@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n identity/authz_app_service.proto\x12\x13\x63\x61\x66m.identity.authz\x1a\x1bidentity/unhashed_key.proto\x1a\x19identity/hashed_key.proto\"r\n AuthzAppService_isAllowedRequest\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0e\n\x06\x61\x63tion\x18\x02 \x01(\t\x12\x1a\n\x12permission_context\x18\x03 \x01(\t\x12\x13\n\x0bresource_id\x18\x04 \x01(\t\"6\n!AuthzAppService_isAllowedResponse\x12\x11\n\tisAllowed\x18\x01 \x01(\x08\"Q\n\x1f\x41uthzAppService_hashKeysRequest\x12.\n\x04keys\x18\x01 \x03(\x0b\x32 .cafm.identity.authz.UnhashedKey\"V\n AuthzAppService_hashKeysResponse\x12\x32\n\nhashedKeys\x18\x01 \x03(\x0b\x32\x1e.cafm.identity.authz.HashedKey2\x8a\x02\n\x0f\x41uthzAppService\x12|\n\tisAllowed\x12\x35.cafm.identity.authz.AuthzAppService_isAllowedRequest\x1a\x36.cafm.identity.authz.AuthzAppService_isAllowedResponse\"\x00\x12y\n\x08hashKeys\x12\x34.cafm.identity.authz.AuthzAppService_hashKeysRequest\x1a\x35.cafm.identity.authz.AuthzAppService_hashKeysResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n identity/authz_app_service.proto\x12\x13\x63\x61\x66m.identity.authz\x1a\x1bidentity/unhashed_key.proto\x1a\x19identity/hashed_key.proto\"r\n AuthzAppService_isAllowedRequest\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0e\n\x06\x61\x63tion\x18\x02 \x01(\t\x12\x1a\n\x12permission_context\x18\x03 \x01(\t\x12\x13\n\x0bresource_id\x18\x04 \x01(\t\"7\n!AuthzAppService_isAllowedResponse\x12\x12\n\nis_allowed\x18\x01 \x01(\x08\"Q\n\x1f\x41uthzAppService_hashKeysRequest\x12.\n\x04keys\x18\x01 \x03(\x0b\x32 .cafm.identity.authz.UnhashedKey\"W\n AuthzAppService_hashKeysResponse\x12\x33\n\x0bhashed_keys\x18\x01 \x03(\x0b\x32\x1e.cafm.identity.authz.HashedKey2\x8c\x02\n\x0f\x41uthzAppService\x12}\n\nis_allowed\x12\x35.cafm.identity.authz.AuthzAppService_isAllowedRequest\x1a\x36.cafm.identity.authz.AuthzAppService_isAllowedResponse\"\x00\x12z\n\thash_keys\x12\x34.cafm.identity.authz.AuthzAppService_hashKeysRequest\x1a\x35.cafm.identity.authz.AuthzAppService_hashKeysResponse\"\x00\x62\x06proto3'
   ,
   dependencies=[identity_dot_unhashed__key__pb2.DESCRIPTOR,identity_dot_hashed__key__pb2.DESCRIPTOR,])
 
@@ -90,7 +90,7 @@ _AUTHZAPPSERVICE_ISALLOWEDRESPONSE = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='isAllowed', full_name='cafm.identity.authz.AuthzAppService_isAllowedResponse.isAllowed', index=0,
+      name='is_allowed', full_name='cafm.identity.authz.AuthzAppService_isAllowedResponse.is_allowed', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -109,7 +109,7 @@ _AUTHZAPPSERVICE_ISALLOWEDRESPONSE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=229,
-  serialized_end=283,
+  serialized_end=284,
 )
 
 
@@ -140,8 +140,8 @@ _AUTHZAPPSERVICE_HASHKEYSREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=285,
-  serialized_end=366,
+  serialized_start=286,
+  serialized_end=367,
 )
 
 
@@ -154,7 +154,7 @@ _AUTHZAPPSERVICE_HASHKEYSRESPONSE = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='hashedKeys', full_name='cafm.identity.authz.AuthzAppService_hashKeysResponse.hashedKeys', index=0,
+      name='hashed_keys', full_name='cafm.identity.authz.AuthzAppService_hashKeysResponse.hashed_keys', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -172,12 +172,12 @@ _AUTHZAPPSERVICE_HASHKEYSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=368,
-  serialized_end=454,
+  serialized_start=369,
+  serialized_end=456,
 )
 
 _AUTHZAPPSERVICE_HASHKEYSREQUEST.fields_by_name['keys'].message_type = identity_dot_unhashed__key__pb2._UNHASHEDKEY
-_AUTHZAPPSERVICE_HASHKEYSRESPONSE.fields_by_name['hashedKeys'].message_type = identity_dot_hashed__key__pb2._HASHEDKEY
+_AUTHZAPPSERVICE_HASHKEYSRESPONSE.fields_by_name['hashed_keys'].message_type = identity_dot_hashed__key__pb2._HASHEDKEY
 DESCRIPTOR.message_types_by_name['AuthzAppService_isAllowedRequest'] = _AUTHZAPPSERVICE_ISALLOWEDREQUEST
 DESCRIPTOR.message_types_by_name['AuthzAppService_isAllowedResponse'] = _AUTHZAPPSERVICE_ISALLOWEDRESPONSE
 DESCRIPTOR.message_types_by_name['AuthzAppService_hashKeysRequest'] = _AUTHZAPPSERVICE_HASHKEYSREQUEST
@@ -221,12 +221,12 @@ _AUTHZAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=457,
-  serialized_end=723,
+  serialized_start=459,
+  serialized_end=727,
   methods=[
   _descriptor.MethodDescriptor(
-    name='isAllowed',
-    full_name='cafm.identity.authz.AuthzAppService.isAllowed',
+    name='is_allowed',
+    full_name='cafm.identity.authz.AuthzAppService.is_allowed',
     index=0,
     containing_service=None,
     input_type=_AUTHZAPPSERVICE_ISALLOWEDREQUEST,
@@ -235,8 +235,8 @@ _AUTHZAPPSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='hashKeys',
-    full_name='cafm.identity.authz.AuthzAppService.hashKeys',
+    name='hash_keys',
+    full_name='cafm.identity.authz.AuthzAppService.hash_keys',
     index=1,
     containing_service=None,
     input_type=_AUTHZAPPSERVICE_HASHKEYSREQUEST,

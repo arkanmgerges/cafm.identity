@@ -4,10 +4,10 @@ package cafm.identity.country;
 
 message Country {
   int32 id = 1;
-  string localeCode = 2;
-  string continentCode = 3;
-  string continentName = 4;
-  string countryIsoCode = 5;
-  string countryName = 6;
-  bool isInEuropeanUnion = 7;
+  string locale_code = 2;
+  string continent_code = 3;
+  string continent_name = 4;
+  string country_iso_code = 5;
+  string country_name = 6;
+  bool is_in_european_union = 7;
 }

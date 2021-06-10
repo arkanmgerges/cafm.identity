@@ -14,23 +14,23 @@ class UserGroupAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.userGroupByName = channel.unary_unary(
-                '/cafm.identity.user_group.UserGroupAppService/userGroupByName',
+        self.user_group_by_name = channel.unary_unary(
+                '/cafm.identity.user_group.UserGroupAppService/user_group_by_name',
                 request_serializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByNameRequest.SerializeToString,
                 response_deserializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByNameResponse.FromString,
                 )
-        self.userGroupById = channel.unary_unary(
-                '/cafm.identity.user_group.UserGroupAppService/userGroupById',
+        self.user_group_by_id = channel.unary_unary(
+                '/cafm.identity.user_group.UserGroupAppService/user_group_by_id',
                 request_serializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByIdRequest.SerializeToString,
                 response_deserializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByIdResponse.FromString,
                 )
-        self.userGroups = channel.unary_unary(
-                '/cafm.identity.user_group.UserGroupAppService/userGroups',
+        self.user_groups = channel.unary_unary(
+                '/cafm.identity.user_group.UserGroupAppService/user_groups',
                 request_serializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupsRequest.SerializeToString,
                 response_deserializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupsResponse.FromString,
                 )
-        self.newId = channel.unary_unary(
-                '/cafm.identity.user_group.UserGroupAppService/newId',
+        self.new_id = channel.unary_unary(
+                '/cafm.identity.user_group.UserGroupAppService/new_id',
                 request_serializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_newIdRequest.SerializeToString,
                 response_deserializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_newIdResponse.FromString,
                 )
@@ -39,25 +39,25 @@ class UserGroupAppServiceStub(object):
 class UserGroupAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def userGroupByName(self, request, context):
+    def user_group_by_name(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def userGroupById(self, request, context):
+    def user_group_by_id(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def userGroups(self, request, context):
+    def user_groups(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def newId(self, request, context):
+    def new_id(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -66,23 +66,23 @@ class UserGroupAppServiceServicer(object):
 
 def add_UserGroupAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'userGroupByName': grpc.unary_unary_rpc_method_handler(
-                    servicer.userGroupByName,
+            'user_group_by_name': grpc.unary_unary_rpc_method_handler(
+                    servicer.user_group_by_name,
                     request_deserializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByNameRequest.FromString,
                     response_serializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByNameResponse.SerializeToString,
             ),
-            'userGroupById': grpc.unary_unary_rpc_method_handler(
-                    servicer.userGroupById,
+            'user_group_by_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.user_group_by_id,
                     request_deserializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByIdRequest.FromString,
                     response_serializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByIdResponse.SerializeToString,
             ),
-            'userGroups': grpc.unary_unary_rpc_method_handler(
-                    servicer.userGroups,
+            'user_groups': grpc.unary_unary_rpc_method_handler(
+                    servicer.user_groups,
                     request_deserializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupsRequest.FromString,
                     response_serializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupsResponse.SerializeToString,
             ),
-            'newId': grpc.unary_unary_rpc_method_handler(
-                    servicer.newId,
+            'new_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.new_id,
                     request_deserializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_newIdRequest.FromString,
                     response_serializer=identity_dot_user__group__app__service__pb2.UserGroupAppService_newIdResponse.SerializeToString,
             ),
@@ -97,7 +97,7 @@ class UserGroupAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def userGroupByName(request,
+    def user_group_by_name(request,
             target,
             options=(),
             channel_credentials=None,
@@ -107,14 +107,14 @@ class UserGroupAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user_group.UserGroupAppService/userGroupByName',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user_group.UserGroupAppService/user_group_by_name',
             identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByNameRequest.SerializeToString,
             identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByNameResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def userGroupById(request,
+    def user_group_by_id(request,
             target,
             options=(),
             channel_credentials=None,
@@ -124,14 +124,14 @@ class UserGroupAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user_group.UserGroupAppService/userGroupById',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user_group.UserGroupAppService/user_group_by_id',
             identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByIdRequest.SerializeToString,
             identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupByIdResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def userGroups(request,
+    def user_groups(request,
             target,
             options=(),
             channel_credentials=None,
@@ -141,14 +141,14 @@ class UserGroupAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user_group.UserGroupAppService/userGroups',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user_group.UserGroupAppService/user_groups',
             identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupsRequest.SerializeToString,
             identity_dot_user__group__app__service__pb2.UserGroupAppService_userGroupsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def newId(request,
+    def new_id(request,
             target,
             options=(),
             channel_credentials=None,
@@ -158,7 +158,7 @@ class UserGroupAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user_group.UserGroupAppService/newId',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user_group.UserGroupAppService/new_id',
             identity_dot_user__group__app__service__pb2.UserGroupAppService_newIdRequest.SerializeToString,
             identity_dot_user__group__app__service__pb2.UserGroupAppService_newIdResponse.FromString,
             options, channel_credentials,

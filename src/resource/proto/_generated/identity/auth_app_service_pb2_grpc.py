@@ -14,13 +14,13 @@ class AuthAppServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.authenticateUserByEmailAndPassword = channel.unary_unary(
-                '/cafm.identity.auth.AuthAppService/authenticateUserByEmailAndPassword',
+        self.authenticate_user_by_email_and_password = channel.unary_unary(
+                '/cafm.identity.auth.AuthAppService/authenticate_user_by_email_and_password',
                 request_serializer=identity_dot_auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordRequest.SerializeToString,
                 response_deserializer=identity_dot_auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordResponse.FromString,
                 )
-        self.isAuthenticated = channel.unary_unary(
-                '/cafm.identity.auth.AuthAppService/isAuthenticated',
+        self.is_authenticated = channel.unary_unary(
+                '/cafm.identity.auth.AuthAppService/is_authenticated',
                 request_serializer=identity_dot_auth__app__service__pb2.AuthAppService_isAuthenticatedRequest.SerializeToString,
                 response_deserializer=identity_dot_auth__app__service__pb2.AuthAppService_isAuthenticatedResponse.FromString,
                 )
@@ -34,13 +34,13 @@ class AuthAppServiceStub(object):
 class AuthAppServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def authenticateUserByEmailAndPassword(self, request, context):
+    def authenticate_user_by_email_and_password(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def isAuthenticated(self, request, context):
+    def is_authenticated(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -55,13 +55,13 @@ class AuthAppServiceServicer(object):
 
 def add_AuthAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'authenticateUserByEmailAndPassword': grpc.unary_unary_rpc_method_handler(
-                    servicer.authenticateUserByEmailAndPassword,
+            'authenticate_user_by_email_and_password': grpc.unary_unary_rpc_method_handler(
+                    servicer.authenticate_user_by_email_and_password,
                     request_deserializer=identity_dot_auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordRequest.FromString,
                     response_serializer=identity_dot_auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordResponse.SerializeToString,
             ),
-            'isAuthenticated': grpc.unary_unary_rpc_method_handler(
-                    servicer.isAuthenticated,
+            'is_authenticated': grpc.unary_unary_rpc_method_handler(
+                    servicer.is_authenticated,
                     request_deserializer=identity_dot_auth__app__service__pb2.AuthAppService_isAuthenticatedRequest.FromString,
                     response_serializer=identity_dot_auth__app__service__pb2.AuthAppService_isAuthenticatedResponse.SerializeToString,
             ),
@@ -81,7 +81,7 @@ class AuthAppService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def authenticateUserByEmailAndPassword(request,
+    def authenticate_user_by_email_and_password(request,
             target,
             options=(),
             channel_credentials=None,
@@ -91,14 +91,14 @@ class AuthAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.auth.AuthAppService/authenticateUserByEmailAndPassword',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.auth.AuthAppService/authenticate_user_by_email_and_password',
             identity_dot_auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordRequest.SerializeToString,
             identity_dot_auth__app__service__pb2.AuthAppService_authenticateUserByEmailAndPasswordResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def isAuthenticated(request,
+    def is_authenticated(request,
             target,
             options=(),
             channel_credentials=None,
@@ -108,7 +108,7 @@ class AuthAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.auth.AuthAppService/isAuthenticated',
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.auth.AuthAppService/is_authenticated',
             identity_dot_auth__app__service__pb2.AuthAppService_isAuthenticatedRequest.SerializeToString,
             identity_dot_auth__app__service__pb2.AuthAppService_isAuthenticatedResponse.FromString,
             options, channel_credentials,

@@ -57,31 +57,31 @@ class CountryAppServiceListener(CountryAppServiceServicer):
     def countries(self, request, context):
         try:
 
-            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            resultSize = request.result_size if request.result_size >= 0 else 10
             logger.debug(
-                f"[{CountryAppServiceListener.countries.__qualname__}] - resultFrom: {request.resultFrom}, resultSize: {resultSize}"
+                f"[{CountryAppServiceListener.countries.__qualname__}] - resultFrom: {request.result_from}, resultSize: {resultSize}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
                 CountryApplicationService
             )
 
             orderData = [
-                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
+                {"orderBy": o.orderBy, "direction": o.direction} for o in request.orders
             ]
             result: dict = countryAppService.countries(
-                resultFrom=request.resultFrom, resultSize=resultSize, order=orderData
+                resultFrom=request.result_from, resultSize=resultSize, order=orderData
             )
             response = CountryAppService_countriesResponse()
-            response.totalItemCount = result["totalItemCount"]
+            response.total_item_count = result["totalItemCount"]
             for country in result["items"]:
                 response.countries.add(
                     id=country.id(),
-                    localeCode=country.localeCode(),
-                    continentCode=country.continentCode(),
-                    continentName=country.continentName(),
-                    countryIsoCode=country.countryIsoCode(),
-                    countryName=country.countryName(),
-                    isInEuropeanUnion=country.isInEuropeanUnion(),
+                    locale_code=country.localeCode(),
+                    continent_code=country.continentCode(),
+                    continent_name=country.continentName(),
+                    country_iso_code=country.countryIsoCode(),
+                    country_name=country.countryName(),
+                    is_in_european_union=country.isInEuropeanUnion(),
                 )
             logger.debug(
                 f"[{CountryApplicationService.countries.__qualname__}] - response: {response}"
@@ -98,11 +98,11 @@ class CountryAppServiceListener(CountryAppServiceServicer):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def countryById(self, request, context):
+    def country_by_id(self, request, context):
         try:
 
             logger.debug(
-                f"[{CountryAppServiceListener.countryById.__qualname__}] - id: {request.id}"
+                f"[{CountryAppServiceListener.country_by_id.__qualname__}] - id: {request.id}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
                 CountryApplicationService
@@ -111,12 +111,12 @@ class CountryAppServiceListener(CountryAppServiceServicer):
             country: Country = countryAppService.countryById(id=request.id)
             response = CountryAppService_countryByIdResponse()
             response.country.id = country.id()
-            response.country.localeCode = country.localeCode()
-            response.country.continentCode = country.continentCode()
-            response.country.continentName = country.continentName()
-            response.country.countryIsoCode = country.countryIsoCode()
-            response.country.countryName = country.countryName()
-            response.country.isInEuropeanUnion = country.isInEuropeanUnion()
+            response.country.locale_code = country.localeCode()
+            response.country.continent_code = country.continentCode()
+            response.country.continent_name = country.continentName()
+            response.country.country_iso_code = country.countryIsoCode()
+            response.country.country_name = country.countryName()
+            response.country.is_in_european_union = country.isInEuropeanUnion()
             logger.debug(
                 f"[{CountryApplicationService.countryById.__qualname__}] - response: {response}"
             )
@@ -136,42 +136,42 @@ class CountryAppServiceListener(CountryAppServiceServicer):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def citiesByCountryId(self, request, context):
+    def cities_by_country_id(self, request, context):
         try:
 
-            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            resultSize = request.result_size if request.result_size >= 0 else 10
             logger.debug(
-                f"[{CountryAppServiceListener.citiesByCountryId.__qualname__}] - \ "
-                f"id: {request.id},resultFrom: {request.resultFrom}, resultSize: {resultSize}"
+                f"[{CountryAppServiceListener.cities_by_country_id.__qualname__}] - \ "
+                f"id: {request.id},resultFrom: {request.result_from}, resultSize: {resultSize}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
                 CountryApplicationService
             )
 
             orderData = [
-                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
+                {"orderBy": o.orderBy, "direction": o.direction} for o in request.orders
             ]
             result: dict = countryAppService.citiesByCountryId(
                 id=request.id,
-                resultFrom=request.resultFrom,
+                resultFrom=request.result_from,
                 resultSize=resultSize,
                 order=orderData,
             )
             response = CountryAppService_citiesByCountryIdResponse()
-            response.totalItemCount = result["totalItemCount"]
+            response.total_item_count = result["totalItemCount"]
             for city in result["items"]:
                 response.cities.add(
                     id=city.id(),
-                    localeCode=city.localeCode(),
-                    continentCode=city.continentCode(),
-                    continentName=city.continentName(),
-                    countryIsoCode=city.countryIsoCode(),
-                    countryName=city.countryName(),
-                    subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
-                    subdivisionOneIsoName=city.subdivisionOneIsoName(),
-                    cityName=city.cityName(),
-                    timeZone=city.timeZone(),
-                    isInEuropeanUnion=city.isInEuropeanUnion(),
+                    locale_code=city.localeCode(),
+                    continent_code=city.continentCode(),
+                    continent_name=city.continentName(),
+                    country_iso_code=city.countryIsoCode(),
+                    country_name=city.countryName(),
+                    subdivision_one_iso_code=city.subdivisionOneIsoCode(),
+                    subdivision_one_iso_name=city.subdivisionOneIsoName(),
+                    city_name=city.cityName(),
+                    time_zone=city.timeZone(),
+                    is_in_european_union=city.isInEuropeanUnion(),
                 )
             logger.debug(
                 f"[{CountryApplicationService.citiesByCountryId.__qualname__}] - response: {response}"
@@ -188,32 +188,32 @@ class CountryAppServiceListener(CountryAppServiceServicer):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def cityByCountryId(self, request, context):
+    def city_by_country_id(self, request, context):
         try:
             logger.debug(
-                f"[{CountryAppServiceListener.cityByCountryId.__qualname__}] - \ "
-                f"country id: {request.countryId},city id: {request.cityId}"
+                f"[{CountryAppServiceListener.city_by_country_id.__qualname__}] - \ "
+                f"country id: {request.country_id},city id: {request.city_id}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
                 CountryApplicationService
             )
 
             city: City = countryAppService.cityByCountryId(
-                countryId=request.countryId, cityId=request.cityId
+                countryId=request.country_id, cityId=request.city_id
             )
 
             response = CountryAppService_cityByCountryIdResponse()
             response.city.id = city.id()
-            response.city.localeCode = city.localeCode()
-            response.city.continentCode = city.continentCode()
-            response.city.continentName = city.continentName()
-            response.city.countryIsoCode = city.countryIsoCode()
-            response.city.countryName = city.countryName()
-            response.city.subdivisionOneIsoCode = city.subdivisionOneIsoCode()
-            response.city.subdivisionOneIsoName = city.subdivisionOneIsoName()
-            response.city.cityName = city.cityName()
-            response.city.timeZone = city.timeZone()
-            response.city.isInEuropeanUnion = city.isInEuropeanUnion()
+            response.city.locale_code = city.localeCode()
+            response.city.continent_code = city.continentCode()
+            response.city.continent_name = city.continentName()
+            response.city.country_iso_code = city.countryIsoCode()
+            response.city.country_name = city.countryName()
+            response.city.subdivision_one_iso_code = city.subdivisionOneIsoCode()
+            response.city.subdivision_one_iso_name = city.subdivisionOneIsoName()
+            response.city.city_name = city.cityName()
+            response.city.time_zone = city.timeZone()
+            response.city.is_in_european_union = city.isInEuropeanUnion()
 
             logger.debug(
                 f"[{CountryApplicationService.cityByCountryId.__qualname__}] - response: {response}"
@@ -230,19 +230,19 @@ class CountryAppServiceListener(CountryAppServiceServicer):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def stateByCountryIdAndStateId(self, request, context):
+    def state_by_country_id_and_state_id(self, request, context):
         try:
             logger.debug(
-                f"[{CountryAppServiceListener.stateByCountryIdAndStateId.__qualname__}] - \ "
-                f"country id: {request.countryId}, state id: {request.stateId}"
+                f"[{CountryAppServiceListener.state_by_country_id_and_state_id.__qualname__}] - \ "
+                f"country id: {request.country_id}, state id: {request.state_id}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
                 CountryApplicationService
             )
 
             state: State = countryAppService.stateByCountryIdAndStateId(
-                countryId=request.countryId,
-                stateId=request.stateId,
+                countryId=request.country_id,
+                stateId=request.state_id,
             )
 
             response = CountryAppService_stateByCountryIdAndStateIdResponse()
@@ -268,28 +268,28 @@ class CountryAppServiceListener(CountryAppServiceServicer):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def statesByCountryId(self, request, context):
+    def states_by_country_id(self, request, context):
         try:
-            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            resultSize = request.result_size if request.result_size >= 0 else 10
             logger.debug(
-                f"[{CountryAppServiceListener.statesByCountryId.__qualname__}] - \ "
-                f"id: {request.id},resultFrom: {request.resultFrom}, resultSize: {resultSize}"
+                f"[{CountryAppServiceListener.states_by_country_id.__qualname__}] - \ "
+                f"id: {request.id},resultFrom: {request.result_from}, resultSize: {resultSize}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
                 CountryApplicationService
             )
 
             orderData = [
-                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
+                {"orderBy": o.order_by, "direction": o.direction} for o in request.orders
             ]
             result: dict = countryAppService.statesByCountryId(
                 id=request.id,
-                resultFrom=request.resultFrom,
+                resultFrom=request.result_from,
                 resultSize=resultSize,
                 order=orderData,
             )
             response = CountryAppService_statesByCountryIdResponse()
-            response.totalItemCount = result["totalItemCount"]
+            response.total_item_count = result["totalItemCount"]
             for state in result["items"]:
                 response.states.add(id=state.id(), name=state.name())
             logger.debug(
@@ -303,41 +303,41 @@ class CountryAppServiceListener(CountryAppServiceServicer):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def citiesByCountryIdAndStateId(self, request, context):
+    def cities_by_country_id_and_state_id(self, request, context):
         try:
-            resultSize = request.resultSize if request.resultSize >= 0 else 10
+            resultSize = request.result_size if request.result_size >= 0 else 10
             logger.debug(
-                f"[{CountryAppServiceListener.citiesByCountryIdAndStateId.__qualname__}] - resultFrom: {request.resultFrom}, resultSize: {resultSize}"
+                f"[{CountryAppServiceListener.cities_by_country_id_and_state_id.__qualname__}] - resultFrom: {request.result_from}, resultSize: {resultSize}"
             )
             countryAppService: CountryApplicationService = AppDi.instance.get(
                 CountryApplicationService
             )
 
             orderData = [
-                {"orderBy": o.orderBy, "direction": o.direction} for o in request.order
+                {"orderBy": o.order_by, "direction": o.direction} for o in request.orders
             ]
             result: dict = countryAppService.citiesByCountryIdAndStateId(
-                countryId=request.countryId,
-                stateId=request.stateId,
-                resultFrom=request.resultFrom,
+                countryId=request.country_id,
+                stateId=request.state_id,
+                resultFrom=request.result_from,
                 resultSize=resultSize,
                 order=orderData,
             )
             response = CountryAppService_citiesByCountryIdAndStateIdResponse()
-            response.totalItemCount = result["totalItemCount"]
+            response.total_item_count = result["totalItemCount"]
             for city in result["items"]:
                 response.cities.add(
                     id=city.id(),
-                    localeCode=city.localeCode(),
-                    continentCode=city.continentCode(),
-                    continentName=city.continentName(),
-                    countryIsoCode=city.countryIsoCode(),
-                    countryName=city.countryName(),
-                    subdivisionOneIsoCode=city.subdivisionOneIsoCode(),
-                    subdivisionOneIsoName=city.subdivisionOneIsoName(),
-                    cityName=city.cityName(),
-                    timeZone=city.timeZone(),
-                    isInEuropeanUnion=city.isInEuropeanUnion(),
+                    locale_code=city.localeCode(),
+                    continent_code=city.continentCode(),
+                    continent_name=city.continentName(),
+                    country_iso_code=city.countryIsoCode(),
+                    country_name=city.countryName(),
+                    subdivision_one_iso_code=city.subdivisionOneIsoCode(),
+                    subdivision_one_iso_name=city.subdivisionOneIsoName(),
+                    city_name=city.cityName(),
+                    time_zone=city.timeZone(),
+                    is_in_european_union=city.isInEuropeanUnion(),
                 )
             logger.debug(
                 f"[{CountryApplicationService.citiesByCountryIdAndStateId.__qualname__}] - response: {response}"
