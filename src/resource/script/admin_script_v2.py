@@ -306,6 +306,14 @@ def init_arango_db():
         # Fetch all permission contexts
         aql = """
             FOR pc IN permission_context
+                FILTER 
+                    pc.type == "resource_type" AND
+                    (pc.data.name == "realm" OR
+                    pc.data.name == "ou" OR
+                    pc.data.name == "project" OR
+                    pc.data.name == "user" OR
+                    pc.data.name == "role" OR
+                    pc.data.name == "user_group")
                 RETURN pc
         """
         permissionContextsQueryResult = db.AQLQuery(aql, rawResults=True)
@@ -529,11 +537,11 @@ def persistPermissionWithPermissionContexts(
             requestId = bulkRequest(token, dict(data=bulkData))
             result = checkForResult(token, requestId, returnResualt=True)
             # Link permission to permission context
-            bulkContectionData = mapPermissionToPermissionContext(
+            bulkConnectionData = mapPermissionToPermissionContext(
                 apiPermissionWithContexts, result
             )
-            if len(bulkContectionData) > 0:
-                requestId = bulkRequest(token, dict(data=bulkContectionData))
+            if len(bulkConnectionData) > 0:
+                requestId = bulkRequest(token, dict(data=bulkConnectionData))
                 checkForResult(token, requestId)
     except Exception as e:
         click.echo(click.style(f"{e}", fg="red"))
