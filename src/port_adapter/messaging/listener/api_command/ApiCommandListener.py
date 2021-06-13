@@ -118,13 +118,13 @@ class ApiCommandListener(CommonListener):
                     sleep(1)
             raise FailedMessageHandleException(message=f"Failed message: {processHandleData.messageData}")
 
-    def _processHandleCommand(self, processHandleData: ProcessHandleData):
+    def _processHandleMessage(self, processHandleData: ProcessHandleData):
         try:
             # Sometimes we are modifying messageData['data'], e.g. on update we are using 'new' and overwrite
             # messageData['data'], that is why we need to send a copy
             processHandleDataCopy = copy(processHandleData)
             processHandleDataCopy.messageData = copy(processHandleData.messageData)
-            return super()._handleCommand(processHandleData=processHandleDataCopy)
+            return super()._handleMessage(processHandleData=processHandleDataCopy)
         except DomainModelException as e:
             logger.warn(e)
             DomainPublishedEvents.cleanup()

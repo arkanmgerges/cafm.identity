@@ -3,6 +3,7 @@
 """
 import glob
 import importlib
+import json
 import os
 import signal
 from abc import abstractmethod
@@ -120,7 +121,7 @@ class CommonListener:
                                     messageData=messageData,
                                     handler=handler,
                                 )
-                                processHandleData.handledResult = self._processHandleCommand(processHandleData=processHandleData)
+                                processHandleData.handledResult = self._processHandleMessage(processHandleData=processHandleData)
                                 self._processHandledResult(processHandleData=processHandleData)
                                 processHandleDataList.append(processHandleData)
 
@@ -172,10 +173,10 @@ class CommonListener:
         pass
 
     @abstractmethod
-    def _processHandleCommand(self, processHandleData: ProcessHandleData):
+    def _processHandleMessage(self, processHandleData: ProcessHandleData):
         pass
 
-    def _handleCommand(self, processHandleData: ProcessHandleData):
+    def _handleMessage(self, processHandleData: ProcessHandleData):
         messageData = processHandleData.messageData
         handler = processHandleData.handler
         name = messageData["name"]
@@ -186,3 +187,32 @@ class CommonListener:
             result = handler.handleMessage(messageData=messageData)
         return {"data": "", "metadata": metadata} if result is None else result
 
+    def _produceDomainEvents(self, **kwargs):
+        logger.debug(f"[{CommonListener._produceDomainEvents.__qualname__}] get postponed events from the event publisher")
+        from src.domain_model.event.DomainPublishedEvents import DomainPublishedEvents
+        domainEvents = DomainPublishedEvents.postponedEvents()
+        producer = kwargs['producer'] if 'producer' in kwargs else None
+        messageData = kwargs['messageData'] if 'messageData' in kwargs else None
+        external = kwargs['external'] if 'external' in kwargs else []
+
+        if producer is not None and messageData is not None:
+            from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
+            for domainEvent in domainEvents:
+                logger.debug(
+                    f"[{CommonListener._produceDomainEvents.__qualname__}] produce domain event with name = {domainEvent.name()}"
+                )
+                producer.produce(
+                    obj=IdentityEvent(
+                        id=domainEvent.id(),
+                        creatorServiceName=self._creatorServiceName,
+                        name=domainEvent.name(),
+                        metadata=messageData["metadata"],
+                        data=json.dumps(domainEvent.data()),
+                        createdOn=domainEvent.occurredOn(),
+                        external=external,
+                    ),
+                    schema=IdentityEvent.get_schema(),
+                )
+
+            logger.debug(f"[{CommonListener._produceDomainEvents.__qualname__}] cleanup event publisher")
+            DomainPublishedEvents.cleanup()

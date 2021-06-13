@@ -41,15 +41,6 @@ class IdentityEventListener(CommonListener):
         messageData = processHandleData.messageData
         producer = processHandleData.producer
         try:
-            if handledResult is None:  # Consume the offset since there is no handler for it
-                logger.info(
-                    f'[{IdentityEventListener.run.__qualname__}] Command handle result is None, The offset is consumed for handleMessage(name={messageData["name"]}, data={messageData["data"]}, metadata={messageData["metadata"]})'
-                )
-                return
-
-            logger.debug(f"[{IdentityEventListener.run.__qualname__}] handleResult returned with: {handledResult}")
-
-            # Produce to project command
             if "external" in messageData:
                 external = messageData["external"]
             else:
@@ -66,6 +57,17 @@ class IdentityEventListener(CommonListener):
                     "created_on": messageData["created_on"],
                 }
             )
+
+            if handledResult is None:  # Consume the offset since there is no handler for it
+                logger.info(
+                    f'[{IdentityEventListener.run.__qualname__}] Command handle result is None, The offset is consumed for handleMessage(name={messageData["name"]}, data={messageData["data"]}, metadata={messageData["metadata"]})'
+                )
+                self._produceDomainEvents(producer=producer, messageData=messageData, external=external)
+                return
+
+            logger.debug(f"[{IdentityEventListener.run.__qualname__}] handleResult returned with: {handledResult}")
+
+            self._produceDomainEvents(producer=producer, messageData=messageData, external=external)
             producer.produce(
                 obj=IdentityCommand(
                     id=messageData["id"],
@@ -99,13 +101,13 @@ class IdentityEventListener(CommonListener):
                     sleep(1)
             raise FailedMessageHandleException(message=f"Failed message: {processHandleData.messageData}")
 
-    def _processHandleCommand(self, processHandleData: ProcessHandleData):
+    def _processHandleMessage(self, processHandleData: ProcessHandleData):
         try:
             # Sometimes we are modifying messageData['data'], e.g. on update we are using 'new' and overwrite
             # messageData['data'], that is why we need to send a copy
             processHandleDataCopy = copy(processHandleData)
             processHandleDataCopy.messageData = copy(processHandleData.messageData)
-            return super()._handleCommand(processHandleData=processHandleDataCopy)
+            return super()._handleMessage(processHandleData=processHandleDataCopy)
         except DomainModelException as e:
             logger.warn(e)
             DomainPublishedEvents.cleanup()
