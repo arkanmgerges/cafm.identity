@@ -85,7 +85,7 @@ class OuApplicationService:
         self._ouService.updateOu(oldObject=resource, newObject=obj, tokenData=tokenData)
 
     @debugLogger
-    def deleteOu(self, id: str, token: str = ""):
+    def deleteOu(self, id: str, token: str = "", **_kwargs):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[
             RoleAccessPermissionData

@@ -83,7 +83,7 @@ class RoleApplicationService:
         self._roleService.updateRole(oldObject=role, newObject=obj, tokenData=tokenData)
 
     @debugLogger
-    def deleteRole(self, id: str, token: str = ""):
+    def deleteRole(self, id: str, token: str = "", **_kwargs):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[
             RoleAccessPermissionData

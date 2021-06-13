@@ -79,7 +79,7 @@ class ProjectApplicationService:
         )
 
     @debugLogger
-    def deleteProject(self, id: str, token: str = ""):
+    def deleteProject(self, id: str, token: str = "", **_kwargs):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[
             RoleAccessPermissionData

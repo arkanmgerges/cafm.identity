@@ -79,7 +79,7 @@ class UserApplicationService:
         )
 
     @debugLogger
-    def deleteUser(self, id: str, token: str = ""):
+    def deleteUser(self, id: str, token: str = "", **_kwargs):
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[
             RoleAccessPermissionData
