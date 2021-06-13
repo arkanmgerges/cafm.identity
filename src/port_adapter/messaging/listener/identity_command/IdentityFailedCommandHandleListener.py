@@ -44,7 +44,7 @@ class IdentityFailedCommandHandleListener(CommonListener):
                 if handledResult is None:  # Consume the offset since there is no handler for it
                     logger.info(
                         f"[{IdentityFailedCommandHandleListener.run.__qualname__}] Command handle result is None, The "
-                        f'offset is consumed for handleCommand(name={messageData["name"]}, data='
+                        f'offset is consumed for handleMessage(name={messageData["name"]}, data='
                         f'{messageData["data"]}, metadata={messageData["metadata"]})'
                     )
                     return

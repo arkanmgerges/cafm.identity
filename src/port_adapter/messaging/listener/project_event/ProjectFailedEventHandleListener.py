@@ -45,7 +45,7 @@ class ProjectFailedEventHandleListener(CommonListener):
                     logger.info(
                         f"[{ProjectFailedEventHandleListener.run.__qualname__}] Command handle result is None, "
                         f"The offset is consumed "
-                        f'for handleCommand(name={messageData["name"]}, data={messageData["data"]}, '
+                        f'for handleMessage(name={messageData["name"]}, data={messageData["data"]}, '
                         f'metadata={messageData["metadata"]})'
                     )
                     return

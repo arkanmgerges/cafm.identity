@@ -181,8 +181,8 @@ class CommonListener:
         name = messageData["name"]
         metadata = messageData["metadata"]
         if name == CommonCommandConstant.PROCESS_BULK.value:
-            result = handler.handleCommand(messageData=messageData, extraData={"handlers": self._handlers})
+            result = handler.handleMessage(messageData=messageData, extraData={"handlers": self._handlers})
         else:
-            result = handler.handleCommand(messageData=messageData)
+            result = handler.handleMessage(messageData=messageData)
         return {"data": "", "metadata": metadata} if result is None else result
 
