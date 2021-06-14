@@ -91,18 +91,36 @@ class TreeParser:
         permissionNames = list(set(aggregatedPermissions))
         return self.checkPermissionsExistence(permissionNames, currentPermissions)
 
+    def isPermissionMatchingPattern(self, permissionName, matchingPattern):
+        if permissionName == matchingPattern:
+            print(f"### {permissionName} : {matchingPattern}")
+            return True
+
+        aTerms = permissionName.split(":")
+        bTerms = matchingPattern.split(":")
+        if len(aTerms) != 4 or len(bTerms) != 4:
+            return False
+
+        for i in range(4):
+            if bTerms[i] == "*" or bTerms[i] == aTerms[i]:
+                continue
+            else:
+                return False
+
+        print(f"### {permissionName} : {matchingPattern}")
+        return True
+
     def checkPermissionsExistence(self, permissionNames, currentPermissions):
         results = []
         for name in permissionNames:
             permissionsFound = list(
-                filter(lambda p: p["name"] == name, currentPermissions)
-            )
-            if len(permissionsFound) != 1:
-                raise Exception(
-                    f"{len(permissionsFound)} permissions found for name {name}"
+                filter(
+                    lambda p: self.isPermissionMatchingPattern(p["name"], name),
+                    currentPermissions,
                 )
-            else:
-                results.append(permissionsFound[0])
+            )
+            for permissionFound in permissionsFound:
+                results.append(permissionFound)
         return results
 
     # end permission tree region
