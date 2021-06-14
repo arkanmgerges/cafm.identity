@@ -12,6 +12,7 @@ from src.domain_model.role.Role import Role
 from src.domain_model.user.User import User
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.resource.logging.decorator import debugLogger
+from src.resource.logging.logger import logger
 
 
 class PolicyService:
@@ -212,6 +213,17 @@ class PolicyService:
             DomainPublishedEvents.addEventForPublishing(
                 UserToRealmAssigned(user=resourceSrc, realm=resourceDst)
             )
+        elif (
+            resourceSrc.type() == PermissionContextConstant.PROJECT.value
+            and resourceDst.type() == PermissionContextConstant.REALM.value
+        ):
+            from src.domain_model.policy.ProjectToRealmAssigned import (
+                ProjectToRealmAssigned,
+            )
+
+            DomainPublishedEvents.addEventForPublishing(
+                ProjectToRealmAssigned(project=resourceSrc, realm=resourceDst)
+            )
         else:
             from src.domain_model.policy.ResourceToResourceAssigned import (
                 ResourceToResourceAssigned,
@@ -244,6 +256,17 @@ class PolicyService:
 
             DomainPublishedEvents.addEventForPublishing(
                 UserToRealmAssignmentRevoked(user=resourceSrc, realm=resourceDst)
+            )
+        elif (
+            resourceSrc.type() == PermissionContextConstant.PROJECT.value
+            and resourceDst.type() == PermissionContextConstant.REALM.value
+        ):
+            from src.domain_model.policy.ProjectToRealmAssignmentRevoked import (
+                ProjectToRealmAssignmentRevoked,
+            )
+
+            DomainPublishedEvents.addEventForPublishing(
+                ProjectToRealmAssignmentRevoked(project=resourceSrc, realm=resourceDst)
             )
         else:
             from src.domain_model.policy.ResourceToResourceAssignmentRevoked import (

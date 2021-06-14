@@ -15,7 +15,13 @@ from uuid import uuid4
 
 
 class Realm(Resource, HasToMap):
-    def __init__(self, id: str = None, name: str = None, realmType: str = None, skipValidation: bool = False,):
+    def __init__(
+        self,
+        id: str = None,
+        name: str = None,
+        realmType: str = None,
+        skipValidation: bool = False,
+    ):
         anId = str(uuid4()) if id is None else id
         super().__init__(id=anId, type="realm")
         self._name = name
@@ -34,7 +40,12 @@ class Realm(Resource, HasToMap):
         logger.debug(
             f"[{Realm.createFrom.__qualname__}] - Create Realm with name: {name} and id: {id}"
         )
-        realm = Realm(id=id, name=name, realmType=realmType, skipValidation=skipValidation)
+        realm = Realm(
+            id=id,
+            name=name,
+            realmType=realmType,
+            skipValidation=skipValidation,
+        )
         if publishEvent:
             from src.domain_model.event.DomainPublishedEvents import (
                 DomainPublishedEvents,

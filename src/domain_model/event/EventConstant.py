@@ -69,3 +69,5 @@ class CommonEventConstant(Enum):
     ROLE_TO_REALM_ASSIGNMENT_REVOKED = "role_to_realm_assignment_revoked"
     ROLE_TO_PROJECT_ASSIGNED = "role_to_project_assigned"
     ROLE_TO_PROJECT_ASSIGNMENT_REVOKED = "role_to_project_assignment_revoked"
+    PROJECT_TO_REALM_ASSIGNED = "project_to_realm_assigned"
+    PROJECT_TO_REALM_ASSIGNMENT_REVOKED = "project_to_realm_assignment_revoked"
