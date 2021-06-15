@@ -52,7 +52,7 @@ class ProjectFailedEventHandle(MessageBase):
     def topic(self):
         return os.getenv(
             "CAFM_PROJECT_FAILED_EVENT_HANDLE_TOPIC",
-            "cafm.project.failed-evt-handle",
+            "cafm.identity.project-failed-evt-handle",
         )
 
     def msgId(self):
