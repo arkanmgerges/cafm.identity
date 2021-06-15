@@ -93,7 +93,6 @@ class TreeParser:
 
     def isPermissionMatchingPattern(self, permissionName, matchingPattern):
         if permissionName == matchingPattern:
-            print(f"### {permissionName} : {matchingPattern}")
             return True
 
         aTerms = permissionName.split(":")
@@ -107,7 +106,6 @@ class TreeParser:
             else:
                 return False
 
-        print(f"### {permissionName} : {matchingPattern}")
         return True
 
     def checkPermissionsExistence(self, permissionNames, currentPermissions):
