@@ -42,7 +42,9 @@ class UpdateRealmHandler(Handler):
 
         data = copy(dataDict)
         dataDict["id"] = dataDict.pop("realm_id")
-        appService.updateRealm(**Util.snakeCaseToLowerCameCaseDict(dataDict), token=metadataDict["token"])
+        appService.updateRealm(
+            **Util.snakeCaseToLowerCameCaseDict(dataDict), token=metadataDict["token"]
+        )
 
         return {
             "name": self._commandConstant.value,

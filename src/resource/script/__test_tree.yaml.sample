@@ -87,7 +87,6 @@ role_trees:
   role_3: &ref_role_3
     name: super_admin
     title: "Super Admin"
-    access: [*ref_tree_2]
   role_4: &ref_role_4
     name: admin
     title: "Admin"

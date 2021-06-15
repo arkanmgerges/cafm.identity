@@ -61,35 +61,42 @@ class TreeParser:
 
     # region permission tree
     def parsePermissionTree(self, parent):
+        existingPermissions = self.cafmClient.readPermissions()
         if parent["tree_type"] == "collection":
-            permissions = self.parsePermissionsCollection(parent["children"])
+            permissions = self.parsePermissionsCollection(
+                newPermissionsNames=parent["children"],
+                currentPermissions=existingPermissions,
+            )
             parent["permissions"] = permissions
             return parent
 
         if parent["tree_type"] == "aggregation":
-            permissions = self.parsePermissionsAggregation(parent["children"])
+            permissions = self.parsePermissionsAggregation(
+                permissionTrees=parent["children"],
+                currentPermissions=existingPermissions,
+            )
             parent["permissions"] = permissions
             return parent
 
-    def parsePermissionsCollection(self, permissions):
-        permissionNames = list(map(lambda item: item["name"], permissions))
-        return self.checkPermissionsExistence(permissionNames)
+    def parsePermissionsCollection(self, newPermissionsNames, currentPermissions):
+        permissionNames = list(map(lambda item: item["name"], newPermissionsNames))
+        return self.checkPermissionsExistence(permissionNames, currentPermissions)
 
-    def parsePermissionsAggregation(self, permissionTrees):
+    def parsePermissionsAggregation(self, permissionTrees, currentPermissions):
         aggregatedPermissions = []
         for tree in permissionTrees:
             children = tree["children"]
             aggregatedPermissions += map(lambda c: c["name"], children)
 
         permissionNames = list(set(aggregatedPermissions))
-        return self.checkPermissionsExistence(permissionNames)
+        return self.checkPermissionsExistence(permissionNames, currentPermissions)
 
-    def checkPermissionsExistence(self, permissionNames):
-        permissions = self.cafmClient.readPermissions()
-
+    def checkPermissionsExistence(self, permissionNames, currentPermissions):
         results = []
         for name in permissionNames:
-            permissionsFound = list(filter(lambda p: p["name"] == name, permissions))
+            permissionsFound = list(
+                filter(lambda p: p["name"] == name, currentPermissions)
+            )
             if len(permissionsFound) != 1:
                 raise Exception(
                     f"{len(permissionsFound)} permissions found for name {name}"
