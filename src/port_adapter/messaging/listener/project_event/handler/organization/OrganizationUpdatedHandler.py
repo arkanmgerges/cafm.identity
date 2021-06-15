@@ -20,13 +20,14 @@ class OrganizationUpdatedHandler(Handler):
     def canHandle(self, name: str) -> bool:
         return name == CommonEventConstant.ORGANIZATION_UPDATED.value
 
-    def handleMessage(self, messageData: dict) -> dict:
+    def handleMessage(self, messageData: dict, extraData: dict = None) -> dict:
         data = messageData["data"]
         dataDict = json.loads(data)
         dataDict = dataDict["new"]
         dataDict["realm_id"] = dataDict["organization_id"]
         messageData["data"] = json.dumps(dataDict)
-        return super().handleMessage(messageData)
+        super().handleMessage(messageData)
+        return None
 
     @staticmethod
     def targetsOnException() -> List[Callable]:

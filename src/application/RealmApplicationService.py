@@ -62,7 +62,7 @@ class RealmApplicationService:
         )
 
     @debugLogger
-    def updateRealm(self, id: str, name: str, token: str = ""):
+    def updateRealm(self, id: str, name: str, token: str = "", **_kwargs):
         obj: Realm = self.constructObject(id=id, name=name)
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[
