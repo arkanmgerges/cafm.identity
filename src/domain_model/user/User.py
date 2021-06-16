@@ -84,6 +84,9 @@ class User(Resource, HasToMap):
     def email(self) -> str:
         return self._email
 
+    def hasOneTimePassword(self) -> bool:
+        return self.isPasswordOneTimePassword()
+
     def update(self, data: dict):
         updated = False
         old = copy(self)
@@ -156,3 +159,5 @@ class User(Resource, HasToMap):
             and self.email() == other.email()
             and self.password() == other.password()
         )
+
+

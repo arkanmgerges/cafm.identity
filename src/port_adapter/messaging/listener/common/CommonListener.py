@@ -180,12 +180,10 @@ class CommonListener:
         messageData = processHandleData.messageData
         handler = processHandleData.handler
         name = messageData["name"]
-        metadata = messageData["metadata"]
         if name == CommonCommandConstant.PROCESS_BULK.value:
-            result = handler.handleMessage(messageData=messageData, extraData={"handlers": self._handlers})
+            return handler.handleMessage(messageData=messageData, extraData={"handlers": self._handlers})
         else:
-            result = handler.handleMessage(messageData=messageData)
-        return {"data": "", "metadata": metadata} if result is None else result
+            return handler.handleMessage(messageData=messageData)
 
     def _produceDomainEvents(self, **kwargs):
         logger.debug(f"[{CommonListener._produceDomainEvents.__qualname__}] get postponed events from the event publisher")
