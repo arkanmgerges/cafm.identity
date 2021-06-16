@@ -18,6 +18,7 @@ from src.domain_model.role.RoleRepository import RoleRepository
 from src.domain_model.role.RoleService import RoleService
 from src.domain_model.token.TokenService import TokenService
 from src.resource.logging.decorator import debugLogger
+from src.resource.logging.logger import logger
 
 
 class RoleApplicationService:
@@ -59,6 +60,35 @@ class RoleApplicationService:
         )
         return self._roleService.createRole(
             obj=obj, objectOnly=objectOnly, tokenData=tokenData
+        )
+
+    @debugLogger
+    def createRoleForProject(
+        self,
+        id: str = None,
+        name: str = "",
+        title: str = "",
+        projectId: str = "",
+        objectOnly: bool = False,
+        token: str = "",
+    ):
+        obj: Role = self.constructObject(id=id, name=name, title=title)
+        objectOnly = True
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessList: List[
+            RoleAccessPermissionData
+        ] = self._authzService.roleAccessPermissionsData(
+            tokenData=tokenData, includeAccessTree=False
+        )
+        self._authzService.verifyAccess(
+            roleAccessPermissionsData=roleAccessList,
+            requestedPermissionAction=PermissionAction.CREATE,
+            requestedContextData=ResourceTypeContextDataRequest(resourceType="role"),
+            tokenData=tokenData,
+        )
+
+        return self._roleService.createRoleForProject(
+            obj=obj, objectOnly=objectOnly, tokenData=tokenData, projectId=projectId
         )
 
     @debugLogger

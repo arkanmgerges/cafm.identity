@@ -19,7 +19,7 @@ from src.resource.logging.logger import logger
 class IdentityFailedEventHandleListener(CommonListener):
     def __init__(self):
         super().__init__(
-            creatorServiceName=os.getenv("CAFM_PROJECT_SERVICE_NAME", "cafm.identity"),
+            creatorServiceName=os.getenv("CAFM_IDENTITY_SERVICE_NAME", "cafm.identity"),
             handlersPath=f"{os.path.dirname(os.path.abspath(__file__))}/handler/**/*.py",
         )
 
