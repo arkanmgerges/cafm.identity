@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1fidentity/user_app_service.proto\x12\x12\x63\x61\x66m.identity.user\x1a\x13identity/user.proto\x1a\x0border.proto\"O\n,UserAppService_userByEmailAndPasswordRequest\x12\r\n\x05\x65mail\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"W\n-UserAppService_userByEmailAndPasswordResponse\x12&\n\x04user\x18\x01 \x01(\x0b\x32\x18.cafm.identity.user.User\",\n\x1eUserAppService_userByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"I\n\x1fUserAppService_userByIdResponse\x12&\n\x04user\x18\x01 \x01(\x0b\x32\x18.cafm.identity.user.User\"q\n\x1bUserAppService_usersRequest\x12\x13\n\x0bresult_from\x18\x01 \x01(\x05\x12\x13\n\x0bresult_size\x18\x02 \x01(\x05\x12(\n\x06orders\x18\x03 \x03(\x0b\x32\x18.cafm.common.order.Order\"a\n\x1cUserAppService_usersResponse\x12\'\n\x05users\x18\x01 \x03(\x0b\x32\x18.cafm.identity.user.User\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\"\x1d\n\x1bUserAppService_newIdRequest\"*\n\x1cUserAppService_newIdResponse\x12\n\n\x02id\x18\x01 \x01(\t\"?\n,UserAppService_userHasOneTimePasswordRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\t\"N\n-UserAppService_userHasOneTimePasswordResponse\x12\x1d\n\x15has_one_time_password\x18\x01 \x01(\x08\x32\xb2\x05\n\x0eUserAppService\x12\xa3\x01\n\x1auser_by_email_and_password\x12@.cafm.identity.user.UserAppService_userByEmailAndPasswordRequest\x1a\x41.cafm.identity.user.UserAppService_userByEmailAndPasswordResponse\"\x00\x12w\n\nuser_by_id\x12\x32.cafm.identity.user.UserAppService_userByIdRequest\x1a\x33.cafm.identity.user.UserAppService_userByIdResponse\"\x00\x12l\n\x05users\x12/.cafm.identity.user.UserAppService_usersRequest\x1a\x30.cafm.identity.user.UserAppService_usersResponse\"\x00\x12m\n\x06new_id\x12/.cafm.identity.user.UserAppService_newIdRequest\x1a\x30.cafm.identity.user.UserAppService_newIdResponse\"\x00\x12\xa3\x01\n\x1auser_has_one_time_password\x12@.cafm.identity.user.UserAppService_userHasOneTimePasswordRequest\x1a\x41.cafm.identity.user.UserAppService_userHasOneTimePasswordResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x1fidentity/user_app_service.proto\x12\x12\x63\x61\x66m.identity.user\x1a\x13identity/user.proto\x1a\x0border.proto\"O\n,UserAppService_userByEmailAndPasswordRequest\x12\r\n\x05\x65mail\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"W\n-UserAppService_userByEmailAndPasswordResponse\x12&\n\x04user\x18\x01 \x01(\x0b\x32\x18.cafm.identity.user.User\",\n\x1eUserAppService_userByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"I\n\x1fUserAppService_userByIdResponse\x12&\n\x04user\x18\x01 \x01(\x0b\x32\x18.cafm.identity.user.User\"q\n\x1bUserAppService_usersRequest\x12\x13\n\x0bresult_from\x18\x01 \x01(\x05\x12\x13\n\x0bresult_size\x18\x02 \x01(\x05\x12(\n\x06orders\x18\x03 \x03(\x0b\x32\x18.cafm.common.order.Order\"a\n\x1cUserAppService_usersResponse\x12\'\n\x05users\x18\x01 \x03(\x0b\x32\x18.cafm.identity.user.User\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\"\x1d\n\x1bUserAppService_newIdRequest\"*\n\x1cUserAppService_newIdResponse\x12\n\n\x02id\x18\x01 \x01(\t\";\n(UserAppService_hasUserPasswordSetRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\t\"J\n)UserAppService_hasUserPasswordSetResponse\x12\x1d\n\x15has_user_password_set\x18\x01 \x01(\x08\x32\xa5\x05\n\x0eUserAppService\x12\xa3\x01\n\x1auser_by_email_and_password\x12@.cafm.identity.user.UserAppService_userByEmailAndPasswordRequest\x1a\x41.cafm.identity.user.UserAppService_userByEmailAndPasswordResponse\"\x00\x12w\n\nuser_by_id\x12\x32.cafm.identity.user.UserAppService_userByIdRequest\x1a\x33.cafm.identity.user.UserAppService_userByIdResponse\"\x00\x12l\n\x05users\x12/.cafm.identity.user.UserAppService_usersRequest\x1a\x30.cafm.identity.user.UserAppService_usersResponse\"\x00\x12m\n\x06new_id\x12/.cafm.identity.user.UserAppService_newIdRequest\x1a\x30.cafm.identity.user.UserAppService_newIdResponse\"\x00\x12\x96\x01\n\x15has_user_password_set\x12<.cafm.identity.user.UserAppService_hasUserPasswordSetRequest\x1a=.cafm.identity.user.UserAppService_hasUserPasswordSetResponse\"\x00\x62\x06proto3'
   ,
   dependencies=[identity_dot_user__pb2.DESCRIPTOR,order__pb2.DESCRIPTOR,])
 
@@ -305,16 +305,16 @@ _USERAPPSERVICE_NEWIDRESPONSE = _descriptor.Descriptor(
 )
 
 
-_USERAPPSERVICE_USERHASONETIMEPASSWORDREQUEST = _descriptor.Descriptor(
-  name='UserAppService_userHasOneTimePasswordRequest',
-  full_name='cafm.identity.user.UserAppService_userHasOneTimePasswordRequest',
+_USERAPPSERVICE_HASUSERPASSWORDSETREQUEST = _descriptor.Descriptor(
+  name='UserAppService_hasUserPasswordSetRequest',
+  full_name='cafm.identity.user.UserAppService_hasUserPasswordSetRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='user_id', full_name='cafm.identity.user.UserAppService_userHasOneTimePasswordRequest.user_id', index=0,
+      name='user_id', full_name='cafm.identity.user.UserAppService_hasUserPasswordSetRequest.user_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -333,20 +333,20 @@ _USERAPPSERVICE_USERHASONETIMEPASSWORDREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=669,
-  serialized_end=732,
+  serialized_end=728,
 )
 
 
-_USERAPPSERVICE_USERHASONETIMEPASSWORDRESPONSE = _descriptor.Descriptor(
-  name='UserAppService_userHasOneTimePasswordResponse',
-  full_name='cafm.identity.user.UserAppService_userHasOneTimePasswordResponse',
+_USERAPPSERVICE_HASUSERPASSWORDSETRESPONSE = _descriptor.Descriptor(
+  name='UserAppService_hasUserPasswordSetResponse',
+  full_name='cafm.identity.user.UserAppService_hasUserPasswordSetResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='has_one_time_password', full_name='cafm.identity.user.UserAppService_userHasOneTimePasswordResponse.has_one_time_password', index=0,
+      name='has_user_password_set', full_name='cafm.identity.user.UserAppService_hasUserPasswordSetResponse.has_user_password_set', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -364,8 +364,8 @@ _USERAPPSERVICE_USERHASONETIMEPASSWORDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=734,
-  serialized_end=812,
+  serialized_start=730,
+  serialized_end=804,
 )
 
 _USERAPPSERVICE_USERBYEMAILANDPASSWORDRESPONSE.fields_by_name['user'].message_type = identity_dot_user__pb2._USER
@@ -380,8 +380,8 @@ DESCRIPTOR.message_types_by_name['UserAppService_usersRequest'] = _USERAPPSERVIC
 DESCRIPTOR.message_types_by_name['UserAppService_usersResponse'] = _USERAPPSERVICE_USERSRESPONSE
 DESCRIPTOR.message_types_by_name['UserAppService_newIdRequest'] = _USERAPPSERVICE_NEWIDREQUEST
 DESCRIPTOR.message_types_by_name['UserAppService_newIdResponse'] = _USERAPPSERVICE_NEWIDRESPONSE
-DESCRIPTOR.message_types_by_name['UserAppService_userHasOneTimePasswordRequest'] = _USERAPPSERVICE_USERHASONETIMEPASSWORDREQUEST
-DESCRIPTOR.message_types_by_name['UserAppService_userHasOneTimePasswordResponse'] = _USERAPPSERVICE_USERHASONETIMEPASSWORDRESPONSE
+DESCRIPTOR.message_types_by_name['UserAppService_hasUserPasswordSetRequest'] = _USERAPPSERVICE_HASUSERPASSWORDSETREQUEST
+DESCRIPTOR.message_types_by_name['UserAppService_hasUserPasswordSetResponse'] = _USERAPPSERVICE_HASUSERPASSWORDSETRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 UserAppService_userByEmailAndPasswordRequest = _reflection.GeneratedProtocolMessageType('UserAppService_userByEmailAndPasswordRequest', (_message.Message,), {
@@ -440,19 +440,19 @@ UserAppService_newIdResponse = _reflection.GeneratedProtocolMessageType('UserApp
   })
 _sym_db.RegisterMessage(UserAppService_newIdResponse)
 
-UserAppService_userHasOneTimePasswordRequest = _reflection.GeneratedProtocolMessageType('UserAppService_userHasOneTimePasswordRequest', (_message.Message,), {
-  'DESCRIPTOR' : _USERAPPSERVICE_USERHASONETIMEPASSWORDREQUEST,
+UserAppService_hasUserPasswordSetRequest = _reflection.GeneratedProtocolMessageType('UserAppService_hasUserPasswordSetRequest', (_message.Message,), {
+  'DESCRIPTOR' : _USERAPPSERVICE_HASUSERPASSWORDSETREQUEST,
   '__module__' : 'identity.user_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:cafm.identity.user.UserAppService_userHasOneTimePasswordRequest)
+  # @@protoc_insertion_point(class_scope:cafm.identity.user.UserAppService_hasUserPasswordSetRequest)
   })
-_sym_db.RegisterMessage(UserAppService_userHasOneTimePasswordRequest)
+_sym_db.RegisterMessage(UserAppService_hasUserPasswordSetRequest)
 
-UserAppService_userHasOneTimePasswordResponse = _reflection.GeneratedProtocolMessageType('UserAppService_userHasOneTimePasswordResponse', (_message.Message,), {
-  'DESCRIPTOR' : _USERAPPSERVICE_USERHASONETIMEPASSWORDRESPONSE,
+UserAppService_hasUserPasswordSetResponse = _reflection.GeneratedProtocolMessageType('UserAppService_hasUserPasswordSetResponse', (_message.Message,), {
+  'DESCRIPTOR' : _USERAPPSERVICE_HASUSERPASSWORDSETRESPONSE,
   '__module__' : 'identity.user_app_service_pb2'
-  # @@protoc_insertion_point(class_scope:cafm.identity.user.UserAppService_userHasOneTimePasswordResponse)
+  # @@protoc_insertion_point(class_scope:cafm.identity.user.UserAppService_hasUserPasswordSetResponse)
   })
-_sym_db.RegisterMessage(UserAppService_userHasOneTimePasswordResponse)
+_sym_db.RegisterMessage(UserAppService_hasUserPasswordSetResponse)
 
 
 
@@ -463,8 +463,8 @@ _USERAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=815,
-  serialized_end=1505,
+  serialized_start=807,
+  serialized_end=1484,
   methods=[
   _descriptor.MethodDescriptor(
     name='user_by_email_and_password',
@@ -507,12 +507,12 @@ _USERAPPSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='user_has_one_time_password',
-    full_name='cafm.identity.user.UserAppService.user_has_one_time_password',
+    name='has_user_password_set',
+    full_name='cafm.identity.user.UserAppService.has_user_password_set',
     index=4,
     containing_service=None,
-    input_type=_USERAPPSERVICE_USERHASONETIMEPASSWORDREQUEST,
-    output_type=_USERAPPSERVICE_USERHASONETIMEPASSWORDRESPONSE,
+    input_type=_USERAPPSERVICE_HASUSERPASSWORDSETREQUEST,
+    output_type=_USERAPPSERVICE_HASUSERPASSWORDSETRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

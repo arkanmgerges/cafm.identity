@@ -34,10 +34,10 @@ class UserAppServiceStub(object):
                 request_serializer=identity_dot_user__app__service__pb2.UserAppService_newIdRequest.SerializeToString,
                 response_deserializer=identity_dot_user__app__service__pb2.UserAppService_newIdResponse.FromString,
                 )
-        self.user_has_one_time_password = channel.unary_unary(
-                '/cafm.identity.user.UserAppService/user_has_one_time_password',
-                request_serializer=identity_dot_user__app__service__pb2.UserAppService_userHasOneTimePasswordRequest.SerializeToString,
-                response_deserializer=identity_dot_user__app__service__pb2.UserAppService_userHasOneTimePasswordResponse.FromString,
+        self.has_user_password_set = channel.unary_unary(
+                '/cafm.identity.user.UserAppService/has_user_password_set',
+                request_serializer=identity_dot_user__app__service__pb2.UserAppService_hasUserPasswordSetRequest.SerializeToString,
+                response_deserializer=identity_dot_user__app__service__pb2.UserAppService_hasUserPasswordSetResponse.FromString,
                 )
 
 
@@ -68,7 +68,7 @@ class UserAppServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def user_has_one_time_password(self, request, context):
+    def has_user_password_set(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -97,10 +97,10 @@ def add_UserAppServiceServicer_to_server(servicer, server):
                     request_deserializer=identity_dot_user__app__service__pb2.UserAppService_newIdRequest.FromString,
                     response_serializer=identity_dot_user__app__service__pb2.UserAppService_newIdResponse.SerializeToString,
             ),
-            'user_has_one_time_password': grpc.unary_unary_rpc_method_handler(
-                    servicer.user_has_one_time_password,
-                    request_deserializer=identity_dot_user__app__service__pb2.UserAppService_userHasOneTimePasswordRequest.FromString,
-                    response_serializer=identity_dot_user__app__service__pb2.UserAppService_userHasOneTimePasswordResponse.SerializeToString,
+            'has_user_password_set': grpc.unary_unary_rpc_method_handler(
+                    servicer.has_user_password_set,
+                    request_deserializer=identity_dot_user__app__service__pb2.UserAppService_hasUserPasswordSetRequest.FromString,
+                    response_serializer=identity_dot_user__app__service__pb2.UserAppService_hasUserPasswordSetResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -181,7 +181,7 @@ class UserAppService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def user_has_one_time_password(request,
+    def has_user_password_set(request,
             target,
             options=(),
             channel_credentials=None,
@@ -191,8 +191,8 @@ class UserAppService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user.UserAppService/user_has_one_time_password',
-            identity_dot_user__app__service__pb2.UserAppService_userHasOneTimePasswordRequest.SerializeToString,
-            identity_dot_user__app__service__pb2.UserAppService_userHasOneTimePasswordResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.user.UserAppService/has_user_password_set',
+            identity_dot_user__app__service__pb2.UserAppService_hasUserPasswordSetRequest.SerializeToString,
+            identity_dot_user__app__service__pb2.UserAppService_hasUserPasswordSetResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

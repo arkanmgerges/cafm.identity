@@ -36,9 +36,9 @@ class UserApplicationService:
         return User.createFrom(skipValidation=True).id()
 
     @debugLogger
-    def userHasOneTimePassword(self, userId: str) -> bool:
+    def hasUserPasswordSet(self, userId: str) -> bool:
         user: User = self._userRepository.userById(userId)
-        return user.hasOneTimePassword()
+        return not (user.hasOneTimePassword() or user.password() == "" or user.password() is None)
 
     @debugLogger
     def createUser(

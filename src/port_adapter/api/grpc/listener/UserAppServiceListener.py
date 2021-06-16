@@ -24,7 +24,7 @@ from src.resource.proto._generated.identity.user_app_service_pb2 import (
     UserAppService_userByEmailAndPasswordResponse,
     UserAppService_usersResponse,
     UserAppService_userByIdResponse,
-    UserAppService_newIdResponse, UserAppService_userHasOneTimePasswordResponse,
+    UserAppService_newIdResponse, UserAppService_hasUserPasswordSetResponse,
 )
 from src.resource.proto._generated.identity.user_app_service_pb2_grpc import (
     UserAppServiceServicer,
@@ -61,11 +61,11 @@ class UserAppServiceListener(UserAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
-    def user_has_one_time_password(self, request, context):
-        response = UserAppService_userHasOneTimePasswordResponse
+    def has_user_password_set(self, request, context):
+        response = UserAppService_hasUserPasswordSetResponse
         try:
             appService: UserApplicationService = AppDi.instance.get(UserApplicationService)
-            return response(has_one_time_password=appService.userHasOneTimePassword(userId=request.user_id))
+            return response(has_user_password_set=appService.hasUserPasswordSet(userId=request.user_id))
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details("Un Authorized")
