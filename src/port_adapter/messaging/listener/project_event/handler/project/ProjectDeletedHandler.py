@@ -13,5 +13,4 @@ class ProjectDeletedHandler(Handler):
         return name == CommonEventConstant.PROJECT_DELETED.value
 
     def handleMessage(self, messageData: dict, extraData: dict = None) -> dict:
-        super().handleMessage(messageData=messageData, extraData=extraData)
-        return None
+        return super().handleMessage(messageData=messageData, extraData=extraData)

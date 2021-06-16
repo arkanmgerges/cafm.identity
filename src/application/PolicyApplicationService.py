@@ -38,6 +38,7 @@ from src.domain_model.util.DomainModelAttributeValidator import (
     DomainModelAttributeValidator,
 )
 from src.resource.logging.decorator import debugLogger
+from src.resource.logging.logger import logger
 
 
 class PolicyApplicationService:

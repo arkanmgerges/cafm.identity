@@ -14,6 +14,7 @@ from src.domain_model.resource.exception.RoleDoesNotExistException import (
 )
 from src.domain_model.token.TokenData import TokenData
 from src.resource.logging.decorator import debugLogger
+from src.resource.logging.logger import logger
 
 
 class RoleService:
@@ -35,6 +36,15 @@ class RoleService:
             obj = Role.createFromObject(obj=obj, publishEvent=True)
             self._repo.save(obj=obj, tokenData=tokenData)
             return obj
+
+    @debugLogger
+    def createRoleForProject(
+        self, obj: Role, projectId: str = '', objectOnly: bool = False, tokenData: TokenData = None
+    ):
+        obj = Role.createFromObjectForProject(obj=obj, publishEvent=True, generateNewId=True, projectId=projectId)
+
+        self._repo.save(obj=obj, tokenData=tokenData)
+        return obj
 
     @debugLogger
     def deleteRole(self, obj: Role, tokenData: TokenData = None):

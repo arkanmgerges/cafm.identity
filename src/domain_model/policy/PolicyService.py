@@ -224,6 +224,17 @@ class PolicyService:
             DomainPublishedEvents.addEventForPublishing(
                 ProjectToRealmAssigned(project=resourceSrc, realm=resourceDst)
             )
+        elif (
+            resourceSrc.type() == PermissionContextConstant.ROLE.value
+            and resourceDst.type() == PermissionContextConstant.PROJECT.value
+        ):
+            from src.domain_model.policy.RoleToProjectAssigned import (
+                RoleToProjectAssigned,
+            )
+
+            DomainPublishedEvents.addEventForPublishing(
+                RoleToProjectAssigned(role=resourceSrc, project=resourceDst)
+            )
         else:
             from src.domain_model.policy.ResourceToResourceAssigned import (
                 ResourceToResourceAssigned,
