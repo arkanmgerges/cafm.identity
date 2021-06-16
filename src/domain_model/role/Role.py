@@ -54,7 +54,7 @@ class Role(Resource, HasToMap):
         cls, obj: "Role", publishEvent: bool = False, generateNewId: bool = False, projectId: str = ''
     ):
         logger.debug(f"[{Role.createFromObject.__qualname__}]")
-        id = None if generateNewId else obj.id()
+        id = cls.createFrom().id()
 
         from src.domain_model.event.DomainPublishedEvents import (
                 DomainPublishedEvents,

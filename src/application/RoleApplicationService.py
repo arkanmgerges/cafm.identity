@@ -73,7 +73,6 @@ class RoleApplicationService:
         token: str = "",
     ):
         obj: Role = self.constructObject(id=id, name=name, title=title)
-        objectOnly = True
         tokenData = TokenService.tokenDataFromToken(token=token)
         roleAccessList: List[
             RoleAccessPermissionData

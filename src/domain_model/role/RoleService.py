@@ -41,9 +41,10 @@ class RoleService:
     def createRoleForProject(
         self, obj: Role, projectId: str = '', objectOnly: bool = False, tokenData: TokenData = None
     ):
-        return (
-            Role.createFromObjectForProject(obj=obj, publishEvent=True, generateNewId=True, projectId=projectId)
-        )
+        obj = Role.createFromObjectForProject(obj=obj, publishEvent=True, generateNewId=True, projectId=projectId)
+
+        self._repo.save(obj=obj, tokenData=tokenData)
+        return obj
 
     @debugLogger
     def deleteRole(self, obj: Role, tokenData: TokenData = None):
