@@ -124,7 +124,7 @@ class User(Resource, HasToMap):
         self._password = f'{str(uuid4()).replace("-", "")}{User.ONE_TIME_PASSWORD_TAG}'
         DomainPublishedEvents.addEventForPublishing(UserOneTimePasswordGenerated(self))
 
-    def isPasswordOneTimePassword(self):
+    def isPasswordOneTimePassword(self) -> bool:
         return self._password.endswith(User.ONE_TIME_PASSWORD_TAG)
 
     def stripOneTimePasswordTag(self):
