@@ -39,19 +39,18 @@ message UserAppService_newIdResponse {
   string id = 1;
 }
 
-message UserAppService_hasOneTimePasswordRequest {
+message UserAppService_userHasOneTimePasswordRequest {
   string user_id = 1;
 }
 
-message UserAppService_hasOneTimePasswordResponse {
+message UserAppService_userHasOneTimePasswordResponse {
   bool has_one_time_password = 1;
 }
-
 
 service UserAppService {
   rpc user_by_email_and_password (UserAppService_userByEmailAndPasswordRequest) returns (UserAppService_userByEmailAndPasswordResponse) {}
   rpc user_by_id (UserAppService_userByIdRequest) returns (UserAppService_userByIdResponse) {}
   rpc users (UserAppService_usersRequest) returns (UserAppService_usersResponse) {}
   rpc new_id (UserAppService_newIdRequest) returns (UserAppService_newIdResponse) {}
-  rpc has_one_time_password (UserAppService_hasOneTimePasswordRequest) returns (UserAppService_hasOneTimePasswordResponse) {}
+  rpc user_has_one_time_password (UserAppService_userHasOneTimePasswordRequest) returns (UserAppService_userHasOneTimePasswordResponse) {}
 }
