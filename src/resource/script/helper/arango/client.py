@@ -28,7 +28,7 @@ class ArangoClient:
         id = roleId or str(uuid.uuid4())
         aql = """
             UPSERT {name: @name, type: @type}
-                INSERT {id: @id, name: @name, title: @title, type: @type}
+                INSERT {_key: @id, id: @id, name: @name, title: @title, type: @type}
                 UPDATE {name: @name, title: @title, type: @type}
                 IN resource
             """
