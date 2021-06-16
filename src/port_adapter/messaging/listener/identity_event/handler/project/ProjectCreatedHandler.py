@@ -19,5 +19,4 @@ class ProjectCreatedHandler(Handler):
         return name == CommonEventConstant.PROJECT_CREATED.value
 
     def handleMessage(self, messageData: dict, extraData: dict = None) -> dict:
-        super().handleMessage(messageData=messageData, extraData=extraData)
-        return None
+        return super().handleMessage(messageData=messageData, extraData=extraData)

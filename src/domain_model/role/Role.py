@@ -54,17 +54,16 @@ class Role(Resource, HasToMap):
         cls, obj: "Role", publishEvent: bool = False, generateNewId: bool = False, projectId: str = ''
     ):
         logger.debug(f"[{Role.createFromObject.__qualname__}]")
-        id = cls.createFrom().id()
 
         from src.domain_model.event.DomainPublishedEvents import (
                 DomainPublishedEvents,
             )
         from src.domain_model.role.RoleCreatedForProject import RoleCreatedForProject
 
-        role = Role(id, obj.name(), obj.title(), skipValidation=False)
+        role = Role( obj.id(), obj.name(), obj.title(), skipValidation=False)
 
         result = cls.createFrom(
-            id=id, name=obj.name(), title=obj.title(), publishEvent=publishEvent
+            id= obj.id(), name=obj.name(), title=obj.title(), publishEvent=publishEvent
         )
         DomainPublishedEvents.addEventForPublishing(RoleCreatedForProject(role, projectId))
         return result

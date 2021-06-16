@@ -21,6 +21,7 @@ class CommonCommandConstant(Enum):
     DELETE_USER = "delete_user"
     UPDATE_USER = "update_user"
     CREATE_ROLE = "create_role"
+    CREATE_ROLE_FOR_PROJECT_ACCESS = "create_role_for_project_access"
     DELETE_ROLE = "delete_role"
     UPDATE_ROLE = "update_role"
     CREATE_OU = "create_ou"
