@@ -98,14 +98,22 @@ def check_schema_registry_readiness():
 def create_super_admin_user():
     sysCafmClient = CAFMClient(
         dict(
-        email='user@admin.system',
-        password='1234',
-        base_url=os.getenv("API_URL"),
-    ))
-    roleId = sysCafmClient.ensureRoleExistence('super_admin', 'Super Admin')
-    userId = sysCafmClient.ensureUserExistence(os.getenv('ADMIN_EMAIL', 'admin@local.me'))
-    sysCafmClient.setUserPassword(userId=userId, password=os.getenv('ADMIN_PASSWORD', '1234'))
-    sysCafmClient.createAssignmentRoleToUser(roleId=roleId, userId=userId, ignoreExistence=True)
+            email="user@admin.system",
+            password="1234",
+            base_url=os.getenv("API_URL"),
+        )
+    )
+    roleId = sysCafmClient.ensureRoleExistence("super_admin", "Super Admin")
+    userId = sysCafmClient.ensureUserExistence(
+        os.getenv("ADMIN_EMAIL", "admin@local.me")
+    )
+    sysCafmClient.setUserPassword(
+        userId=userId, password=os.getenv("ADMIN_PASSWORD", "1234")
+    )
+    sysCafmClient.createAssignmentRoleToUser(
+        roleId=roleId, userId=userId, ignoreExistence=True
+    )
+
 
 @cli.command(help="Check that redis is ready")
 def check_redis_readiness():
@@ -433,28 +441,28 @@ def create_arango_db_user(email, password, database_name):
 
 
 @cli.command(help="Create user and assign super admin role")
-@click.argument("email")
-@click.argument("password")
-@click.argument("database_name")
-def create_arango_resource_user_with_sys_admin_role(email, password, database_name):
+def create_arango_resource_user_with_sys_admin_role():
     click.echo(
         click.style(f"[Arango] Create user and assign super_admin role", fg="green")
     )
 
     conn = arangoClient.getConnection()
 
-    db = conn[database_name]
+    db = conn["cafm-identity"]
 
     name = "sys_admin"
+    title = "System Admin"
     arangoClient.createOrUpdateRole(
         db=db,
         roleName=name,
-        roleTitle="System Admin",
+        roleTitle=title,
     )
+
+    email = "user@admin.system"
     arangoClient.createOrUpdateUser(
         db=db,
         email=email,
-        password=password,
+        password="1234",
     )
 
     roleDocId = arangoClient.getResourceDocId(db, nameOrEmail=name, type="role")
@@ -839,7 +847,12 @@ def permissions(token: str) -> List[dict]:
 
 def getAccessToken():
     click.echo(click.style(f"Get Access Token", fg="green"))
-    click.echo(click.style(f"em: {os.getenv('ADMIN_EMAIL', None)},  ps: {os.getenv('ADMIN_PASSWORD', None)}", fg="green"))
+    click.echo(
+        click.style(
+            f"em: {os.getenv('ADMIN_EMAIL', None)},  ps: {os.getenv('ADMIN_PASSWORD', None)}",
+            fg="green",
+        )
+    )
     resp = requests.post(
         baseURL + "/v1/identity/auth/authenticate",
         json=dict(
