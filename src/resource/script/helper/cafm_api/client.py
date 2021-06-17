@@ -378,7 +378,7 @@ class CAFMClient:
 
                 return rolesFound[0]
             else:
-                raise Exception(f"Multiple ous founds for name:{name}")
+                raise Exception(f"Multiple roles founds for name:{name}")
         return None
 
     def createRole(self, name, title):
