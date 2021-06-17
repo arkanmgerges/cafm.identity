@@ -38,12 +38,12 @@ class RoleService:
             return obj
 
     @debugLogger
-    def createRoleForProject(
+    def createRoleForProjectAccess(
         self, obj: Role, projectId: str = '', objectOnly: bool = False, tokenData: TokenData = None
     ):
-        obj = Role.createFromObjectForProject(obj=obj, publishEvent=True, generateNewId=True, projectId=projectId)
+        obj = Role.createFromObjectForProjectAccess(obj=obj, publishEvent=True, generateNewId=True, projectId=projectId)
 
-        self._repo.save(obj=obj, tokenData=tokenData)
+        self._repo.saveRoleForProjectAccess(obj=obj, projectId=projectId, tokenData=tokenData)
         return obj
 
     @debugLogger

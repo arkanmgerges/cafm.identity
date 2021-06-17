@@ -3,13 +3,9 @@
 """
 import json
 from copy import copy
-from logging import log
 
 import src.port_adapter.AppDi as AppDi
 from src.application.RoleApplicationService import RoleApplicationService
-from src.domain_model.resource.exception.UnAuthorizedException import (
-    UnAuthorizedException,
-)
 from src.port_adapter.messaging.listener.CommandConstant import CommonCommandConstant
 from src.port_adapter.messaging.listener.common.handler.Handler import Handler
 from src.resource.common.DateTimeHelper import DateTimeHelper
@@ -37,7 +33,9 @@ class CreateRoleForProjectAccessHandler(Handler):
         dataDict = json.loads(data)
         metadataDict = json.loads(metadata)
 
-        appService.createRoleForProject(**Util.snakeCaseToLowerCameCaseDict(dataDict), token=metadataDict["token"])
+        data = copy(dataDict)
+        dataDict['id'] = dataDict.pop('role_id')
+        appService.createRoleForProjectAccess(**Util.snakeCaseToLowerCameCaseDict(dataDict), token=metadataDict["token"])
 
         return {
             "name": self._commandConstant.value,

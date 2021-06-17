@@ -906,9 +906,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         roleAccessPermissionData: List[RoleAccessPermissionData] = None,
         sortData: str = "",
     ) -> dict:
-        if TokenService.isSuperAdmin(tokenData=tokenData) or self._canRead(
-            roleAccessPermissionData, PermissionContextConstant.PERMISSION
-        ):
+        if TokenService.isSuperAdmin(tokenData=tokenData) or TokenService.isSysAdmin(tokenData=tokenData) or \
+                self._canRead(roleAccessPermissionData, PermissionContextConstant.PERMISSION):
             aql = """
                 LET ds = (FOR d IN permission #sortData RETURN d)
                 RETURN {items: ds}
@@ -928,9 +927,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         roleAccessPermissionData: List[RoleAccessPermissionData] = None,
         sortData: str = "",
     ) -> dict:
-        if TokenService.isSuperAdmin(tokenData=tokenData) or self._canRead(
-            roleAccessPermissionData, PermissionContextConstant.PERMISSION_CONTEXT
-        ):
+        if TokenService.isSuperAdmin(tokenData=tokenData) or TokenService.isSysAdmin(tokenData=tokenData) or \
+                self._canRead(roleAccessPermissionData, PermissionContextConstant.PERMISSION_CONTEXT):
             aql = """
                 LET ds = (FOR d IN permission_context #sortData RETURN d)
                 RETURN {items: ds}
@@ -987,6 +985,8 @@ class PolicyRepositoryImpl(PolicyRepository):
     def getRolesTrees(self, roles, doFilter, roleAccessPermissionDataList, tokenData):
         if TokenService.isSuperAdmin(
             tokenData=tokenData
+        ) or TokenService.isSysAdmin(
+            tokenData=tokenData
         ) or self._hasReadAllRolesTreesInPermissionContext(
             roleAccessPermissionDataList
         ):
@@ -1015,6 +1015,8 @@ class PolicyRepositoryImpl(PolicyRepository):
         doFilter = True
         roleList = None
         if TokenService.isSuperAdmin(
+            tokenData=tokenData
+        ) or TokenService.isSysAdmin(
             tokenData=tokenData
         ) or self._hasReadAllRolesTreesInPermissionContext(roleAccessPermissionData):
             roleList = self._roleById(roleId)
@@ -1087,7 +1089,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         roleAccessPermissionData: List[RoleAccessPermissionData] = None,
         sortData: str = "",
     ) -> dict:
-        if TokenService.isSuperAdmin(tokenData=tokenData):
+        if TokenService.isSuperAdmin(tokenData=tokenData) or TokenService.isSysAdmin(tokenData=tokenData):
             aql = """
                 LET ds = (FOR d IN resource FILTER d.type == @type #sortData RETURN d)
                 RETURN {items: ds}

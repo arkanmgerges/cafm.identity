@@ -84,7 +84,7 @@ class AuthorizationService:
         tokenData: TokenData,
         requestedObject: RequestedAuthzObject = None,
     ):
-        if not self._isSuperAdmin(tokenData=tokenData):
+        if not self._isSuperAdmin(tokenData=tokenData) and not self._isSysAdmin(tokenData=tokenData):
             if requestedPermissionAction in [PermissionAction.READ]:
                 if self._verifyActionByPermissionWithPermissionContext(
                     requestedPermissionAction=requestedPermissionAction,
@@ -129,6 +129,13 @@ class AuthorizationService:
     def _isSuperAdmin(self, tokenData) -> bool:
         for role in tokenData.roles():
             if role["name"] == "super_admin":
+                return True
+        return False
+
+    @debugLogger
+    def _isSysAdmin(self, tokenData) -> bool:
+        for role in tokenData.roles():
+            if role["name"] == "sys_admin":
                 return True
         return False
 

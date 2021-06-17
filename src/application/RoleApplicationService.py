@@ -63,7 +63,7 @@ class RoleApplicationService:
         )
 
     @debugLogger
-    def createRoleForProject(
+    def createRoleForProjectAccess(
         self,
         id: str = None,
         name: str = "",
@@ -71,6 +71,7 @@ class RoleApplicationService:
         projectId: str = "",
         objectOnly: bool = False,
         token: str = "",
+        **_kwargs,
     ):
         obj: Role = self.constructObject(id=id, name=name, title=title)
         tokenData = TokenService.tokenDataFromToken(token=token)
@@ -86,9 +87,8 @@ class RoleApplicationService:
             tokenData=tokenData,
         )
 
-        return self._roleService.createRoleForProject(
-            obj=obj, objectOnly=objectOnly, tokenData=tokenData, projectId=projectId
-        )
+        return self._roleService.createRoleForProjectAccess(obj=obj, projectId=projectId, objectOnly=objectOnly,
+                                                            tokenData=tokenData)
 
     @debugLogger
     def updateRole(self, id: str, name: str, title: str = "", token: str = ""):

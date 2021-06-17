@@ -50,7 +50,7 @@ class Role(Resource, HasToMap):
         )
 
     @classmethod
-    def createFromObjectForProject(
+    def createFromObjectForProjectAccess(
         cls, obj: "Role", publishEvent: bool = False, generateNewId: bool = False, projectId: str = ''
     ):
         logger.debug(f"[{Role.createFromObject.__qualname__}]")
@@ -58,14 +58,14 @@ class Role(Resource, HasToMap):
         from src.domain_model.event.DomainPublishedEvents import (
                 DomainPublishedEvents,
             )
-        from src.domain_model.role.RoleCreatedForProject import RoleCreatedForProject
+        from src.domain_model.role.RoleForProjectAccessCreated import RoleForProjectAccessCreated
 
         role = Role( obj.id(), obj.name(), obj.title(), skipValidation=False)
 
         result = cls.createFrom(
             id= obj.id(), name=obj.name(), title=obj.title(), publishEvent=publishEvent
         )
-        DomainPublishedEvents.addEventForPublishing(RoleCreatedForProject(role, projectId))
+        DomainPublishedEvents.addEventForPublishing(RoleForProjectAccessCreated(role, projectId))
         return result
 
     def name(self) -> str:

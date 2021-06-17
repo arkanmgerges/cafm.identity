@@ -178,9 +178,11 @@ services:
       && python -m src.resource.script.admin_script_v2 init-schema-registry
       && python -m src.resource.script.admin_script_v2 init-arango-db
       && python -m src.resource.script.admin_script_v2 create-arango-db-user ${ADMIN_EMAIL:-admin@local.me} ${ADMIN_PASSWORD:-1234} ${DB_NAME:-cafm-identity}
-      && python -m src.resource.script.admin_script_v2 create-arango-resource-user-with-super-admin-role ${ADMIN_EMAIL:-admin@local.me} ${ADMIN_PASSWORD:-1234} ${DB_NAME:-cafm-identity}
+      && python -m src.resource.script.admin_script_v2 create-arango-resource-user-with-sys-admin-role ${ADMIN_EMAIL:-user@admin.system} ${ADMIN_PASSWORD:-1234} ${DB_NAME:-cafm-identity}
+      && python -m src.resource.script.admin_script_v2 create-super-admin-user
       && python -m src.resource.script.admin_script_v2 create-permission-with-permission-contexts-for-api-endpoints
       && python -m src.resource.script.admin_script_v2 build-resource-tree-from-file ${TREE_FILE:-src/resource/script/__test_tree.yaml.sample}"
+
     working_dir: /app
     env_file:
       - ../../../.env

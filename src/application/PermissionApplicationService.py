@@ -138,7 +138,9 @@ class PermissionApplicationService:
                 DomainModelAttributeValidator.validate(domainModelObject=self.constructObject(skipValidation=True),
                                                        attributeDictionary=objListParamsItem)
                 objList.append(
-                    self.constructObject(id=objListParamsItem["permission_id"], name=objListParamsItem["name"]))
+                    self.constructObject(id=objListParamsItem["permission_id"], name=objListParamsItem["name"],
+                                         allowedActions=objListParamsItem['allowed_actions'],
+                                         deniedActions=objListParamsItem['denied_actions']))
             except DomainModelException as e:
                 exceptions.append({"reason": {"message": e.message, "code": e.code}})
         _ = TokenService.tokenDataFromToken(token=token)

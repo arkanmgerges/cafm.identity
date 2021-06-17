@@ -80,3 +80,11 @@ class TokenService:
             if i["name"] == "super_admin":
                 return True
         return False
+
+    @staticmethod
+    def isSysAdmin(tokenData: TokenData):
+        role = tokenData.roles()
+        for i in role:
+            if i["name"] == "sys_admin":
+                return True
+        return False

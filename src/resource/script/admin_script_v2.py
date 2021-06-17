@@ -94,6 +94,19 @@ def check_schema_registry_readiness():
     exit(1)
 
 
+@cli.command(help="Create super admin user")
+def create_super_admin_user():
+    sysCafmClient = CAFMClient(
+        dict(
+        email='user@admin.system',
+        password='1234',
+        base_url=os.getenv("API_URL"),
+    ))
+    roleId = sysCafmClient.ensureRoleExistence('super_admin', 'Super Admin')
+    userId = sysCafmClient.ensureUserExistence(os.getenv('ADMIN_EMAIL', 'admin@local.me'))
+    sysCafmClient.setUserPassword(userId=userId, password=os.getenv('ADMIN_PASSWORD', '1234'))
+    sysCafmClient.createAssignmentRoleToUser(roleId=roleId, userId=userId, ignoreExistence=True)
+
 @cli.command(help="Check that redis is ready")
 def check_redis_readiness():
     click.echo(click.style("[Redis] Check readiness", fg="green"))
@@ -423,7 +436,7 @@ def create_arango_db_user(email, password, database_name):
 @click.argument("email")
 @click.argument("password")
 @click.argument("database_name")
-def create_arango_resource_user_with_super_admin_role(email, password, database_name):
+def create_arango_resource_user_with_sys_admin_role(email, password, database_name):
     click.echo(
         click.style(f"[Arango] Create user and assign super_admin role", fg="green")
     )
@@ -432,11 +445,11 @@ def create_arango_resource_user_with_super_admin_role(email, password, database_
 
     db = conn[database_name]
 
-    name = "super_admin"
+    name = "sys_admin"
     arangoClient.createOrUpdateRole(
         db=db,
         roleName=name,
-        roleTitle="Super Admin",
+        roleTitle="System Admin",
     )
     arangoClient.createOrUpdateUser(
         db=db,
@@ -506,9 +519,6 @@ def create_permission_with_permission_contexts_for_api_endpoints():
 def persistPermissionWithPermissionContexts(
     apiPermissionWithContexts, hashedKeys, token
 ):
-    permissionContextDataList = []
-    permissionDataList = []
-    permissionToPermissionContextDataList = []
     bulkData = []
 
     for item in apiPermissionWithContexts:
@@ -528,14 +538,13 @@ def persistPermissionWithPermissionContexts(
                 )
                 permissionsDataItem = item["permissions"]
                 for permissionDataItem in permissionsDataItem:
-                    permissionDataList.append(permissionDataItem)
                     bulkData.append(
                         dict(create_permission=dict(data=permissionDataItem))
                     )
     try:
         if len(bulkData) > 0:
             requestId = bulkRequest(token, dict(data=bulkData))
-            result = checkForResult(token, requestId, returnResualt=True)
+            result = checkForResult(token, requestId, returnResult=True)
             # Link permission to permission context
             bulkConnectionData = mapPermissionToPermissionContext(
                 apiPermissionWithContexts, result
@@ -830,6 +839,7 @@ def permissions(token: str) -> List[dict]:
 
 def getAccessToken():
     click.echo(click.style(f"Get Access Token", fg="green"))
+    click.echo(click.style(f"em: {os.getenv('ADMIN_EMAIL', None)},  ps: {os.getenv('ADMIN_PASSWORD', None)}", fg="green"))
     resp = requests.post(
         baseURL + "/v1/identity/auth/authenticate",
         json=dict(
@@ -897,7 +907,7 @@ def assignUserToRole(token, roleID, userID):
 
 
 def checkForResult(
-    token, requestId, checkForID=False, resultIdName=None, returnResualt=False
+    token, requestId, checkForID=False, resultIdName=None, returnResult=False
 ):
     for i in range(50):
         sleep(0.3)
@@ -920,7 +930,7 @@ def checkForResult(
                         return result["items"][0][resultIdName]
                     else:
                         return result[resultIdName]
-                elif returnResualt:
+                elif returnResult:
                     return result
                 else:
                     return

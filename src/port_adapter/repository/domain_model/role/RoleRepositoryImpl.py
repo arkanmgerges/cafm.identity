@@ -154,6 +154,69 @@ class RoleRepositoryImpl(RoleRepository):
                 raise ObjectCouldNotBeUpdatedException(f"role: {obj}")
 
     @debugLogger
+    def saveRoleForProjectAccess(self, obj: Role, projectId: str, tokenData: TokenData):
+        userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
+        from src.domain_model.project.Project import Project
+        projectDocId = self._helperRepo.resourceDocumentId(resource=Project.createFrom(id=projectId))
+        rolesDocIds = []
+        roles = tokenData.roles()
+        for role in roles:
+            rolesDocIds.append(self._helperRepo.roleDocumentId(id=role["id"]))
+        actionFunction = """
+                    function (params) {                                            
+                        queryLink = `UPSERT {_from: @fromId, _to: @toId}
+                              INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                              UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                             IN owned_by`;
+
+                        queryLink2 = `UPSERT {_from: @fromRoleId, _to: @toProjectId}
+                            INSERT {_from: @fromRoleId, _to: @toProjectId, _from_type: "role", _to_type: "project"}
+                            UPDATE {_from: @fromRoleId, _to: @toProjectId, _from_type: "role", _to_type: "project"}
+                            IN has`;
+
+                        let db = require('@arangodb').db;
+                        let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
+                        if (res.length == 0) {
+                            p = params['resource']
+                            res = db.resource.insert({_key: p['id'], id: p['id'], name: p['name'], title: p['title'],type: p['type']});
+                            fromDocId = res['_id'];
+                            p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
+                            db._query(queryLink, p).execute();
+                            for (let i = 0; i < params['rolesDocIds'].length; i++) {
+                                let currentDocId = params['rolesDocIds'][i];
+                                let p = {'fromId': fromDocId, 'toId': currentDocId, 
+                                    'fromType': params['resource']['type'], 'toType': params['toTypeRole']};
+                                db._query(queryLink, p).execute();    
+                            }
+                            p = {'fromRoleId': fromDocId, 'toProjectId': params['projectDocId']};
+                            db._query(queryLink2, p).execute();                        
+                        } else {
+                            let err = new Error(`Could not create resource, ${params['resource']['id']} is already exist`);
+                            err.errorNum = params['OBJECT_ALREADY_EXIST_CODE'];
+                            throw err;
+                        }                        
+                    }
+                """
+        params = {
+            "resource": {
+                "id": obj.id(),
+                "name": obj.name(),
+                "title": obj.title(),
+                "type": obj.type(),
+            },
+            "user": {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
+            "rolesDocIds": rolesDocIds,
+            "projectDocId": projectDocId,
+            "toTypeRole": PermissionContextConstant.ROLE.value,
+            "OBJECT_ALREADY_EXIST_CODE": CodeExceptionConstant.OBJECT_ALREADY_EXIST.value,
+        }
+        self._db.transaction(
+            collections={"write": ["resource", "owned_by", "has"]},
+            action=actionFunction,
+            params=params,
+        )
+
+    @debugLogger
     def deleteRole(self, obj: Role, tokenData: TokenData = None):
         try:
             actionFunction = """

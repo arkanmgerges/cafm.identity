@@ -2,7 +2,6 @@
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
 import json
-from src.resource.common.Util import Util
 
 import src.port_adapter.AppDi as AppDi
 from src.application.RoleApplicationService import RoleApplicationService
@@ -35,19 +34,19 @@ class ProjectCreatedHandler(Handler):
         dataDict = json.loads(data)
         metadataDict = json.loads(metadata)
 
-        appService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
-
-        roleDataDict = {"id": appService.newId(), "name": "access-"+dataDict["project_id"], "title": "access-"+dataDict["project_id"], "project_id": dataDict["project_id"]}
-
-        # appService.createRoleForProject(**Util.snakeCaseToLowerCameCaseDict(roleDataDict), token=metadataDict["token"])
-
         if "token" not in metadataDict:
             raise UnAuthorizedException()
+
+        appService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
+        obj = appService.createRole(
+            name="access-"+dataDict["project_id"],
+            title="access-"+dataDict["project_id"],
+            objectOnly=True, token=metadataDict['token'])
 
         return {
             "name": self._commandConstant.value,
             "created_on": DateTimeHelper.utcNow(),
-            "data": roleDataDict,
+            "data": {**obj.toMap(), "project_id": dataDict["project_id"]},
             "metadata": metadataDict,
         }
 

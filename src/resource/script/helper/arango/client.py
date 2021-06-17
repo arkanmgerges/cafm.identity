@@ -46,7 +46,7 @@ class ArangoClient:
         id = userId or str(uuid.uuid4())
         aql = """
             UPSERT {email: @email, type: @type}
-                INSERT {id: @id, email: @email, password: @password, type: @type }
+                INSERT {_key: @id, id: @id, email: @email, password: @password, type: @type }
                 UPDATE {email: @email, password: @password, type: @type}
                 IN resource
             """
