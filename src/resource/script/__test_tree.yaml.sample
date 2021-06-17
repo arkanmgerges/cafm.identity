@@ -103,27 +103,21 @@ role_trees:
   role_4: &ref_role_4
     name: admin
     title: "Admin"
-    permissions: [*ref_perm_tree_5_permit_all]
   role_5: &ref_role_5
     name: coordinator
     title: "Coordinator"
-    permissions: [*ref_perm_tree_4_read_and_create]
   role_7: &ref_role_7
     name: project_manager
     title: "Project Manager"
-    permissions: [*ref_perm_tree_4_read_and_create]
   role_8: &ref_role_8
     name: assistant_project_manager
     title: "Assistant Project Manager"
-    permissions: [*ref_perm_tree_3_read_only]
   role_9: &ref_role_9
     name: tehnician
     title: "Technician"
-    permissions: [*ref_perm_tree_3_read_only]
   role_10: &ref_role_10
     name: procurment
     title: "Procurement"
-    permissions: [*ref_perm_tree_3_read_only]
 
 
 user_trees:
