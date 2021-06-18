@@ -47,6 +47,15 @@ class RoleService:
         return obj
 
     @debugLogger
+    def createRoleForRealmAccess(
+        self, obj: Role, realmId: str = '', objectOnly: bool = False, tokenData: TokenData = None
+    ):
+        obj = Role.createFromObjectForRealmAccess(obj=obj, publishEvent=True, generateNewId=True, realmId=realmId)
+
+        self._repo.saveRoleForRealmAccess(obj=obj, realmId=realmId, tokenData=tokenData)
+        return obj
+
+    @debugLogger
     def deleteRole(self, obj: Role, tokenData: TokenData = None):
         obj.publishDelete()
         self._repo.deleteRole(obj, tokenData=tokenData)

@@ -35,6 +35,7 @@ class CommonCommandConstant(Enum):
     DELETE_PROJECT = "delete_project"
     UPDATE_PROJECT = "update_project"
     CREATE_REALM = "create_realm"
+    CREATE_ROLE_FOR_REALM_ACCESS = "create_role_for_realm_access"
     DELETE_REALM = "delete_realm"
     UPDATE_REALM = "update_realm"
     CREATE_RESOURCE_TYPE = "create_resource_context"
