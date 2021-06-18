@@ -30,7 +30,6 @@ class CommonCommandConstant(Enum):
     CREATE_PERMISSION = "create_permission"
     DELETE_PERMISSION = "delete_permission"
     UPDATE_PERMISSION = "update_permission"
-    DUMMY_PROJECT = "dummy_project"
     CREATE_PROJECT = "create_project"
     DELETE_PROJECT = "delete_project"
     UPDATE_PROJECT = "update_project"
