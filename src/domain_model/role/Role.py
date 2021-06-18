@@ -68,6 +68,25 @@ class Role(Resource, HasToMap):
         DomainPublishedEvents.addEventForPublishing(RoleForProjectAccessCreated(role, projectId))
         return result
 
+    @classmethod
+    def createFromObjectForRealmAccess(
+        cls, obj: "Role", publishEvent: bool = False, generateNewId: bool = False, realmId: str = ''
+    ):
+        logger.debug(f"[{Role.createFromObject.__qualname__}]")
+
+        from src.domain_model.event.DomainPublishedEvents import (
+                DomainPublishedEvents,
+            )
+        from src.domain_model.role.RoleForRealmAccessCreated import RoleForRealmAccessCreated
+
+        role = Role( obj.id(), obj.name(), obj.title(), skipValidation=False)
+
+        result = cls.createFrom(
+            id= obj.id(), name=obj.name(), title=obj.title(), publishEvent=publishEvent
+        )
+        DomainPublishedEvents.addEventForPublishing(RoleForRealmAccessCreated(role, realmId))
+        return result
+
     def name(self) -> str:
         return self._name
 

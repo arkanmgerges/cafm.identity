@@ -91,6 +91,34 @@ class RoleApplicationService:
                                                             tokenData=tokenData)
 
     @debugLogger
+    def createRoleForRealmAccess(
+        self,
+        id: str = None,
+        name: str = "",
+        title: str = "",
+        realmId: str = "",
+        objectOnly: bool = False,
+        token: str = "",
+        **_kwargs,
+    ):
+        obj: Role = self.constructObject(id=id, name=name, title=title)
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessList: List[
+            RoleAccessPermissionData
+        ] = self._authzService.roleAccessPermissionsData(
+            tokenData=tokenData, includeAccessTree=False
+        )
+        self._authzService.verifyAccess(
+            roleAccessPermissionsData=roleAccessList,
+            requestedPermissionAction=PermissionAction.CREATE,
+            requestedContextData=ResourceTypeContextDataRequest(resourceType="role"),
+            tokenData=tokenData,
+        )
+
+        return self._roleService.createRoleForRealmAccess(obj=obj, realmId=realmId, objectOnly=objectOnly,
+                                                            tokenData=tokenData)
+
+    @debugLogger
     def updateRole(self, id: str, name: str, title: str = "", token: str = ""):
         obj: Role = self.constructObject(id=id, name=name, title=title)
         tokenData = TokenService.tokenDataFromToken(token=token)

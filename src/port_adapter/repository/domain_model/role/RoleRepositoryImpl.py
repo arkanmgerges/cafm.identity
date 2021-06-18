@@ -81,7 +81,7 @@ class RoleRepositoryImpl(RoleRepository):
         # queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
         actionFunction = """
-            function (params) {                                            
+            function (params) {
                 queryLink = `UPSERT {_from: @fromId, _to: @toId}
                       INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
                       UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
@@ -97,9 +97,9 @@ class RoleRepositoryImpl(RoleRepository):
                     db._query(queryLink, p).execute();
                     for (let i = 0; i < params['rolesDocIds'].length; i++) {
                         let currentDocId = params['rolesDocIds'][i];
-                        let p = {'fromId': fromDocId, 'toId': currentDocId, 
+                        let p = {'fromId': fromDocId, 'toId': currentDocId,
                             'fromType': params['resource']['type'], 'toType': params['toTypeRole']};
-                        db._query(queryLink, p).execute();    
+                        db._query(queryLink, p).execute();
                     }
                 } else {
                     let err = new Error(`Could not create resource, ${params['resource']['id']} is already exist`);
@@ -163,7 +163,7 @@ class RoleRepositoryImpl(RoleRepository):
         for role in roles:
             rolesDocIds.append(self._helperRepo.roleDocumentId(id=role["id"]))
         actionFunction = """
-                    function (params) {                                            
+                    function (params) {
                         queryLink = `UPSERT {_from: @fromId, _to: @toId}
                               INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
                               UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
@@ -184,17 +184,17 @@ class RoleRepositoryImpl(RoleRepository):
                             db._query(queryLink, p).execute();
                             for (let i = 0; i < params['rolesDocIds'].length; i++) {
                                 let currentDocId = params['rolesDocIds'][i];
-                                let p = {'fromId': fromDocId, 'toId': currentDocId, 
+                                let p = {'fromId': fromDocId, 'toId': currentDocId,
                                     'fromType': params['resource']['type'], 'toType': params['toTypeRole']};
-                                db._query(queryLink, p).execute();    
+                                db._query(queryLink, p).execute();
                             }
                             p = {'fromRoleId': fromDocId, 'toProjectId': params['projectDocId']};
-                            db._query(queryLink2, p).execute();                        
+                            db._query(queryLink2, p).execute();
                         } else {
                             let err = new Error(`Could not create resource, ${params['resource']['id']} is already exist`);
                             err.errorNum = params['OBJECT_ALREADY_EXIST_CODE'];
                             throw err;
-                        }                        
+                        }
                     }
                 """
         params = {
@@ -217,24 +217,87 @@ class RoleRepositoryImpl(RoleRepository):
         )
 
     @debugLogger
+    def saveRoleForRealmAccess(self, obj: Role, realmId: str, tokenData: TokenData):
+        userDocId = self._helperRepo.userDocumentId(id=tokenData.id())
+        from src.domain_model.realm.Realm import Realm
+        realmDocId = self._helperRepo.resourceDocumentId(resource=Realm.createFrom(id=realmId))
+        rolesDocIds = []
+        roles = tokenData.roles()
+        for role in roles:
+            rolesDocIds.append(self._helperRepo.roleDocumentId(id=role["id"]))
+        actionFunction = """
+                    function (params) {
+                        queryLink = `UPSERT {_from: @fromId, _to: @toId}
+                              INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                              UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
+                             IN owned_by`;
+
+                        queryLink2 = `UPSERT {_from: @fromRoleId, _to: @toRealmId}
+                            INSERT {_from: @fromRoleId, _to: @toRealmId, _from_type: "role", _to_type: "realm"}
+                            UPDATE {_from: @fromRoleId, _to: @toRealmId, _from_type: "role", _to_type: "realm"}
+                            IN has`;
+
+                        let db = require('@arangodb').db;
+                        let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
+                        if (res.length == 0) {
+                            p = params['resource']
+                            res = db.resource.insert({_key: p['id'], id: p['id'], name: p['name'], title: p['title'],type: p['type']});
+                            fromDocId = res['_id'];
+                            p = params['user']; p['fromId'] = fromDocId; p['fromType'] = params['resource']['type'];
+                            db._query(queryLink, p).execute();
+                            for (let i = 0; i < params['rolesDocIds'].length; i++) {
+                                let currentDocId = params['rolesDocIds'][i];
+                                let p = {'fromId': fromDocId, 'toId': currentDocId,
+                                    'fromType': params['resource']['type'], 'toType': params['toTypeRole']};
+                                db._query(queryLink, p).execute();
+                            }
+                            p = {'fromRoleId': fromDocId, 'toRealmId': params['realmDocId']};
+                            db._query(queryLink2, p).execute();
+                        } else {
+                            let err = new Error(`Could not create resource, ${params['resource']['id']} is already exist`);
+                            err.errorNum = params['OBJECT_ALREADY_EXIST_CODE'];
+                            throw err;
+                        }
+                    }
+                """
+        params = {
+            "resource": {
+                "id": obj.id(),
+                "name": obj.name(),
+                "title": obj.title(),
+                "type": obj.type(),
+            },
+            "user": {"toId": userDocId, "toType": PermissionContextConstant.USER.value},
+            "rolesDocIds": rolesDocIds,
+            "realmDocId": realmDocId,
+            "toTypeRole": PermissionContextConstant.ROLE.value,
+            "OBJECT_ALREADY_EXIST_CODE": CodeExceptionConstant.OBJECT_ALREADY_EXIST.value,
+        }
+        self._db.transaction(
+            collections={"write": ["resource", "owned_by", "has"]},
+            action=actionFunction,
+            params=params,
+        )
+
+    @debugLogger
     def deleteRole(self, obj: Role, tokenData: TokenData = None):
         try:
             actionFunction = """
-                function (params) {                                            
+                function (params) {
 
                     let db = require('@arangodb').db;
                     let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                     if (res.length != 0) {
                         let doc = res[0];
-                        let edges = db.owned_by.outEdges(doc._id);   
+                        let edges = db.owned_by.outEdges(doc._id);
                         for (let i = 0; i < edges.length; i++) {
                             db.owned_by.remove(edges[i]);
                         }
-                        edges = db.has.edges(doc._id);   
+                        edges = db.has.edges(doc._id);
                         for (let i = 0; i < edges.length; i++) {
                             db.has.remove(edges[i]);
                         }
-                        edges = db.access.edges(doc._id);   
+                        edges = db.access.edges(doc._id);
                         for (let i = 0; i < edges.length; i++) {
                             db.access.remove(edges[i]);
                         }
