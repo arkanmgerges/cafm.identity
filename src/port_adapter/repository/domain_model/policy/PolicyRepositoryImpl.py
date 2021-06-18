@@ -1200,14 +1200,14 @@ class PolicyRepositoryImpl(PolicyRepository):
                         == PermissionContextConstant.RESOURCE_TYPE
                     ):
                         data = permissionContext.data()
-                        if "name" in data:
+                        if "name" in data and "deniedResourceTypes" in deniedItems:
                             deniedItems["deniedResourceTypes"][data["name"]] = True
                     if (
                         permissionContext.type()
                         == PermissionContextConstant.RESOURCE_INSTANCE
                     ):
                         data = permissionContext.data()
-                        if "id" in data:
+                        if "id" in data and "deniedResources" in deniedItems:
                             deniedItems["deniedResources"][data["id"]] = True
         return deniedItems
 
@@ -1544,7 +1544,7 @@ class PolicyRepositoryImpl(PolicyRepository):
 
     def _addAccessKey(self, result: dict, key: str, verts: List[dict]):
         for vert in verts:
-            if vert is not None and vert["_id"] == key:
+            if vert is not None and vert["_id"] == key and "name" in vert:
                 node = AccessNode()
                 resource = Resource(id=vert["id"], type=vert["type"])
                 resourceName = vert["name"]
