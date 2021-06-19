@@ -38,10 +38,19 @@ message PermissionAppService_newIdResponse {
   string id = 1;
 }
 
+message PermissionAppService_idByStringRequest {
+  string string = 1;
+}
+
+message PermissionAppService_idByStringResponse {
+  string id = 1;
+}
+
 
 service PermissionAppService {
   rpc permission_by_name (PermissionAppService_permissionByNameRequest) returns (PermissionAppService_permissionByNameResponse) {}
   rpc permission_by_id (PermissionAppService_permissionByIdRequest) returns (PermissionAppService_permissionByIdResponse) {}
   rpc permissions (PermissionAppService_permissionsRequest) returns (PermissionAppService_permissionsResponse) {}
   rpc new_id (PermissionAppService_newIdRequest) returns (PermissionAppService_newIdResponse) {}
+  rpc id_by_string (PermissionAppService_idByStringRequest) returns (PermissionAppService_idByStringResponse) {}
 }

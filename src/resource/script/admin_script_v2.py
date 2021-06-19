@@ -37,6 +37,8 @@ sys.path.append("../../../")
 from dotenv import load_dotenv
 from time import sleep
 
+CACHE_PREFIX = os.getenv('CACHE_PREFIX', 'cafm.identity.admin_script:')
+CACHE_TTL = os.getenv('CACHE_TTL', 43200)
 load_dotenv()
 
 baseURL = os.getenv("API_URL")
@@ -119,16 +121,12 @@ def create_super_admin_user():
 def check_redis_readiness():
     click.echo(click.style("[Redis] Check readiness", fg="green"))
 
-    config = {
-        "host": os.getenv("CAFM_IDENTITY_REDIS_HOST", "localhost"),
-        "port": os.getenv("CAFM_IDENTITY_REDIS_PORT", 6379),
-    }
     counter = 15
     seconds = 10
 
     while counter > 0:
         try:
-            cache: redis.client.Redis = redis.Redis(**config)
+            cache: redis.client.Redis = _redisClient()
             click.echo(click.style("[Redis] Client created", fg="green"))
 
             cache.setex("test_redis_key", 10, "test")
@@ -150,7 +148,6 @@ def check_redis_readiness():
             seconds += 3
 
     exit(1)
-
 
 @cli.command(help="Initialize Kafka topics")
 def init_kafka_topics():
@@ -528,13 +525,27 @@ def persistPermissionWithPermissionContexts(
     apiPermissionWithContexts, hashedKeys, token
 ):
     bulkData = []
+    redisClient = None
+    try:
+        redisClient = _redisClient()
+    except: pass
 
     for item in apiPermissionWithContexts:
-        if item["create_permission_context"]:
-            hashedKey = hashedKeyByKey(
-                key=item["permission_context"]["path"], hashedKeys=hashedKeys
-            )
-            if hashedKey is not None:
+        hashedKey = hashedKeyByKey(
+            key=item["permission_context"]["path"], hashedKeys=hashedKeys
+        )
+        if hashedKey is not None:
+            permissionsDataItem = item["permissions"]
+            addPermissionContext = False
+            for permissionDataItem in permissionsDataItem:
+                if (redisClient is not None and redisClient.get(
+                        f'{CACHE_PREFIX}permission_name:{permissionDataItem["name"]}') is None) or (
+                        redisClient is None):
+                    bulkData.append(
+                        dict(create_permission=dict(data=permissionDataItem))
+                    )
+                    addPermissionContext = True
+            if addPermissionContext:
                 data = item["permission_context"]
                 data["hash_code"] = hashedKey
                 bulkData.append(
@@ -544,11 +555,7 @@ def persistPermissionWithPermissionContexts(
                         )
                     )
                 )
-                permissionsDataItem = item["permissions"]
-                for permissionDataItem in permissionsDataItem:
-                    bulkData.append(
-                        dict(create_permission=dict(data=permissionDataItem))
-                    )
+
     try:
         if len(bulkData) > 0:
             requestId = bulkRequest(token, dict(data=bulkData))
@@ -560,33 +567,52 @@ def persistPermissionWithPermissionContexts(
             if len(bulkConnectionData) > 0:
                 requestId = bulkRequest(token, dict(data=bulkConnectionData))
                 checkForResult(token, requestId)
+
+            # Add to cache
+            for bulkDataItem in bulkData:
+                if "create_permission" in bulkDataItem:
+                    permissionName = bulkDataItem["create_permission"]["data"]["name"]
+                    if redisClient is not None:
+                        redisClient.setex(f'{CACHE_PREFIX}permission_name:{permissionName}', CACHE_TTL, 1)
+
     except Exception as e:
+        # If there is an exception then delete all the keys found in bulk data from the cache
+        permissionNames = []
+        for bulkDataItem in bulkData:
+            if "create_permission" in bulkDataItem:
+                permissionName = bulkDataItem["create_permission"]["data"]["name"]
+                permissionNames.append(f'{CACHE_PREFIX}permission_name:{permissionName}')
+
+        if redisClient is not None:
+            redisClient.delete(*permissionNames)
+
         click.echo(click.style(f"{e}", fg="red"))
 
 
 def mapPermissionToPermissionContext(apiPermissionWithContexts, bulkResponse):
     permissionToPermissionContextMap = []
     for item in apiPermissionWithContexts:
-        if item["create_permission_context"]:
-            permissionContextId = findIdByNameInResponse(
-                item["permission_context"]["name"], bulkResponse
-            )
-            if permissionContextId is not None:
-                for permission in item["permissions"]:
-                    permissionId = findIdByNameInResponse(
-                        permission["name"], bulkResponse
-                    )
-                    if permissionId is not None:
-                        permissionToPermissionContextMap.append(
-                            dict(
-                                assign_permission_to_permission_context=dict(
-                                    data=dict(
-                                        permission_id=permissionId,
-                                        permission_context_id=permissionContextId,
-                                    )
+        # It will search the data from the response, and if the response does not have what we are searching for,
+        # then no assignments will happen
+        permissionContextId = findIdByNameInResponse(
+            item["permission_context"]["name"], bulkResponse
+        )
+        if permissionContextId is not None:
+            for permission in item["permissions"]:
+                permissionId = findIdByNameInResponse(
+                    permission["name"], bulkResponse
+                )
+                if permissionId is not None:
+                    permissionToPermissionContextMap.append(
+                        dict(
+                            assign_permission_to_permission_context=dict(
+                                data=dict(
+                                    permission_id=permissionId,
+                                    permission_context_id=permissionContextId,
                                 )
                             )
                         )
+                    )
 
     return permissionToPermissionContextMap
 
@@ -685,8 +711,7 @@ def hashedKeyByKey(key, hashedKeys) -> Optional[str]:
 def extractKeys(apiPermissionWithContexts) -> List[dict]:
     keys = []
     for item in apiPermissionWithContexts:
-        if item["create_permission_context"]:
-            keys.append({"key": item["permission_context"]["path"]})
+        keys.append({"key": item["permission_context"]["path"]})
     return keys
 
 
@@ -748,15 +773,14 @@ def apiPermissionWithContextList(
         apiPermissionContextToBeCreated = None
         apiPermissionsToBeCreated = []
         # Check for permission contexts
-        found = False
         for apiPermissionContext in apiPermissionContexts:
             if appRoute["path"] == apiPermissionContext["data"]["path"]:
                 apiPermissionContexts.remove(apiPermissionContext)
-                found = True
+                apiPermissionContextToBeCreated = {
+                    "name": appRoute["path"],
+                    "path": appRoute["path"]
+                }
                 break
-        if not found:
-            apiPermissionContextToBeCreated = copy(appRoute)
-            apiPermissionContextToBeCreated["name"] = appRoute["path"]
 
         # Check for permissions
         for method in appRoute["methods"]:
@@ -766,7 +790,7 @@ def apiPermissionWithContextList(
                 method = "update"
             elif method == "get":
                 method = "read"
-            found = False
+
             microserviceName = _extractMicroserviceName(appRoute["path"])
             for permission in permissionList:
                 microserviceName = (
@@ -776,25 +800,17 @@ def apiPermissionWithContextList(
                     permission["name"]
                     == f'api:{method}:{microserviceName}:{appRoute["name"]}'
                 ):
-                    found = True
+                    apiPermissionsToBeCreated.append(
+                        {
+                            "name": f'api:{method}:{microserviceName}:{appRoute["name"]}',
+                            "allowed_actions": [method.lower()],
+                            "denied_actions": [],
+                        }
+                    )
                     break
-            if not found:
-                apiPermissionsToBeCreated.append(
-                    {
-                        "name": f'api:{method}:{microserviceName}:{appRoute["name"]}',
-                        "allowed_actions": [method.lower()],
-                        "denied_actions": [],
-                    }
-                )
-
-        # Remove the methods from the permission context
-        if apiPermissionContextToBeCreated is not None:
-            del apiPermissionContextToBeCreated["methods"]
 
         apiPermissionWithContexts.append(
             {
-                "create_permission_context": apiPermissionContextToBeCreated
-                is not None,
                 "permission_context": apiPermissionContextToBeCreated,
                 "permissions": apiPermissionsToBeCreated,
             }
@@ -809,6 +825,13 @@ def _extractMicroserviceName(routePath):
     else:
         return None
 
+def _redisClient() -> redis.Redis:
+    config = {
+        "host": os.getenv("CAFM_IDENTITY_REDIS_HOST", "localhost"),
+        "port": os.getenv("CAFM_IDENTITY_REDIS_PORT", 6379),
+    }
+    cache: redis.client.Redis = redis.Redis(**config)
+    return cache
 
 def appRouteList():
     appRoutesResponse = requests.get(baseURL + "/v1/util/route/app_routes")
@@ -922,8 +945,9 @@ def assignUserToRole(token, roleID, userID):
 def checkForResult(
     token, requestId, checkForID=False, resultIdName=None, returnResult=False
 ):
+    period = 0.3
     for i in range(50):
-        sleep(0.3)
+        sleep(period)
         isSuccessful = requests.get(
             baseURL + "/v1/common/request/is_successful",
             headers=dict(Authorization="Bearer " + token),
@@ -957,6 +981,7 @@ def checkForResult(
                         raise Exception(result["reason"]["message"])
                 raise Exception("Unknown error!")
 
+        period += 0.2
     raise Exception("Response time out!")
 
 

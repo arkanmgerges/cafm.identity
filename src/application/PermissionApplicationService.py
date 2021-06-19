@@ -37,6 +37,12 @@ class PermissionApplicationService:
         self._permissionService = permissionService
 
     @debugLogger
+    def idByString(self, string: str) -> str:
+        import hashlib
+        import uuid
+        return str(uuid.UUID(hashlib.md5(string.encode()).hexdigest()))
+
+    @debugLogger
     def newId(self):
         return Permission.createFrom().id()
 

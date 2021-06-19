@@ -1369,7 +1369,7 @@ class PolicyRepositoryImpl(PolicyRepository):
     ) -> List[RoleAccessPermissionData]:
         result = []
         for item in items:
-            role = Role.createFrom(id=item["role"]["id"], name=item["role"]["name"])
+            role = Role.createFrom(**item["role"])
             permissions = item["role"]["_permissions"]
             permList = []
             # For each permission
@@ -1452,12 +1452,12 @@ class PolicyRepositoryImpl(PolicyRepository):
                                         RETURN p
                                )
                 LET result = UNION_DISTINCT(direct_access, accesses)
-                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "owner_of": owner_of, "accesses": result}
+                RETURN {"role": {"id": role.id, "name": role.name, "title": role.title, "_permissions": permissions}, "owned_by": owned_by, "owner_of": owner_of, "accesses": result}
                 """
             aql += accessTree
         else:
             noAccessTree = """
-                RETURN {"role": {"id": role.id, "name": role.name, "_permissions": permissions}, "owned_by": owned_by, "owner_of": owner_of, "accesses": []}
+                RETURN {"role": {"id": role.id, "name": role.name, "title": role.title, "_permissions": permissions}, "owned_by": owned_by, "owner_of": owner_of, "accesses": []}
             """
             aql += noAccessTree
         aql = aql.replace("#rolesConditions", rolesConditions)

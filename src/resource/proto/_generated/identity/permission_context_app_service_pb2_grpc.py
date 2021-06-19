@@ -29,6 +29,11 @@ class PermissionContextAppServiceStub(object):
                 request_serializer=identity_dot_permission__context__app__service__pb2.PermissionContextAppService_newIdRequest.SerializeToString,
                 response_deserializer=identity_dot_permission__context__app__service__pb2.PermissionContextAppService_newIdResponse.FromString,
                 )
+        self.id_by_string = channel.unary_unary(
+                '/cafm.identity.permission.PermissionContextAppService/id_by_string',
+                request_serializer=identity_dot_permission__context__app__service__pb2.PermissionContextAppService_idByStringRequest.SerializeToString,
+                response_deserializer=identity_dot_permission__context__app__service__pb2.PermissionContextAppService_idByStringResponse.FromString,
+                )
 
 
 class PermissionContextAppServiceServicer(object):
@@ -52,6 +57,12 @@ class PermissionContextAppServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def id_by_string(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_PermissionContextAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -69,6 +80,11 @@ def add_PermissionContextAppServiceServicer_to_server(servicer, server):
                     servicer.new_id,
                     request_deserializer=identity_dot_permission__context__app__service__pb2.PermissionContextAppService_newIdRequest.FromString,
                     response_serializer=identity_dot_permission__context__app__service__pb2.PermissionContextAppService_newIdResponse.SerializeToString,
+            ),
+            'id_by_string': grpc.unary_unary_rpc_method_handler(
+                    servicer.id_by_string,
+                    request_deserializer=identity_dot_permission__context__app__service__pb2.PermissionContextAppService_idByStringRequest.FromString,
+                    response_serializer=identity_dot_permission__context__app__service__pb2.PermissionContextAppService_idByStringResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -128,5 +144,22 @@ class PermissionContextAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission.PermissionContextAppService/new_id',
             identity_dot_permission__context__app__service__pb2.PermissionContextAppService_newIdRequest.SerializeToString,
             identity_dot_permission__context__app__service__pb2.PermissionContextAppService_newIdResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def id_by_string(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.permission.PermissionContextAppService/id_by_string',
+            identity_dot_permission__context__app__service__pb2.PermissionContextAppService_idByStringRequest.SerializeToString,
+            identity_dot_permission__context__app__service__pb2.PermissionContextAppService_idByStringResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

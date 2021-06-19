@@ -30,9 +30,18 @@ message PermissionContextAppService_newIdResponse {
   string id = 1;
 }
 
+message PermissionContextAppService_idByStringRequest {
+  string string = 1;
+}
+
+message PermissionContextAppService_idByStringResponse {
+  string id = 1;
+}
+
 
 service PermissionContextAppService {
   rpc permission_context_by_id (PermissionContextAppService_permissionContextByIdRequest) returns (PermissionContextAppService_permissionContextByIdResponse) {}
   rpc permission_contexts (PermissionContextAppService_permissionContextsRequest) returns (PermissionContextAppService_permissionContextsResponse) {}
   rpc new_id (PermissionContextAppService_newIdRequest) returns (PermissionContextAppService_newIdResponse) {}
+  rpc id_by_string (PermissionContextAppService_idByStringRequest) returns (PermissionContextAppService_idByStringResponse) {}
 }

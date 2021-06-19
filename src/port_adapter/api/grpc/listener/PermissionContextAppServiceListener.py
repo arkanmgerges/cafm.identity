@@ -26,7 +26,7 @@ from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.permission_context_app_service_pb2 import (
     PermissionContextAppService_permissionContextsResponse,
     PermissionContextAppService_permissionContextByIdResponse,
-    PermissionContextAppService_newIdResponse,
+    PermissionContextAppService_newIdResponse, PermissionContextAppService_idByStringResponse,
 )
 from src.resource.proto._generated.identity.permission_context_app_service_pb2_grpc import (
     PermissionContextAppServiceServicer,
@@ -43,6 +43,24 @@ class PermissionContextAppServiceListener(PermissionContextAppServiceServicer, B
 
     def __str__(self):
         return self.__class__.__name__
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def id_by_string(self, request, context):
+        response = PermissionContextAppService_idByStringResponse
+        try:
+            token = self._token(context)
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
+            logger.debug(
+                f"[{PermissionContextAppServiceListener.id_by_string.__qualname__}] - claims: {claims}\n\t \
+                    token: {token}"
+            )
+            appService: PermissionContextApplicationService = AppDi.instance.get(PermissionContextApplicationService)
+            return response(id=appService.idByString(string=request.string))
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details("Un Authorized")
+            return response()
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
