@@ -61,6 +61,9 @@ class ProcessBulkHandler(Handler):
                         if entityName == 'permission_to_permission_context':
                             appService.bulkAssignPermissionToPermissionContext(
                                 objListParams=requestParamsList, token=metadataDict["token"])
+                        elif entityName == 'role_to_permission':
+                            appService.bulkAssignRoleToPermission(
+                                objListParams=requestParamsList, token=metadataDict["token"])
                     elif commandMethod == "remove":
                         if entityName == 'permission_to_permission_context_assignment':
                             appService.bulkRemovePermissionToPermissionContextAssignment(
@@ -118,6 +121,7 @@ class ProcessBulkHandler(Handler):
             # 'project': ProjectApplicationService,
             # 'role': RoleApplicationService,
             # 'user': UserApplicationService,
+            "role_to_permission": PolicyApplicationService,
             "permission_to_permission_context": PolicyApplicationService,
             "permission_to_permission_context_assignment": PolicyApplicationService,
             "permission": PermissionApplicationService,

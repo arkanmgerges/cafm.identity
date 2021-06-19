@@ -12,6 +12,16 @@ class ArangoClient:
         self.config = config
         self.connection = None
 
+    @classmethod
+    def clientByDefaultEnv(cls) -> 'ArangoClient':
+        return ArangoClient(
+            dict(
+                arangoURL=os.getenv("CAFM_IDENTITY_ARANGODB_URL", ""),
+                username=os.getenv("CAFM_IDENTITY_ARANGODB_USERNAME", ""),
+                password=os.getenv("CAFM_IDENTITY_ARANGODB_PASSWORD", ""),
+            )
+        )
+
     def getConnection(self):
         if self.connection != None:
             return self.connection

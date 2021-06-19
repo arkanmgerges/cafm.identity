@@ -3,64 +3,34 @@
 @collaborator: Alex Brebu<alexandru.brebu@digitalmob.ro>
 @collaborator: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
+import inspect
+import os
 import sys
 import uuid
-import os
-import yaml
+
 import click
-import re
-import requests
-import json
 import redis
-
-from copy import copy
-from pyArango.connection import Connection
-from typing import List, Optional
-
-
-from confluent_kafka.avro import CachedSchemaRegistryClient
-from pyArango.connection import Connection
-from pyArango.query import AQLQuery
-from pyArango.users import Users
+import yaml
 from confluent_kafka.admin import AdminClient, NewTopic
-
-
-from src.resource.script.helper.arango.client import ArangoClient
-from src.resource.script.helper.cafm_api.client import CAFMClient
-from src.resource.script.helper.tree.parser import TreeParser
+from confluent_kafka.avro import CachedSchemaRegistryClient
+from pyArango.users import Users
 
 from src.port_adapter.messaging.common.model.IdentityCommand import IdentityCommand
 from src.port_adapter.messaging.common.model.IdentityEvent import IdentityEvent
+from src.resource.script.helper.arango.ArangoClient import ArangoClient
+from src.resource.script.helper.cache.Cache import Cache
+from src.resource.script.helper.cafm_api.CafmClient import CafmClient
+from src.resource.script.helper.cafm_api.CafmClientConfig import CafmClientConfig
+from src.resource.script.helper.tree.TreeParser import TreeParser
 
 sys.path.append("../../../")
 
 from dotenv import load_dotenv
 from time import sleep
 
-CACHE_PREFIX = os.getenv('CACHE_PREFIX', 'cafm.identity.admin_script:')
-CACHE_TTL = os.getenv('CACHE_TTL', 43200)
 load_dotenv()
 
 baseURL = os.getenv("API_URL")
-microserviceNamePatternCompiled = re.compile("/v[0-9]/([^/]+)?/")
-
-arangoClient = ArangoClient(
-    dict(
-        arangoURL=os.getenv("CAFM_IDENTITY_ARANGODB_URL", ""),
-        username=os.getenv("CAFM_IDENTITY_ARANGODB_USERNAME", ""),
-        password=os.getenv("CAFM_IDENTITY_ARANGODB_PASSWORD", ""),
-    )
-)
-
-cafmClient = CAFMClient(
-    dict(
-        email=os.getenv("ADMIN_EMAIL", None),
-        password=os.getenv("ADMIN_PASSWORD", None),
-        base_url=os.getenv("API_URL"),
-    )
-)
-
-treeParser = TreeParser(cafmClient=cafmClient)
 
 
 @click.group()
@@ -98,23 +68,18 @@ def check_schema_registry_readiness():
 
 @cli.command(help="Create super admin user")
 def create_super_admin_user():
-    sysCafmClient = CAFMClient(
-        dict(
+    cafmClient = CafmClient(
+        CafmClientConfig(
             email="user@admin.system",
             password="1234",
-            base_url=os.getenv("API_URL"),
+            baseUrl=os.getenv("API_URL"),
+            cache=Cache.instance()
         )
     )
-    roleId = sysCafmClient.ensureRoleExistence("super_admin", "Super Admin")
-    userId = sysCafmClient.ensureUserExistence(
-        os.getenv("ADMIN_EMAIL", "admin@local.me")
-    )
-    sysCafmClient.setUserPassword(
-        userId=userId, password=os.getenv("ADMIN_PASSWORD", "1234")
-    )
-    sysCafmClient.createAssignmentRoleToUser(
-        roleId=roleId, userId=userId, ignoreExistence=True
-    )
+    roleId = cafmClient.ensureRoleExistence("super_admin", "Super Admin")
+    userId = cafmClient.ensureUserExistence(os.getenv("ADMIN_EMAIL", "admin@local.me"))
+    cafmClient.setUserPassword(userId=userId, password=os.getenv("ADMIN_PASSWORD", "1234"))
+    cafmClient.createAssignmentRoleToUser(roleId=roleId, userId=userId, ignoreExistence=True)
 
 
 @cli.command(help="Check that redis is ready")
@@ -126,7 +91,7 @@ def check_redis_readiness():
 
     while counter > 0:
         try:
-            cache: redis.client.Redis = _redisClient()
+            cache: redis.client.Redis = Cache.instance()
             click.echo(click.style("[Redis] Client created", fg="green"))
 
             cache.setex("test_redis_key", 10, "test")
@@ -148,6 +113,7 @@ def check_redis_readiness():
             seconds += 3
 
     exit(1)
+
 
 @cli.command(help="Initialize Kafka topics")
 def init_kafka_topics():
@@ -214,15 +180,11 @@ def init_schema_registry():
         if s[0] is None:
             newSchemas.append(schema)
         else:
-            click.echo(
-                click.style(f'[Schema Registry] Schema {schema["name"]} already exists')
-            )
+            click.echo(click.style(f'[Schema Registry] Schema {schema["name"]} already exists'))
 
     for schema in newSchemas:
         srClient.register(schema["name"], schema["schema"])
-        click.echo(
-            click.style(f'[Schema Registry] Schema {schema["name"]} was created')
-        )
+        click.echo(click.style(f'[Schema Registry] Schema {schema["name"]} was created'))
 
     exit(0)
 
@@ -236,6 +198,7 @@ def init_arango_db():
         raise Exception("Database name {CAFM_IDENTITY_ARANGODB_DB_NAME} is not set")
 
     try:
+        arangoClient = ArangoClient.clientByDefaultEnv()
         conn = arangoClient.getConnection()
 
         counter = 30
@@ -267,9 +230,7 @@ def init_arango_db():
                 click.echo(click.style(f"[Arango] Collection {name} already exists"))
                 continue
 
-            db.createCollection(
-                name=name, keyOptions={"type": "uuid", "allowUserKeys": True}
-            )
+            db.createCollection(name=name, keyOptions={"type": "uuid", "allowUserKeys": True})
             click.echo(click.style(f"[Arango] Collection {name} was created"))
 
         click.echo(click.style(f"[Arango] Creating edges ..."))
@@ -312,13 +273,9 @@ def init_arango_db():
                     "type": "resource_type",
                 },
             }
-            queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            _queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
-        click.echo(
-            click.style(
-                f"[Arango] Creating default permissions for permission contexts ..."
-            )
-        )
+        click.echo(click.style(f"[Arango] Creating default permissions for permission contexts ..."))
         # Add default permissions (this was added later in code. It will read the already created permission contexts and
         # create permissions for them)
         # Fetch all permission contexts
@@ -340,11 +297,7 @@ def init_arango_db():
             permissionContextsResult.append(r)
 
         # Create permissions with names '<action>_<permission_context>' like read_ou, create_realm ...etc
-        click.echo(
-            click.style(
-                f"[Arango] Create permissions with names linked to permission contexts"
-            )
-        )
+        click.echo(click.style(f"[Arango] Create permissions with names linked to permission contexts"))
         for action in ["create", "read", "update", "delete"]:
             for pc in permissionContextsResult:
                 aql = """
@@ -409,6 +362,7 @@ def create_arango_db_user(email, password, database_name):
         )
     )
 
+    arangoClient = ArangoClient.clientByDefaultEnv()
     conn = arangoClient.getConnection()
 
     users = Users(connection=conn)
@@ -418,7 +372,7 @@ def create_arango_db_user(email, password, database_name):
     try:
         user = users.fetchUser(username=email)
         click.echo(click.style(f"[Arango] User {email} fetched", fg="green"))
-    except Exception as e:
+    except Exception as _e:
         click.echo(click.style(f"[Arango] No user {email} fetched", fg="yellow"))
 
     # Create User
@@ -439,10 +393,9 @@ def create_arango_db_user(email, password, database_name):
 
 @cli.command(help="Create user and assign super admin role")
 def create_arango_resource_user_with_sys_admin_role():
-    click.echo(
-        click.style(f"[Arango] Create user and assign super_admin role", fg="green")
-    )
+    click.echo(click.style(f"[Arango] Create user and assign super_admin role", fg="green"))
 
+    arangoClient = ArangoClient.clientByDefaultEnv()
     conn = arangoClient.getConnection()
 
     db = conn["cafm-identity"]
@@ -481,257 +434,44 @@ def create_arango_resource_user_with_sys_admin_role():
 
 @cli.command(help="Create permission with permission contexts for the api endpoints")
 def create_permission_with_permission_contexts_for_api_endpoints():
-    click.echo(
-        click.style(
-            f"Creating permission with permission contexts and linking them", fg="green"
+    click.echo(click.style(f"[cafm-api] Creating permission with permission contexts and linking them", fg="green"))
+    cafmClient = CafmClient(
+        config=CafmClientConfig(
+            email=os.getenv("ADMIN_EMAIL", None),
+            password=os.getenv("ADMIN_PASSWORD", None),
+            baseUrl=os.getenv("API_URL"),
+            cache=Cache.instance()
         )
     )
-    token = getAccessToken()
-    # Get all app routes
-    appRoutesJsonResponse = appRouteList()
-    # Get all the permission contexts
-    permissionContextList = permissionContexts(token)
-    # Get all permissions
-    permissionList = permissions(token)
 
-    apiPermissionContexts = list(
-        filter(lambda x: "api_resource_type" in x["type"], permissionContextList)
-    )
-    apiPermissionWithContexts = apiPermissionWithContextList(
-        apiPermissionContexts, appRoutesJsonResponse, permissionList
-    )
-    hashedKeys = hashKeys(extractKeys(apiPermissionWithContexts))
-    persistPermissionWithPermissionContexts(
-        apiPermissionWithContexts=apiPermissionWithContexts,
-        hashedKeys=hashedKeys,
-        token=token,
-    )
+    cafmClient.creatPermissionWithPermissionContextsForApiEndpoints()
+
     click.echo(
         click.style(
-            f"Done creating permission with permission contexts and linking them",
+            f"[cafm-api] Creating permission with permission contexts and linking them",
             fg="green",
         )
     )
-    # Logout
-    click.echo(click.style(f"Logout", fg="green"))
-    requests.post(
-        baseURL + "/v1/identity/auth/logout",
-        headers=dict(Authorization="Bearer " + token),
-        json=dict(token=token),
-    )
-
-
-def persistPermissionWithPermissionContexts(
-    apiPermissionWithContexts, hashedKeys, token
-):
-    bulkData = []
-    redisClient = None
-    try:
-        redisClient = _redisClient()
-    except: pass
-
-    for item in apiPermissionWithContexts:
-        hashedKey = hashedKeyByKey(
-            key=item["permission_context"]["path"], hashedKeys=hashedKeys
-        )
-        if hashedKey is not None:
-            permissionsDataItem = item["permissions"]
-            addPermissionContext = False
-            for permissionDataItem in permissionsDataItem:
-                if (redisClient is not None and redisClient.get(
-                        f'{CACHE_PREFIX}permission_name:{permissionDataItem["name"]}') is None) or (
-                        redisClient is None):
-                    bulkData.append(
-                        dict(create_permission=dict(data=permissionDataItem))
-                    )
-                    addPermissionContext = True
-            if addPermissionContext:
-                data = item["permission_context"]
-                data["hash_code"] = hashedKey
-                bulkData.append(
-                    dict(
-                        create_permission_context=dict(
-                            data=dict(type="api_resource_type", data=data)
-                        )
-                    )
-                )
-
-    try:
-        if len(bulkData) > 0:
-            requestId = bulkRequest(token, dict(data=bulkData))
-            result = checkForResult(token, requestId, returnResult=True)
-            # Link permission to permission context
-            bulkConnectionData = mapPermissionToPermissionContext(
-                apiPermissionWithContexts, result
-            )
-            if len(bulkConnectionData) > 0:
-                requestId = bulkRequest(token, dict(data=bulkConnectionData))
-                checkForResult(token, requestId)
-
-            # Add to cache
-            for bulkDataItem in bulkData:
-                if "create_permission" in bulkDataItem:
-                    permissionName = bulkDataItem["create_permission"]["data"]["name"]
-                    if redisClient is not None:
-                        redisClient.setex(f'{CACHE_PREFIX}permission_name:{permissionName}', CACHE_TTL, 1)
-
-    except Exception as e:
-        # If there is an exception then delete all the keys found in bulk data from the cache
-        permissionNames = []
-        for bulkDataItem in bulkData:
-            if "create_permission" in bulkDataItem:
-                permissionName = bulkDataItem["create_permission"]["data"]["name"]
-                permissionNames.append(f'{CACHE_PREFIX}permission_name:{permissionName}')
-
-        if redisClient is not None:
-            redisClient.delete(*permissionNames)
-
-        click.echo(click.style(f"{e}", fg="red"))
-
-
-def mapPermissionToPermissionContext(apiPermissionWithContexts, bulkResponse):
-    permissionToPermissionContextMap = []
-    for item in apiPermissionWithContexts:
-        # It will search the data from the response, and if the response does not have what we are searching for,
-        # then no assignments will happen
-        permissionContextId = findIdByNameInResponse(
-            item["permission_context"]["name"], bulkResponse
-        )
-        if permissionContextId is not None:
-            for permission in item["permissions"]:
-                permissionId = findIdByNameInResponse(
-                    permission["name"], bulkResponse
-                )
-                if permissionId is not None:
-                    permissionToPermissionContextMap.append(
-                        dict(
-                            assign_permission_to_permission_context=dict(
-                                data=dict(
-                                    permission_id=permissionId,
-                                    permission_context_id=permissionContextId,
-                                )
-                            )
-                        )
-                    )
-
-    return permissionToPermissionContextMap
-
-
-def findIdByNameInResponse(name, bulkResponse):
-    for item in bulkResponse["items"]:
-        data = item["data"]
-        if data["command"] == "create_permission_context":
-            data = data["command_data"]
-            if data["data"]["name"] == name:
-                return data["permission_context_id"]
-        elif data["command"] == "create_permission":
-            data = data["command_data"]
-            if data["name"] == name:
-                return data["permission_id"]
-    return None
-
-
-def _generateUuid3ByString(string) -> str:
-    return str(uuid.uuid3(uuid.NAMESPACE_URL, string))
-
-
-def _dbClientConnection():
-    try:
-        connection = Connection(
-            arangoURL=os.getenv("CAFM_IDENTITY_ARANGODB_URL", ""),
-            username=os.getenv("CAFM_IDENTITY_ARANGODB_USERNAME", ""),
-            password=os.getenv("CAFM_IDENTITY_ARANGODB_PASSWORD", ""),
-        )
-        return connection
-    except Exception as e:
-        raise Exception(f"Could not connect to the db, message: {e}")
-
-
-def assignPermissionToPermissionContext(permissionId, permissionContextId, token):
-    click.echo(
-        click.style(
-            f"\t---> assign permission ({permissionId}) to permission context ({permissionContextId})",
-            fg="yellow",
-        )
-    )
-    resp = requests.post(
-        baseURL + "/v1/identity/assignments/permission_to_permission_context",
-        headers=dict(Authorization="Bearer " + token),
-        json=dict(
-            {
-                "permission_id": permissionId,
-                "permission_context_id": permissionContextId,
-            }
-        ),
-    )
-    resp.raise_for_status()
-    return checkForResult(
-        token,
-        resp.json()["request_id"],
-    )
-
-
-def persistPermissionContext(data, token):
-    click.echo(click.style(f"\t---> persist permission context {data}", fg="yellow"))
-    resp = requests.post(
-        baseURL + "/v1/identity/permission_contexts",
-        headers=dict(Authorization="Bearer " + token),
-        json=dict(data),
-    )
-    resp.raise_for_status()
-    return checkForResult(
-        token,
-        resp.json()["request_id"],
-        checkForID=True,
-        resultIdName="permission_context_id",
-    )
-
-
-def persistPermission(data, token):
-    click.echo(click.style(f"\t---> persist permission {data}", fg="yellow"))
-    resp = requests.post(
-        baseURL + "/v1/identity/permissions",
-        headers=dict(Authorization="Bearer " + token),
-        json=dict(data),
-    )
-    resp.raise_for_status()
-    return checkForResult(
-        token, resp.json()["request_id"], checkForID=True, resultIdName="permission_id"
-    )
-
-
-def hashedKeyByKey(key, hashedKeys) -> Optional[str]:
-    if "hashed_keys" in hashedKeys:
-        for item in hashedKeys["hashed_keys"]:
-            if item["key"] == key:
-                return item["hash_code"]
-    return None
-
-
-def extractKeys(apiPermissionWithContexts) -> List[dict]:
-    keys = []
-    for item in apiPermissionWithContexts:
-        keys.append({"key": item["permission_context"]["path"]})
-    return keys
-
-
-def hashKeys(keys):
-    resp = requests.post(
-        baseURL + "/v1/util/route/hash_keys", json=dict(unhashed_keys={"keys": keys})
-    )
-    return resp.json()
 
 
 @cli.command(help="Create user from file")
 @click.argument("filename")
 def build_resource_tree_from_file(filename):
     click.echo(click.style(f"[Resources] Build from tree", fg="green"))
+    treeParser = TreeParser(
+        cafmClient=CafmClient(
+            config=CafmClientConfig(
+                email=os.getenv("ADMIN_EMAIL", None),
+                password=os.getenv("ADMIN_PASSWORD", None),
+                baseUrl=os.getenv("API_URL"),
+                cache=Cache.instance()
+            )
+        )
+    )
 
     with open(f"{filename}", "r") as f:
         data = yaml.safe_load(f)
-        click.echo(
-            click.style(f"[Resources] Read data from file {filename}", fg="green")
-        )
+        click.echo(click.style(f"[Resources] Read data from file {filename}", fg="green"))
 
     try:
         click.echo(click.style(f"[Build] Resource trees", fg="green"))
@@ -760,229 +500,10 @@ def build_resource_tree_from_file(filename):
             treeParser.parseUserTree(userTree)
 
     except Exception as e:
-        click.echo(click.style(f"Error: {sys._getframe().f_code.co_name}", fg="red"))
+        currentFrame = inspect.currentframe()
+        click.echo(click.style(f"Error: {currentFrame.f_code.co_name}", fg="red"))
         click.echo(click.style(f"{e}", fg="red"))
         exit(1)
-
-
-def apiPermissionWithContextList(
-    apiPermissionContexts, appRoutesJsonResponse, permissionList
-):
-    apiPermissionWithContexts = []
-    for appRoute in appRoutesJsonResponse["routes"]:
-        apiPermissionContextToBeCreated = None
-        apiPermissionsToBeCreated = []
-        # Check for permission contexts
-        for apiPermissionContext in apiPermissionContexts:
-            if appRoute["path"] == apiPermissionContext["data"]["path"]:
-                apiPermissionContexts.remove(apiPermissionContext)
-                apiPermissionContextToBeCreated = {
-                    "name": appRoute["path"],
-                    "path": appRoute["path"]
-                }
-                break
-
-        # Check for permissions
-        for method in appRoute["methods"]:
-            if method == "post":
-                method = "create"
-            elif method == "put" or method == "patch":
-                method = "update"
-            elif method == "get":
-                method = "read"
-
-            microserviceName = _extractMicroserviceName(appRoute["path"])
-            for permission in permissionList:
-                microserviceName = (
-                    microserviceName if microserviceName is not None else "default"
-                )
-                if (
-                    permission["name"]
-                    == f'api:{method}:{microserviceName}:{appRoute["name"]}'
-                ):
-                    apiPermissionsToBeCreated.append(
-                        {
-                            "name": f'api:{method}:{microserviceName}:{appRoute["name"]}',
-                            "allowed_actions": [method.lower()],
-                            "denied_actions": [],
-                        }
-                    )
-                    break
-
-        apiPermissionWithContexts.append(
-            {
-                "permission_context": apiPermissionContextToBeCreated,
-                "permissions": apiPermissionsToBeCreated,
-            }
-        )
-    return apiPermissionWithContexts
-
-
-def _extractMicroserviceName(routePath):
-    m = microserviceNamePatternCompiled.search(routePath)
-    if m.group(1):
-        return m.group(1)
-    else:
-        return None
-
-def _redisClient() -> redis.Redis:
-    config = {
-        "host": os.getenv("CAFM_IDENTITY_REDIS_HOST", "localhost"),
-        "port": os.getenv("CAFM_IDENTITY_REDIS_PORT", 6379),
-    }
-    cache: redis.client.Redis = redis.Redis(**config)
-    return cache
-
-def appRouteList():
-    appRoutesResponse = requests.get(baseURL + "/v1/util/route/app_routes")
-    appRoutesJsonResponse = appRoutesResponse.json()
-    return appRoutesJsonResponse
-
-
-def permissionContexts(token: str) -> List[dict]:
-    permissionContextsResponse = requests.get(
-        baseURL + "/v1/identity/permission_contexts?result_size=10000",
-        headers=dict(Authorization="Bearer " + token),
-    )
-    permissionContextsJsonResponse = permissionContextsResponse.json()
-    return permissionContextsJsonResponse["permission_contexts"]
-
-
-def bulkRequest(token: str, body) -> str:
-    bulkResponse = requests.post(
-        baseURL + "/v1/common/_bulk",
-        headers=dict(Authorization="Bearer " + token),
-        json=dict(body=body),
-    )
-    bulkResponse.raise_for_status()
-    bulkResponse = bulkResponse.json()
-    return bulkResponse["request_id"]
-
-
-def permissions(token: str) -> List[dict]:
-    permissionsResponse = requests.get(
-        baseURL + "/v1/identity/permissions?result_size=10000",
-        headers=dict(Authorization="Bearer " + token),
-    )
-    permissionsJsonResponse = permissionsResponse.json()
-    return permissionsJsonResponse["permissions"]
-
-
-def getAccessToken():
-    click.echo(click.style(f"Get Access Token", fg="green"))
-    click.echo(
-        click.style(
-            f"em: {os.getenv('ADMIN_EMAIL', None)},  ps: {os.getenv('ADMIN_PASSWORD', None)}",
-            fg="green",
-        )
-    )
-    resp = requests.post(
-        baseURL + "/v1/identity/auth/authenticate",
-        json=dict(
-            email=os.getenv("ADMIN_EMAIL", None),
-            password=os.getenv("ADMIN_PASSWORD", None),
-        ),
-    )
-    resp.raise_for_status()
-    return resp.text.replace('"', "")
-
-
-def createRealm(token, name, type):
-    click.echo(click.style(f"Creating realm name: {name} type: {type}", fg="green"))
-    resp = requests.post(
-        baseURL + "/v1/identity/realms/create",
-        headers=dict(Authorization="Bearer " + token),
-        json=dict(name=name, realm_type=type),
-    )
-    resp.raise_for_status()
-    checkForResult(token, resp.json()["request_id"])
-
-
-def createRole(token, name, title):
-    click.echo(click.style(f"Creating Role name: {name}", fg="green"))
-    resp = requests.post(
-        baseURL + "/v1/identity/roles/create",
-        headers=dict(Authorization="Bearer " + token),
-        json=dict(name=name, title=title),
-    )
-    resp.raise_for_status()
-    return checkForResult(token, resp.json()["request_id"], checkForID=True)
-
-
-def createUser(token, email):
-    click.echo(click.style(f"Creating User email: {email}", fg="green"))
-    resp = requests.post(
-        baseURL + "/v1/identity/users/create",
-        headers=dict(Authorization="Bearer " + token),
-        json=dict(email=email),
-    )
-    resp.raise_for_status()
-    return checkForResult(token, resp.json()["request_id"], checkForID=True)
-
-
-def setPassword(token, user_id, password):
-    click.echo(click.style(f"Set password for User: {user_id}", fg="green"))
-    resp = requests.put(
-        baseURL + "/v1/identity/users/" + user_id + "/set_password",
-        headers=dict(Authorization="Bearer " + token),
-        json=dict(password=password),
-    )
-    resp.raise_for_status()
-    checkForResult(token, resp.json()["request_id"])
-
-
-def assignUserToRole(token, roleID, userID):
-    click.echo(click.style(f"Assign user To role", fg="green"))
-    resp = requests.post(
-        baseURL + "/v1/identity/assignments/role_to_user",
-        headers=dict(Authorization="Bearer " + token),
-        json=dict(role_id=roleID, user_id=userID),
-    )
-    resp.raise_for_status()
-    checkForResult(token, resp.json()["request_id"])
-
-
-def checkForResult(
-    token, requestId, checkForID=False, resultIdName=None, returnResult=False
-):
-    period = 0.3
-    for i in range(50):
-        sleep(period)
-        isSuccessful = requests.get(
-            baseURL + "/v1/common/request/is_successful",
-            headers=dict(Authorization="Bearer " + token),
-            params=dict(request_id=str(requestId)),
-        )
-        if isSuccessful.status_code == 200:
-            resp = requests.get(
-                baseURL + "/v1/common/request/result",
-                headers=dict(Authorization="Bearer " + token),
-                params=dict(request_id=str(requestId)),
-            )
-            resp.raise_for_status()
-            result = resp.json()["result"]
-            if isSuccessful.json()["success"]:
-                if checkForID:
-                    if "items" in result:
-                        return result["items"][0][resultIdName]
-                    else:
-                        return result[resultIdName]
-                elif returnResult:
-                    return result
-                else:
-                    return
-            else:
-                if "items" in result:
-                    for item in result["items"]:
-                        if "reason" in item:
-                            raise Exception(item["reason"]["message"])
-                else:
-                    if "reason" in result:
-                        raise Exception(result["reason"]["message"])
-                raise Exception("Unknown error!")
-
-        period += 0.2
-    raise Exception("Response time out!")
 
 
 if __name__ == "__main__":

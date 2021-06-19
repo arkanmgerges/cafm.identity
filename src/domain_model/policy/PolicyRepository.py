@@ -40,6 +40,18 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
+    def bulkAssignRoleToPermission(self, objList: List[dict]):
+        """Bulk assign role to permission
+
+        Args:
+            objList (List[dict]): A list of dictionary that contains 'role' and 'permission' as keys
+                                  and the values are objects of `Role <src.domain_model.role.Role>`
+                                  and `Permission <src.domain_model.permission.Permission`
+                                  respectively
+
+        """
+
+    @abstractmethod
     def allTreeByRoleName(self, roleName: str) -> List[Any]:
         """Retrieve all the connection by role name
 

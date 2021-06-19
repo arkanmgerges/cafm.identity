@@ -34,153 +34,6 @@ def cli():
 #         click.echo(click.style('Hello %s!' % name, fg='green'))
 
 
-@cli.command(help="Initialize a database")
-def init_db():
-    click.echo(click.style("Initialized the database", fg="green", bold=True))
-    try:
-        dbName = os.getenv("CAFM_IDENTITY_ARANGODB_DB_NAME", None)
-        if dbName is None:
-            raise Exception("Db name is not set")
-
-        connection = dbClientConnection()
-        click.echo(click.style(f"Create database {dbName} if not exist", fg="green"))
-
-        sleepPeriod = 1
-        for i in range(30):
-            if not connection.hasDatabase(dbName):
-                connection.createDatabase(name=dbName)
-                connection.reload()
-                sleep(sleepPeriod)
-                sleepPeriod += 3
-            else:
-                break
-
-        dbConnection = connection[dbName]
-        click.echo(click.style(f"Create collections:", fg="green"))
-        collections = [
-            "resource",
-            "permission",
-            "permission_context",
-            "country",
-            "city",
-        ]
-        for colName in collections:
-            if not dbConnection.hasCollection(colName):
-                dbConnection.createCollection(name=colName, keyOptions={"type": "uuid", "allowUserKeys": True})
-
-        # Create edges
-        click.echo(click.style(f"Create edges:", fg="green"))
-        edges = ["has", "for", "access", "owned_by"]
-        for edgeName in edges:
-            if not dbConnection.hasCollection(edgeName):
-                dbConnection.createCollection(
-                    className="Edges",
-                    name=edgeName,
-                    keyOptions={"type": "uuid", "allowUserKeys": True},
-                )
-
-        # Add permission contexts
-        permissionContextResourceNames = [
-            "realm",
-            "ou",
-            "project",
-            "user",
-            "role",
-            "user_group",
-        ]
-        click.echo(click.style(f"Create permission contexts", fg="green"))
-        for permissionContextResourceName in permissionContextResourceNames:
-            aql = """
-                        UPSERT {data: {name: @resourceTypeName}}
-                            INSERT {_key: @id, id: @id, type: @type, data: @data}
-                            UPDATE {data: @data}
-                          IN permission_context
-                        """
-
-            bindVars = {
-                "id": str(uuid.uuid4()),
-                "type": "resource_type",
-                "resourceTypeName": permissionContextResourceName,
-                "data": {
-                    "name": permissionContextResourceName,
-                    "type": "resource_type",
-                },
-            }
-            queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-
-        # Add default permissions (this was added later in code. It will read the already created permission contexts and
-        # create permissions for them)
-        # Fetch all permission contexts
-        aql = """
-            FOR pc IN permission_context
-                RETURN pc
-        """
-        permissionContextsQueryResult = dbConnection.AQLQuery(aql, rawResults=True)
-        permissionContextsResult = []
-        for r in permissionContextsQueryResult:
-            permissionContextsResult.append(r)
-
-        # Create permissions with names '<action>_<permission_context>' like read_ou, create_realm ...etc
-        click.echo(
-            click.style(
-                f"Create permissions with names linked to permission contexts",
-                fg="green",
-            )
-        )
-        for action in ["create", "read", "update", "delete"]:
-            for pc in permissionContextsResult:
-                aql = """
-                        UPSERT {name: @name, type: @type}
-                            INSERT {_key: @id, id: @id, name: @name, type: @type, allowed_actions: ["#allowedAction"], denied_actions: []}
-                            UPDATE {name: @name}
-                          IN permission
-                        """
-                aql = aql.replace("#allowedAction", action)
-                bindVars = {
-                    "id": str(uuid.uuid4()),
-                    "name": f'{action}_{pc["data"]["name"]}',
-                    "type": "permission",
-                }
-                queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-
-        # Fetch all permissions
-        aql = """
-            FOR p IN permission
-                RETURN p
-        """
-        permissionsResult = dbConnection.AQLQuery(aql, rawResults=True)
-
-        # Link the permissions with the permission contexts
-        click.echo(click.style(f"Link permissions to permission contexts", fg="green"))
-        for perm in permissionsResult:
-            aql = """
-                UPSERT {_from: @fromId, _to: @toId}
-                    INSERT {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
-                    UPDATE {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
-                  IN `for`                
-                """
-            rtName = perm["name"][perm["name"].find("_") + 1 :]
-            rtId = None
-            for pc in permissionContextsResult:
-                if pc["data"]["name"] == rtName:
-                    rtId = pc["_id"]
-                    break
-            if rtId is None:
-                click.echo(
-                    click.style(
-                        f"rtId is none for {rtName} and {permissionContextsResult}",
-                        fg="red",
-                    )
-                )
-            if rtId is not None:
-                bindVars = {"fromId": perm["_id"], "toId": rtId}
-                queryResult = dbConnection.AQLQuery(aql, bindVars=bindVars, rawResults=True)
-
-    except Exception as e:
-        click.echo(click.style(str(e), fg="red"))
-        exit(0)
-
-
 @cli.command(help="Drop a database")
 def drop_db():
     click.echo(click.style("Dropping the database", fg="green", bold=True))
@@ -348,7 +201,7 @@ def assignParentToChildResource(db, fromId, toId, fromType, toType):
               IN has                  
             """
     bindVars = {"fromId": fromId, "toId": toId, "fromType": fromType, "toType": toType}
-    queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+    _queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
 
 def assignRoleAccessToResource(db, fromId, toId, fromType, toType):
@@ -359,7 +212,7 @@ def assignRoleAccessToResource(db, fromId, toId, fromType, toType):
               IN `access`                  
             """
     bindVars = {"fromId": fromId, "toId": toId, "fromType": fromType, "toType": toType}
-    queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+    _queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
 
 def createResource(db, id, nameOrEmail, type):
@@ -379,7 +232,7 @@ def createResource(db, id, nameOrEmail, type):
             """
 
     bindVars = {"id": id, "nameOrEmail": nameOrEmail, "type": type}
-    queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+    _queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
 
 def resourceDocId(db, nameOrEmail, type):
@@ -432,7 +285,7 @@ def createUser(db, id, email, password):
               IN resource
             """
     bindVars = {"id": id, "email": email, "password": password}
-    queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+    _queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
 
 @cli.command(help="Initialize kafka topics and schema registries")
@@ -529,11 +382,7 @@ def check_schema_registry_readiness():
             click.echo(click.style("Schema registry is ready", fg="green", bold=True))
             exit(0)
         except Exception as e:
-            click.echo(click.style(f"Error thrown ... {e}", fg="red"))
-            click.echo(click.style(f"Sleep {sleepPeriod} seconds ...", fg="green", bold=True))
-            click.echo(click.style(f"Remaining retries: {counter}", fg="green"))
-            sleepPeriod += 3
-            sleep(sleepPeriod)
+            _showSleepingPeriodAndRetriesCounter(counter=counter, sleepPeriod=sleepPeriod, e=e)
     exit(1)
 
 
@@ -559,13 +408,15 @@ def check_redis_readiness():
             sleepPeriod += 3
             sleep(sleepPeriod)
         except Exception as e:
-            click.echo(click.style(f"Error thrown ... {e}", fg="red"))
-            click.echo(click.style(f"Sleep {sleepPeriod} seconds ...", fg="green", bold=True))
-            click.echo(click.style(f"Remaining retries: {counter}", fg="green"))
-            sleepPeriod += 3
-            sleep(sleepPeriod)
+            _showSleepingPeriodAndRetriesCounter(counter=counter, sleepPeriod=sleepPeriod, e=e)
     exit(1)
 
+def _showSleepingPeriodAndRetriesCounter(counter, sleepPeriod, e):
+    click.echo(click.style(f"Error thrown ... {e}", fg="red"))
+    click.echo(click.style(f"Sleep {sleepPeriod} seconds ...", fg="green", bold=True))
+    click.echo(click.style(f"Remaining retries: {counter}", fg="green"))
+    sleepPeriod += 3
+    sleep(sleepPeriod)
 
 def dbClientConnection():
     try:

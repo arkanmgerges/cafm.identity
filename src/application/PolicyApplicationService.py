@@ -30,6 +30,7 @@ from src.domain_model.resource.exception.InvalidAttributeException import (
 from src.domain_model.resource.exception.ProcessBulkDomainException import (
     ProcessBulkDomainException,
 )
+from src.domain_model.role.Role import Role
 from src.domain_model.role.RoleRepository import RoleRepository
 from src.domain_model.token.TokenService import TokenService
 from src.domain_model.user.UserRepository import UserRepository
@@ -308,7 +309,7 @@ class PolicyApplicationService:
                     or "permission_context_id" not in objListParamsItem
                 ):
                     raise InvalidAttributeException(
-                        message=f'The needed parameters are: permission_id and permission_context_is. Received: {",".join(objListParamsItem)}'
+                        message=f'The needed parameters are: permission_id and permission_context_id. Received: {",".join(objListParamsItem)}'
                     )
                 objList.append(
                     {
@@ -346,7 +347,7 @@ class PolicyApplicationService:
                 ):
                     raise InvalidAttributeException(
                         message=f"The needed parameters are: permission_id and "
-                        f'permission_context_is. Received: {",".join(objListParamsItem)}'
+                        f'permission_context_id. Received: {",".join(objListParamsItem)}'
                     )
                 objList.append(
                     {
@@ -366,6 +367,43 @@ class PolicyApplicationService:
             self._policyService.bulkRemovePermissionToPermissionContextAssignment(
                 objList=objList
             )
+            if len(exceptions) > 0:
+                raise ProcessBulkDomainException(messages=exceptions)
+        except DomainModelException as e:
+            exceptions.append({"reason": {"message": e.message, "code": e.code}})
+            raise ProcessBulkDomainException(messages=exceptions)
+
+    @debugLogger
+    def bulkAssignRoleToPermission(
+            self, objListParams: List[dict], token: str = ""
+    ):
+        objList = []
+        exceptions = []
+        for objListParamsItem in objListParams:
+            try:
+                if (
+                        "role_id" not in objListParamsItem
+                        or "permission_id" not in objListParamsItem
+                ):
+                    raise InvalidAttributeException(
+                        message=f'The needed parameters are: role_id and permission_id. Received: {",".join(objListParamsItem)}'
+                    )
+                objList.append(
+                    {
+                        "role": Role.createFrom(
+                            id=objListParamsItem["role_id"],
+                            skipValidation=True,
+                        ),
+                        "permission": Permission.createFrom(
+                            id=objListParamsItem["permission_id"], skipValidation=True
+                        ),
+                    }
+                )
+            except DomainModelException as e:
+                exceptions.append({"reason": {"message": e.message, "code": e.code}})
+        _ = TokenService.tokenDataFromToken(token=token)
+        try:
+            self._policyService.bulkAssignRoleToPermission(objList=objList)
             if len(exceptions) > 0:
                 raise ProcessBulkDomainException(messages=exceptions)
         except DomainModelException as e:

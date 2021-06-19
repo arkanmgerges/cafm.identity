@@ -611,6 +611,38 @@ class PolicyRepositoryImpl(PolicyRepository):
         )
 
     @debugLogger
+    def bulkAssignRoleToPermission(self, objList: List[dict]):
+        actionFunction = """
+                        function (params) {                                            
+                            let db = require('@arangodb').db;
+                            let objList = params['roleAndPermissionIdList'];
+                            for (let index in objList) {
+                                let res = db.has.byExample({_from: `resource/${objList[index].role_id}`,
+                                                           _to: `permission/${objList[index].permission_id}`}).toArray();
+                                if (res.length == 0) {
+                                    db.has.insert({
+                                        _from_type: "role",
+                                        _to_type: "permission",
+                                        _from: `resource/${objList[index].role_id}`,
+                                        _to: `permission/${objList[index].permission_id}`
+                                    }, {"overwrite": true});
+                                }
+                            }
+                        }
+                    """
+        params = {
+            "roleAndPermissionIdList": list(map(lambda obj: {
+                "role_id": obj['role'].id(),
+                "permission_id": obj['permission'].id()
+            }, objList))
+        }
+        self._db.transaction(
+            collections={"write": ["has"]},
+            action=actionFunction,
+            params=params,
+        )
+
+    @debugLogger
     def assignPermissionToPermissionContext(
         self, permission: Permission, permissionContext: PermissionContext
     ) -> None:

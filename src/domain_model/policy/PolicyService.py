@@ -92,6 +92,21 @@ class PolicyService:
             )
 
     @debugLogger
+    def bulkAssignRoleToPermission(self, objList: List[dict]):
+        self._repo.bulkAssignRoleToPermission(objList=objList)
+        for objListItem in objList:
+            from src.domain_model.policy.RoleToPermissionAssigned import (
+                RoleToPermissionAssigned,
+            )
+
+            DomainPublishedEvents.addEventForPublishing(
+                RoleToPermissionAssigned(
+                    role=objListItem["role"],
+                    permission=objListItem["permission"],
+                )
+            )
+
+    @debugLogger
     def grantAccessRoleToResource(self, role: Role, resource: Resource):
         from src.domain_model.policy.RoleToResourceAccessGranted import (
             RoleToResourceAccessGranted,
