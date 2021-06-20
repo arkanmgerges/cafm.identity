@@ -91,7 +91,7 @@ def check_redis_readiness():
 
     while counter > 0:
         try:
-            cache: redis.client.Redis = Cache.instance()
+            cache: redis.client.Redis = Cache.instance().client()
             click.echo(click.style("[Redis] Client created", fg="green"))
 
             cache.setex("test_redis_key", 10, "test")

@@ -142,7 +142,7 @@ class IdentityCommandListener(CommonListener):
                 createdOn=messageData["created_on"],
                 external=external,
             ),
-            schema=IdentityCommand.get_schema(),
+            schema=IdentityFailedCommandHandle.get_schema(),
         )
         producer.sendOffsetsToTransaction(consumer)
         producer.commitTransaction()

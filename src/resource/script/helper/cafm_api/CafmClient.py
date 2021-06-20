@@ -295,13 +295,11 @@ class CafmClient:
         appRoutesJsonResponse = self.appRouteList()
         # Get all the permission contexts
         permissionContextList = self.permissionContexts()
-        # Get all permissions
-        permissionList = self.permissions()
 
         apiPermissionContexts = list(filter(lambda x: "api_resource_type" in x["type"], permissionContextList))
 
         apiPermissionWithContexts = self._apiPermissionWithContextList(
-            apiPermissionContexts, appRoutesJsonResponse, permissionList
+            apiPermissionContexts, appRoutesJsonResponse
         )
         hashedKeys = self.hashKeys(self._extractKeys(apiPermissionWithContexts))
         self._bulkPersistPermissionWithPermissionContexts(
@@ -309,17 +307,21 @@ class CafmClient:
             hashedKeys=hashedKeys,
         )
 
-    def _apiPermissionWithContextList(self, apiPermissionContexts, appRoutesJsonResponse, permissionList):
+    def _apiPermissionWithContextList(self, apiPermissionContexts, appRoutesJsonResponse):
         apiPermissionWithContexts = []
         for appRoute in appRoutesJsonResponse["routes"]:
             apiPermissionContextToBeCreated = None
             apiPermissionsToBeCreated = []
             # Check for permission contexts
+            apiPermissionContextFound = False
             for apiPermissionContext in apiPermissionContexts:
                 if appRoute["path"] == apiPermissionContext["data"]["path"]:
+                    apiPermissionContextFound = True
                     apiPermissionContexts.remove(apiPermissionContext)
                     apiPermissionContextToBeCreated = {"name": appRoute["path"], "path": appRoute["path"]}
                     break
+            if not apiPermissionContextFound:
+                apiPermissionContextToBeCreated = {"name": appRoute["path"], "path": appRoute["path"]}
 
             # Check for permissions
             for method in appRoute["methods"]:
@@ -331,17 +333,13 @@ class CafmClient:
                     method = "read"
 
                 microserviceName = self._extractMicroserviceName(appRoute["path"])
-                for permission in permissionList:
-                    microserviceName = microserviceName if microserviceName is not None else "default"
-                    if permission["name"] == f'api:{method}:{microserviceName}:{appRoute["name"]}':
-                        apiPermissionsToBeCreated.append(
-                            {
-                                "name": f'api:{method}:{microserviceName}:{appRoute["name"]}',
-                                "allowed_actions": [method.lower()],
-                                "denied_actions": [],
-                            }
-                        )
-                        break
+                apiPermissionsToBeCreated.append(
+                    {
+                        "name": f'api:{method}:{microserviceName}:{appRoute["name"]}',
+                        "allowed_actions": [method.lower()],
+                        "denied_actions": [],
+                    }
+                )
 
             apiPermissionWithContexts.append(
                 {
@@ -435,7 +433,8 @@ class CafmClient:
     def _extractKeys(self, apiPermissionWithContexts) -> List[dict]:
         keys = []
         for item in apiPermissionWithContexts:
-            keys.append({"key": item["permission_context"]["path"]})
+            if (item is not None and "permission_context" in item) and (item["permission_context"] is not None and "path" in item["permission_context"]):
+                keys.append({"key": item["permission_context"]["path"]})
         return keys
 
     def _hashedKeyByKey(self, key, hashedKeys) -> Optional[str]:

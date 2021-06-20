@@ -145,7 +145,7 @@ class IdentityEventListener(CommonListener):
                 createdOn=messageData["created_on"],
                 external=external,
             ),
-            schema=IdentityEvent.get_schema(),
+            schema=IdentityFailedEventHandle.get_schema(),
         )
         producer.sendOffsetsToTransaction(consumer)
         producer.commitTransaction()
