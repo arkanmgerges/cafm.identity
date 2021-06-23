@@ -63,7 +63,6 @@ class ProjectEventListener(CommonListener):
                     f'[{ProjectEventListener.run.__qualname__}] Command handle result is None, The offset is consumed for handleMessage(name={messageData["name"]}, data={messageData["data"]}, metadata={messageData["metadata"]})'
                 )
                 self._produceDomainEvents(producer=producer, messageData=messageData, external=external)
-                processHandleData.isSuccess = True
                 return
 
             logger.debug(f"[{ProjectEventListener.run.__qualname__}] handleResult returned with: {handledResult}")
