@@ -155,7 +155,7 @@ class CommonListener:
             res = target(
                 messageData=messageData,
                 creatorServiceName=self._creatorServiceName,
-                resultData=handledResult["data"],
+                resultData=handledResult["data"] if handledResult is not None else None,
             )
             producer.produce(obj=res["obj"], schema=res["schema"])
 

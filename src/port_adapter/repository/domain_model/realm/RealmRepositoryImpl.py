@@ -84,7 +84,7 @@ class RealmRepositoryImpl(RealmRepository):
         # queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
         actionFunction = """
-            function (params) {                                            
+            function (params) {
                 queryLink = `UPSERT {_from: @fromId, _to: @toId}
                       INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
                       UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
@@ -100,9 +100,9 @@ class RealmRepositoryImpl(RealmRepository):
                     db._query(queryLink, p).execute();
                     for (let i = 0; i < params['rolesDocIds'].length; i++) {
                         let currentDocId = params['rolesDocIds'][i];
-                        let p = {'fromId': fromDocId, 'toId': currentDocId, 
+                        let p = {'fromId': fromDocId, 'toId': currentDocId,
                             'fromType': params['resource']['type'], 'toType': params['toTypeRole']};
-                        db._query(queryLink, p).execute();    
+                        db._query(queryLink, p).execute();
                     }
                 } else {
                     let err = new Error(`Could not create resource, ${params['resource']['id']} is already exist`);
@@ -111,6 +111,7 @@ class RealmRepositoryImpl(RealmRepository):
                 }
             }
         """
+
         params = {
             "resource": {
                 "id": obj.id(),
@@ -163,21 +164,21 @@ class RealmRepositoryImpl(RealmRepository):
     def deleteRealm(self, obj: Realm, tokenData: TokenData = None):
         try:
             actionFunction = """
-                function (params) {                                            
+                function (params) {
 
                     let db = require('@arangodb').db;
                     let res = db.resource.byExample({id: params['resource']['id'], type: params['resource']['type']}).toArray();
                     if (res.length != 0) {
                         let doc = res[0];
-                        let edges = db.owned_by.outEdges(doc._id);   
+                        let edges = db.owned_by.outEdges(doc._id);
                         for (let i = 0; i < edges.length; i++) {
                             db.owned_by.remove(edges[i]);
                         }
-                        edges = db.has.edges(doc._id);   
+                        edges = db.has.edges(doc._id);
                         for (let i = 0; i < edges.length; i++) {
                             db.has.remove(edges[i]);
                         }
-                        edges = db.access.edges(doc._id);   
+                        edges = db.access.edges(doc._id);
                         for (let i = 0; i < edges.length; i++) {
                             db.access.remove(edges[i]);
                         }
