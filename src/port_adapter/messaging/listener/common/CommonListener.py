@@ -128,7 +128,7 @@ class CommonListener:
                         for processHandleDataItem in processHandleDataList:
                             if processHandleDataItem.isSuccess:
                                 self._handleTargetsOnSuccess(processHandleData=processHandleDataItem)
-                            elif not processHandleDataItem.isSuccess:
+                            elif processHandleDataItem.isSuccess is False:
                                 self._handleTargetsOnException(processHandleData=processHandleDataItem)
 
                         producer.sendOffsetsToTransaction(consumer)

@@ -28,11 +28,3 @@ class OrganizationUpdatedHandler(Handler):
         messageData["data"] = json.dumps(dataDict)
         super().handleMessage(messageData)
         return None
-
-    @staticmethod
-    def targetsOnException() -> List[Callable]:
-        return [Handler.targetOnException]
-
-    @staticmethod
-    def targetsOnSuccess() -> List[Callable]:
-        return [Handler.targetOnSuccess]
