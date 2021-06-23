@@ -153,7 +153,7 @@ class RealmRepositoryImpl(RealmRepository):
 
             # Check if it is updated
             repoObj = self.realmById(obj.id())
-            if repoObj != obj:
+            if repoObj.name() != obj.name() and repoObj.id() != obj.id():
                 logger.warn(
                     f"[{RealmRepositoryImpl.updateRealm.__qualname__}] The object realm: {obj} could not be updated in the database"
                 )
