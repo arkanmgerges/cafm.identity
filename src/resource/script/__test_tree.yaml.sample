@@ -83,42 +83,41 @@ permission_trees:
 
 role_trees:
   role_0: &ref_role_0
-    name: role_0
-    title: "Role 0 (from tree) "
-    permissions: [*ref_perm_tree_0]
-    access: [*ref_tree_0]
-  role_1: &ref_role_1
-    name: role_1
-    title: "Role 1 (from tree) "
-    permissions: [*ref_perm_tree_0, *ref_perm_tree_1]
-    access: [*ref_tree_0, *ref_tree_1]
-  role_2: &ref_role_2
-    name: role_2
-    title: "Role 2 (from tree) "
-    permissions: [*ref_perm_tree_1]
-    access: [*ref_tree_1]
-  role_3: &ref_role_3
     name: super_admin
     title: "Super Admin"
-  role_4: &ref_role_4
+    tag: super_admin
+  role_1: &ref_role_1
     name: admin
     title: "Admin"
-  role_5: &ref_role_5
+    tag: provider
+  role_2: &ref_role_2
     name: coordinator
     title: "Coordinator"
-  role_7: &ref_role_7
+    tag: provider
+  role_3: &ref_role_3
     name: project_manager
     title: "Project Manager"
-  role_8: &ref_role_8
+    tag: provider
+  role_4: &ref_role_4
     name: assistant_project_manager
     title: "Assistant Project Manager"
-  role_9: &ref_role_9
+    tag: provider
+  role_5: &ref_role_5
     name: tehnician
     title: "Technician"
-  role_10: &ref_role_10
+    tag: provider
+  role_6: &ref_role_6
     name: procurment
     title: "Procurement"
-
+    tag: provider
+  role_7: &ref_role_7
+    name: building_manager
+    title: "Building Manager"
+    tag: beneficiary
+  role_8: &ref_role_8
+    name: office_manager
+    title: "Office Manager"
+    tag: tenant
 
 user_trees:
   user_0: &ref_user_0
@@ -132,12 +131,12 @@ user_trees:
   user_2: &ref_user_2
     email: admin@coral.com
     password: 'superC@FM'
-    roles: [*ref_role_3]
+    roles: [*ref_role_0]
   user_3: &ref_user_3
     email: admin@globalworth.com
     password: 'superC@FM'
-    roles: [*ref_role_3]
+    roles: [*ref_role_0]
   user_4: &ref_user_4
     email: admin@amazon.com
     password: 'superC@FM'
-    roles: [*ref_role_3]
+    roles: [*ref_role_0]

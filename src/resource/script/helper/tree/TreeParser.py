@@ -135,6 +135,9 @@ class TreeParser:
         )
         roleTree["id"] = roleId
 
+        if roleTree["tag"] != "super_admin":
+            self._cafmClient.assignTagToRole(tagName=roleTree["tag"], roleId=roleId)
+
         # Role permissions
         if "permissions" in roleTree:
             permissionsTrees = roleTree["permissions"]
