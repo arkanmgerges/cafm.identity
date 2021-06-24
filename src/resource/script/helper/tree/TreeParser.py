@@ -21,17 +21,23 @@ class TreeParser:
 
         resource = self.ensureResourceExistence(parent)
         if resource is None:
-            raise Exception(f"Something went wrong while ensuring resource existence for node {parent}")
+            raise Exception(
+                f"Something went wrong while ensuring resource existence for node {parent}"
+            )
 
         for child in parent["children"]:
             childResource = self.parseResourceTree(child)
             if childResource is not None:
-                self.ensureAssignmentFromParentResourceToChildResourceExistence(parent=resource, child=childResource)
+                self.ensureAssignmentFromParentResourceToChildResourceExistence(
+                    parent=resource, child=childResource
+                )
 
         return resource
 
     def ensureAssignmentFromParentResourceToChildResourceExistence(self, parent, child):
-        self._cafmClient.createAssignmentResourceToResource(fromId=child["id"], toId=parent["id"], ignoreExistence=True)
+        self._cafmClient.createAssignmentResourceToResource(
+            fromId=child["id"], toId=parent["id"], ignoreExistence=True
+        )
 
     def ensureResourceExistence(self, node):
         """Create or update the resource according to the node type
@@ -41,7 +47,9 @@ class TreeParser:
         """
 
         if node["resource_type"] == "realm":
-            resourceId = self._cafmClient.ensureRealmExistence(name=node["name"], realmType=node["realm_type"])
+            resourceId = self._cafmClient.ensureRealmExistence(
+                name=node["name"], realmType=node["realm_type"]
+            )
             node["id"] = resourceId
             return node
         if node["resource_type"] == "ou":
@@ -104,7 +112,9 @@ class TreeParser:
 
         return True
 
-    def checkPermissionsExistence(self, permissionNames, currentPermissions) -> List[dict]:
+    def checkPermissionsExistence(
+        self, permissionNames, currentPermissions
+    ) -> List[dict]:
         """Filter the permission names from the current permissions, regex is used for filtering them
         Args:
             permissionNames (List[str]): List of permission names
@@ -145,10 +155,20 @@ class TreeParser:
                 permissions = permissionsTree["permissions"]
                 if "children" in permissionsTree:
                     for item in permissionsTree["children"]:
-                        click.echo(click.style(f"[cafm-api] Bulk assignment of permission: {item['name']} to role name: {roleTree['name']} , role id: {roleId}"))
+                        click.echo(
+                            click.style(
+                                f"[cafm-api] Bulk assignment of permission: {item['name']} to role name: {roleTree['name']} , role id: {roleId}"
+                            )
+                        )
                 else:
-                    click.echo(click.style(f"[cafm-api] Bulk assignment of permissions to role id {roleId}"))
-                self._bulkAssignmentPermissionsToRole(roleId=roleId, permissions=permissions)
+                    click.echo(
+                        click.style(
+                            f"[cafm-api] Bulk assignment of permissions to role id {roleId}"
+                        )
+                    )
+                self._bulkAssignmentPermissionsToRole(
+                    roleId=roleId, permissions=permissions
+                )
                 # for permission in permissions:
                 #     permissionId = permission["id"]
                 #     self._cafmClient.createAssignmentRoleToPermission(
@@ -162,7 +182,9 @@ class TreeParser:
             accessibleResourceTrees = roleTree["access"]
             for resourceTree in accessibleResourceTrees:
                 resourceId = resourceTree["id"]
-                self._cafmClient.createAccessRoleToResource(roleId=roleId, resourceId=resourceId, ignoreExistence=True)
+                self._cafmClient.createAccessRoleToResource(
+                    roleId=roleId, resourceId=resourceId, ignoreExistence=True
+                )
 
     def _bulkAssignmentPermissionsToRole(self, permissions, roleId):
         bulkData = []
@@ -177,7 +199,11 @@ class TreeParser:
                 is None
             ) or (redisClient is None):
                 bulkData.append(
-                    dict(assign_role_to_permission=dict(data=dict(role_id=roleId, permission_id=permissionId)))
+                    dict(
+                        assign_role_to_permission=dict(
+                            data=dict(role_id=roleId, permission_id=permissionId)
+                        )
+                    )
                 )
         if len(bulkData) > 0:
             try:
@@ -185,8 +211,12 @@ class TreeParser:
                 # Add to cache
                 for bulkDataItem in bulkData:
                     if "assign_role_to_permission" in bulkDataItem:
-                        roleId = bulkDataItem["assign_role_to_permission"]["data"]["role_id"]
-                        permissionId = bulkDataItem["assign_role_to_permission"]["data"]["permission_id"]
+                        roleId = bulkDataItem["assign_role_to_permission"]["data"][
+                            "role_id"
+                        ]
+                        permissionId = bulkDataItem["assign_role_to_permission"][
+                            "data"
+                        ]["permission_id"]
                         if redisClient is not None:
                             redisClient.setex(
                                 f"{Cache.CACHE_PREFIX}assign_role_to_permission:role_id__{roleId}__permission_id__{permissionId}",
@@ -209,5 +239,25 @@ class TreeParser:
                     userId=userId,
                     ignoreExistence=True,
                 )
+        if "access" in userTree:
+            accessibleResourceTrees = userTree["access"]
+            for resourceTree in accessibleResourceTrees:
+                resourceId = resourceTree["id"]
+                resourceName = resourceTree["name"]
+
+                accessRoleName = "access-" + resourceId
+                role = self._cafmClient.findRoleByName(name=accessRoleName)
+                if role is not None:
+                    roleId = role["id"]
+                    click.echo(
+                        click.style(
+                            f"[cafm-api] Creating assignment between user and role: {role} for access to resource: {resourceName}"
+                        )
+                    )
+                    self._cafmClient.createAssignmentRoleToUser(
+                        roleId=roleId,
+                        userId=userId,
+                        ignoreExistence=True,
+                    )
 
     # endregion Role
