@@ -3,55 +3,37 @@ database_name: cafm-identity
 resource_trees:
   tree_0: &ref_tree_0
     resource_type: realm
-    name: realm_0
+    name: Coral Romania
     realm_type: provider
     children:
-      - resource_type: ou
-        name: ou_0
-        children:
-          - name: project_0
-            resource_type: project
-            children: []
-      - resource_type: ou
-        name: ou_1
-        children:
-          - name: project_1
-            resource_type: project
-            children: []
+      - name: Novo Park
+        resource_type: project
+        children: []
+      - name: Old Park
+        resource_type: project
+        children: []
   tree_1: &ref_tree_1
     resource_type: realm
-    name: realm_1
+    name: Coral Polonia
     realm_type: provider
     children:
-      - resource_type: ou
-        name: ou_2
-        children:
-          - resource_type: project
-            name: project_2
-            children: []
-      - resource_type: ou
-        name: ou_3
-        children:
-          - resource_type: project
-            name: project_3
-            children: []
+      - resource_type: project
+        name: South Park
+        children: []
+      - resource_type: project
+        name: North Park
+        children: []
   tree_2: &ref_tree_2
     resource_type: realm
     name: digitalmob
     realm_type: provider
     children:
-      - resource_type: ou
-        name: "Global Worth"
-        children:
-          - resource_type: project
-            name: "Pipera 21"
-            children: []
-      - resource_type: ou
-        name: "Amazon"
-        children:
-          - resource_type: project
-            name: "Vlaicu 13"
-            children: []
+      - resource_type: project
+        name: "Pipera 21"
+        children: []
+      - resource_type: project
+        name: "Vlaicu 13"
+        children: []
 
 permission_trees:
   perm_tree_0: &ref_perm_tree_0
@@ -90,34 +72,42 @@ role_trees:
     name: admin
     title: "Admin"
     tag: provider
+    permissions: [*ref_perm_tree_5_permit_all]
   role_2: &ref_role_2
     name: coordinator
     title: "Coordinator"
     tag: provider
+    permissions: [*ref_perm_tree_4_read_and_create]
   role_3: &ref_role_3
     name: project_manager
     title: "Project Manager"
     tag: provider
+    permissions: [*ref_perm_tree_4_read_and_create]
   role_4: &ref_role_4
     name: assistant_project_manager
     title: "Assistant Project Manager"
     tag: provider
+    permissions: [*ref_perm_tree_4_read_and_create]
   role_5: &ref_role_5
     name: tehnician
     title: "Technician"
     tag: provider
+    permissions: [*ref_perm_tree_4_read_and_create]
   role_6: &ref_role_6
     name: procurment
     title: "Procurement"
     tag: provider
+    permissions: [*ref_perm_tree_4_read_and_create]
   role_7: &ref_role_7
     name: building_manager
     title: "Building Manager"
     tag: beneficiary
+    permissions: [*ref_perm_tree_3_read_only]
   role_8: &ref_role_8
     name: office_manager
     title: "Office Manager"
     tag: tenant
+    permissions: [*ref_perm_tree_3_read_only]
 
 user_trees:
   user_0: &ref_user_0
@@ -131,12 +121,16 @@ user_trees:
   user_2: &ref_user_2
     email: admin@coral.com
     password: 'superC@FM'
-    roles: [*ref_role_0]
+    roles: [*ref_role_1]
   user_3: &ref_user_3
     email: admin@globalworth.com
     password: 'superC@FM'
-    roles: [*ref_role_0]
+    roles: [*ref_role_7]
   user_4: &ref_user_4
     email: admin@amazon.com
     password: 'superC@FM'
-    roles: [*ref_role_0]
+    roles: [*ref_role_8]
+  user_5: &ref_user_5
+    email: tehnician@coral.com
+    password: 'superC@FM'
+    roles: [*ref_role_5]

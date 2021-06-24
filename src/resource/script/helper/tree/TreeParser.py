@@ -31,7 +31,7 @@ class TreeParser:
         return resource
 
     def ensureAssignmentFromParentResourceToChildResourceExistence(self, parent, child):
-        self._cafmClient.createAssignmentResourceToResource(fromId=parent["id"], toId=child["id"], ignoreExistence=True)
+        self._cafmClient.createAssignmentResourceToResource(fromId=child["id"], toId=parent["id"], ignoreExistence=True)
 
     def ensureResourceExistence(self, node):
         """Create or update the resource according to the node type
