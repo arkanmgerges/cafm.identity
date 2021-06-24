@@ -114,9 +114,9 @@ user_trees:
     email: admin@coral.com
     password: 'superC@FM'
     roles: [*ref_role_1]
-    acces: [*ref_tree_0, *ref_tree_1, *ref_tree_2]
+    access: [*ref_tree_0, *ref_tree_1, *ref_tree_2]
   user_6: &ref_user_6
     email: admin@digitalmob.ro
     password: '1234'
     roles: [*ref_role_1]
-    acces: [*ref_tree_2]
+    access: [*ref_tree_2]
