@@ -13,8 +13,4 @@ c4model:Rel(identity__messaging_project_event_handler__UserUpdatedHandler, proje
 
 
 class UserUpdatedHandler(UpdateUserHandler):
-    def targetsOnSuccess(self):
-        return []
-
-    def targetsOnException(self):
-        return []
+    pass
