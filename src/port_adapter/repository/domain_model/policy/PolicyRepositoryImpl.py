@@ -1101,12 +1101,12 @@ class PolicyRepositoryImpl(PolicyRepository):
         roleAccessPermissionDataList: List[RoleAccessPermissionData],
         doFilter,
     ) -> List[RoleAccessPermissionData]:
-        rawDataItems = self._rawRoleTreeItems(roles, True)
         if doFilter:
             resultItems = self._filterRoleAccessPermissionDataItems(
                 roleAccessPermissionDataList
             )
         else:
+            rawDataItems = self._rawRoleTreeItems(roles, True)
             resultItems = self._constructRoleAccessPermissionDataFromRawRoleTreeItems(
                 rawDataItems
             )
