@@ -73,13 +73,17 @@ def create_super_admin_user():
             email="user@admin.system",
             password="1234",
             baseUrl=os.getenv("API_URL"),
-            cache=Cache.instance()
+            cache=Cache.instance(),
         )
     )
     roleId = cafmClient.ensureRoleExistence("super_admin", "Super Admin")
     userId = cafmClient.ensureUserExistence(os.getenv("ADMIN_EMAIL", "admin@local.me"))
-    cafmClient.setUserPassword(userId=userId, password=os.getenv("ADMIN_PASSWORD", "1234"))
-    cafmClient.createAssignmentRoleToUser(roleId=roleId, userId=userId, ignoreExistence=True)
+    cafmClient.setUserPassword(
+        userId=userId, password=os.getenv("ADMIN_PASSWORD", "1234")
+    )
+    cafmClient.createAssignmentRoleToUser(
+        roleId=roleId, userId=userId, ignoreExistence=True
+    )
 
 
 @cli.command(help="Check that redis is ready")
@@ -180,11 +184,15 @@ def init_schema_registry():
         if s[0] is None:
             newSchemas.append(schema)
         else:
-            click.echo(click.style(f'[Schema Registry] Schema {schema["name"]} already exists'))
+            click.echo(
+                click.style(f'[Schema Registry] Schema {schema["name"]} already exists')
+            )
 
     for schema in newSchemas:
         srClient.register(schema["name"], schema["schema"])
-        click.echo(click.style(f'[Schema Registry] Schema {schema["name"]} was created'))
+        click.echo(
+            click.style(f'[Schema Registry] Schema {schema["name"]} was created')
+        )
 
     exit(0)
 
@@ -230,7 +238,9 @@ def init_arango_db():
                 click.echo(click.style(f"[Arango] Collection {name} already exists"))
                 continue
 
-            db.createCollection(name=name, keyOptions={"type": "uuid", "allowUserKeys": True})
+            db.createCollection(
+                name=name, keyOptions={"type": "uuid", "allowUserKeys": True}
+            )
             click.echo(click.style(f"[Arango] Collection {name} was created"))
 
         click.echo(click.style(f"[Arango] Creating edges ..."))
@@ -275,7 +285,11 @@ def init_arango_db():
             }
             _queryResult = db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
 
-        click.echo(click.style(f"[Arango] Creating default permissions for permission contexts ..."))
+        click.echo(
+            click.style(
+                f"[Arango] Creating default permissions for permission contexts ..."
+            )
+        )
         # Add default permissions (this was added later in code. It will read the already created permission contexts and
         # create permissions for them)
         # Fetch all permission contexts
@@ -297,7 +311,11 @@ def init_arango_db():
             permissionContextsResult.append(r)
 
         # Create permissions with names '<action>_<permission_context>' like read_ou, create_realm ...etc
-        click.echo(click.style(f"[Arango] Create permissions with names linked to permission contexts"))
+        click.echo(
+            click.style(
+                f"[Arango] Create permissions with names linked to permission contexts"
+            )
+        )
         for action in ["create", "read", "update", "delete"]:
             for pc in permissionContextsResult:
                 aql = """
@@ -393,7 +411,9 @@ def create_arango_db_user(email, password, database_name):
 
 @cli.command(help="Create user and assign super admin role")
 def create_arango_resource_user_with_sys_admin_role():
-    click.echo(click.style(f"[Arango] Create user and assign super_admin role", fg="green"))
+    click.echo(
+        click.style(f"[Arango] Create user and assign super_admin role", fg="green")
+    )
 
     arangoClient = ArangoClient.clientByDefaultEnv()
     conn = arangoClient.getConnection()
@@ -434,13 +454,18 @@ def create_arango_resource_user_with_sys_admin_role():
 
 @cli.command(help="Create permission with permission contexts for the api endpoints")
 def create_permission_with_permission_contexts_for_api_endpoints():
-    click.echo(click.style(f"[cafm-api] Creating permission with permission contexts and linking them", fg="green"))
+    click.echo(
+        click.style(
+            f"[cafm-api] Creating permission with permission contexts and linking them",
+            fg="green",
+        )
+    )
     cafmClient = CafmClient(
         config=CafmClientConfig(
             email=os.getenv("ADMIN_EMAIL", None),
             password=os.getenv("ADMIN_PASSWORD", None),
             baseUrl=os.getenv("API_URL"),
-            cache=Cache.instance()
+            cache=Cache.instance(),
         )
     )
 
@@ -464,14 +489,16 @@ def build_resource_tree_from_file(filename):
                 email=os.getenv("ADMIN_EMAIL", None),
                 password=os.getenv("ADMIN_PASSWORD", None),
                 baseUrl=os.getenv("API_URL"),
-                cache=Cache.instance()
+                cache=Cache.instance(),
             )
         )
     )
 
     with open(f"{filename}", "r") as f:
         data = yaml.safe_load(f)
-        click.echo(click.style(f"[Resources] Read data from file {filename}", fg="green"))
+        click.echo(
+            click.style(f"[Resources] Read data from file {filename}", fg="green")
+        )
 
     try:
         click.echo(click.style(f"[Build] Resource trees", fg="green"))

@@ -110,27 +110,13 @@ role_trees:
     permissions: [*ref_perm_tree_3_read_only]
 
 user_trees:
-  user_0: &ref_user_0
-    email: user_1@local.me
-    password: '1234'
-    roles: [*ref_role_0, *ref_role_1]
-  user_1: &ref_user_1
-    email: admin2@local.me
-    password: '1234'
-    roles: [*ref_role_2]
   user_2: &ref_user_2
     email: admin@coral.com
     password: 'superC@FM'
     roles: [*ref_role_1]
-  user_3: &ref_user_3
-    email: admin@globalworth.com
-    password: 'superC@FM'
-    roles: [*ref_role_7]
-  user_4: &ref_user_4
-    email: admin@amazon.com
-    password: 'superC@FM'
-    roles: [*ref_role_8]
-  user_5: &ref_user_5
-    email: tehnician@coral.com
-    password: 'superC@FM'
-    roles: [*ref_role_5]
+    acces: [*ref_tree_0, *ref_tree_1, *ref_tree_2]
+  user_6: &ref_user_6
+    email: admin@digitalmob.ro
+    password: '1234'
+    roles: [*ref_role_1]
+    acces: [*ref_tree_2]
