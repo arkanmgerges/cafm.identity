@@ -497,6 +497,17 @@ class CafmClient:
         click.echo(click.style(f"[cafm-api] Created role {name}:{roleId}"))
         return roleId
 
+    def assignTagToRole(self, tagName, roleId):
+        resp = requests.post(
+            self._baseUrl + "/v1/project/tags/assign_tag_to_role",
+            headers=dict(Authorization="Bearer " + self.getAccessToken()),
+            json=dict(name=tagName, role_id=roleId),
+        )
+        # resp.raise_for_status()
+
+        click.echo(click.style(f"[cafm-api] Assign tag to role {tagName}:{roleId}"))
+        return None
+
     def ensureRoleExistence(self, name, title):
         role = self.findRoleByName(name)
         if role is not None:
