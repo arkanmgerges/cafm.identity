@@ -35,6 +35,7 @@ class CommonEventConstant(Enum):
     ROLE_CREATED = "role_created"
     ROLE_FOR_PROJECT_ACCESS_CREATED = "role_for_project_access_created"
     ROLE_FOR_REALM_ACCESS_CREATED = "role_for_realm_access_created"
+    ROLE_FOR_USER_ACCESS_CREATED = "role_for_user_access_created"
     ROLE_DELETED = "role_deleted"
     ROLE_UPDATED = "role_updated"
     USER_CREATED = "user_created"
