@@ -56,6 +56,15 @@ class RoleService:
         return obj
 
     @debugLogger
+    def createRoleForUserAccess(
+        self, obj: Role, userId: str = '', objectOnly: bool = False, tokenData: TokenData = None
+    ):
+        obj = Role.createFromObjectForUserAccess(obj=obj, publishEvent=True, generateNewId=True, userId=userId)
+
+        self._repo.saveRoleForUserAccess(obj=obj, userId=userId, tokenData=tokenData)
+        return obj
+
+    @debugLogger
     def deleteRole(self, obj: Role, tokenData: TokenData = None):
         obj.publishDelete()
         self._repo.deleteRole(obj, tokenData=tokenData)

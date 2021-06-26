@@ -41,6 +41,16 @@ class RoleRepository(ABC):
         """
 
     @abstractmethod
+    def saveRoleForUserAccess(self, obj: Role, userId: str, tokenData: TokenData):
+        """Save role and assign it to the user
+
+        Args:
+            obj (Role): The role that needs to be saved
+            projectId (str): The project that will be assigned to the role
+            tokenData (TokenData): Token data that has info about the token
+        """
+
+    @abstractmethod
     def deleteRole(self, obj: Role, tokenData: TokenData) -> None:
         """Delete a role
 
