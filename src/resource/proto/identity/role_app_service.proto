@@ -15,7 +15,7 @@ message RoleAppService_roleTreeRequest {
   string role_id = 1;
 }
 message RoleAppService_roleTreeResponse {
-  RoleAccessPermission role_access_permission = 1;
+  bytes data = 1;
 }
 
 message RoleAppService_roleByNameRequest {

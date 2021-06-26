@@ -1,15 +1,15 @@
 """
 @author: Arkan M. Gerges<arkan.m.gerges@gmail.com>
 """
-import json
+import pickle
 import time
+import zlib
 from typing import List, Any
 
 import grpc
 
 import src.port_adapter.AppDi as AppDi
 from src.application.RoleApplicationService import RoleApplicationService
-from src.domain_model.policy.AccessNode import AccessNode
 from src.domain_model.policy.RoleAccessPermissionData import RoleAccessPermissionData
 from src.domain_model.resource.exception.RoleDoesNotExistException import (
     RoleDoesNotExistException,
@@ -152,45 +152,10 @@ resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
             logger.debug(f"request: {request}")
             roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
 
-            roleAccessPermissionItem: RoleAccessPermissionData = roleAppService.roleTree(
-                roleId=request.role_id, token=token
-            )
-
-            response = RoleAppService_rolesTreesResponse()
-            # Create a response item
-            roleAccessPermissionResponse = response.role_access_permission.add()
-
-            # role
-            self._addObjectToResponse(obj=roleAccessPermissionItem.role, response=roleAccessPermissionResponse)
-
-            # owned by
-            if roleAccessPermissionItem.ownedBy is not None:
-                roleAccessPermissionResponse.owned_by.id = roleAccessPermissionItem.ownedBy.id()
-                roleAccessPermissionResponse.owned_by.type = roleAccessPermissionItem.ownedBy.type()
-            else:
-                roleAccessPermissionItem.ownedBy = None
-
-            # owner of
-            for ownerOf in roleAccessPermissionItem.ownerOf:
-                tmp = roleAccessPermissionResponse.owner_of.add()
-                tmp.id = ownerOf.id()
-                tmp.type = ownerOf.type()
-
-            # permission with permission contexts
-            self._populatePermissionWithPermissionContexts(
-                roleAccessPermissionResponse.permission_with_permission_contexts,
-                roleAccessPermissionItem.permissions,
-            )
-
-            # access tree
-            self._populateAccessTree(
-                roleAccessPermissionResponse.access_tree,
-                roleAccessPermissionItem.accessTree,
-            )
-
-            logger.debug(f"[{RoleAppServiceListener.role_tree.__qualname__}] - response: {response}")
-            return response
-
+            result: RoleAccessPermissionData = roleAppService.roleTree(roleId=request.role_id, token=token)
+            dataDictionary = result.toMap()
+            dataDictionaryBinaryData = zlib.compress(pickle.dumps(dataDictionary))
+            return RoleAppService_rolesTreesResponse(data=dataDictionaryBinaryData)
         except RoleDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("No roles found")
@@ -211,50 +176,9 @@ resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
             roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
 
             result: List[RoleAccessPermissionData] = roleAppService.rolesTrees(token=token)
-            ff = [item.toMap() for item in result]
-            import zlib
-            import pickle
-            xx = zlib.compress(pickle.dumps(ff))
-            response = RoleAppService_rolesTreesResponse(data=xx)
-            return response
-            for roleAccessPermissionItem in result:
-                # Create a response item
-                roleAccessPermissionResponse = response.role_access_permission.add()
-
-                # role
-                self._addObjectToResponse(
-                    obj=roleAccessPermissionItem.role,
-                    response=roleAccessPermissionResponse,
-                )
-
-                # owned by
-                if roleAccessPermissionItem.ownedBy is not None:
-                    roleAccessPermissionResponse.owned_by.id = roleAccessPermissionItem.ownedBy.id()
-                    roleAccessPermissionResponse.owned_by.type = roleAccessPermissionItem.ownedBy.type()
-                else:
-                    roleAccessPermissionItem.ownedBy = None
-
-                # owner of
-                for ownerOf in roleAccessPermissionItem.ownerOf:
-                    tmp = roleAccessPermissionResponse.owner_of.add()
-                    tmp.id = ownerOf.id()
-                    tmp.type = ownerOf.type()
-
-                # permission with permission contexts
-                self._populatePermissionWithPermissionContexts(
-                    roleAccessPermissionResponse.permission_with_permission_contexts,
-                    roleAccessPermissionItem.permissions,
-                )
-
-                # access tree
-                self._populateAccessTree(
-                    roleAccessPermissionResponse.access_tree,
-                    roleAccessPermissionItem.accessTree,
-                )
-            raise Exception(f'ddd: {time.perf_counter()-st}')
-            logger.debug(f"[{RoleAppServiceListener.roles_trees.__qualname__}] - response: {response}")
-            return response
-
+            dataDictionaryList = [item.toMap() for item in result]
+            dataDictionaryListBinaryData = zlib.compress(pickle.dumps(dataDictionaryList))
+            return RoleAppService_rolesTreesResponse(data=dataDictionaryListBinaryData)
         except RoleDoesNotExistException:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("No roles found")
@@ -263,42 +187,6 @@ resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details("Un Authorized")
         return RoleAppService_roleByNameResponse()
-
-    @debugLogger
-    def _populateAccessTree(self, protoBuf, accessTree: List[AccessNode]):
-        for accessNode in accessTree:
-            tmp = protoBuf.add()
-            self._populateData(tmp, accessNode.data)
-            self._populateAccessTree(tmp.children, accessNode.children)
-
-    @debugLogger
-    def _populatePermissionWithPermissionContexts(self, protoBuf, permissionWithPermissionContexts):
-        for permissionWithPermissionContext in permissionWithPermissionContexts:
-            tmp = protoBuf.add()
-            self._populatePermission(tmp.permission, permissionWithPermissionContext.permission)
-            for permissionContext in permissionWithPermissionContext.permissionContexts:
-                self._populatePermissionContext(tmp.permission_contexts.add(), permissionContext)
-
-    @debugLogger
-    def _populateData(self, protoBuf, data):
-        protoBuf.data.content_type = data.contentType.value
-        protoBuf.data.context = json.dumps(data.context)
-        protoBuf.data.content = json.dumps(data.content.toMap())
-
-    @debugLogger
-    def _populatePermission(self, protoBuf, permission):
-        protoBuf.id = permission.id()
-        protoBuf.name = permission.name()
-        for action in permission.allowedActions():
-            protoBuf.allowed_actions.append(action)
-        for action in permission.deniedActions():
-            protoBuf.denied_actions.append(action)
-
-    @debugLogger
-    def _populatePermissionContext(self, protoBuf, permissionContext):
-        protoBuf.id = permissionContext.id()
-        protoBuf.type = permissionContext.type()
-        protoBuf.data = json.dumps(permissionContext.data())
 
     @debugLogger
     def _addObjectToResponse(self, obj: Role, response: Any):
