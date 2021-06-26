@@ -211,8 +211,12 @@ resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
             roleAppService: RoleApplicationService = AppDi.instance.get(RoleApplicationService)
 
             result: List[RoleAccessPermissionData] = roleAppService.rolesTrees(token=token)
-
-            response = RoleAppService_rolesTreesResponse()
+            ff = [item.toMap() for item in result]
+            import zlib
+            import pickle
+            xx = zlib.compress(pickle.dumps(ff))
+            response = RoleAppService_rolesTreesResponse(data=xx)
+            return response
             for roleAccessPermissionItem in result:
                 # Create a response item
                 roleAccessPermissionResponse = response.role_access_permission.add()
@@ -247,7 +251,7 @@ resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
                     roleAccessPermissionResponse.access_tree,
                     roleAccessPermissionItem.accessTree,
                 )
-
+            raise Exception(f'ddd: {time.perf_counter()-st}')
             logger.debug(f"[{RoleAppServiceListener.roles_trees.__qualname__}] - response: {response}")
             return response
 

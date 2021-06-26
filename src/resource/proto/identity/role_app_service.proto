@@ -8,7 +8,7 @@ import "identity/role_access_permission.proto";
 
 message RoleAppService_rolesTreesRequest {}
 message RoleAppService_rolesTreesResponse {
-  repeated RoleAccessPermission role_access_permission = 1;
+  bytes data = 1;
 }
 
 message RoleAppService_roleTreeRequest {

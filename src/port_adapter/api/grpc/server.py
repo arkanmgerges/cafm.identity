@@ -89,7 +89,7 @@ def serve():
     """The main serve function of the server.
     This opens the socket, and listens for incoming grpc conformant packets"""
 
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
+    server = grpc.server(thread_pool=futures.ThreadPoolExecutor(max_workers=1))
     add_UserAppServiceServicer_to_server(UserAppServiceListener(), server)
     add_RoleAppServiceServicer_to_server(RoleAppServiceListener(), server)
     add_UserGroupAppServiceServicer_to_server(UserGroupAppServiceListener(), server)
@@ -124,6 +124,7 @@ def serve():
 
     port = "[::]:9999"
     server.add_insecure_port(port)
+
     logger.info(f"Identity microservice grpc server started/restarted on port {port}")
     server.start()
 
