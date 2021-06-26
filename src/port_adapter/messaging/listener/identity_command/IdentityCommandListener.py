@@ -3,6 +3,7 @@
 """
 import json
 import os
+import threading
 from copy import copy
 from time import sleep
 
@@ -18,6 +19,7 @@ from src.port_adapter.messaging.listener.common.CommonListener import CommonList
 from src.port_adapter.messaging.listener.common.ProcessHandleData import ProcessHandleData
 from src.port_adapter.messaging.listener.common.resource.exception.FailedMessageHandleException import \
     FailedMessageHandleException
+from src.resource.logging.LogProcessor import LogProcessor
 from src.resource.logging.logger import logger
 
 
@@ -148,5 +150,10 @@ class IdentityCommandListener(CommonListener):
         producer.commitTransaction()
         producer.beginTransaction()
 
-
+# region Logger
+import src.resource.Di as Di
+logProcessor = Di.instance.get(LogProcessor)
+thread = threading.Thread(target=logProcessor.start)
+thread.start()
+# endregion
 IdentityCommandListener().run()

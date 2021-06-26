@@ -1,19 +1,26 @@
 # https://www.youtube.com/watch?v=dQK0VLahrDk&list=PLXs6ze70rLY9u0X6qz_91bCvsjq3Kqn_O&index=5
 """The Python implementation of the GRPC Seans-gRPC server."""
-from datetime import datetime
-from concurrent import futures
 import random
+import threading
+from concurrent import futures
+from datetime import datetime
 
 import grpc
 from grpc_reflection.v1alpha import reflection
 
-import src.resource.proto._generated
 import src.port_adapter.AppDi as AppDi
+import src.resource.proto._generated
 from src.port_adapter.api.grpc.listener.AuthAppServiceListener import (
     AuthAppServiceListener,
 )
 from src.port_adapter.api.grpc.listener.AuthzAppServiceListener import (
     AuthzAppServiceListener,
+)
+from src.port_adapter.api.grpc.listener.CityAppServiceListener import (
+    CityAppServiceListener,
+)
+from src.port_adapter.api.grpc.listener.CountryAppServiceListener import (
+    CountryAppServiceListener,
 )
 from src.port_adapter.api.grpc.listener.OuAppServiceListener import OuAppServiceListener
 from src.port_adapter.api.grpc.listener.PermissionAppServiceListener import (
@@ -34,15 +41,10 @@ from src.port_adapter.api.grpc.listener.RoleAppServiceListener import (
 from src.port_adapter.api.grpc.listener.UserAppServiceListener import (
     UserAppServiceListener,
 )
-from src.port_adapter.api.grpc.listener.CountryAppServiceListener import (
-    CountryAppServiceListener,
-)
-from src.port_adapter.api.grpc.listener.CityAppServiceListener import (
-    CityAppServiceListener,
-)
 from src.port_adapter.api.grpc.listener.UserGroupAppServiceListener import (
     UserGroupAppServiceListener,
 )
+from src.resource.logging.LogProcessor import LogProcessor
 from src.resource.logging.logger import logger
 from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.auth_app_service_pb2_grpc import (
@@ -50,6 +52,12 @@ from src.resource.proto._generated.identity.auth_app_service_pb2_grpc import (
 )
 from src.resource.proto._generated.identity.authz_app_service_pb2_grpc import (
     add_AuthzAppServiceServicer_to_server,
+)
+from src.resource.proto._generated.identity.city_app_service_pb2_grpc import (
+    add_CityAppServiceServicer_to_server,
+)
+from src.resource.proto._generated.identity.country_app_service_pb2_grpc import (
+    add_CountryAppServiceServicer_to_server,
 )
 from src.resource.proto._generated.identity.ou_app_service_pb2_grpc import (
     add_OuAppServiceServicer_to_server,
@@ -71,12 +79,6 @@ from src.resource.proto._generated.identity.role_app_service_pb2_grpc import (
 )
 from src.resource.proto._generated.identity.user_app_service_pb2_grpc import (
     add_UserAppServiceServicer_to_server,
-)
-from src.resource.proto._generated.identity.country_app_service_pb2_grpc import (
-    add_CountryAppServiceServicer_to_server,
-)
-from src.resource.proto._generated.identity.city_app_service_pb2_grpc import (
-    add_CityAppServiceServicer_to_server,
 )
 from src.resource.proto._generated.identity.user_group_app_service_pb2_grpc import (
     add_UserGroupAppServiceServicer_to_server,
@@ -138,4 +140,12 @@ def serve():
 if __name__ == "__main__":
     random.seed(datetime.utcnow().timestamp())
     openTelemetry = AppDi.instance.get(OpenTelemetry)
+
+    # region Logger
+    import src.resource.Di as Di
+    logProcessor = Di.instance.get(LogProcessor)
+    thread = threading.Thread(target=logProcessor.start)
+    thread.start()
+    # endregion
+
     serve()
