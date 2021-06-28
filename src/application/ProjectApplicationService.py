@@ -154,5 +154,27 @@ class ProjectApplicationService:
         )
 
     @debugLogger
+    def projectsByRealmId(
+        self,
+        realmId: str = '',
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        token: str = "",
+        order: List[dict] = None,
+    ) -> dict:
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(
+            tokenData=tokenData
+        )
+        return self._projectRepository.projectsByRealmId(
+            tokenData=tokenData,
+            realmId=realmId,
+            roleAccessPermissionData=roleAccessPermissionData,
+            resultFrom=resultFrom,
+            resultSize=resultSize,
+            order=order,
+        )
+
+    @debugLogger
     def constructObject(self, id: str = None, name: str = "") -> Project:
         return Project.createFrom(id=id, name=name)

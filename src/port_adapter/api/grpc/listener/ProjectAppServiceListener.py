@@ -24,7 +24,7 @@ from src.resource.proto._generated.identity.project_app_service_pb2 import (
     ProjectAppService_projectByNameResponse,
     ProjectAppService_projectsResponse,
     ProjectAppService_projectByIdResponse,
-    ProjectAppService_newIdResponse,
+    ProjectAppService_newIdResponse, ProjectAppService_projectsByRealmIdResponse,
 )
 from src.resource.proto._generated.identity.project_app_service_pb2_grpc import (
     ProjectAppServiceServicer,
@@ -111,6 +111,44 @@ resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
                 response.projects.add(id=project.id(), name=project.name())
             response.total_item_count = result["totalItemCount"]
             logger.debug(f"[{ProjectAppServiceListener.projects.__qualname__}] - response: {response}")
+            return ProjectAppService_projectsResponse(
+                projects=response.projects, total_item_count=response.total_item_count
+            )
+        except ProjectDoesNotExistException:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("No projects found")
+            return ProjectAppService_projectsResponse()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details("Un Authorized")
+            return ProjectAppService_projectsResponse()
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def projects_by_realm_id(self, request, context):
+        try:
+            resultSize = request.result_size if request.result_size >= 0 else 10
+            token = self._token(context)
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
+            logger.debug(
+                f"[{ProjectAppServiceListener.projects_by_realm_id.__qualname__}] - claims: {claims}\n\t \
+    resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
+            )
+            projectAppService: ProjectApplicationService = AppDi.instance.get(ProjectApplicationService)
+
+            orderData = [{"orderBy": o.orderBy, "direction": o.direction} for o in request.orders]
+            result: dict = projectAppService.projectsByRealmId(
+                resultFrom=request.result_from,
+                resultSize=resultSize,
+                token=token,
+                order=orderData,
+                realmId=request.realm_id,
+            )
+            response = ProjectAppService_projectsByRealmIdResponse()
+            for project in result["items"]:
+                response.projects.add(id=project.id(), name=project.name())
+            response.total_item_count = result["totalItemCount"]
+            logger.debug(f"[{ProjectAppServiceListener.projects_by_realm_id.__qualname__}] - response: {response}")
             return ProjectAppService_projectsResponse(
                 projects=response.projects, total_item_count=response.total_item_count
             )
