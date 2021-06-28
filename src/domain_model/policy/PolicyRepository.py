@@ -287,6 +287,26 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
+    def realmsByType(
+            self,
+            tokenData: TokenData = None,
+            roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+            sortData: str = "",
+            realmType: str = None
+    ) -> dict:
+        """Get realms that is filtered by type and the allowed permissions
+
+        Args:
+            tokenData (TokenData): Token data that has information about the user/role
+            roleAccessPermissionData (RoleAccessPermissionData): Role with permission data and access tree
+            sortData (str): A string for sorting the data
+            realmType (str): Realm type
+
+        Returns:
+            dict: A dictionary that has 'items' as an array
+        """
+
+    @abstractmethod
     def resourcesOfTypeByConnectedResourceId(self, resourceType: str = "",
                                              resourceId: str = "",
                                              tokenData: TokenData = None,

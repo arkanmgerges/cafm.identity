@@ -24,7 +24,7 @@ from src.resource.proto._generated.identity.realm_app_service_pb2 import (
     RealmAppService_realmByNameResponse,
     RealmAppService_realmsResponse,
     RealmAppService_realmByIdResponse,
-    RealmAppService_newIdResponse,
+    RealmAppService_newIdResponse, RealmAppService_realmsByTypeResponse,
 )
 from src.resource.proto._generated.identity.realm_app_service_pb2_grpc import (
     RealmAppServiceServicer,
@@ -120,6 +120,43 @@ resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             context.set_details("Un Authorized")
             return RealmAppService_realmsResponse()
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def realms_by_type(self, request, context):
+        response = RealmAppService_realmsByTypeResponse
+        try:
+            resultSize = request.result_size if request.result_size >= 0 else 10
+            token = self._token(context)
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
+            logger.debug(
+                f"[{RealmAppServiceListener.realms_by_type.__qualname__}] - claims: {claims}\n\t \
+    resultFrom: {request.result_from}, resultSize: {resultSize}, token: {token}"
+            )
+            realmAppService: RealmApplicationService = AppDi.instance.get(RealmApplicationService)
+
+            orderData = [{"orderBy": o.order_by, "direction": o.direction} for o in request.orders]
+            result: dict = realmAppService.realmsByType(
+                resultFrom=request.result_from,
+                resultSize=resultSize,
+                token=token,
+                order=orderData,
+                realmType=request.realm_type
+            )
+
+            responseObject = response()
+            logger.debug(f"[{RealmAppServiceListener.realms.__qualname__}] - response: {result}")
+            [responseObject.realms.add(id=realm.id(), name=realm.name(), realm_type=realm.realmType()) for realm in result["items"]]
+            responseObject.total_item_count=result["totalItemCount"]
+            return responseObject
+        except RealmDoesNotExistException:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("No realms found")
+            return response()
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details("Un Authorized")
+            return response()
 
     """
     c4model|cb|identity:Component(identity__grpc__RealmAppServiceListener__realmById, "Get realm by id", "grpc listener", "Get a realm by id")

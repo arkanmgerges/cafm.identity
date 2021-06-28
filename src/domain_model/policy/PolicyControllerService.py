@@ -106,6 +106,19 @@ class PolicyControllerService:
         )
 
     @debugLogger
+    def realmsByType(
+            self,
+            tokenData: TokenData = None,
+            roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+            sortData: str = "",
+            realmType: str = None
+    ):
+        return self._policyRepo.realmsByType(
+            tokenData=tokenData, roleAccessPermissionData=roleAccessPermissionData,
+            sortData=sortData, realmType=realmType
+        )
+
+    @debugLogger
     def resourcesOfTypeByConnectedResourceId(
         self,
         resourceType: str = "",

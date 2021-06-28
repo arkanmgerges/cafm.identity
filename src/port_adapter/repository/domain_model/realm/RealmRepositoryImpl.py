@@ -295,3 +295,45 @@ class RealmRepositoryImpl(RealmRepository):
             ],
             "totalItemCount": totalItemCount,
         }
+
+    @debugLogger
+    def realmsByType(
+        self,
+        tokenData: TokenData,
+        roleAccessPermissionData: List[RoleAccessPermissionData],
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+        realmType: str = None,
+    ) -> dict:
+        sortData = ""
+        if order is not None:
+            for item in order:
+                sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
+            sortData = sortData[2:]
+
+        result = self._policyService.realmsByType(
+            tokenData=tokenData,
+            roleAccessPermissionData=roleAccessPermissionData,
+            sortData=sortData,
+            realmType=realmType,
+        )
+
+        if result is None or len(result["items"]) == 0:
+            return {"items": [], "totalItemCount": 0}
+        items = result["items"]
+        totalItemCount = len(items)
+        items = items[resultFrom : resultFrom + resultSize]
+
+        return {
+            "items": [
+                Realm.createFrom(
+                    id=x["id"],
+                    name=x["name"],
+                    realmType=x["realm_type"] if "realm_type" in x else "",
+                    #   realmType=x["realm_type"] # TODO: to be replaced with after data is cleaned
+                )
+                for x in items
+            ],
+            "totalItemCount": totalItemCount,
+        }

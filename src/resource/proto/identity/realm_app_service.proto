@@ -32,6 +32,18 @@ message RealmAppService_realmsResponse {
   int32 total_item_count = 2;
 }
 
+message RealmAppService_realmsByTypeRequest {
+  int32 result_from = 1;
+  int32 result_size = 2;
+  repeated cafm.common.order.Order orders = 3;
+  string realm_type = 4;
+}
+
+message RealmAppService_realmsByTypeResponse {
+  repeated Realm realms = 1;
+  int32 total_item_count = 2;
+}
+
 message RealmAppService_newIdRequest {}
 
 message RealmAppService_newIdResponse {
@@ -42,5 +54,6 @@ service RealmAppService {
   rpc realm_by_name (RealmAppService_realmByNameRequest) returns (RealmAppService_realmByNameResponse) {}
   rpc realm_by_id (RealmAppService_realmByIdRequest) returns (RealmAppService_realmByIdResponse) {}
   rpc realms (RealmAppService_realmsRequest) returns (RealmAppService_realmsResponse) {}
+  rpc realms_by_type (RealmAppService_realmsByTypeRequest) returns (RealmAppService_realmsByTypeResponse) {}
   rpc new_id (RealmAppService_newIdRequest) returns (RealmAppService_newIdResponse) {}
 }

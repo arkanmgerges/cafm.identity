@@ -1248,6 +1248,70 @@ class PolicyRepositoryImpl(PolicyRepository):
         return {"items": filteredItems, "totalItemCount": len(filteredItems)}
 
     @debugLogger
+    def realmsByType(
+            self,
+            tokenData: TokenData = None,
+            roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+            sortData: str = "",
+            realmType: str = None
+    ) -> dict:
+        if TokenService.isSuperAdmin(tokenData=tokenData) or TokenService.isSysAdmin(tokenData=tokenData):
+            aql = """
+                    LET ds = (FOR d IN resource FILTER d.type == "realm" AND d.realm_type == @type #sortData RETURN d)
+                    RETURN {items: ds}
+                """
+            if sortData != "":
+                aql = aql.replace("#sortData", f"SORT {sortData}")
+            else:
+                aql = aql.replace("#sortData", "")
+
+            bindVars = {"type": realmType}
+            queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            return queryResult.result[0]
+
+        rolesConditions = ""
+        for role in tokenData.roles():
+            if rolesConditions == "":
+                rolesConditions += f'role.id == "{role["id"]}"'
+            else:
+                rolesConditions += f' OR role.id == "{role["id"]}"'
+
+        if rolesConditions == "":
+            rolesConditions = 'role.id == "None"'
+        aql = """
+                    FOR role IN resource
+                        FILTER (#rolesConditions) AND role.type == 'role'
+                        LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == "realm" AND v1.realm_type == @type RETURN v1)
+                        LET accesses = (FOR v1 IN OUTBOUND role._id `access`
+                                                        FOR v2, e2, p IN 1..100 OUTBOUND v1._id `has`
+                                                        FILTER v2.type == "realm" AND v2.realm_type == @type
+                                                            RETURN v2
+                                                   )
+                        LET owned_resources = (FOR v1 IN INBOUND role._id `owned_by` FILTER v1.type == "realm" AND v1.realm_type == @type RETURN v1)
+                        LET result = UNION_DISTINCT(owned_resources, accesses, direct_access)
+                        LET sorted_result = (FOR d IN result #sortData RETURN d)
+                        RETURN {items: sorted_result}
+                    """
+        if sortData != "":
+            aql = aql.replace("#sortData", f"SORT {sortData}")
+        else:
+            aql = aql.replace("#sortData", "")
+        aql = aql.replace("#rolesConditions", rolesConditions)
+        bindVars = {"type": realmType}
+        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result[0] if queryResult.result != [] else []
+
+        if not result:
+            filteredItems = self._filterItems(
+                [], roleAccessPermissionData, "realm"
+            )
+        else:
+            filteredItems = self._filterItems(
+                result["items"], roleAccessPermissionData, "realm"
+            )
+        return {"items": filteredItems, "totalItemCount": len(filteredItems)}
+
+    @debugLogger
     def _filterRoleAccessPermissionDataItems(
         self, roleAccessPermissionDataList: List[RoleAccessPermissionData]
     ) -> List[RoleAccessPermissionData]:

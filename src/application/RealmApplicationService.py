@@ -159,6 +159,29 @@ class RealmApplicationService:
         )
 
     @debugLogger
+    def realmsByType(
+            self,
+            resultFrom: int = 0,
+            resultSize: int = 100,
+            token: str = "",
+            order: List[dict] = None,
+            realmType: str = None,
+            **_kwargs
+    ) -> dict:
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        roleAccessPermissionData = self._authzService.roleAccessPermissionsData(
+            tokenData=tokenData
+        )
+        return self._realmRepository.realmsByType(
+            tokenData=tokenData,
+            roleAccessPermissionData=roleAccessPermissionData,
+            resultFrom=resultFrom,
+            resultSize=resultSize,
+            order=order,
+            realmType=realmType
+        )
+
+    @debugLogger
     def constructObject(
         self, id: str = None, name: str = None, realmType: str = None
     ) -> Realm:
