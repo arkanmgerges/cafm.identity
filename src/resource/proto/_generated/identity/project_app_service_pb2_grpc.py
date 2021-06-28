@@ -29,6 +29,11 @@ class ProjectAppServiceStub(object):
                 request_serializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsRequest.SerializeToString,
                 response_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsResponse.FromString,
                 )
+        self.projects_by_realm_id = channel.unary_unary(
+                '/cafm.identity.project.ProjectAppService/projects_by_realm_id',
+                request_serializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsByRealmIdRequest.SerializeToString,
+                response_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsByRealmIdResponse.FromString,
+                )
         self.new_id = channel.unary_unary(
                 '/cafm.identity.project.ProjectAppService/new_id',
                 request_serializer=identity_dot_project__app__service__pb2.ProjectAppService_newIdRequest.SerializeToString,
@@ -57,6 +62,12 @@ class ProjectAppServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def projects_by_realm_id(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def new_id(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -80,6 +91,11 @@ def add_ProjectAppServiceServicer_to_server(servicer, server):
                     servicer.projects,
                     request_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsRequest.FromString,
                     response_serializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsResponse.SerializeToString,
+            ),
+            'projects_by_realm_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.projects_by_realm_id,
+                    request_deserializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsByRealmIdRequest.FromString,
+                    response_serializer=identity_dot_project__app__service__pb2.ProjectAppService_projectsByRealmIdResponse.SerializeToString,
             ),
             'new_id': grpc.unary_unary_rpc_method_handler(
                     servicer.new_id,
@@ -144,6 +160,23 @@ class ProjectAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/projects',
             identity_dot_project__app__service__pb2.ProjectAppService_projectsRequest.SerializeToString,
             identity_dot_project__app__service__pb2.ProjectAppService_projectsResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def projects_by_realm_id(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.project.ProjectAppService/projects_by_realm_id',
+            identity_dot_project__app__service__pb2.ProjectAppService_projectsByRealmIdRequest.SerializeToString,
+            identity_dot_project__app__service__pb2.ProjectAppService_projectsByRealmIdResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

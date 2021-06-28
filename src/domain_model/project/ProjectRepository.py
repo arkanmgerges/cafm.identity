@@ -81,3 +81,27 @@ class ProjectRepository(ABC):
         Returns:
             dict: A dict that has {"items": [], "totalItemCount": 0}
         """
+
+    @abstractmethod
+    def projectsByRealmId(
+        self,
+        tokenData: TokenData,
+        realmId: str,
+        roleAccessPermissionData: List[RoleAccessPermissionData],
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
+        """Get list of projects based on the owned roles that the user has
+
+        Args:
+            tokenData (TokenData): A token data object
+            realmId (str): A realm id to be used to filter the projects connected in the same tree that this realm exists
+            roleAccessPermissionData (List[RoleAccessPermissionData]): List of role access permissions
+            resultFrom (int): The start offset of the result item
+            resultSize (int): The size of the items in the result
+            order (List[dict]): A list of order e.g. [{'orderBy': 'name', 'direction': 'asc'}, {'orderBy': 'age', 'direction': 'desc'}]
+
+        Returns:
+            dict: A dict that has {"items": [], "totalItemCount": 0}
+        """

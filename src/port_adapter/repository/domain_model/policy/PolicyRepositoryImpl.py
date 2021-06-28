@@ -1114,6 +1114,76 @@ class PolicyRepositoryImpl(PolicyRepository):
         return resultItems
 
     @debugLogger
+    def resourcesOfTypeByConnectedResourceId(self, resourceType: str = "",
+                                             resourceId: str = "",
+                                             tokenData: TokenData = None,
+                                             roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+                                             sortData: str = "",
+                                             ):
+        if TokenService.isSuperAdmin(tokenData=tokenData) or TokenService.isSysAdmin(tokenData=tokenData):
+            aql = """
+                FOR d IN resource
+                    FILTER d.id == @resource_id
+                    FOR v IN 1..100 OUTBOUND d._id `has` FILTER v.type == @type #sortData RETURN v
+            """
+            if sortData != "":
+                aql = aql.replace("#sortData", f"SORT {sortData}")
+            else:
+                aql = aql.replace("#sortData", "")
+
+            bindVars = {"type": resourceType, "resource_id": resourceId}
+            queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+            result = queryResult.result
+            return {"items": result if len(result) > 0 else [], "totalItemCount": len(result)}
+
+        rolesConditions = ""
+        for role in tokenData.roles():
+            if rolesConditions == "":
+                rolesConditions += f'role.id == "{role["id"]}"'
+            else:
+                rolesConditions += f' OR role.id == "{role["id"]}"'
+
+        if rolesConditions == "":
+            rolesConditions = 'role.id == "None"'
+        aql = """
+                RETURN FLATTEN((FOR role IN resource
+                    FILTER (#rolesConditions) AND role.type == 'role'
+                    LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.id == @resource_id RETURN v1)
+                    LET accesses = (FOR v1 IN 1..100 OUTBOUND role._id `access`
+                                        FOR v2 IN 1..100 OUTBOUND v1._id `has`
+                                        FILTER v2.id == @resource_id
+                                            RETURN v2
+                                    )
+                    LET owned_resources = (FOR v1 IN INBOUND role._id `owned_by` FILTER v1.id == @resource_id RETURN v1)
+                    LET result_unique = UNION_DISTINCT(owned_resources, accesses, direct_access)
+                    LET result = LENGTH(FLATTEN(result_unique)) > 0 ? 
+                        (FOR d IN resource FILTER d.id == @resource_id FOR v IN 1..100 OUTBOUND d._id `has` FILTER v.type == @type RETURN v)
+                    : (RETURN [])
+                    
+                    LET sorted_result = (FOR d IN result #sortData RETURN d)
+                    RETURN sorted_result), 2)
+                        """
+        if sortData != "":
+            aql = aql.replace("#sortData", f"SORT {sortData}")
+        else:
+            aql = aql.replace("#sortData", "")
+        aql = aql.replace("#rolesConditions", rolesConditions)
+        bindVars = {"type": resourceType, "resource_id": resourceId}
+        queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
+        result = queryResult.result[0] if queryResult.result != [] else []
+
+        if not result:
+            filteredItems = self._filterItems(
+                [], roleAccessPermissionData, resourceType
+            )
+        else:
+            filteredItems = self._filterItems(
+                result, roleAccessPermissionData, resourceType
+            )
+        return {"items": filteredItems, "totalItemCount": len(filteredItems)}
+
+
+    @debugLogger
     def resourcesOfTypeByTokenData(
         self,
         resourceType: str = "",
@@ -1294,7 +1364,7 @@ class PolicyRepositoryImpl(PolicyRepository):
     ):
         result = []
         for node in accessTree:
-            # todo modified
+            # todo to be modified
             nodeContentType = node.data.contentType
             if nodeContentType is AccessNodeContentTypeConstant.RESOURCE_INSTANCE:
                 nodeDataContent: ResourceInstanceAccessNodeContent = (
@@ -1346,7 +1416,6 @@ class PolicyRepositoryImpl(PolicyRepository):
                     and "id" in contextData
                 ):
                     result["deniedResources"][contextData["id"]] = True
-
         return result
 
     @debugLogger

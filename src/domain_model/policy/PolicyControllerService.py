@@ -106,6 +106,20 @@ class PolicyControllerService:
         )
 
     @debugLogger
+    def resourcesOfTypeByConnectedResourceId(
+        self,
+        resourceType: str = "",
+        resourceId: str = "",
+        tokenData: TokenData = None,
+        roleAccessPermissionData: List[RoleAccessPermissionData] = None,
+        sortData: str = "",
+    ):
+        return self._policyRepo.resourcesOfTypeByConnectedResourceId(
+            resourceType=resourceType, resourceId=resourceId, tokenData=tokenData,
+            roleAccessPermissionData=roleAccessPermissionData, sortData=sortData
+        )
+
+    @debugLogger
     def permissionsByTokenData(
         self,
         tokenData: TokenData = None,

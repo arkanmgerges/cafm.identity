@@ -32,6 +32,18 @@ message ProjectAppService_projectsResponse {
   int32 total_item_count = 2;
 }
 
+message ProjectAppService_projectsByRealmIdRequest {
+  int32 result_from = 1;
+  int32 result_size = 2;
+  repeated cafm.common.order.Order orders = 3;
+  string realm_id = 4;
+}
+
+message ProjectAppService_projectsByRealmIdResponse {
+  repeated Project projects = 1;
+  int32 total_item_count = 2;
+}
+
 message ProjectAppService_newIdRequest {}
 
 message ProjectAppService_newIdResponse {
@@ -43,5 +55,6 @@ service ProjectAppService {
   rpc project_by_name (ProjectAppService_projectByNameRequest) returns (ProjectAppService_projectByNameResponse) {}
   rpc project_by_id (ProjectAppService_projectByIdRequest) returns (ProjectAppService_projectByIdResponse) {}
   rpc projects (ProjectAppService_projectsRequest) returns (ProjectAppService_projectsResponse) {}
+  rpc projects_by_realm_id (ProjectAppService_projectsByRealmIdRequest) returns (ProjectAppService_projectsByRealmIdResponse) {}
   rpc new_id (ProjectAppService_newIdRequest) returns (ProjectAppService_newIdResponse) {}
 }

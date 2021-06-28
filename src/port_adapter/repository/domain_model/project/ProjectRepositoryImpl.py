@@ -272,3 +272,37 @@ class ProjectRepositoryImpl(ProjectRepository):
             "items": [Project.createFrom(id=x["id"], name=x["name"]) for x in items],
             "totalItemCount": totalItemCount,
         }
+
+    @debugLogger
+    def projectsByRealmId(
+        self,
+        tokenData: TokenData,
+        realmId: str,
+        roleAccessPermissionData: List[RoleAccessPermissionData],
+        resultFrom: int = 0,
+        resultSize: int = 100,
+        order: List[dict] = None,
+    ) -> dict:
+        sortData = ""
+        if order is not None:
+            for item in order:
+                sortData = f'{sortData}, d.{item["orderBy"]} {item["direction"]}'
+            sortData = sortData[2:]
+
+        result = self._policyService.resourcesOfTypeByConnectedResourceId(
+            resourceType=PermissionContextConstant.PROJECT.value,
+            resourceId=realmId,
+            tokenData=tokenData,
+            roleAccessPermissionData=roleAccessPermissionData,
+            sortData=sortData,
+        )
+
+        if result is None or len(result["items"]) == 0:
+            return {"items": [], "totalItemCount": 0}
+        items = result["items"]
+        totalItemCount = len(items)
+        items = items[resultFrom : resultFrom + resultSize]
+        return {
+            "items": [Project.createFrom(id=x["id"], name=x["name"]) for x in items],
+            "totalItemCount": totalItemCount,
+        }

@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\"identity/project_app_service.proto\x12\x15\x63\x61\x66m.identity.project\x1a\x16identity/project.proto\x1a\x0border.proto\"6\n&ProjectAppService_projectByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"Z\n\'ProjectAppService_projectByNameResponse\x12/\n\x07project\x18\x01 \x01(\x0b\x32\x1e.cafm.identity.project.Project\"2\n$ProjectAppService_projectByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"X\n%ProjectAppService_projectByIdResponse\x12/\n\x07project\x18\x01 \x01(\x0b\x32\x1e.cafm.identity.project.Project\"w\n!ProjectAppService_projectsRequest\x12\x13\n\x0bresult_from\x18\x01 \x01(\x05\x12\x13\n\x0bresult_size\x18\x02 \x01(\x05\x12(\n\x06orders\x18\x03 \x03(\x0b\x32\x18.cafm.common.order.Order\"p\n\"ProjectAppService_projectsResponse\x12\x30\n\x08projects\x18\x01 \x03(\x0b\x32\x1e.cafm.identity.project.Project\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\" \n\x1eProjectAppService_newIdRequest\"-\n\x1fProjectAppService_newIdResponse\x12\n\n\x02id\x18\x01 \x01(\t2\xb6\x04\n\x11ProjectAppService\x12\x92\x01\n\x0fproject_by_name\x12=.cafm.identity.project.ProjectAppService_projectByNameRequest\x1a>.cafm.identity.project.ProjectAppService_projectByNameResponse\"\x00\x12\x8c\x01\n\rproject_by_id\x12;.cafm.identity.project.ProjectAppService_projectByIdRequest\x1a<.cafm.identity.project.ProjectAppService_projectByIdResponse\"\x00\x12\x81\x01\n\x08projects\x12\x38.cafm.identity.project.ProjectAppService_projectsRequest\x1a\x39.cafm.identity.project.ProjectAppService_projectsResponse\"\x00\x12y\n\x06new_id\x12\x35.cafm.identity.project.ProjectAppService_newIdRequest\x1a\x36.cafm.identity.project.ProjectAppService_newIdResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\"identity/project_app_service.proto\x12\x15\x63\x61\x66m.identity.project\x1a\x16identity/project.proto\x1a\x0border.proto\"6\n&ProjectAppService_projectByNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"Z\n\'ProjectAppService_projectByNameResponse\x12/\n\x07project\x18\x01 \x01(\x0b\x32\x1e.cafm.identity.project.Project\"2\n$ProjectAppService_projectByIdRequest\x12\n\n\x02id\x18\x01 \x01(\t\"X\n%ProjectAppService_projectByIdResponse\x12/\n\x07project\x18\x01 \x01(\x0b\x32\x1e.cafm.identity.project.Project\"w\n!ProjectAppService_projectsRequest\x12\x13\n\x0bresult_from\x18\x01 \x01(\x05\x12\x13\n\x0bresult_size\x18\x02 \x01(\x05\x12(\n\x06orders\x18\x03 \x03(\x0b\x32\x18.cafm.common.order.Order\"p\n\"ProjectAppService_projectsResponse\x12\x30\n\x08projects\x18\x01 \x03(\x0b\x32\x1e.cafm.identity.project.Project\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\"\x92\x01\n*ProjectAppService_projectsByRealmIdRequest\x12\x13\n\x0bresult_from\x18\x01 \x01(\x05\x12\x13\n\x0bresult_size\x18\x02 \x01(\x05\x12(\n\x06orders\x18\x03 \x03(\x0b\x32\x18.cafm.common.order.Order\x12\x10\n\x08realm_id\x18\x04 \x01(\t\"y\n+ProjectAppService_projectsByRealmIdResponse\x12\x30\n\x08projects\x18\x01 \x03(\x0b\x32\x1e.cafm.identity.project.Project\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\" \n\x1eProjectAppService_newIdRequest\"-\n\x1fProjectAppService_newIdResponse\x12\n\n\x02id\x18\x01 \x01(\t2\xd8\x05\n\x11ProjectAppService\x12\x92\x01\n\x0fproject_by_name\x12=.cafm.identity.project.ProjectAppService_projectByNameRequest\x1a>.cafm.identity.project.ProjectAppService_projectByNameResponse\"\x00\x12\x8c\x01\n\rproject_by_id\x12;.cafm.identity.project.ProjectAppService_projectByIdRequest\x1a<.cafm.identity.project.ProjectAppService_projectByIdResponse\"\x00\x12\x81\x01\n\x08projects\x12\x38.cafm.identity.project.ProjectAppService_projectsRequest\x1a\x39.cafm.identity.project.ProjectAppService_projectsResponse\"\x00\x12\x9f\x01\n\x14projects_by_realm_id\x12\x41.cafm.identity.project.ProjectAppService_projectsByRealmIdRequest\x1a\x42.cafm.identity.project.ProjectAppService_projectsByRealmIdResponse\"\x00\x12y\n\x06new_id\x12\x35.cafm.identity.project.ProjectAppService_newIdRequest\x1a\x36.cafm.identity.project.ProjectAppService_newIdResponse\"\x00\x62\x06proto3'
   ,
   dependencies=[identity_dot_project__pb2.DESCRIPTOR,order__pb2.DESCRIPTOR,])
 
@@ -241,6 +241,98 @@ _PROJECTAPPSERVICE_PROJECTSRESPONSE = _descriptor.Descriptor(
 )
 
 
+_PROJECTAPPSERVICE_PROJECTSBYREALMIDREQUEST = _descriptor.Descriptor(
+  name='ProjectAppService_projectsByRealmIdRequest',
+  full_name='cafm.identity.project.ProjectAppService_projectsByRealmIdRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='result_from', full_name='cafm.identity.project.ProjectAppService_projectsByRealmIdRequest.result_from', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='result_size', full_name='cafm.identity.project.ProjectAppService_projectsByRealmIdRequest.result_size', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='orders', full_name='cafm.identity.project.ProjectAppService_projectsByRealmIdRequest.orders', index=2,
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='realm_id', full_name='cafm.identity.project.ProjectAppService_projectsByRealmIdRequest.realm_id', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=624,
+  serialized_end=770,
+)
+
+
+_PROJECTAPPSERVICE_PROJECTSBYREALMIDRESPONSE = _descriptor.Descriptor(
+  name='ProjectAppService_projectsByRealmIdResponse',
+  full_name='cafm.identity.project.ProjectAppService_projectsByRealmIdResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='projects', full_name='cafm.identity.project.ProjectAppService_projectsByRealmIdResponse.projects', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='total_item_count', full_name='cafm.identity.project.ProjectAppService_projectsByRealmIdResponse.total_item_count', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=772,
+  serialized_end=893,
+)
+
+
 _PROJECTAPPSERVICE_NEWIDREQUEST = _descriptor.Descriptor(
   name='ProjectAppService_newIdRequest',
   full_name='cafm.identity.project.ProjectAppService_newIdRequest',
@@ -261,8 +353,8 @@ _PROJECTAPPSERVICE_NEWIDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=623,
-  serialized_end=655,
+  serialized_start=895,
+  serialized_end=927,
 )
 
 
@@ -293,20 +385,24 @@ _PROJECTAPPSERVICE_NEWIDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=657,
-  serialized_end=702,
+  serialized_start=929,
+  serialized_end=974,
 )
 
 _PROJECTAPPSERVICE_PROJECTBYNAMERESPONSE.fields_by_name['project'].message_type = identity_dot_project__pb2._PROJECT
 _PROJECTAPPSERVICE_PROJECTBYIDRESPONSE.fields_by_name['project'].message_type = identity_dot_project__pb2._PROJECT
 _PROJECTAPPSERVICE_PROJECTSREQUEST.fields_by_name['orders'].message_type = order__pb2._ORDER
 _PROJECTAPPSERVICE_PROJECTSRESPONSE.fields_by_name['projects'].message_type = identity_dot_project__pb2._PROJECT
+_PROJECTAPPSERVICE_PROJECTSBYREALMIDREQUEST.fields_by_name['orders'].message_type = order__pb2._ORDER
+_PROJECTAPPSERVICE_PROJECTSBYREALMIDRESPONSE.fields_by_name['projects'].message_type = identity_dot_project__pb2._PROJECT
 DESCRIPTOR.message_types_by_name['ProjectAppService_projectByNameRequest'] = _PROJECTAPPSERVICE_PROJECTBYNAMEREQUEST
 DESCRIPTOR.message_types_by_name['ProjectAppService_projectByNameResponse'] = _PROJECTAPPSERVICE_PROJECTBYNAMERESPONSE
 DESCRIPTOR.message_types_by_name['ProjectAppService_projectByIdRequest'] = _PROJECTAPPSERVICE_PROJECTBYIDREQUEST
 DESCRIPTOR.message_types_by_name['ProjectAppService_projectByIdResponse'] = _PROJECTAPPSERVICE_PROJECTBYIDRESPONSE
 DESCRIPTOR.message_types_by_name['ProjectAppService_projectsRequest'] = _PROJECTAPPSERVICE_PROJECTSREQUEST
 DESCRIPTOR.message_types_by_name['ProjectAppService_projectsResponse'] = _PROJECTAPPSERVICE_PROJECTSRESPONSE
+DESCRIPTOR.message_types_by_name['ProjectAppService_projectsByRealmIdRequest'] = _PROJECTAPPSERVICE_PROJECTSBYREALMIDREQUEST
+DESCRIPTOR.message_types_by_name['ProjectAppService_projectsByRealmIdResponse'] = _PROJECTAPPSERVICE_PROJECTSBYREALMIDRESPONSE
 DESCRIPTOR.message_types_by_name['ProjectAppService_newIdRequest'] = _PROJECTAPPSERVICE_NEWIDREQUEST
 DESCRIPTOR.message_types_by_name['ProjectAppService_newIdResponse'] = _PROJECTAPPSERVICE_NEWIDRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -353,6 +449,20 @@ ProjectAppService_projectsResponse = _reflection.GeneratedProtocolMessageType('P
   })
 _sym_db.RegisterMessage(ProjectAppService_projectsResponse)
 
+ProjectAppService_projectsByRealmIdRequest = _reflection.GeneratedProtocolMessageType('ProjectAppService_projectsByRealmIdRequest', (_message.Message,), {
+  'DESCRIPTOR' : _PROJECTAPPSERVICE_PROJECTSBYREALMIDREQUEST,
+  '__module__' : 'identity.project_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.project.ProjectAppService_projectsByRealmIdRequest)
+  })
+_sym_db.RegisterMessage(ProjectAppService_projectsByRealmIdRequest)
+
+ProjectAppService_projectsByRealmIdResponse = _reflection.GeneratedProtocolMessageType('ProjectAppService_projectsByRealmIdResponse', (_message.Message,), {
+  'DESCRIPTOR' : _PROJECTAPPSERVICE_PROJECTSBYREALMIDRESPONSE,
+  '__module__' : 'identity.project_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.project.ProjectAppService_projectsByRealmIdResponse)
+  })
+_sym_db.RegisterMessage(ProjectAppService_projectsByRealmIdResponse)
+
 ProjectAppService_newIdRequest = _reflection.GeneratedProtocolMessageType('ProjectAppService_newIdRequest', (_message.Message,), {
   'DESCRIPTOR' : _PROJECTAPPSERVICE_NEWIDREQUEST,
   '__module__' : 'identity.project_app_service_pb2'
@@ -376,8 +486,8 @@ _PROJECTAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=705,
-  serialized_end=1271,
+  serialized_start=977,
+  serialized_end=1705,
   methods=[
   _descriptor.MethodDescriptor(
     name='project_by_name',
@@ -410,9 +520,19 @@ _PROJECTAPPSERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
+    name='projects_by_realm_id',
+    full_name='cafm.identity.project.ProjectAppService.projects_by_realm_id',
+    index=3,
+    containing_service=None,
+    input_type=_PROJECTAPPSERVICE_PROJECTSBYREALMIDREQUEST,
+    output_type=_PROJECTAPPSERVICE_PROJECTSBYREALMIDRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
     name='new_id',
     full_name='cafm.identity.project.ProjectAppService.new_id',
-    index=3,
+    index=4,
     containing_service=None,
     input_type=_PROJECTAPPSERVICE_NEWIDREQUEST,
     output_type=_PROJECTAPPSERVICE_NEWIDRESPONSE,
