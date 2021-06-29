@@ -1146,7 +1146,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         if rolesConditions == "":
             rolesConditions = 'role.id == "None"'
         aql = """
-                RETURN FLATTEN((FOR role IN resource
+                RETURN MERGE(FOR role IN resource
                     FILTER (#rolesConditions) AND role.type == 'role'
                     LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.id == @resource_id RETURN v1)
                     LET accesses = (FOR v1 IN 1..100 OUTBOUND role._id `access`
@@ -1161,7 +1161,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                     : (RETURN [])
                     
                     LET sorted_result = (FOR d IN result #sortData RETURN d)
-                    RETURN sorted_result), 2)
+                    RETURN sorted_result)
                         """
         if sortData != "":
             aql = aql.replace("#sortData", f"SORT {sortData}")
@@ -1215,7 +1215,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         if rolesConditions == "":
             rolesConditions = 'role.id == "None"'
         aql = """
-                FOR role IN resource
+                RETURN MERGE(FOR role IN resource
                     FILTER (#rolesConditions) AND role.type == 'role'
                     LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == @type RETURN v1)
                     LET accesses = (FOR v1 IN OUTBOUND role._id `access`
@@ -1226,7 +1226,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                     LET owned_resources = (FOR v1 IN INBOUND role._id `owned_by` FILTER v1.type == @type RETURN v1)
                     LET result = UNION_DISTINCT(owned_resources, accesses, direct_access)
                     LET sorted_result = (FOR d IN result #sortData RETURN d)
-                    RETURN {items: sorted_result}
+                    RETURN {items: sorted_result})
                 """
         if sortData != "":
             aql = aql.replace("#sortData", f"SORT {sortData}")
@@ -1310,6 +1310,86 @@ class PolicyRepositoryImpl(PolicyRepository):
                 result["items"], roleAccessPermissionData, "realm"
             )
         return {"items": filteredItems, "totalItemCount": len(filteredItems)}
+
+
+
+
+
+
+
+# region User with Role
+    @debugLogger
+    def usersWithAccessRoles(
+            self,
+            tokenData: TokenData = None,
+    ) -> dict:
+        if TokenService.isSuperAdmin(tokenData=tokenData) or TokenService.isSysAdmin(tokenData=tokenData):
+            aql = """
+                    LET users_with_roles = (FOR role_item IN resource
+                            FILTER role_item.type == "role"
+                            FOR v1 IN INBOUND role_item._id `has` FILTER v1.type == "user"
+                                    RETURN {user: v1, role: role_item})
+                    RETURN users_with_roles
+                """
+
+            queryResult = self._db.AQLQuery(aql, rawResults=True)
+            return {"items": queryResult.result[0], "totalItemCount": len(queryResult.result[0])}
+
+        rolesConditions = ""
+        for role in tokenData.roles():
+            if rolesConditions == "":
+                rolesConditions += f'role.id == "{role["id"]}"'
+            else:
+                rolesConditions += f' OR role.id == "{role["id"]}"'
+
+        if rolesConditions == "":
+            rolesConditions = 'role.id == "None"'
+        aql = """
+            RETURN FLATTEN (FOR role IN resource
+                FILTER (#rolesConditions)
+                LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == 'realm'
+                            FOR v2 IN INBOUND v1._id `access` FILTER v2.type == "role" RETURN v2)
+                LET accesses = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == "realm"
+                                    FOR v2 IN 1..100 OUTBOUND v1._id `has` FILTER v2.type == "realm"
+                                        FOR v3 IN INBOUND v2._id `access` FILTER v3.type == "role"
+                                                    RETURN v3
+                                           )
+                LET roles = UNION_DISTINCT(accesses, direct_access)
+                LET users_with_roles = (FOR role_item IN roles
+                                            FOR v1 IN INBOUND role_item._id `has` FILTER v1.type == "user"
+                                                    RETURN {user: v1, role: role_item})
+                RETURN users_with_roles)
+                    """
+        aql = aql.replace("#rolesConditions", rolesConditions)
+        queryResult = self._db.AQLQuery(aql, rawResults=True)
+        result = queryResult.result[0]
+        return {"items": [{"user": User.createFrom(id=x["user"]["id"], email=x["user"]["email"], skipValidation=True),
+                           "role": Role.createFrom(id=x["role"]["id"], type=x["role"]["type"], name=x["role"]["name"], title=x["role"]["title"], skipValidation=True)}
+                          for x in result], "totalItemCount": len(result)}
+# endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @debugLogger
     def _filterRoleAccessPermissionDataItems(

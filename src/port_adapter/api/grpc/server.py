@@ -29,6 +29,7 @@ from src.port_adapter.api.grpc.listener.PermissionAppServiceListener import (
 from src.port_adapter.api.grpc.listener.PermissionContextAppServiceListener import (
     PermissionContextAppServiceListener,
 )
+from src.port_adapter.api.grpc.listener.PolicyAppServiceListener import PolicyAppServiceListener
 from src.port_adapter.api.grpc.listener.ProjectAppServiceListener import (
     ProjectAppServiceListener,
 )
@@ -68,6 +69,7 @@ from src.resource.proto._generated.identity.permission_app_service_pb2_grpc impo
 from src.resource.proto._generated.identity.permission_context_app_service_pb2_grpc import (
     add_PermissionContextAppServiceServicer_to_server,
 )
+from src.resource.proto._generated.identity.policy_app_service_pb2_grpc import add_PolicyAppServiceServicer_to_server
 from src.resource.proto._generated.identity.project_app_service_pb2_grpc import (
     add_ProjectAppServiceServicer_to_server,
 )
@@ -99,6 +101,7 @@ def serve():
         PermissionContextAppServiceListener(), server
     )
     add_ProjectAppServiceServicer_to_server(ProjectAppServiceListener(), server)
+    add_PolicyAppServiceServicer_to_server(PolicyAppServiceListener(), server)
     add_RealmAppServiceServicer_to_server(RealmAppServiceListener(), server)
     add_PermissionAppServiceServicer_to_server(PermissionAppServiceListener(), server)
     add_OuAppServiceServicer_to_server(OuAppServiceListener(), server)
@@ -114,6 +117,7 @@ def serve():
         src.resource.proto._generated.identity.permission_context_app_service_pb2.DESCRIPTOR.services_by_name['PermissionContextAppService'].full_name,
         src.resource.proto._generated.identity.permission_app_service_pb2.DESCRIPTOR.services_by_name['PermissionAppService'].full_name,
         src.resource.proto._generated.identity.project_app_service_pb2.DESCRIPTOR.services_by_name['ProjectAppService'].full_name,
+        src.resource.proto._generated.identity.policy_app_service_pb2.DESCRIPTOR.services_by_name['PolicyAppService'].full_name,
         src.resource.proto._generated.identity.realm_app_service_pb2.DESCRIPTOR.services_by_name['RealmAppService'].full_name,
         src.resource.proto._generated.identity.ou_app_service_pb2.DESCRIPTOR.services_by_name['OuAppService'].full_name,
         src.resource.proto._generated.identity.auth_app_service_pb2.DESCRIPTOR.services_by_name['AuthAppService'].full_name,

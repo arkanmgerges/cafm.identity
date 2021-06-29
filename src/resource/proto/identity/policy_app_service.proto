@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package cafm.identity.policy;
+
+import "identity/user_with_role.proto";
+
+message PolicyAppService_usersWithAccessRolesRequest {
+}
+
+message PolicyAppService_usersWithAccessRolesResponse {
+  repeated UserWithRole user_with_role_items = 1;
+  int32 total_item_count = 2;
+}
+
+
+service PolicyAppService {
+  rpc users_with_access_roles (PolicyAppService_usersWithAccessRolesRequest) returns (PolicyAppService_usersWithAccessRolesResponse) {}
+}

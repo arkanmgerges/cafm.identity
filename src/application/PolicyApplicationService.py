@@ -89,6 +89,11 @@ class PolicyApplicationService:
         self._policyService.assignRoleToUser(role=role, user=user)
 
     @debugLogger
+    def usersWithAccessRoles(self, token: str = None):
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        return self._policyService.usersWithAccessRoles(tokenData=tokenData)
+
+    @debugLogger
     def revokeRoleToUserAssignment(
         self, roleId: str = "", userId: str = "", token: str = ""
     ):

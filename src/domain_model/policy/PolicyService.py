@@ -9,6 +9,7 @@ from src.domain_model.permission_context.PermissionContext import PermissionCont
 from src.domain_model.policy.PolicyRepository import PolicyRepository
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.role.Role import Role
+from src.domain_model.token.TokenData import TokenData
 from src.domain_model.user.User import User
 from src.domain_model.user_group.UserGroup import UserGroup
 from src.resource.logging.decorator import debugLogger
@@ -341,3 +342,11 @@ class PolicyService:
         self._repo.revokePermissionToPermissionContextAssignment(
             permission=permission, permissionContext=permissionContext
         )
+
+
+    @debugLogger
+    def usersWithAccessRoles(
+            self,
+            tokenData: TokenData = None,
+    ) -> dict:
+        return self._repo.usersWithAccessRoles(tokenData=tokenData)

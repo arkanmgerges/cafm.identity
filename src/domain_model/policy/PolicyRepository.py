@@ -287,6 +287,20 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
+    def usersWithAccessRoles(
+            self,
+            tokenData: TokenData = None,
+    ) -> dict:
+        """Get users with access roles by token
+
+        Args:
+            tokenData (TokenData): Token data that has information about the user/role
+
+        Returns:
+            dict: A dictionary that has 'items' as an array
+        """
+
+    @abstractmethod
     def realmsByType(
             self,
             tokenData: TokenData = None,

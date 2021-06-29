@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package cafm.identity.policy;
+
+import "identity/user.proto";
+import "identity/role.proto";
+
+message UserWithRole {
+  cafm.identity.user.User user = 1;
+  cafm.identity.role.Role role = 2;
+}

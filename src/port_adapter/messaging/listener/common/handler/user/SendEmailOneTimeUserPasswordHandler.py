@@ -41,6 +41,11 @@ class SendEmailOneTimeUserPasswordHandler(Handler):
         obj: User = appService.userById(
             id=dataDict["user_id"], token=metadataDict["token"]
         )
+        email = obj.email()
+        domain = email[email.rfind('.') + 1:]
+        if domain in ['test', 'me', 'local']:
+            return None
+
         password = obj.stripOneTimePasswordTag()
         content = f"Hi, this is your one time login password <strong>{password}</strong>, use it to login and to create new one"
 
