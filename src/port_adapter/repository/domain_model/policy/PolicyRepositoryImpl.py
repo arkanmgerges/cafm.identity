@@ -1329,13 +1329,21 @@ class PolicyRepositoryImpl(PolicyRepository):
                                             FILTER user.type == "user"
                                             FOR role_item IN OUTBOUND user `has`
                                             FILTER role_item.type == "role"
-                                            COLLECT user_item = user into groups = {role: role_item}
+                                            COLLECT user_item = user into groups = role_item
                                                 RETURN {user: user_item, roles: groups})
                     RETURN users_with_roles
                 """
-
             queryResult = self._db.AQLQuery(aql, rawResults=True)
-            return {"items": queryResult.result[0], "totalItemCount": len(queryResult.result[0])}
+            result = queryResult.result[0]
+            return {"items": [
+                {
+                    "user": User.createFrom(id=x["user"]["id"], email=x["user"]["email"], skipValidation=True),
+                    "roles": [
+                        Role.createFrom(id=role["id"], type=role["type"], name=role["name"], title=role["title"],
+                                        skipValidation=True)
+                        for role in x["roles"]
+                    ]
+                } for x in result], "totalItemCount": len(result)}
 
         rolesConditions = ""
         for role in tokenData.roles():
