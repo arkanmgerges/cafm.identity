@@ -47,14 +47,16 @@ class PolicyAppServiceListener(PolicyAppServiceServicer, BaseListener):
             result = appService.usersWithAccessRoles(token=token)
             logger.debug(f"[{PolicyAppServiceListener.users_with_access_roles.__qualname__}] - app service result: {result}")
             response.total_item_count = result["totalItemCount"]
-            for x in result["items"]:
-                responseItem = response.user_with_role_items.add()
-                responseItem.user.id = x["user"].id()
-                responseItem.user.email = x["user"].email()
-                responseItem.role.id = x["role"].id()
-                responseItem.role.type = x["role"].type()
-                responseItem.role.name = x["role"].name()
-                responseItem.role.title = x["role"].title()
+            for resultItem in result["items"]:
+                responseItem = response.user_with_roles_items.add()
+                responseItem.user.id = resultItem["user"].id()
+                responseItem.user.email = resultItem["user"].email()
+                for role in resultItem["roles"]:
+                    roleResponseItem = responseItem.roles.add()
+                    roleResponseItem.id = role.id()
+                    roleResponseItem.type = role.type()
+                    roleResponseItem.name = role.name()
+                    roleResponseItem.title = role.title()
             return response
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)

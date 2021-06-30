@@ -1325,10 +1325,12 @@ class PolicyRepositoryImpl(PolicyRepository):
     ) -> dict:
         if TokenService.isSuperAdmin(tokenData=tokenData) or TokenService.isSysAdmin(tokenData=tokenData):
             aql = """
-                    LET users_with_roles = (FOR role_item IN resource
-                            FILTER role_item.type == "role"
-                            FOR v1 IN INBOUND role_item._id `has` FILTER v1.type == "user"
-                                    RETURN {user: v1, role: role_item})
+                    LET users_with_roles = (FOR user IN resource
+                                            FILTER user.type == "user"
+                                            FOR role_item IN OUTBOUND user `has`
+                                            FILTER role_item.type == "role"
+                                            COLLECT user_item = user into groups = {role: role_item}
+                                                RETURN {user: user_item, roles: groups})
                     RETURN users_with_roles
                 """
 
@@ -1345,27 +1347,42 @@ class PolicyRepositoryImpl(PolicyRepository):
         if rolesConditions == "":
             rolesConditions = 'role.id == "None"'
         aql = """
-            RETURN FLATTEN (FOR role IN resource
-                FILTER (#rolesConditions)
-                LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == 'realm'
-                            FOR v2 IN INBOUND v1._id `access` FILTER v2.type == "role" RETURN v2)
-                LET accesses = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == "realm"
-                                    FOR v2 IN 1..100 OUTBOUND v1._id `has` FILTER v2.type == "realm"
-                                        FOR v3 IN INBOUND v2._id `access` FILTER v3.type == "role"
-                                                    RETURN v3
-                                           )
-                LET roles = UNION_DISTINCT(accesses, direct_access)
-                LET users_with_roles = (FOR role_item IN roles
-                                            FOR v1 IN INBOUND role_item._id `has` FILTER v1.type == "user"
-                                                    RETURN {user: v1, role: role_item})
-                RETURN users_with_roles)
+                LET res1 =UNIQUE(FLATTEN(
+                            FOR role IN resource
+                                FILTER (#rolesConditions)
+                                LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == 'realm'
+                                            FOR v2 IN INBOUND v1._id `access` FILTER v2.type == "role" RETURN v2)
+                                LET accesses = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == "realm"
+                                                    FOR v2 IN 1..100 OUTBOUND v1._id `has` FILTER v2.type == "realm"
+                                                        FOR v3 IN INBOUND v2._id `access` FILTER v3.type == "role"
+                                                                    RETURN v3
+                                                           )
+                                LET roles = UNION_DISTINCT(accesses, direct_access)
+                                RETURN roles
+                            ))
+                
+                
+                LET users_with_roles = (FOR user IN resource
+                        FILTER user.type == "user"
+                        FOR role2 IN res1
+                            FILTER role2.type == "role"
+                            FOR role3 IN OUTBOUND user `has`
+                            FILTER role3.id == role2.id
+                            COLLECT user_item = user into groups = role3
+                                RETURN {user: user_item, roles: groups})
+                RETURN users_with_roles
                     """
         aql = aql.replace("#rolesConditions", rolesConditions)
         queryResult = self._db.AQLQuery(aql, rawResults=True)
         result = queryResult.result[0]
-        return {"items": [{"user": User.createFrom(id=x["user"]["id"], email=x["user"]["email"], skipValidation=True),
-                           "role": Role.createFrom(id=x["role"]["id"], type=x["role"]["type"], name=x["role"]["name"], title=x["role"]["title"], skipValidation=True)}
-                          for x in result], "totalItemCount": len(result)}
+        return {"items": [
+            {
+                "user": User.createFrom(id=x["user"]["id"], email=x["user"]["email"], skipValidation=True),
+                "roles": [
+                    Role.createFrom(id=role["id"], type=role["type"], name=role["name"], title=role["title"], skipValidation=True)
+                for role in x["roles"]
+                ]
+            } for x in result], "totalItemCount": len(result)}
 # endregion
 
 

@@ -11,7 +11,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from identity import user_with_role_pb2 as identity_dot_user__with__role__pb2
+from identity import user_with_roles_pb2 as identity_dot_user__with__roles__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +20,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n!identity/policy_app_service.proto\x12\x14\x63\x61\x66m.identity.policy\x1a\x1didentity/user_with_role.proto\".\n,PolicyAppService_usersWithAccessRolesRequest\"\x8b\x01\n-PolicyAppService_usersWithAccessRolesResponse\x12@\n\x14user_with_role_items\x18\x01 \x03(\x0b\x32\".cafm.identity.policy.UserWithRole\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\x32\xb9\x01\n\x10PolicyAppService\x12\xa4\x01\n\x17users_with_access_roles\x12\x42.cafm.identity.policy.PolicyAppService_usersWithAccessRolesRequest\x1a\x43.cafm.identity.policy.PolicyAppService_usersWithAccessRolesResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n!identity/policy_app_service.proto\x12\x14\x63\x61\x66m.identity.policy\x1a\x1eidentity/user_with_roles.proto\".\n,PolicyAppService_usersWithAccessRolesRequest\"\x8d\x01\n-PolicyAppService_usersWithAccessRolesResponse\x12\x42\n\x15user_with_roles_items\x18\x01 \x03(\x0b\x32#.cafm.identity.policy.UserWithRoles\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\x32\xb9\x01\n\x10PolicyAppService\x12\xa4\x01\n\x17users_with_access_roles\x12\x42.cafm.identity.policy.PolicyAppService_usersWithAccessRolesRequest\x1a\x43.cafm.identity.policy.PolicyAppService_usersWithAccessRolesResponse\"\x00\x62\x06proto3'
   ,
-  dependencies=[identity_dot_user__with__role__pb2.DESCRIPTOR,])
+  dependencies=[identity_dot_user__with__roles__pb2.DESCRIPTOR,])
 
 
 
@@ -47,8 +47,8 @@ _POLICYAPPSERVICE_USERSWITHACCESSROLESREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=90,
-  serialized_end=136,
+  serialized_start=91,
+  serialized_end=137,
 )
 
 
@@ -61,7 +61,7 @@ _POLICYAPPSERVICE_USERSWITHACCESSROLESRESPONSE = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='user_with_role_items', full_name='cafm.identity.policy.PolicyAppService_usersWithAccessRolesResponse.user_with_role_items', index=0,
+      name='user_with_roles_items', full_name='cafm.identity.policy.PolicyAppService_usersWithAccessRolesResponse.user_with_roles_items', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -86,11 +86,11 @@ _POLICYAPPSERVICE_USERSWITHACCESSROLESRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=139,
-  serialized_end=278,
+  serialized_start=140,
+  serialized_end=281,
 )
 
-_POLICYAPPSERVICE_USERSWITHACCESSROLESRESPONSE.fields_by_name['user_with_role_items'].message_type = identity_dot_user__with__role__pb2._USERWITHROLE
+_POLICYAPPSERVICE_USERSWITHACCESSROLESRESPONSE.fields_by_name['user_with_roles_items'].message_type = identity_dot_user__with__roles__pb2._USERWITHROLES
 DESCRIPTOR.message_types_by_name['PolicyAppService_usersWithAccessRolesRequest'] = _POLICYAPPSERVICE_USERSWITHACCESSROLESREQUEST
 DESCRIPTOR.message_types_by_name['PolicyAppService_usersWithAccessRolesResponse'] = _POLICYAPPSERVICE_USERSWITHACCESSROLESRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -118,8 +118,8 @@ _POLICYAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=281,
-  serialized_end=466,
+  serialized_start=284,
+  serialized_end=469,
   methods=[
   _descriptor.MethodDescriptor(
     name='users_with_access_roles',

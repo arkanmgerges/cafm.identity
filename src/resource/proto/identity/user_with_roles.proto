@@ -5,7 +5,7 @@ package cafm.identity.policy;
 import "identity/user.proto";
 import "identity/role.proto";
 
-message UserWithRole {
+message UserWithRoles {
   cafm.identity.user.User user = 1;
-  cafm.identity.role.Role role = 2;
+  repeated cafm.identity.role.Role roles = 2;
 }

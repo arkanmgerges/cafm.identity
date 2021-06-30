@@ -2,13 +2,13 @@ syntax = "proto3";
 
 package cafm.identity.policy;
 
-import "identity/user_with_role.proto";
+import "identity/user_with_roles.proto";
 
 message PolicyAppService_usersWithAccessRolesRequest {
 }
 
 message PolicyAppService_usersWithAccessRolesResponse {
-  repeated UserWithRole user_with_role_items = 1;
+  repeated UserWithRoles user_with_roles_items = 1;
   int32 total_item_count = 2;
 }
 
