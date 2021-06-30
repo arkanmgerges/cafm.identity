@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package cafm.identity.policy;
+
+import "identity/user_includes_roles.proto";
+
+message RealmIncludesUsersIncludeRoles {
+  string id = 1;
+  string name = 2;
+  string realm_type = 3;
+  repeated UserIncludesRoles user_includes_roles = 4;
+}

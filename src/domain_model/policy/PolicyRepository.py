@@ -287,14 +287,42 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
-    def usersWithAccessRoles(
+    def usersIncludeAccessRoles(
             self,
             tokenData: TokenData = None,
     ) -> dict:
-        """Get users with access roles by token
+        """Get users include access roles by token
 
         Args:
             tokenData (TokenData): Token data that has information about the user/role
+
+        Returns:
+            dict: A dictionary that has 'items' as an array
+        """
+
+    @abstractmethod
+    def usersIncludeRoles(
+            self,
+            tokenData: TokenData = None,
+    ) -> dict:
+        """Get users include roles by token
+
+        Args:
+            tokenData (TokenData): Token data that has information about the user/role
+
+        Returns:
+            dict: A dictionary that has 'items' as an array
+        """
+
+    @abstractmethod
+    def realmsIncludeUsersIncludeRoles(
+            self,
+            tokenData: TokenData = None,
+    ) -> dict:
+        """Get realms that includes users that include roles by token
+
+        Args:
+            tokenData (TokenData): Token data
 
         Returns:
             dict: A dictionary that has 'items' as an array

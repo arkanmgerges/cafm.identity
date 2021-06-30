@@ -345,8 +345,22 @@ class PolicyService:
 
 
     @debugLogger
-    def usersWithAccessRoles(
+    def usersIncludeAccessRoles(
             self,
             tokenData: TokenData = None,
     ) -> dict:
-        return self._repo.usersWithAccessRoles(tokenData=tokenData)
+        return self._repo.usersIncludeAccessRoles(tokenData=tokenData)
+
+    @debugLogger
+    def usersIncludeRoles(
+            self,
+            tokenData: TokenData = None,
+    ) -> dict:
+        return self._repo.usersIncludeRoles(tokenData=tokenData)
+
+    @debugLogger
+    def realmsIncludeUsersIncludeRoles(
+            self,
+            tokenData: TokenData = None,
+    ) -> dict:
+        return self._repo.realmsIncludeUsersIncludeRoles(tokenData=tokenData)

@@ -89,9 +89,19 @@ class PolicyApplicationService:
         self._policyService.assignRoleToUser(role=role, user=user)
 
     @debugLogger
-    def usersWithAccessRoles(self, token: str = None):
+    def usersIncludeAccessRoles(self, token: str = None):
         tokenData = TokenService.tokenDataFromToken(token=token)
-        return self._policyService.usersWithAccessRoles(tokenData=tokenData)
+        return self._policyService.usersIncludeAccessRoles(tokenData=tokenData)
+
+    @debugLogger
+    def usersIncludeRoles(self, token: str = None):
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        return self._policyService.usersIncludeRoles(tokenData=tokenData)
+
+    @debugLogger
+    def realmsIncludeUsersIncludeRoles(self, token: str = None):
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        return self._policyService.realmsIncludeUsersIncludeRoles(tokenData=tokenData)
 
     @debugLogger
     def revokeRoleToUserAssignment(

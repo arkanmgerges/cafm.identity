@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package cafm.identity.policy;
+
+import "identity/role.proto";
+
+message UserIncludesRoles {
+  string id = 1;
+  string email = 2;
+  repeated cafm.identity.role.Role roles = 3;
+}
