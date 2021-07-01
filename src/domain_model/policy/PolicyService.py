@@ -364,3 +364,10 @@ class PolicyService:
             tokenData: TokenData = None,
     ) -> dict:
         return self._repo.realmsIncludeUsersIncludeRoles(tokenData=tokenData)
+
+    @debugLogger
+    def projectsIncludeRealmsIncludeUsersIncludeRoles(
+            self,
+            tokenData: TokenData = None,
+    ) -> dict:
+        return self._repo.projectsIncludeRealmsIncludeUsersIncludeRoles(tokenData=tokenData)

@@ -29,6 +29,11 @@ class PolicyAppServiceStub(object):
                 request_serializer=identity_dot_policy__app__service__pb2.PolicyAppService_realmsIncludeUsersIncludeRolesRequest.SerializeToString,
                 response_deserializer=identity_dot_policy__app__service__pb2.PolicyAppService_realmsIncludeUsersIncludeRolesResponse.FromString,
                 )
+        self.projects_include_realms_include_users_include_roles = channel.unary_unary(
+                '/cafm.identity.policy.PolicyAppService/projects_include_realms_include_users_include_roles',
+                request_serializer=identity_dot_policy__app__service__pb2.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest.SerializeToString,
+                response_deserializer=identity_dot_policy__app__service__pb2.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse.FromString,
+                )
 
 
 class PolicyAppServiceServicer(object):
@@ -52,6 +57,12 @@ class PolicyAppServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def projects_include_realms_include_users_include_roles(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_PolicyAppServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -69,6 +80,11 @@ def add_PolicyAppServiceServicer_to_server(servicer, server):
                     servicer.realms_include_users_include_roles,
                     request_deserializer=identity_dot_policy__app__service__pb2.PolicyAppService_realmsIncludeUsersIncludeRolesRequest.FromString,
                     response_serializer=identity_dot_policy__app__service__pb2.PolicyAppService_realmsIncludeUsersIncludeRolesResponse.SerializeToString,
+            ),
+            'projects_include_realms_include_users_include_roles': grpc.unary_unary_rpc_method_handler(
+                    servicer.projects_include_realms_include_users_include_roles,
+                    request_deserializer=identity_dot_policy__app__service__pb2.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest.FromString,
+                    response_serializer=identity_dot_policy__app__service__pb2.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -128,5 +144,22 @@ class PolicyAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.policy.PolicyAppService/realms_include_users_include_roles',
             identity_dot_policy__app__service__pb2.PolicyAppService_realmsIncludeUsersIncludeRolesRequest.SerializeToString,
             identity_dot_policy__app__service__pb2.PolicyAppService_realmsIncludeUsersIncludeRolesResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def projects_include_realms_include_users_include_roles(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.policy.PolicyAppService/projects_include_realms_include_users_include_roles',
+            identity_dot_policy__app__service__pb2.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest.SerializeToString,
+            identity_dot_policy__app__service__pb2.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

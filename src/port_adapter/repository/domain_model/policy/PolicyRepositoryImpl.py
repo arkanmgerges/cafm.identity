@@ -26,8 +26,11 @@ from src.domain_model.policy.access_node_content.AccessNodeContent import (
 from src.domain_model.policy.access_node_content.ResourceInstanceAccessNodeContent import (
     ResourceInstanceAccessNodeContent,
 )
+from src.domain_model.policy.model.ProjectIncludesRealmsIncludeUsersIncludeRoles import \
+    ProjectIncludesRealmsIncludeUsersIncludeRoles
 from src.domain_model.policy.model.RealmIncludesUsersIncludeRoles import RealmIncludesUsersIncludeRoles
 from src.domain_model.policy.model.UserIncludesRoles import UserIncludesRoles
+from src.domain_model.project.Project import Project
 from src.domain_model.realm.Realm import Realm
 from src.domain_model.resource.Resource import Resource
 from src.domain_model.resource.exception.InvalidResourceException import (
@@ -1516,6 +1519,118 @@ class PolicyRepositoryImpl(PolicyRepository):
         result = queryResult.result
         return {"items": [self._realmIncludesUsersIncludeRolesByResultItem(x) for x in result], "totalItemCount": len(result)}
 
+    @debugLogger
+    def projectsIncludeRealmsIncludeUsersIncludeRoles(
+            self,
+            tokenData: TokenData = None,
+    ) -> dict:
+        if TokenService.isSuperAdmin(tokenData=tokenData) or TokenService.isSysAdmin(tokenData=tokenData):
+            aql = """
+                                LET users_include_roles = (FOR user IN resource
+                                                        FILTER user.type == "user"
+                                                        FOR role_item IN OUTBOUND user `has`
+                                                        FILTER role_item.type == "role"
+                                                        COLLECT user_item = user into groups = role_item
+                                                            RETURN MERGE(user_item, {roles: groups}))
+                                
+                                for project in resource
+                                    // Filter only project type
+                                    filter project.type == "project"
+                                    // Loop through all the user items that have roles as a key
+                                    for user_item in users_include_roles
+                                        for user_item_role in user_item.roles
+                                            // User item has connection to a project
+                                            for v_project in outbound user_item_role `access`
+                                                // Make sure the the user has connection with the same project that we are looping from above
+                                                filter v_project.id == project.id
+                                                // User item has a connection to a realm
+                                                for v_realm in outbound user_item_role `access`
+                                                    // Filter only the realm type
+                                                    filter v_realm.type == "realm"
+                                                    // Group by project and put realm and user into the groups to be processed later
+                                                    COLLECT project_item = project into realm_and_user_grp = {realm: v_realm, user_item}
+                                                        // Group by realm
+                                                        let realm_coll = (for item in realm_and_user_grp
+                                                            collect c_realm = item.realm into grp = {user_item: item.user_item, project: project_item}
+                                                                return merge(c_realm, {users_include_roles: grp[*].user_item})
+                                                                )
+                                                        return merge(project_item, {realms_include_users_include_roles: realm_coll})
+                            """
+            queryResult = self._db.AQLQuery(aql, rawResults=True)
+            result = queryResult.result
+            return {"items": [self._projectIncludesRealmsIncludeUsersIncludeRolesByResultItem(x) for x in result],
+                    "totalItemCount": len(result)}
+
+        rolesConditions = ""
+        for role in tokenData.roles():
+            if rolesConditions == "":
+                rolesConditions += f'role.id == "{role["id"]}"'
+            else:
+                rolesConditions += f' OR role.id == "{role["id"]}"'
+
+        if rolesConditions == "":
+            rolesConditions = 'role.id == "None"'
+        aql = """
+                    LET roles =UNIQUE(FLATTEN(
+                        FOR role IN resource
+                            FILTER (#rolesConditions)
+                            LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == 'realm'
+                                        FOR v2 IN INBOUND v1._id `access` FILTER v2.type == "role" RETURN v2)
+                            LET accesses = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == "realm"
+                                                FOR v2 IN 1..100 OUTBOUND v1._id `has` FILTER v2.type == "realm"
+                                                    FOR v3 IN INBOUND v2._id `access` FILTER v3.type == "role"
+                                                                RETURN v3
+                                                       )
+                            LET roles = UNION_DISTINCT(accesses, direct_access)
+                            RETURN roles
+                        ))
+                    
+                    LET users_include_roles = (
+                        FOR user IN resource
+                            FILTER user.type == "user"
+                            FOR role2 IN roles
+                                FILTER role2.type == "role"
+                                FOR role3 IN OUTBOUND user `has`
+                                FILTER role3.id == role2.id
+                                FOR role4 IN OUTBOUND user `has`
+                                    FILTER role4.type == "role"
+                                    COLLECT user_item = user into groups = role4
+                                        RETURN merge(user_item, {roles: unique(groups)}))
+                    
+                    for project in resource
+                        // Filter only project type
+                        filter project.type == "project"
+                        // Loop through all the user items that have roles as a key
+                        for user_item in users_include_roles
+                            for user_item_role in user_item.roles
+                                // User item has connection to a project
+                                for v_project in outbound user_item_role `access`
+                                    // Make sure the the user has connection with the same project that we are looping from above
+                                    filter v_project.id == project.id
+                                    // User item has a connection to a realm
+                                    for v_realm in outbound user_item_role `access`
+                                        // Filter only the realm type
+                                        filter v_realm.type == "realm"
+                                        // Group by project and put realm and user into the groups to be processed later
+                                        COLLECT project_item = project into realm_and_user_grp = {realm: v_realm, user_item}
+                                            // Group by realm
+                                            let realm_coll = (for item in realm_and_user_grp
+                                                collect c_realm = item.realm into grp = {user_item: item.user_item, project: project_item}
+                                                    return merge(c_realm, {users_include_roles: grp[*].user_item})
+                                                    )
+                                            return merge(project_item, {realms_include_users_include_roles: realm_coll})
+                                """
+        aql = aql.replace("#rolesConditions", rolesConditions)
+        queryResult = self._db.AQLQuery(aql, rawResults=True)
+        result = queryResult.result
+        return {"items": [self._projectIncludesRealmsIncludeUsersIncludeRolesByResultItem(x) for x in result],
+                "totalItemCount": len(result)}
+
+    def _projectIncludesRealmsIncludeUsersIncludeRolesByResultItem(self, resultItem):
+        return ProjectIncludesRealmsIncludeUsersIncludeRoles.createFrom(
+                project=Project.createFrom(id=resultItem["id"], name=resultItem["name"], skipValidation=True),
+                realmsIncludeUsersIncludeRoles=[self._realmIncludesUsersIncludeRolesByResultItem(x) for x in resultItem["realms_include_users_include_roles"]]
+        )
 
     def _realmIncludesUsersIncludeRolesByResultItem(self, resultItem):
         return RealmIncludesUsersIncludeRoles.createFrom(

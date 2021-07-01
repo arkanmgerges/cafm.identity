@@ -13,6 +13,7 @@ _sym_db = _symbol_database.Default()
 
 from identity import user_includes_roles_pb2 as identity_dot_user__includes__roles__pb2
 from identity import realm_includes_users_include_roles_pb2 as identity_dot_realm__includes__users__include__roles__pb2
+from identity import project_includes_realms_include_users_include_roles_pb2 as identity_dot_project__includes__realms__include__users__include__roles__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -21,9 +22,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n!identity/policy_app_service.proto\x12\x14\x63\x61\x66m.identity.policy\x1a\"identity/user_includes_roles.proto\x1a\x31identity/realm_includes_users_include_roles.proto\"1\n/PolicyAppService_usersIncludeAccessRolesRequest\"\x98\x01\n0PolicyAppService_usersIncludeAccessRolesResponse\x12J\n\x19user_includes_roles_items\x18\x01 \x03(\x0b\x32\'.cafm.identity.policy.UserIncludesRoles\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\"+\n)PolicyAppService_usersIncludeRolesRequest\"\x92\x01\n*PolicyAppService_usersIncludeRolesResponse\x12J\n\x19user_includes_roles_items\x18\x01 \x03(\x0b\x32\'.cafm.identity.policy.UserIncludesRoles\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\"8\n6PolicyAppService_realmsIncludeUsersIncludeRolesRequest\"\xbb\x01\n7PolicyAppService_realmsIncludeUsersIncludeRolesResponse\x12\x66\n(realm_includes_users_include_roles_items\x18\x01 \x03(\x0b\x32\x34.cafm.identity.policy.RealmIncludesUsersIncludeRoles\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\x32\xa5\x04\n\x10PolicyAppService\x12\xad\x01\n\x1ausers_include_access_roles\x12\x45.cafm.identity.policy.PolicyAppService_usersIncludeAccessRolesRequest\x1a\x46.cafm.identity.policy.PolicyAppService_usersIncludeAccessRolesResponse\"\x00\x12\x9a\x01\n\x13users_include_roles\x12?.cafm.identity.policy.PolicyAppService_usersIncludeRolesRequest\x1a@.cafm.identity.policy.PolicyAppService_usersIncludeRolesResponse\"\x00\x12\xc3\x01\n\"realms_include_users_include_roles\x12L.cafm.identity.policy.PolicyAppService_realmsIncludeUsersIncludeRolesRequest\x1aM.cafm.identity.policy.PolicyAppService_realmsIncludeUsersIncludeRolesResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n!identity/policy_app_service.proto\x12\x14\x63\x61\x66m.identity.policy\x1a\"identity/user_includes_roles.proto\x1a\x31identity/realm_includes_users_include_roles.proto\x1a\x42identity/project_includes_realms_include_users_include_roles.proto\"1\n/PolicyAppService_usersIncludeAccessRolesRequest\"\x98\x01\n0PolicyAppService_usersIncludeAccessRolesResponse\x12J\n\x19user_includes_roles_items\x18\x01 \x03(\x0b\x32\'.cafm.identity.policy.UserIncludesRoles\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\"+\n)PolicyAppService_usersIncludeRolesRequest\"\x92\x01\n*PolicyAppService_usersIncludeRolesResponse\x12J\n\x19user_includes_roles_items\x18\x01 \x03(\x0b\x32\'.cafm.identity.policy.UserIncludesRoles\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\"8\n6PolicyAppService_realmsIncludeUsersIncludeRolesRequest\"\xbb\x01\n7PolicyAppService_realmsIncludeUsersIncludeRolesResponse\x12\x66\n(realm_includes_users_include_roles_items\x18\x01 \x03(\x0b\x32\x34.cafm.identity.policy.RealmIncludesUsersIncludeRoles\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\"G\nEPolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest\"\xea\x01\nFPolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse\x12\x85\x01\n9project_includes_realms_include_users_include_roles_items\x18\x01 \x03(\x0b\x32\x42.cafm.identity.policy.ProjectIncludesRealmIncludeUsersIncludeRoles\x12\x18\n\x10total_item_count\x18\x02 \x01(\x05\x32\x9a\x06\n\x10PolicyAppService\x12\xad\x01\n\x1ausers_include_access_roles\x12\x45.cafm.identity.policy.PolicyAppService_usersIncludeAccessRolesRequest\x1a\x46.cafm.identity.policy.PolicyAppService_usersIncludeAccessRolesResponse\"\x00\x12\x9a\x01\n\x13users_include_roles\x12?.cafm.identity.policy.PolicyAppService_usersIncludeRolesRequest\x1a@.cafm.identity.policy.PolicyAppService_usersIncludeRolesResponse\"\x00\x12\xc3\x01\n\"realms_include_users_include_roles\x12L.cafm.identity.policy.PolicyAppService_realmsIncludeUsersIncludeRolesRequest\x1aM.cafm.identity.policy.PolicyAppService_realmsIncludeUsersIncludeRolesResponse\"\x00\x12\xf2\x01\n3projects_include_realms_include_users_include_roles\x12[.cafm.identity.policy.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest\x1a\\.cafm.identity.policy.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse\"\x00\x62\x06proto3'
   ,
-  dependencies=[identity_dot_user__includes__roles__pb2.DESCRIPTOR,identity_dot_realm__includes__users__include__roles__pb2.DESCRIPTOR,])
+  dependencies=[identity_dot_user__includes__roles__pb2.DESCRIPTOR,identity_dot_realm__includes__users__include__roles__pb2.DESCRIPTOR,identity_dot_project__includes__realms__include__users__include__roles__pb2.DESCRIPTOR,])
 
 
 
@@ -48,8 +49,8 @@ _POLICYAPPSERVICE_USERSINCLUDEACCESSROLESREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=146,
-  serialized_end=195,
+  serialized_start=214,
+  serialized_end=263,
 )
 
 
@@ -87,8 +88,8 @@ _POLICYAPPSERVICE_USERSINCLUDEACCESSROLESRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=198,
-  serialized_end=350,
+  serialized_start=266,
+  serialized_end=418,
 )
 
 
@@ -112,8 +113,8 @@ _POLICYAPPSERVICE_USERSINCLUDEROLESREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=352,
-  serialized_end=395,
+  serialized_start=420,
+  serialized_end=463,
 )
 
 
@@ -151,8 +152,8 @@ _POLICYAPPSERVICE_USERSINCLUDEROLESRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=398,
-  serialized_end=544,
+  serialized_start=466,
+  serialized_end=612,
 )
 
 
@@ -176,8 +177,8 @@ _POLICYAPPSERVICE_REALMSINCLUDEUSERSINCLUDEROLESREQUEST = _descriptor.Descriptor
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=546,
-  serialized_end=602,
+  serialized_start=614,
+  serialized_end=670,
 )
 
 
@@ -215,19 +216,86 @@ _POLICYAPPSERVICE_REALMSINCLUDEUSERSINCLUDEROLESRESPONSE = _descriptor.Descripto
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=605,
-  serialized_end=792,
+  serialized_start=673,
+  serialized_end=860,
+)
+
+
+_POLICYAPPSERVICE_PROJECTSINCLUDEREALMSINCLUDEUSERSINCLUDEROLESREQUEST = _descriptor.Descriptor(
+  name='PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest',
+  full_name='cafm.identity.policy.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=862,
+  serialized_end=933,
+)
+
+
+_POLICYAPPSERVICE_PROJECTSINCLUDEREALMSINCLUDEUSERSINCLUDEROLESRESPONSE = _descriptor.Descriptor(
+  name='PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse',
+  full_name='cafm.identity.policy.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='project_includes_realms_include_users_include_roles_items', full_name='cafm.identity.policy.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse.project_includes_realms_include_users_include_roles_items', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='total_item_count', full_name='cafm.identity.policy.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse.total_item_count', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=936,
+  serialized_end=1170,
 )
 
 _POLICYAPPSERVICE_USERSINCLUDEACCESSROLESRESPONSE.fields_by_name['user_includes_roles_items'].message_type = identity_dot_user__includes__roles__pb2._USERINCLUDESROLES
 _POLICYAPPSERVICE_USERSINCLUDEROLESRESPONSE.fields_by_name['user_includes_roles_items'].message_type = identity_dot_user__includes__roles__pb2._USERINCLUDESROLES
 _POLICYAPPSERVICE_REALMSINCLUDEUSERSINCLUDEROLESRESPONSE.fields_by_name['realm_includes_users_include_roles_items'].message_type = identity_dot_realm__includes__users__include__roles__pb2._REALMINCLUDESUSERSINCLUDEROLES
+_POLICYAPPSERVICE_PROJECTSINCLUDEREALMSINCLUDEUSERSINCLUDEROLESRESPONSE.fields_by_name['project_includes_realms_include_users_include_roles_items'].message_type = identity_dot_project__includes__realms__include__users__include__roles__pb2._PROJECTINCLUDESREALMINCLUDEUSERSINCLUDEROLES
 DESCRIPTOR.message_types_by_name['PolicyAppService_usersIncludeAccessRolesRequest'] = _POLICYAPPSERVICE_USERSINCLUDEACCESSROLESREQUEST
 DESCRIPTOR.message_types_by_name['PolicyAppService_usersIncludeAccessRolesResponse'] = _POLICYAPPSERVICE_USERSINCLUDEACCESSROLESRESPONSE
 DESCRIPTOR.message_types_by_name['PolicyAppService_usersIncludeRolesRequest'] = _POLICYAPPSERVICE_USERSINCLUDEROLESREQUEST
 DESCRIPTOR.message_types_by_name['PolicyAppService_usersIncludeRolesResponse'] = _POLICYAPPSERVICE_USERSINCLUDEROLESRESPONSE
 DESCRIPTOR.message_types_by_name['PolicyAppService_realmsIncludeUsersIncludeRolesRequest'] = _POLICYAPPSERVICE_REALMSINCLUDEUSERSINCLUDEROLESREQUEST
 DESCRIPTOR.message_types_by_name['PolicyAppService_realmsIncludeUsersIncludeRolesResponse'] = _POLICYAPPSERVICE_REALMSINCLUDEUSERSINCLUDEROLESRESPONSE
+DESCRIPTOR.message_types_by_name['PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest'] = _POLICYAPPSERVICE_PROJECTSINCLUDEREALMSINCLUDEUSERSINCLUDEROLESREQUEST
+DESCRIPTOR.message_types_by_name['PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse'] = _POLICYAPPSERVICE_PROJECTSINCLUDEREALMSINCLUDEUSERSINCLUDEROLESRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 PolicyAppService_usersIncludeAccessRolesRequest = _reflection.GeneratedProtocolMessageType('PolicyAppService_usersIncludeAccessRolesRequest', (_message.Message,), {
@@ -272,6 +340,20 @@ PolicyAppService_realmsIncludeUsersIncludeRolesResponse = _reflection.GeneratedP
   })
 _sym_db.RegisterMessage(PolicyAppService_realmsIncludeUsersIncludeRolesResponse)
 
+PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest = _reflection.GeneratedProtocolMessageType('PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest', (_message.Message,), {
+  'DESCRIPTOR' : _POLICYAPPSERVICE_PROJECTSINCLUDEREALMSINCLUDEUSERSINCLUDEROLESREQUEST,
+  '__module__' : 'identity.policy_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.policy.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest)
+  })
+_sym_db.RegisterMessage(PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest)
+
+PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse = _reflection.GeneratedProtocolMessageType('PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse', (_message.Message,), {
+  'DESCRIPTOR' : _POLICYAPPSERVICE_PROJECTSINCLUDEREALMSINCLUDEUSERSINCLUDEROLESRESPONSE,
+  '__module__' : 'identity.policy_app_service_pb2'
+  # @@protoc_insertion_point(class_scope:cafm.identity.policy.PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse)
+  })
+_sym_db.RegisterMessage(PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse)
+
 
 
 _POLICYAPPSERVICE = _descriptor.ServiceDescriptor(
@@ -281,8 +363,8 @@ _POLICYAPPSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=795,
-  serialized_end=1344,
+  serialized_start=1173,
+  serialized_end=1967,
   methods=[
   _descriptor.MethodDescriptor(
     name='users_include_access_roles',
@@ -311,6 +393,16 @@ _POLICYAPPSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_POLICYAPPSERVICE_REALMSINCLUDEUSERSINCLUDEROLESREQUEST,
     output_type=_POLICYAPPSERVICE_REALMSINCLUDEUSERSINCLUDEROLESRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='projects_include_realms_include_users_include_roles',
+    full_name='cafm.identity.policy.PolicyAppService.projects_include_realms_include_users_include_roles',
+    index=3,
+    containing_service=None,
+    input_type=_POLICYAPPSERVICE_PROJECTSINCLUDEREALMSINCLUDEUSERSINCLUDEROLESREQUEST,
+    output_type=_POLICYAPPSERVICE_PROJECTSINCLUDEREALMSINCLUDEUSERSINCLUDEROLESRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

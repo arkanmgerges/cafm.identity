@@ -4,6 +4,7 @@ package cafm.identity.policy;
 
 import "identity/user_includes_roles.proto";
 import "identity/realm_includes_users_include_roles.proto";
+import "identity/project_includes_realms_include_users_include_roles.proto";
 
 message PolicyAppService_usersIncludeAccessRolesRequest {
 }
@@ -29,8 +30,17 @@ message PolicyAppService_realmsIncludeUsersIncludeRolesResponse {
   int32 total_item_count = 2;
 }
 
+message PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest {
+}
+
+message PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse {
+  repeated ProjectIncludesRealmIncludeUsersIncludeRoles project_includes_realms_include_users_include_roles_items = 1;
+  int32 total_item_count = 2;
+}
+
 service PolicyAppService {
   rpc users_include_access_roles (PolicyAppService_usersIncludeAccessRolesRequest) returns (PolicyAppService_usersIncludeAccessRolesResponse) {}
   rpc users_include_roles (PolicyAppService_usersIncludeRolesRequest) returns (PolicyAppService_usersIncludeRolesResponse) {}
   rpc realms_include_users_include_roles (PolicyAppService_realmsIncludeUsersIncludeRolesRequest) returns (PolicyAppService_realmsIncludeUsersIncludeRolesResponse) {}
+  rpc projects_include_realms_include_users_include_roles (PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesRequest) returns (PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse) {}
 }

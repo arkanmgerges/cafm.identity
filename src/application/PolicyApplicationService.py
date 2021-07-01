@@ -104,6 +104,11 @@ class PolicyApplicationService:
         return self._policyService.realmsIncludeUsersIncludeRoles(tokenData=tokenData)
 
     @debugLogger
+    def projectsIncludeRealmsIncludeUsersIncludeRoles(self, token: str = None):
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        return self._policyService.projectsIncludeRealmsIncludeUsersIncludeRoles(tokenData=tokenData)
+
+    @debugLogger
     def revokeRoleToUserAssignment(
         self, roleId: str = "", userId: str = "", token: str = ""
     ):

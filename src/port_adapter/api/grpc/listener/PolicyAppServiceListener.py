@@ -19,7 +19,8 @@ from src.resource.logging.opentelemetry.OpenTelemetry import OpenTelemetry
 from src.resource.proto._generated.identity.policy_app_service_pb2 import \
     PolicyAppService_usersIncludeAccessRolesResponse, \
     PolicyAppService_usersIncludeRolesResponse, PolicyAppService_usersIncludeAccessRolesResponse, \
-    PolicyAppService_realmsIncludeUsersIncludeRolesResponse
+    PolicyAppService_realmsIncludeUsersIncludeRolesResponse, \
+    PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse
 from src.resource.proto._generated.identity.policy_app_service_pb2_grpc import PolicyAppServiceServicer
 
 
@@ -131,6 +132,50 @@ class PolicyAppServiceListener(PolicyAppServiceServicer, BaseListener):
                         roleResponseItem.type = role.type()
                         roleResponseItem.name = role.name()
                         roleResponseItem.title = role.title()
+            return response
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details("Un Authorized")
+            return response()
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
+    def projects_include_realms_include_users_include_roles(self, request, context):
+        response = PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse
+        try:
+            token = self._token(context)
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
+            logger.debug(
+                f"[{PolicyAppServiceListener.projects_include_realms_include_users_include_roles.__qualname__}] - claims: {claims}\n\t \
+                                token: {token}"
+            )
+            appService: PolicyApplicationService = AppDi.instance.get(PolicyApplicationService)
+            response = response()
+            result = appService.projectsIncludeRealmsIncludeUsersIncludeRoles(token=token)
+            logger.debug(
+                f"[{PolicyAppServiceListener.projects_include_realms_include_users_include_roles.__qualname__}] - app service result: {result}")
+            response.total_item_count = result["totalItemCount"]
+            for resultItem in result["items"]:
+                responseItem = response.project_includes_realms_include_users_include_roles_items.add()
+                responseItem.id = resultItem.id()
+                responseItem.name = resultItem.name()
+                for realmIncludesUsersIncludeRoles in resultItem.realmsIncludeUsersIncludeRoles():
+                    realmIncludesUsersIncludeRolesResponseItem = responseItem.realm_includes_users_include_roles.add()
+                    realmIncludesUsersIncludeRolesResponseItem.id = realmIncludesUsersIncludeRoles.id()
+                    realmIncludesUsersIncludeRolesResponseItem.name = realmIncludesUsersIncludeRoles.name()
+                    realmIncludesUsersIncludeRolesResponseItem.realm_type = realmIncludesUsersIncludeRoles.realmType()
+
+                    for userIncludesRoles in realmIncludesUsersIncludeRoles.usersIncludeRoles():
+                        userIncludesRolesResponseItem = realmIncludesUsersIncludeRolesResponseItem.user_includes_roles.add()
+                        userIncludesRolesResponseItem.id = userIncludesRoles.id()
+                        userIncludesRolesResponseItem.email = userIncludesRoles.email()
+                        for role in userIncludesRoles.roles():
+                            roleResponseItem = userIncludesRolesResponseItem.roles.add()
+                            roleResponseItem.id = role.id()
+                            roleResponseItem.type = role.type()
+                            roleResponseItem.name = role.name()
+                            roleResponseItem.title = role.title()
+
             return response
         except UnAuthorizedException:
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)

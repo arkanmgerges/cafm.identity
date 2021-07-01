@@ -329,6 +329,20 @@ class PolicyRepository(ABC):
         """
 
     @abstractmethod
+    def projectsIncludeRealmsIncludeUsersIncludeRoles(
+            self,
+            tokenData: TokenData = None,
+    ) -> dict:
+        """Get projects that includes realms that include users that include roles by token
+
+        Args:
+            tokenData (TokenData): Token data
+
+        Returns:
+            dict: A dictionary that has 'items' as an array
+        """
+
+    @abstractmethod
     def realmsByType(
             self,
             tokenData: TokenData = None,
