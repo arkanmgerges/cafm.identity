@@ -8,5 +8,5 @@ message RealmIncludesUsersIncludeRoles {
   string id = 1;
   string name = 2;
   string realm_type = 3;
-  repeated UserIncludesRoles user_includes_roles = 4;
+  repeated UserIncludesRoles users_include_roles = 4;
 }

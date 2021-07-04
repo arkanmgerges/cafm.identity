@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n1identity/realm_includes_users_include_roles.proto\x12\x14\x63\x61\x66m.identity.policy\x1a\"identity/user_includes_roles.proto\"\x94\x01\n\x1eRealmIncludesUsersIncludeRoles\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x12\n\nrealm_type\x18\x03 \x01(\t\x12\x44\n\x13user_includes_roles\x18\x04 \x03(\x0b\x32\'.cafm.identity.policy.UserIncludesRolesb\x06proto3'
+  serialized_pb=b'\n1identity/realm_includes_users_include_roles.proto\x12\x14\x63\x61\x66m.identity.policy\x1a\"identity/user_includes_roles.proto\"\x94\x01\n\x1eRealmIncludesUsersIncludeRoles\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x12\n\nrealm_type\x18\x03 \x01(\t\x12\x44\n\x13users_include_roles\x18\x04 \x03(\x0b\x32\'.cafm.identity.policy.UserIncludesRolesb\x06proto3'
   ,
   dependencies=[identity_dot_user__includes__roles__pb2.DESCRIPTOR,])
 
@@ -57,7 +57,7 @@ _REALMINCLUDESUSERSINCLUDEROLES = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='user_includes_roles', full_name='cafm.identity.policy.RealmIncludesUsersIncludeRoles.user_includes_roles', index=3,
+      name='users_include_roles', full_name='cafm.identity.policy.RealmIncludesUsersIncludeRoles.users_include_roles', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -79,7 +79,7 @@ _REALMINCLUDESUSERSINCLUDEROLES = _descriptor.Descriptor(
   serialized_end=260,
 )
 
-_REALMINCLUDESUSERSINCLUDEROLES.fields_by_name['user_includes_roles'].message_type = identity_dot_user__includes__roles__pb2._USERINCLUDESROLES
+_REALMINCLUDESUSERSINCLUDEROLES.fields_by_name['users_include_roles'].message_type = identity_dot_user__includes__roles__pb2._USERINCLUDESROLES
 DESCRIPTOR.message_types_by_name['RealmIncludesUsersIncludeRoles'] = _REALMINCLUDESUSERSINCLUDEROLES
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 

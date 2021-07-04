@@ -123,7 +123,7 @@ class PolicyAppServiceListener(PolicyAppServiceServicer, BaseListener):
                 responseItem.name = resultItem.name()
                 responseItem.realm_type = resultItem.realmType()
                 for userIncludesRoles in resultItem.usersIncludeRoles():
-                    userIncludesRolesResponseItem = responseItem.user_includes_roles.add()
+                    userIncludesRolesResponseItem = responseItem.users_include_roles.add()
                     userIncludesRolesResponseItem.id = userIncludesRoles.id()
                     userIncludesRolesResponseItem.email = userIncludesRoles.email()
                     for role in userIncludesRoles.roles():
@@ -166,7 +166,7 @@ class PolicyAppServiceListener(PolicyAppServiceServicer, BaseListener):
                     realmIncludesUsersIncludeRolesResponseItem.realm_type = realmIncludesUsersIncludeRoles.realmType()
 
                     for userIncludesRoles in realmIncludesUsersIncludeRoles.usersIncludeRoles():
-                        userIncludesRolesResponseItem = realmIncludesUsersIncludeRolesResponseItem.user_includes_roles.add()
+                        userIncludesRolesResponseItem = realmIncludesUsersIncludeRolesResponseItem.users_include_roles.add()
                         userIncludesRolesResponseItem.id = userIncludesRoles.id()
                         userIncludesRolesResponseItem.email = userIncludesRoles.email()
                         for role in userIncludesRoles.roles():
