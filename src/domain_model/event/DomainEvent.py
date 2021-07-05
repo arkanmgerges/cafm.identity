@@ -9,11 +9,21 @@ from src.resource.common.DateTimeHelper import DateTimeHelper
 
 
 class DomainEvent(ABC):
-    def __init__(self, id: str = str(uuid4()), name: str = "", occurredOn: int = None):
+    def __init__(self, id: str = str(uuid4()), name: str = "", occurredOn: int = None, key: str = None):
         self._id = id
+        self._key = key
         self._name = name
         self._occurredOn = DateTimeHelper.utcNow() if occurredOn is None else occurredOn
         self._data = {}
+
+    def key(self) -> str:
+        """Get the key of the event, a lot of events can have the same key but different id,
+        the key is used as a grouping mechanism
+
+        Returns:
+            str: The key of the event
+        """
+        return self._key
 
     def id(self) -> str:
         """Get identity of the object
