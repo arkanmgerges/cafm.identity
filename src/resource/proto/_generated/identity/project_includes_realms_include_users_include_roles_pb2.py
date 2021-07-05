@@ -20,37 +20,37 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\nBidentity/project_includes_realms_include_users_include_roles.proto\x12\x14\x63\x61\x66m.identity.policy\x1a\x31identity/realm_includes_users_include_roles.proto\"\xaa\x01\n,ProjectIncludesRealmIncludeUsersIncludeRoles\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12`\n\"realm_includes_users_include_roles\x18\x04 \x03(\x0b\x32\x34.cafm.identity.policy.RealmIncludesUsersIncludeRolesb\x06proto3'
+  serialized_pb=b'\nBidentity/project_includes_realms_include_users_include_roles.proto\x12\x14\x63\x61\x66m.identity.policy\x1a\x31identity/realm_includes_users_include_roles.proto\"\xab\x01\n-ProjectIncludesRealmsIncludeUsersIncludeRoles\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12`\n\"realm_includes_users_include_roles\x18\x04 \x03(\x0b\x32\x34.cafm.identity.policy.RealmIncludesUsersIncludeRolesb\x06proto3'
   ,
   dependencies=[identity_dot_realm__includes__users__include__roles__pb2.DESCRIPTOR,])
 
 
 
 
-_PROJECTINCLUDESREALMINCLUDEUSERSINCLUDEROLES = _descriptor.Descriptor(
-  name='ProjectIncludesRealmIncludeUsersIncludeRoles',
-  full_name='cafm.identity.policy.ProjectIncludesRealmIncludeUsersIncludeRoles',
+_PROJECTINCLUDESREALMSINCLUDEUSERSINCLUDEROLES = _descriptor.Descriptor(
+  name='ProjectIncludesRealmsIncludeUsersIncludeRoles',
+  full_name='cafm.identity.policy.ProjectIncludesRealmsIncludeUsersIncludeRoles',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='cafm.identity.policy.ProjectIncludesRealmIncludeUsersIncludeRoles.id', index=0,
+      name='id', full_name='cafm.identity.policy.ProjectIncludesRealmsIncludeUsersIncludeRoles.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='name', full_name='cafm.identity.policy.ProjectIncludesRealmIncludeUsersIncludeRoles.name', index=1,
+      name='name', full_name='cafm.identity.policy.ProjectIncludesRealmsIncludeUsersIncludeRoles.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='realm_includes_users_include_roles', full_name='cafm.identity.policy.ProjectIncludesRealmIncludeUsersIncludeRoles.realm_includes_users_include_roles', index=2,
+      name='realm_includes_users_include_roles', full_name='cafm.identity.policy.ProjectIncludesRealmsIncludeUsersIncludeRoles.realm_includes_users_include_roles', index=2,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -69,19 +69,19 @@ _PROJECTINCLUDESREALMINCLUDEUSERSINCLUDEROLES = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=144,
-  serialized_end=314,
+  serialized_end=315,
 )
 
-_PROJECTINCLUDESREALMINCLUDEUSERSINCLUDEROLES.fields_by_name['realm_includes_users_include_roles'].message_type = identity_dot_realm__includes__users__include__roles__pb2._REALMINCLUDESUSERSINCLUDEROLES
-DESCRIPTOR.message_types_by_name['ProjectIncludesRealmIncludeUsersIncludeRoles'] = _PROJECTINCLUDESREALMINCLUDEUSERSINCLUDEROLES
+_PROJECTINCLUDESREALMSINCLUDEUSERSINCLUDEROLES.fields_by_name['realm_includes_users_include_roles'].message_type = identity_dot_realm__includes__users__include__roles__pb2._REALMINCLUDESUSERSINCLUDEROLES
+DESCRIPTOR.message_types_by_name['ProjectIncludesRealmsIncludeUsersIncludeRoles'] = _PROJECTINCLUDESREALMSINCLUDEUSERSINCLUDEROLES
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-ProjectIncludesRealmIncludeUsersIncludeRoles = _reflection.GeneratedProtocolMessageType('ProjectIncludesRealmIncludeUsersIncludeRoles', (_message.Message,), {
-  'DESCRIPTOR' : _PROJECTINCLUDESREALMINCLUDEUSERSINCLUDEROLES,
+ProjectIncludesRealmsIncludeUsersIncludeRoles = _reflection.GeneratedProtocolMessageType('ProjectIncludesRealmsIncludeUsersIncludeRoles', (_message.Message,), {
+  'DESCRIPTOR' : _PROJECTINCLUDESREALMSINCLUDEUSERSINCLUDEROLES,
   '__module__' : 'identity.project_includes_realms_include_users_include_roles_pb2'
-  # @@protoc_insertion_point(class_scope:cafm.identity.policy.ProjectIncludesRealmIncludeUsersIncludeRoles)
+  # @@protoc_insertion_point(class_scope:cafm.identity.policy.ProjectIncludesRealmsIncludeUsersIncludeRoles)
   })
-_sym_db.RegisterMessage(ProjectIncludesRealmIncludeUsersIncludeRoles)
+_sym_db.RegisterMessage(ProjectIncludesRealmsIncludeUsersIncludeRoles)
 
 
 # @@protoc_insertion_point(module_scope)

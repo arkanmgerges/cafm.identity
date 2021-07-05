@@ -29,6 +29,7 @@ from src.domain_model.policy.access_node_content.ResourceInstanceAccessNodeConte
 from src.domain_model.policy.model.ProjectIncludesRealmsIncludeUsersIncludeRoles import \
     ProjectIncludesRealmsIncludeUsersIncludeRoles
 from src.domain_model.policy.model.RealmIncludesUsersIncludeRoles import RealmIncludesUsersIncludeRoles
+from src.domain_model.policy.model.UserIncludesRealmsAndRoles import UserIncludesRealmsAndRoles
 from src.domain_model.policy.model.UserIncludesRoles import UserIncludesRoles
 from src.domain_model.project.Project import Project
 from src.domain_model.realm.Realm import Realm
@@ -1520,6 +1521,80 @@ class PolicyRepositoryImpl(PolicyRepository):
         return {"items": [self._realmIncludesUsersIncludeRolesByResultItem(x) for x in result], "totalItemCount": len(result)}
 
     @debugLogger
+    def usersIncludeRealmsAndRoles(
+            self,
+            tokenData: TokenData = None,
+    ) -> dict:
+        if TokenService.isSuperAdmin(tokenData=tokenData) or TokenService.isSysAdmin(tokenData=tokenData):
+            aql = """
+                    LET users_include_roles = (FOR user IN resource
+                                            FILTER user.type == "user"
+                                            FOR role_item IN OUTBOUND user `has`
+                                            FILTER role_item.type == "role"
+                                            COLLECT user_item = user into groups = role_item
+                                                RETURN MERGE(user_item, {roles: groups}))
+                    FOR item IN users_include_roles
+                        FOR role2 IN item.roles
+                            FOR realm IN outbound role2 `access`
+                                FILTER realm.type == "realm"
+                                COLLECT user_item = item INTO groups = realm
+                                    RETURN MERGE(user_item, {realms: groups})
+                            """
+            queryResult = self._db.AQLQuery(aql, rawResults=True)
+            result = queryResult.result
+            return {"items": [self._userIncludesRealmsAndRolesByResultItem(x) for x in result],
+                    "totalItemCount": len(result)}
+
+        rolesConditions = ""
+        for role in tokenData.roles():
+            if rolesConditions == "":
+                rolesConditions += f'role.id == "{role["id"]}"'
+            else:
+                rolesConditions += f' OR role.id == "{role["id"]}"'
+
+        if rolesConditions == "":
+            rolesConditions = 'role.id == "None"'
+        aql = """
+                            LET res1 =UNIQUE(FLATTEN(
+                                        FOR role IN resource
+                                            FILTER (#rolesConditions)
+                                            LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == 'realm'
+                                                        FOR v2 IN INBOUND v1._id `access` FILTER v2.type == "role" RETURN v2)
+                                            LET accesses = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == "realm"
+                                                                FOR v2 IN 1..100 OUTBOUND v1._id `has` FILTER v2.type == "realm"
+                                                                    FOR v3 IN INBOUND v2._id `access` FILTER v3.type == "role"
+                                                                                RETURN v3
+                                                                       )
+                                            LET roles = UNION_DISTINCT(accesses, direct_access)
+                                            RETURN roles
+                                        ))
+
+                            LET users_with_roles = (
+                                FOR user IN resource
+                                    FILTER user.type == "user"
+                                    FOR role2 IN res1
+                                        FILTER role2.type == "role"
+                                        FOR role3 IN OUTBOUND user `has`
+                                        FILTER role3.id == role2.id
+                                        FOR role4 IN OUTBOUND user `has`
+                                            FILTER role4.type == "role"
+                                            COLLECT user_item = user into groups = role4
+                                                RETURN MERGE(user_item, {roles: unique(groups)}))
+
+                    FOR item IN users_with_roles
+                        FOR role2 IN item.roles
+                            FOR realm IN outbound role2 `access`
+                                FILTER realm.type == "realm"
+                                COLLECT user_item = item INTO groups = realm
+                                    RETURN MERGE(user_item, {realms: groups})
+                                """
+        aql = aql.replace("#rolesConditions", rolesConditions)
+        queryResult = self._db.AQLQuery(aql, rawResults=True)
+        result = queryResult.result
+        return {"items": [self._userIncludesRealmsAndRolesByResultItem(x) for x in result],
+                "totalItemCount": len(result)}
+
+    @debugLogger
     def projectsIncludeRealmsIncludeUsersIncludeRoles(
             self,
             tokenData: TokenData = None,
@@ -1637,6 +1712,14 @@ class PolicyRepositoryImpl(PolicyRepository):
                 realm=Realm.createFrom(id=resultItem["id"], name=resultItem["name"], realmType=resultItem["realm_type"]),
                 usersIncludeRoles=[self._userIncludesRolesByResultItem(x) for x in resultItem["users_include_roles"]]
         )
+
+    def _userIncludesRealmsAndRolesByResultItem(self, resultItem):
+        return UserIncludesRealmsAndRoles.createFrom(
+                user=User.createFrom(id=resultItem["id"], email=resultItem["email"]),
+                roles=[Role.createFrom(id=role["id"], type=role["type"], name=role["name"], title=role["title"],
+                                   skipValidation=True) for role in resultItem["roles"]],
+                realms = [Realm.createFrom(id=realm["id"], name=realm["name"], realmType=realm["realm_type"],skipValidation=True)
+                          for realm in resultItem["realms"]])
 
     def _userIncludesRolesByResultItem(self, resultItem):
         return UserIncludesRoles.createFrom(

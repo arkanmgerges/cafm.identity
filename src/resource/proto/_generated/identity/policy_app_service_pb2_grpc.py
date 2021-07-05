@@ -24,6 +24,11 @@ class PolicyAppServiceStub(object):
                 request_serializer=identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRolesRequest.SerializeToString,
                 response_deserializer=identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRolesResponse.FromString,
                 )
+        self.users_include_realms_and_roles = channel.unary_unary(
+                '/cafm.identity.policy.PolicyAppService/users_include_realms_and_roles',
+                request_serializer=identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRealmsAndRolesRequest.SerializeToString,
+                response_deserializer=identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRealmsAndRolesResponse.FromString,
+                )
         self.realms_include_users_include_roles = channel.unary_unary(
                 '/cafm.identity.policy.PolicyAppService/realms_include_users_include_roles',
                 request_serializer=identity_dot_policy__app__service__pb2.PolicyAppService_realmsIncludeUsersIncludeRolesRequest.SerializeToString,
@@ -46,6 +51,12 @@ class PolicyAppServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def users_include_roles(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def users_include_realms_and_roles(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -75,6 +86,11 @@ def add_PolicyAppServiceServicer_to_server(servicer, server):
                     servicer.users_include_roles,
                     request_deserializer=identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRolesRequest.FromString,
                     response_serializer=identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRolesResponse.SerializeToString,
+            ),
+            'users_include_realms_and_roles': grpc.unary_unary_rpc_method_handler(
+                    servicer.users_include_realms_and_roles,
+                    request_deserializer=identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRealmsAndRolesRequest.FromString,
+                    response_serializer=identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRealmsAndRolesResponse.SerializeToString,
             ),
             'realms_include_users_include_roles': grpc.unary_unary_rpc_method_handler(
                     servicer.realms_include_users_include_roles,
@@ -127,6 +143,23 @@ class PolicyAppService(object):
         return grpc.experimental.unary_unary(request, target, '/cafm.identity.policy.PolicyAppService/users_include_roles',
             identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRolesRequest.SerializeToString,
             identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRolesResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def users_include_realms_and_roles(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/cafm.identity.policy.PolicyAppService/users_include_realms_and_roles',
+            identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRealmsAndRolesRequest.SerializeToString,
+            identity_dot_policy__app__service__pb2.PolicyAppService_usersIncludeRealmsAndRolesResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

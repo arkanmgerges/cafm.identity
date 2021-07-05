@@ -20,7 +20,8 @@ from src.resource.proto._generated.identity.policy_app_service_pb2 import \
     PolicyAppService_usersIncludeAccessRolesResponse, \
     PolicyAppService_usersIncludeRolesResponse, PolicyAppService_usersIncludeAccessRolesResponse, \
     PolicyAppService_realmsIncludeUsersIncludeRolesResponse, \
-    PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse
+    PolicyAppService_projectsIncludeRealmsIncludeUsersIncludeRolesResponse, \
+    PolicyAppService_usersIncludeRealmsAndRolesResponse
 from src.resource.proto._generated.identity.policy_app_service_pb2_grpc import PolicyAppServiceServicer
 
 
@@ -102,6 +103,44 @@ class PolicyAppServiceListener(PolicyAppServiceServicer, BaseListener):
 
     @debugLogger
     @OpenTelemetry.grpcTraceOTel
+    def users_include_realms_and_roles(self, request, context):
+        response = PolicyAppService_usersIncludeRealmsAndRolesResponse
+        try:
+            token = self._token(context)
+            claims = self._tokenService.claimsFromToken(token=token) if "token" != "" else None
+            logger.debug(
+                f"[{PolicyAppServiceListener.users_include_realms_and_roles.__qualname__}] - claims: {claims}\n\t \
+                                token: {token}"
+            )
+            appService: PolicyApplicationService = AppDi.instance.get(PolicyApplicationService)
+            response = response()
+            result = appService.usersIncludeRealmsAndRoles(token=token)
+            logger.debug(
+                f"[{PolicyAppServiceListener.users_include_realms_and_roles.__qualname__}] - app service result: {result}")
+            response.total_item_count = result["totalItemCount"]
+            for resultItem in result["items"]:
+                responseItem = response.users_include_realms_and_roles.add()
+                responseItem.id = resultItem.id()
+                responseItem.email = resultItem.email()
+                for role in resultItem.roles():
+                    roleResponseItem = responseItem.roles.add()
+                    roleResponseItem.id = role.id()
+                    roleResponseItem.type = role.type()
+                    roleResponseItem.name = role.name()
+                    roleResponseItem.title = role.title()
+                for realm in resultItem.realms():
+                    realmResponseItem = responseItem.realms.add()
+                    realmResponseItem.id = realm.id()
+                    realmResponseItem.name = realm.name()
+                    realmResponseItem.realm_type = realm.realmType()
+            return response
+        except UnAuthorizedException:
+            context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+            context.set_details("Un Authorized")
+            return response()
+
+    @debugLogger
+    @OpenTelemetry.grpcTraceOTel
     def realms_include_users_include_roles(self, request, context):
         response = PolicyAppService_realmsIncludeUsersIncludeRolesResponse
         try:
@@ -118,7 +157,7 @@ class PolicyAppServiceListener(PolicyAppServiceServicer, BaseListener):
                 f"[{PolicyAppServiceListener.realms_include_users_include_roles.__qualname__}] - app service result: {result}")
             response.total_item_count = result["totalItemCount"]
             for resultItem in result["items"]:
-                responseItem = response.realm_includes_users_include_roles_items.add()
+                responseItem = response.realms_include_users_include_roles.add()
                 responseItem.id = resultItem.id()
                 responseItem.name = resultItem.name()
                 responseItem.realm_type = resultItem.realmType()
@@ -156,7 +195,7 @@ class PolicyAppServiceListener(PolicyAppServiceServicer, BaseListener):
                 f"[{PolicyAppServiceListener.projects_include_realms_include_users_include_roles.__qualname__}] - app service result: {result}")
             response.total_item_count = result["totalItemCount"]
             for resultItem in result["items"]:
-                responseItem = response.project_includes_realms_include_users_include_roles_items.add()
+                responseItem = response.projects_include_realms_include_users_include_roles.add()
                 responseItem.id = resultItem.id()
                 responseItem.name = resultItem.name()
                 for realmIncludesUsersIncludeRoles in resultItem.realmsIncludeUsersIncludeRoles():

@@ -4,7 +4,7 @@ package cafm.identity.policy;
 
 import "identity/realm_includes_users_include_roles.proto";
 
-message ProjectIncludesRealmIncludeUsersIncludeRoles {
+message ProjectIncludesRealmsIncludeUsersIncludeRoles {
   string id = 1;
   string name = 2;
   repeated RealmIncludesUsersIncludeRoles realm_includes_users_include_roles = 4;

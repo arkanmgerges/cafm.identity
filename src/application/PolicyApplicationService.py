@@ -99,6 +99,11 @@ class PolicyApplicationService:
         return self._policyService.usersIncludeRoles(tokenData=tokenData)
 
     @debugLogger
+    def usersIncludeRealmsAndRoles(self, token: str = None):
+        tokenData = TokenService.tokenDataFromToken(token=token)
+        return self._policyService.usersIncludeRealmsAndRoles(tokenData=tokenData)
+
+    @debugLogger
     def realmsIncludeUsersIncludeRoles(self, token: str = None):
         tokenData = TokenService.tokenDataFromToken(token=token)
         return self._policyService.realmsIncludeUsersIncludeRoles(tokenData=tokenData)

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package cafm.identity.policy;
+
+import "identity/realm.proto";
+import "identity/role.proto";
+
+message UserIncludesRealmsAndRoles {
+  string id = 1;
+  string email = 2;
+  repeated cafm.identity.realm.Realm realms = 3;
+  repeated cafm.identity.role.Role roles = 4;
+}
