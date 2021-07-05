@@ -294,9 +294,9 @@ class RoleRepositoryImpl(RoleRepository):
                               UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
                              IN owned_by`;
 
-                        queryLink2 = `UPSERT {_from: @fromRoleId, _to: @toUserId}
-                            INSERT {_from: @fromRoleId, _to: @toUserId, _from_type: "role", _to_type: "user"}
-                            UPDATE {_from: @fromRoleId, _to: @toUserId, _from_type: "role", _to_type: "user"}
+                        queryLink2 = `UPSERT {_from: @fromUserId, _to: @toRoleId}
+                            INSERT {_from: @fromUserId, _to: @toRoleId, _from_type: "user", _to_type: "role"}
+                            UPDATE {_from: @fromUserId, _to: @toRoleId, _from_type: "user", _to_type: "role"}
                             IN has`;
 
                         let db = require('@arangodb').db;
@@ -313,7 +313,7 @@ class RoleRepositoryImpl(RoleRepository):
                                     'fromType': params['resource']['type'], 'toType': params['toTypeRole']};
                                 db._query(queryLink, p).execute();
                             }
-                            p = {'fromRoleId': fromDocId, 'toUserId': params['userFromParamDocId']};
+                            p = {'fromUserId': params['userFromParamDocId'], 'toRoleId': fromDocId};
                             db._query(queryLink2, p).execute();
                         } else {
                             let err = new Error(`Could not create resource, ${params['resource']['id']} is already exist`);
