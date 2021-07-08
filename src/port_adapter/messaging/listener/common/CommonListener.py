@@ -73,7 +73,7 @@ class CommonListener:
         consumer.subscribe(consumerTopicList)
 
         # Producer
-        producer: TransactionalProducer = AppDi.instance.get(TransactionalProducer)
+        producer: TransactionalProducer = self._newProducer()
         producer.initTransaction()
         producer.beginTransaction()
 
