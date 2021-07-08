@@ -158,35 +158,48 @@ class AuthAppServiceListener(AuthAppServiceServicer):
             from src.port_adapter.messaging.common.TransactionalProducer import (
                 TransactionalProducer,
             )
-
             producer: TransactionalProducer = AppDi.instance.get(TransactionalProducer)
-            for domainEvent in domainEvents:
-                from src.port_adapter.messaging.common.model.IdentityEvent import (
-                    IdentityEvent,
-                )
+            try:
+                for domainEvent in domainEvents:
+                    from src.port_adapter.messaging.common.model.IdentityEvent import (
+                        IdentityEvent,
+                    )
 
-                producer.initTransaction()
-                producer.beginTransaction()
-                import os
-                import json
+                    producer.initTransaction()
+                    producer.beginTransaction()
+                    import os
+                    import json
 
-                producer.produce(
-                    obj=IdentityEvent(
-                        id=domainEvent.id(),
-                        creatorServiceName=os.getenv(
-                            "CAFM_IDENTITY_SERVICE_NAME", "cafm.identity"
+                    producer.produce(
+                        obj=IdentityEvent(
+                            id=domainEvent.id(),
+                            creatorServiceName=os.getenv(
+                                "CAFM_IDENTITY_SERVICE_NAME", "cafm.identity"
+                            ),
+                            name=domainEvent.name(),
+                            metadata=json.dumps({"token": token}),
+                            data=json.dumps(domainEvent.data()),
+                            createdOn=domainEvent.occurredOn(),
+                            external=[],
                         ),
-                        name=domainEvent.name(),
-                        metadata=json.dumps({"token": token}),
-                        data=json.dumps(domainEvent.data()),
-                        createdOn=domainEvent.occurredOn(),
-                        external=[],
-                    ),
-                    schema=IdentityEvent.get_schema(),
+                        schema=IdentityEvent.get_schema(),
+                    )
+                from src.domain_model.event.DomainPublishedEvents import (
+                    DomainPublishedEvents,
                 )
-            from src.domain_model.event.DomainPublishedEvents import (
-                DomainPublishedEvents,
-            )
 
-            DomainPublishedEvents.cleanup()
-            producer.commitTransaction()
+                DomainPublishedEvents.cleanup()
+                producer.commitTransaction()
+            except Exception as e:
+                logger.error(e)
+                try:
+                    from src.domain_model.event.DomainPublishedEvents import (
+                        DomainPublishedEvents,
+                    )
+                    DomainPublishedEvents.cleanup()
+                    producer.abortTransaction()
+                except: pass
+
+
+
+
