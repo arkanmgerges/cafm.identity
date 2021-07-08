@@ -67,12 +67,7 @@ class CommonListener:
             self._handlers.append(handler)
 
     def _process(self, consumerGroupId, consumerTopicList: List[str]):
-        consumer: Consumer = AppDi.Builder.buildConsumer(
-            groupId=consumerGroupId,
-            autoCommit=False,
-            partitionEof=True,
-            autoOffsetReset=ConsumerOffsetReset.earliest.name,
-        )
+        consumer: Consumer = self._newConsumer(consumerGroupId=consumerGroupId,)
 
         # Subscribe - Consume the commands that exist in this service own topic
         consumer.subscribe(consumerTopicList)
@@ -88,7 +83,14 @@ class CommonListener:
                     message = consumer.poll(timeout=1.0)
                     if message is None:
                         continue
-                except Exception as _e:
+                except Exception as e:
+                    logger.debug(e)
+                    try:
+                        producer.abortTransaction()
+                        producer = self._newProducer()
+                        producer.initTransaction()
+                        producer.beginTransaction()
+                    except: pass
                     continue
 
                 if message.error():
@@ -98,6 +100,10 @@ class CommonListener:
                         )
                     else:
                         logger.error(message.error())
+                        producer.abortTransaction()
+                        producer = self._newProducer()
+                        producer.initTransaction()
+                        producer.beginTransaction()
                 else:
                     # Proper message
                     logger.info(
@@ -145,6 +151,17 @@ class CommonListener:
             producer.abortTransaction()
             # Close down consumer to commit final offsets.
             consumer.close()
+
+    def _newConsumer(self, consumerGroupId) -> Consumer:
+        return AppDi.Builder.buildConsumer(
+            groupId=consumerGroupId,
+            autoCommit=False,
+            partitionEof=True,
+            autoOffsetReset=ConsumerOffsetReset.earliest.name,
+        )
+
+    def _newProducer(self) -> TransactionalProducer:
+        return AppDi.instance.get(TransactionalProducer)
 
     def _handleTargetsOnSuccess(self, processHandleData: ProcessHandleData):
         handler: Handler = processHandleData.handler

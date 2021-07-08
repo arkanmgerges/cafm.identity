@@ -420,17 +420,14 @@ class AppDi(Module):
     # endregion
 
     # region Messaging
-    @singleton
     @provider
     def provideSimpleProducer(self) -> SimpleProducer:
         return KafkaProducer.simpleProducer()
 
-    @singleton
     @provider
     def provideTransactionalProducer(self) -> TransactionalProducer:
         return KafkaProducer.transactionalProducer()
 
-    @singleton
     @provider
     def provideConsumer(
         self,
