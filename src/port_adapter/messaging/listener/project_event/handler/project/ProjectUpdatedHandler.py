@@ -29,3 +29,11 @@ class ProjectUpdatedHandler(Handler):
         dataDict["name"] = new["name"] if new["name"] is not None else old["name"]
         messageData["data"] = json.dumps(dataDict)
         return super().handleMessage(messageData)
+
+    @staticmethod
+    def targetsOnException() -> List[Callable]:
+        return [Handler.targetOnException]
+
+    @staticmethod
+    def targetsOnSuccess() -> List[Callable]:
+        return [Handler.targetOnSuccess]
