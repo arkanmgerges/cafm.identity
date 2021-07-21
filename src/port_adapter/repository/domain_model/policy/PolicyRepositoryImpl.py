@@ -1221,6 +1221,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         if rolesConditions == "":
             rolesConditions = 'role.id == "None"'
         aql = """
+                LET resource_user_id = "#userId"
                 RETURN MERGE(FOR role IN resource
                     FILTER (#rolesConditions) AND role.type == 'role'
                     LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == @type RETURN v1)
@@ -1229,7 +1230,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                                                     FILTER v2.type == @type
                                                         RETURN v2
                                                )
-                    LET owned_resources = (FOR v1 IN INBOUND role._id `owned_by` FILTER v1.type == @type RETURN v1)
+                    LET owned_resources = (FOR v1 IN INBOUND resource_user_id `owned_by` FILTER v1.type == @type RETURN v1)
                     LET result = UNION_DISTINCT(owned_resources, accesses, direct_access)
                     LET sorted_result = (FOR d IN result #sortData RETURN d)
                     RETURN {items: sorted_result})
@@ -1239,6 +1240,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         else:
             aql = aql.replace("#sortData", "")
         aql = aql.replace("#rolesConditions", rolesConditions)
+        aql = aql.replace("#userId", f'resource/{tokenData.id()}')
         bindVars = {"type": resourceType}
         queryResult = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
         result = queryResult.result[0] if queryResult.result != [] else []
@@ -1646,6 +1648,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         if rolesConditions == "":
             rolesConditions = 'role.id == "None"'
         aql = """
+                    LET resource_user_id = "#userId" 
                     LET roles =UNIQUE(FLATTEN(
                         FOR role IN resource
                             FILTER (#rolesConditions)
@@ -1679,13 +1682,21 @@ class PolicyRepositoryImpl(PolicyRepository):
                         for user_item in users_include_roles
                             for user_item_role in user_item.roles
                                 // User item has connection to a project
-                                for v_project in outbound user_item_role `access`
+                                let prj1 = (for v_project in outbound user_item_role `access` filter v_project.id == project.id return v_project)
+                                let prj2 = (for v_project in inbound resource_user_id `owned_by` filter v_project.id == project.id return v_project)
+                    
+                                filter prj1 != [] or prj2 != []
+                                
+                                let prj_merged = unique([merge(prj1 != [] ? prj1[0] : {}, prj2 != [] ? prj2[0] : {})])
+                                for v_project in prj_merged
                                     // Make sure the the user has connection with the same project that we are looping from above
                                     filter v_project.id == project.id
+                                    
                                     // User item has a connection to a realm
                                     for v_realm in outbound user_item_role `access`
                                         // Filter only the realm type
                                         filter v_realm.type == "realm"
+                    
                                         // Group by project and put realm and user into the groups to be processed later
                                         COLLECT project_item = project into realm_and_user_grp = {realm: v_realm, user_item}
                                             // Group by realm
@@ -1696,6 +1707,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                                             return merge(project_item, {realms_include_users_include_roles: realm_coll})
                                 """
         aql = aql.replace("#rolesConditions", rolesConditions)
+        aql = aql.replace("#userId", f'resource/{tokenData.id()}')
         queryResult = self._db.AQLQuery(aql, rawResults=True)
         result = queryResult.result
         return {"items": [self._projectIncludesRealmsIncludeUsersIncludeRolesByResultItem(x) for x in result],
