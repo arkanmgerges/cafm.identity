@@ -1648,10 +1648,11 @@ class PolicyRepositoryImpl(PolicyRepository):
         if rolesConditions == "":
             rolesConditions = 'role.id == "None"'
         aql = """
-                    LET resource_user_id = "#userId" 
+                    LET resource_user_id = "#resourceUserId"
+                    LET user_id = "#userId"
                     LET roles =UNIQUE(FLATTEN(
                         FOR role IN resource
-                            FILTER (#rolesConditions)
+                            FILTER (role.id == "f80a214f-ae9d-49ee-bff7-b902299452db" or role.id == "3315c977-93f5-463a-b872-0ce8b29c4109")
                             LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == 'realm'
                                         FOR v2 IN INBOUND v1._id `access` FILTER v2.type == "role" RETURN v2)
                             LET accesses = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == "realm"
@@ -1675,20 +1676,17 @@ class PolicyRepositoryImpl(PolicyRepository):
                                     COLLECT user_item = user into groups = role4
                                         RETURN merge(user_item, {roles: unique(groups)}))
                     
-                    for project in resource
+                    
+                    let res1 = (for project in resource
                         // Filter only project type
                         filter project.type == "project"
                         // Loop through all the user items that have roles as a key
                         for user_item in users_include_roles
                             for user_item_role in user_item.roles
                                 // User item has connection to a project
-                                let prj1 = (for v_project in outbound user_item_role `access` filter v_project.id == project.id return v_project)
-                                let prj2 = (for v_project in inbound resource_user_id `owned_by` filter v_project.id == project.id return v_project)
-                    
-                                filter prj1 != [] or prj2 != []
+                                let prj = (for v_project in outbound user_item_role `access` filter v_project.id == project.id return v_project)
                                 
-                                let prj_merged = unique([merge(prj1 != [] ? prj1[0] : {}, prj2 != [] ? prj2[0] : {})])
-                                for v_project in prj_merged
+                                for v_project in prj
                                     // Make sure the the user has connection with the same project that we are looping from above
                                     filter v_project.id == project.id
                                     
@@ -1704,12 +1702,34 @@ class PolicyRepositoryImpl(PolicyRepository):
                                                 collect c_realm = item.realm into grp = {user_item: item.user_item, project: project_item}
                                                     return merge(c_realm, {users_include_roles: grp[*].user_item})
                                                     )
-                                            return merge(project_item, {realms_include_users_include_roles: realm_coll})
+                                            return merge(project_item, {realms_include_users_include_roles: realm_coll}))
+                    
+                    
+                    let res2 = (for project in (for v_project in inbound resource_user_id `owned_by` filter v_project.type == "project" return v_project)
+                        for user_item in users_include_roles
+                            filter user_item.id == user_id
+                            for user_item_role in user_item.roles
+                                // User item has a connection to a realm
+                                for v_realm in outbound user_item_role `access`
+                                    // Filter only the realm type
+                                    filter v_realm.type == "realm"
+                                    // Group by project and put realm and user into the groups to be processed later
+                                    COLLECT project_item = project into realm_and_user_grp = {realm: v_realm, user_item}
+                                        // Group by realm
+                                        let realm_coll = (for item in realm_and_user_grp
+                                            collect c_realm = item.realm into grp = {user_item: item.user_item, project: project_item}
+                                                return merge(c_realm, {users_include_roles: grp[*].user_item})
+                                                )
+                                        return merge(project_item, {realms_include_users_include_roles: realm_coll}))
+                    return union(res1, res2)
+    
+        
                                 """
         aql = aql.replace("#rolesConditions", rolesConditions)
-        aql = aql.replace("#userId", f'resource/{tokenData.id()}')
+        aql = aql.replace("#resourceUserId", f'resource/{tokenData.id()}')
+        aql = aql.replace("#userId", f'{tokenData.id()}')
         queryResult = self._db.AQLQuery(aql, rawResults=True)
-        result = queryResult.result
+        result = queryResult.result[0]
         return {"items": [self._projectIncludesRealmsIncludeUsersIncludeRolesByResultItem(x) for x in result],
                 "totalItemCount": len(result)}
 
