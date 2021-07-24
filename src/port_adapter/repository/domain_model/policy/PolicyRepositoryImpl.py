@@ -1721,7 +1721,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                                                 return merge(c_realm, {users_include_roles: grp[*].user_item})
                                                 )
                                         return merge(project_item, {realms_include_users_include_roles: realm_coll}))
-                    return union(res1, res2)
+                    return union_distinct(res1, res2)
     
         
                                 """
