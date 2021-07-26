@@ -1652,7 +1652,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                     LET user_id = "#userId"
                     LET roles =UNIQUE(FLATTEN(
                         FOR role IN resource
-                            FILTER (role.id == "f80a214f-ae9d-49ee-bff7-b902299452db" or role.id == "3315c977-93f5-463a-b872-0ce8b29c4109")
+                            FILTER (role.id == #rolesConditions)
                             LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == 'realm'
                                         FOR v2 IN INBOUND v1._id `access` FILTER v2.type == "role" RETURN v2)
                             LET accesses = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == "realm"
