@@ -1652,7 +1652,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                     LET user_id = "#userId"
                     LET roles =UNIQUE(FLATTEN(
                         FOR role IN resource
-                            FILTER (role.id == #rolesConditions)
+                            FILTER (#rolesConditions)
                             LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == 'realm'
                                         FOR v2 IN INBOUND v1._id `access` FILTER v2.type == "role" RETURN v2)
                             LET accesses = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == "realm"
@@ -1730,8 +1730,19 @@ class PolicyRepositoryImpl(PolicyRepository):
         aql = aql.replace("#userId", f'{tokenData.id()}')
         queryResult = self._db.AQLQuery(aql, rawResults=True)
         result = queryResult.result[0]
+        result = self._groupByToplevel(data=result, keys=['realms_include_users_include_roles', 'users_include_roles', 'roles'], keyIndex=0)
         return {"items": [self._projectIncludesRealmsIncludeUsersIncludeRolesByResultItem(x) for x in result],
                 "totalItemCount": len(result)}
+
+    def _groupByToplevel(self, data, keys, keyIndex):
+        result = {}
+        key = keys[keyIndex]
+        for item in data:
+            if item['_id'] not in result:
+                result[item['_id']] = item
+            elif keyIndex < len(keys) - 1:
+                result[item['_id']][key] = self._groupByToplevel(data=result[item['_id']][key] + item[key], keys=keys, keyIndex=keyIndex + 1)
+        return result.values()
 
     def _projectIncludesRealmsIncludeUsersIncludeRolesByResultItem(self, resultItem):
         return ProjectIncludesRealmsIncludeUsersIncludeRoles.createFrom(
