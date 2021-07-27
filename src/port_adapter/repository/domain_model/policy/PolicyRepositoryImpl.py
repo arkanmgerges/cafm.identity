@@ -219,7 +219,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                 UPSERT {_from: @fromId, _to: @toId}
                     INSERT {_from: @fromId, _to: @toId, _from_type: 'user', _to_type: 'role'}
                     UPDATE {_from: @fromId, _to: @toId, _from_type: 'user', _to_type: 'role'}
-                  IN has                  
+                  IN has
                 """
         bindVars = {"fromId": userDocId, "toId": roleDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
@@ -262,7 +262,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Check if there is a link
         aql = """
             FOR d IN has
-              FILTER 
+              FILTER
                 d._from == @fromId AND d._to == @toId
                 AND d._from_type == 'user' AND d._to_type == 'role'
               RETURN d
@@ -296,7 +296,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                 UPSERT {_from: @fromId, _to: @toId}
                     INSERT {_from: @fromId, _to: @toId, _from_type: 'user_group', _to_type: 'role'}
                     UPDATE {_from: @fromId, _to: @toId, _from_type: 'user_group', _to_type: 'role'}
-                  IN has                  
+                  IN has
                 """
         bindVars = {"fromId": userGroupDocId, "toId": roleDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
@@ -339,7 +339,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Check if there is a link
         aql = """
             FOR d IN has
-              FILTER 
+              FILTER
                 d._from == @fromId AND d._to == @toId
                 AND d._from_type == 'user_group' AND d._to_type == 'role'
               RETURN d
@@ -373,7 +373,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                 UPSERT {_from: @fromId, _to: @toId}
                     INSERT {_from: @fromId, _to: @toId, _from_type: 'user_group', _to_type: 'user'}
                     UPDATE {_from: @fromId, _to: @toId, _from_type: 'user_group', _to_type: 'user'}
-                  IN has                  
+                  IN has
                 """
         bindVars = {"fromId": userGroupDocId, "toId": userDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
@@ -416,7 +416,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Check if there is a link
         aql = """
             FOR d IN has
-              FILTER 
+              FILTER
                 d._from == @fromId AND d._to == @toId
                 AND d._from_type == 'user_group' AND d._to_type == 'user'
               RETURN d
@@ -450,7 +450,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                 UPSERT {_from: @fromId, _to: @toId}
                     INSERT {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: 'permission'}
                     UPDATE {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: 'permission'}
-                  IN `has`                  
+                  IN `has`
                 """
         bindVars = {"fromId": roleDocId, "toId": permissionDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
@@ -563,7 +563,7 @@ class PolicyRepositoryImpl(PolicyRepository):
     @debugLogger
     def bulkAssignPermissionToPermissionContext(self, objList: List[dict]):
         actionFunction = """
-                    function (params) {                                            
+                    function (params) {
                         let db = require('@arangodb').db;
                         let objList = params['permissionAndPermissionContextIdList'];
                         for (let index in objList) {
@@ -595,12 +595,12 @@ class PolicyRepositoryImpl(PolicyRepository):
     @debugLogger
     def bulkRemovePermissionToPermissionContextAssignment(self, objList: List[dict]):
         actionFunction = """
-                    function (params) {                                            
+                    function (params) {
                         let db = require('@arangodb').db;
                         let objList = params['permissionAndPermissionContextIdList'];
                         for (let index in objList) {
                             db.for.removeByExample({_from: `permission/${objList[index].permission_id}`,
-                                                       _to: `permission_context/${objList[index].permission_context_id}`});                            
+                                                       _to: `permission_context/${objList[index].permission_context_id}`});
                         }
                     }
                 """
@@ -619,7 +619,7 @@ class PolicyRepositoryImpl(PolicyRepository):
     @debugLogger
     def bulkAssignRoleToPermission(self, objList: List[dict]):
         actionFunction = """
-                        function (params) {                                            
+                        function (params) {
                             let db = require('@arangodb').db;
                             let objList = params['roleAndPermissionIdList'];
                             for (let index in objList) {
@@ -672,7 +672,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                 UPSERT {_from: @fromId, _to: @toId}
                     INSERT {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
                     UPDATE {_from: @fromId, _to: @toId, _from_type: 'permission', _to_type: 'permission_context'}
-                  IN `for`                  
+                  IN `for`
                 """
         bindVars = {"fromId": permissionDocId, "toId": permissionContextDocId}
         _ = self._db.AQLQuery(aql, bindVars=bindVars, rawResults=True)
@@ -766,7 +766,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                 UPSERT {_from: @fromId, _to: @toId}
                     INSERT {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: @permissionContextName}
                     UPDATE {_from: @fromId, _to: @toId, _from_type: 'role', _to_type: @permissionContextName}
-                  IN access                  
+                  IN access
                 """
         bindVars = {
             "fromId": roleDocId,
@@ -815,7 +815,7 @@ class PolicyRepositoryImpl(PolicyRepository):
         # Check if there is a link
         aql = """
             FOR d IN access
-              FILTER 
+              FILTER
                 d._from == @fromId AND d._to == @toId
                 AND d._from_type == 'role' AND d._to_type == @permissionContextName
               RETURN d
@@ -875,7 +875,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                 UPSERT {_from: @fromId, _to: @toId}
                     INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
                     UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
-                  IN has                  
+                  IN has
                 """
         bindVars = {
             "fromId": resourceSrcDocId,
@@ -925,7 +925,7 @@ class PolicyRepositoryImpl(PolicyRepository):
     def assignmentResourceToResource(self, resourceSrcDocId, resourceDstDocId) -> List:
         aql = """
             FOR d IN has
-              FILTER 
+              FILTER
                 d._from == @fromId AND d._to == @toId
               RETURN d
         """
@@ -1162,10 +1162,10 @@ class PolicyRepositoryImpl(PolicyRepository):
                                     )
                     LET owned_resources = (FOR v1 IN INBOUND role._id `owned_by` FILTER v1.id == @resource_id RETURN v1)
                     LET result_unique = UNION_DISTINCT(owned_resources, accesses, direct_access)
-                    LET result = LENGTH(FLATTEN(result_unique)) > 0 ? 
+                    LET result = LENGTH(FLATTEN(result_unique)) > 0 ?
                         (FOR d IN resource FILTER d.id == @resource_id FOR v IN 1..100 OUTBOUND d._id `has` FILTER v.type == @type RETURN v)
                     : (RETURN [])
-                    
+
                     LET sorted_result = (FOR d IN result #sortData RETURN d)
                     RETURN sorted_result)
                         """
@@ -1368,8 +1368,8 @@ class PolicyRepositoryImpl(PolicyRepository):
                                 LET roles = UNION_DISTINCT(accesses, direct_access)
                                 RETURN roles
                             ))
-                
-                
+
+
                 LET users_with_roles = (FOR user IN resource
                         FILTER user.type == "user"
                         FOR role2 IN res1
@@ -1484,42 +1484,65 @@ class PolicyRepositoryImpl(PolicyRepository):
         if rolesConditions == "":
             rolesConditions = 'role.id == "None"'
         aql = """
-                        LET res1 =UNIQUE(FLATTEN(
-                                    FOR role IN resource
-                                        FILTER (#rolesConditions)
-                                        LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == 'realm'
-                                                    FOR v2 IN INBOUND v1._id `access` FILTER v2.type == "role" RETURN v2)
-                                        LET accesses = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == "realm"
-                                                            FOR v2 IN 1..100 OUTBOUND v1._id `has` FILTER v2.type == "realm"
-                                                                FOR v3 IN INBOUND v2._id `access` FILTER v3.type == "role"
-                                                                            RETURN v3
-                                                                   )
-                                        LET roles = UNION_DISTINCT(accesses, direct_access)
-                                        RETURN roles
-                                    ))
+            LET resource_user_id = "#resourceUserId"
+            LET user_id = "#userId"
 
-                        LET users_with_roles = (
-                            FOR user IN resource
-                                FILTER user.type == "user"
-                                FOR role2 IN res1
-                                    FILTER role2.type == "role"
-                                    FOR role3 IN OUTBOUND user `has`
-                                    FILTER role3.id == role2.id
-                                    FOR role4 IN OUTBOUND user `has`
-                                        FILTER role4.type == "role"
-                                        COLLECT user_item = user into groups = role4
-                                            RETURN MERGE(user_item, {roles: unique(groups)}))
-                        
-                        FOR item IN users_with_roles
-                            FOR role2 IN item.roles
-                                FOR realm IN outbound role2 `access`
-                                    FILTER realm.type == "realm"
-                                    COLLECT realm_item = realm INTO groups = item
-                                        RETURN MERGE(realm_item, {users_include_roles: groups})
+            LET res1 =UNIQUE(FLATTEN(
+                        FOR role IN resource
+                            FILTER (#rolesConditions)
+                            LET direct_access = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == 'realm'
+                                        FOR v2 IN INBOUND v1._id `access` FILTER v2.type == "role" RETURN v2)
+                            LET accesses = (FOR v1 IN OUTBOUND role._id `access` FILTER v1.type == "realm"
+                                                FOR v2 IN 1..100 OUTBOUND v1._id `has` FILTER v2.type == "realm"
+                                                    FOR v3 IN INBOUND v2._id `access` FILTER v3.type == "role"
+                                                                RETURN v3
+                                                    )
+                            LET roles = UNION_DISTINCT(accesses, direct_access)
+                            RETURN roles
+                        ))
+
+            LET users_with_roles = (
+                FOR user IN resource
+                    FILTER user.type == "user"
+                    FOR role2 IN res1
+                        FILTER role2.type == "role"
+                        FOR role3 IN OUTBOUND user `has`
+                        FILTER role3.id == role2.id
+                        FOR role4 IN OUTBOUND user `has`
+                            FILTER role4.type == "role"
+                            COLLECT user_item = user into groups = role4
+                                RETURN MERGE(user_item, {roles: unique(groups)}))
+
+            let result1 = (FOR item IN users_with_roles
+                FOR role2 IN item.roles
+                    FOR realm IN outbound role2 `access`
+                        FILTER realm.type == "realm"
+                        COLLECT realm_item = realm INTO groups = item
+                            RETURN MERGE(realm_item, {users_include_roles: groups}))
+
+
+            let result2 = (for realm in (for v_realm in inbound resource_user_id `owned_by` filter v_realm.type == "realm" return v_realm)
+                let users = (for user_item in users_with_roles
+                for user_item_role in user_item.roles
+                        // User item has a connection to a realm
+                        for v_realm2 in outbound user_item_role `access`
+                            // Filter only the realm type
+                            filter v_realm2.type == 'realm' and v_realm2.id == realm.id
+                                return user_item)
+                            //COLLECT realm_item = v_realm2 INTO groups = user_item
+                    RETURN MERGE(realm, {users_include_roles: users})
+                                    )
+                                    //return result2
+            return union_distinct(result1, result2)
                             """
         aql = aql.replace("#rolesConditions", rolesConditions)
+        aql = aql.replace("#resourceUserId", f'resource/{tokenData.id()}')
+        aql = aql.replace("#userId", f'{tokenData.id()}')
+
         queryResult = self._db.AQLQuery(aql, rawResults=True)
-        result = queryResult.result
+        result = queryResult.result[0]
+        result = self._groupByToplevel(data=result, keys=['users_include_roles', 'roles'], keyIndex=0)
+
         return {"items": [self._realmIncludesUsersIncludeRolesByResultItem(x) for x in result], "totalItemCount": len(result)}
 
     @debugLogger
@@ -1609,7 +1632,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                                                         FILTER role_item.type == "role"
                                                         COLLECT user_item = user into groups = role_item
                                                             RETURN MERGE(user_item, {roles: groups}))
-                                
+
                                 for project in resource
                                     // Filter only project type
                                     filter project.type == "project"
@@ -1663,7 +1686,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                             LET roles = UNION_DISTINCT(accesses, direct_access)
                             RETURN roles
                         ))
-                    
+
                     LET users_include_roles = (
                         FOR user IN resource
                             FILTER user.type == "user"
@@ -1675,8 +1698,8 @@ class PolicyRepositoryImpl(PolicyRepository):
                                     FILTER role4.type == "role"
                                     COLLECT user_item = user into groups = role4
                                         RETURN merge(user_item, {roles: unique(groups)}))
-                    
-                    
+
+
                     let res1 = (for project in resource
                         // Filter only project type
                         filter project.type == "project"
@@ -1685,16 +1708,16 @@ class PolicyRepositoryImpl(PolicyRepository):
                             for user_item_role in user_item.roles
                                 // User item has connection to a project
                                 let prj = (for v_project in outbound user_item_role `access` filter v_project.id == project.id return v_project)
-                                
+
                                 for v_project in prj
                                     // Make sure the the user has connection with the same project that we are looping from above
                                     filter v_project.id == project.id
-                                    
+
                                     // User item has a connection to a realm
                                     for v_realm in outbound user_item_role `access`
                                         // Filter only the realm type
                                         filter v_realm.type == "realm"
-                    
+
                                         // Group by project and put realm and user into the groups to be processed later
                                         COLLECT project_item = project into realm_and_user_grp = {realm: v_realm, user_item}
                                             // Group by realm
@@ -1703,8 +1726,8 @@ class PolicyRepositoryImpl(PolicyRepository):
                                                     return merge(c_realm, {users_include_roles: grp[*].user_item})
                                                     )
                                             return merge(project_item, {realms_include_users_include_roles: realm_coll}))
-                    
-                    
+
+
                     let res2 = (for project in (for v_project in inbound resource_user_id `owned_by` filter v_project.type == "project" return v_project)
                         for user_item in users_include_roles
                             filter user_item.id == user_id
@@ -1722,8 +1745,6 @@ class PolicyRepositoryImpl(PolicyRepository):
                                                 )
                                         return merge(project_item, {realms_include_users_include_roles: realm_coll}))
                     return union_distinct(res1, res2)
-    
-        
                                 """
         aql = aql.replace("#rolesConditions", rolesConditions)
         aql = aql.replace("#resourceUserId", f'resource/{tokenData.id()}')
@@ -1976,7 +1997,7 @@ class PolicyRepositoryImpl(PolicyRepository):
             UPSERT {_from: @fromId, _to: @toId}
                 INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
                 UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
-              IN owned_by                  
+              IN owned_by
             """
         bindVars = {
             "fromId": resourceDocId,
@@ -1994,7 +2015,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                 UPSERT {_from: @fromId, _to: @toId}
                     INSERT {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
                     UPDATE {_from: @fromId, _to: @toId, _from_type: @fromType, _to_type: @toType}
-                  IN owned_by                  
+                  IN owned_by
                 """
             bindVars = {
                 "fromId": resourceDocId,
