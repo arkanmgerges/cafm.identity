@@ -1742,7 +1742,7 @@ class PolicyRepositoryImpl(PolicyRepository):
                 result[item['_id']] = item
             elif keyIndex < len(keys) - 1:
                 result[item['_id']][key] = self._groupByToplevel(data=result[item['_id']][key] + item[key], keys=keys, keyIndex=keyIndex + 1)
-        return result.values()
+        return list(result.values())
 
     def _projectIncludesRealmsIncludeUsersIncludeRolesByResultItem(self, resultItem):
         return ProjectIncludesRealmsIncludeUsersIncludeRoles.createFrom(
